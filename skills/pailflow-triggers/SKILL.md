@@ -70,6 +70,7 @@ Do not create anything until you have all of the following:
 - If there is clearly one connected account for the requested source app, use it.
 - If there may be multiple connected accounts, ask the user to choose or provide enough detail to choose safely.
 - Prefer explicit `external_account_id` when known.
+- Do not invent or pass `external_user_id`. The gateway derives the Composio user identity from the current Slack workspace/account owner.
 
 ## Create Workflow
 
@@ -120,7 +121,6 @@ When calling `POST /v1/trigger-subscriptions`, include or derive the following:
 - `provider_trigger_slug`
 - `approval_status`
 - `external_account_id` when known
-- `external_user_id` when known
 - `resource_ref`
 - `config_json`
 - `scopes`
@@ -176,6 +176,7 @@ Provider mapping rules:
 - `config_json` should contain only the provider config needed to create the trigger.
 - `resource_ref` should describe the watched resource in provider-agnostic terms when possible.
 - `scopes` should name only the scopes or permissions needed for the trigger.
+- Do not set `external_user_id`; the gateway uses the canonical PailFlow owner user ID as the Composio user key.
 
 If you do not know the exact Composio trigger slug or required config, inspect the available Composio trigger catalog before proposing creation. Do not guess trigger slugs for create calls.
 
