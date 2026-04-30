@@ -16,9 +16,9 @@ Skills are directory-based instruction packs that help AI agents recognize and e
 
 ## State of the repository
 
-- Current maturity: baseline complete, with full 28-skill workflow coverage
+- Current maturity: baseline complete, with full 30-skill workflow coverage
 - Core pattern: use lane routers to choose focused sub-workflows and return decision-ready handoffs
-- Published skills today: `composio`, `pailflow-workflow-automation`, `pm-communication-style`, `pm-initiate`, `pm-initiate-project-context`, `pm-initiate-budget`, `pm-initiate-problem-framing`, `pm-initiate-stakeholder-map`, `pm-initiate-charter-and-viability-gate`, `pm-plan`, `pm-plan-requirements-brief`, `pm-plan-scope-schedule-baseline`, `pm-plan-roadmap-and-prioritization`, `pm-plan-raid-raci-decision-setup`, `pm-execute`, `pm-execute-work-package-coordination`, `pm-execute-iteration-cycle`, `pm-execute-change-control`, `pm-execute-dependency-and-handoff`, `pm-monitor`, `pm-monitor-ticket-triage`, `pm-monitor-status`, `pm-monitor-budget`, `pm-monitor-risk-escalation`, `pm-close`, `pm-close-acceptance-signoff`, `pm-close-handover-transition`, `pm-close-lessons-learned`, `pm-close-benefits-review-and-archive`
+- Published skills today: `composio`, `pailflow-triggers`, `pailflow-workflow-automation`, `pm-communication-style`, `pm-initiate`, `pm-initiate-project-context`, `pm-initiate-budget`, `pm-initiate-problem-framing`, `pm-initiate-stakeholder-map`, `pm-initiate-charter-and-viability-gate`, `pm-plan`, `pm-plan-requirements-brief`, `pm-plan-scope-schedule-baseline`, `pm-plan-roadmap-and-prioritization`, `pm-plan-raid-raci-decision-setup`, `pm-execute`, `pm-execute-work-package-coordination`, `pm-execute-iteration-cycle`, `pm-execute-change-control`, `pm-execute-dependency-and-handoff`, `pm-monitor`, `pm-monitor-ticket-triage`, `pm-monitor-status`, `pm-monitor-budget`, `pm-monitor-risk-escalation`, `pm-close`, `pm-close-acceptance-signoff`, `pm-close-handover-transition`, `pm-close-lessons-learned`, `pm-close-benefits-review-and-archive`
 - Strongest current lane: balanced baseline coverage across all lanes
 - Planned growth path: quality refinement, eval coverage, and iterative hardening
 
@@ -91,6 +91,7 @@ As new skills are added, they should reference project context before generating
 | Skill | Description |
 |-------|-------------|
 | [composio](skills/composio/) | Handles connected-tool workflows through Composio by choosing the right external system, checking connection state, using the smallest reliable tool path, and returning concise provenance with the specific records that support the answer. |
+| [pailflow-triggers](skills/pailflow-triggers/) | Handles event-triggered automation creation, inspection, and deletion for PailFlow by gathering source app/resource/event details, confirming the final execution prompt, and using the gateway trigger subscription API safely. |
 | [pailflow-workflow-automation](skills/pailflow-workflow-automation/) | Handles Slack-driven recurring automation creation, inspection, and deletion for PailFlow by gathering missing schedule/timezone/destination details, confirming the final execution prompt, and using the gateway automation API safely. |
 | [pm-communication-style](skills/pm-communication-style/) | Shared communication-style contract for PM-facing updates and reports: BLUF first, outcome-oriented movement, bold dated asks near the top, decision-ready risks, and concise sources for drill-down. |
 | [pm-initiate-project-context](skills/pm-initiate-project-context/) | Creates or updates `.agents/project-context.md` so agents can reuse stakeholder context, delivery expectations, tools/access, risks, and source-of-truth links across project work. |
@@ -162,6 +163,7 @@ cp -r project-management-skills/skills/* .agents/skills/
 ## Current skills
 
 - `composio`
+- `pailflow-triggers`
 - `pailflow-workflow-automation`
 - `pm-communication-style`
 - `pm-initiate-project-context`
@@ -194,7 +196,7 @@ cp -r project-management-skills/skills/* .agents/skills/
 ### Current skills by lane
 
 - `tooling`: `composio`
-- `pailflow`: `pailflow-workflow-automation`
+- `pailflow`: `pailflow-triggers`, `pailflow-workflow-automation`
 - `shared`: `pm-communication-style`
 - `initiate`: `pm-initiate`, `pm-initiate-project-context`, `pm-initiate-budget`, `pm-initiate-problem-framing`, `pm-initiate-stakeholder-map`, `pm-initiate-charter-and-viability-gate`
 - `plan`: `pm-plan`, `pm-plan-requirements-brief`, `pm-plan-scope-schedule-baseline`, `pm-plan-roadmap-and-prioritization`, `pm-plan-raid-raci-decision-setup`
