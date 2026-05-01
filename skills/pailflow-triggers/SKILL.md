@@ -79,7 +79,7 @@ Follow this sequence:
 
 1. Detect event-trigger intent.
 2. Extract source app, event type, resource, delivery destination, and desired action from the user request.
-3. Identify the provider trigger slug and provider config needed by Composio.
+3. Discover matching provider trigger types through the gateway trigger catalog.
 4. Ask follow-up questions for anything missing or risky.
 5. Build the resolved trigger prompt that should run for each accepted event.
 6. Confirm the final setup in plain language, including resource, event, destination, expected action, and execution prompt.
@@ -189,7 +189,7 @@ Example create payload shape:
 }
 ```
 
-## Provider Trigger Mapping
+## Provider Trigger Catalog
 
 Use Composio as the V1 trigger provider.
 
@@ -203,7 +203,21 @@ Provider mapping rules:
 - `scopes` should name only the scopes or permissions needed for the trigger.
 - Do not set `external_user_id`; the gateway uses the canonical PailFlow owner user ID as the Composio user key.
 
-If you do not know the exact Composio trigger slug or required config, inspect the available Composio trigger catalog before proposing creation. Do not guess trigger slugs for create calls.
+Always use a catalog-first process for provider trigger setup:
+
+1. Normalize the requested source app to a Composio toolkit slug, such as `github`, `linear`, `slack`, or `asana`.
+2. Call `GET /v1/trigger-types?toolkit=<toolkit>` through the gateway using the internal bearer token.
+3. Choose the closest trigger type from the returned catalog items. Use the returned `slug` exactly as `provider_trigger_slug`; do not synthesize or simplify it.
+4. Call `GET /v1/trigger-types/<provider_trigger_slug>` to inspect the selected trigger type's `config_schema`.
+5. Collect any required config fields from the user or provider tools. Put only those provider-required fields in `config_json`.
+6. If the catalog has no suitable trigger type, report that the provider trigger is not supported by the current Composio catalog. Do not create a direct app webhook as a workaround.
+7. Only after catalog selection, config collection, and user confirmation, call `POST /v1/trigger-subscriptions`.
+
+Do not guess trigger slugs from event names. For example, if the user says "issue updated," do not construct a slug from that phrase. The only valid `provider_trigger_slug` is one returned by the trigger catalog.
+
+Do not create direct provider webhooks for this V1 flow. The gateway's `/webhooks/composio/triggers` endpoint accepts Composio-signed trigger webhooks and routes by Composio trigger instance ID. A native provider webhook ID is not a valid `external_trigger_id` for this route.
+
+For narrower conditions than the provider catalog supports, such as assignee-specific issue updates when the catalog only exposes team-scoped issue updates, use the provider catalog trigger and put the narrower condition in `trigger_prompt`, `resource_ref`, or execution-time filtering. Do not invent a narrower trigger slug.
 
 ## List Workflow
 
@@ -396,6 +410,20 @@ curl -sS -X POST "$PAILFLOW_API_BASE_URL/v1/trigger-subscriptions" \
   -d '{...json payload...}'
 ```
 
+Example trigger catalog list call:
+
+```bash
+curl -sS "$PAILFLOW_API_BASE_URL/v1/trigger-types?toolkit=<toolkit>" \
+  -H "Authorization: Bearer $PAILFLOW_EXECUTION_SECRET"
+```
+
+Example trigger catalog detail call:
+
+```bash
+curl -sS "$PAILFLOW_API_BASE_URL/v1/trigger-types/<provider_trigger_slug>" \
+  -H "Authorization: Bearer $PAILFLOW_EXECUTION_SECRET"
+```
+
 Example list call shape:
 
 ```bash
@@ -422,6 +450,8 @@ Failure rule:
 
 Use these endpoints:
 
+- `GET /v1/trigger-types`
+- `GET /v1/trigger-types/:providerTriggerSlug`
 - `POST /v1/trigger-subscriptions`
 - `GET /v1/trigger-subscriptions`
 - `GET /v1/trigger-subscriptions/:id`

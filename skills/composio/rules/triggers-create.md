@@ -11,7 +11,7 @@ Triggers receive real-time events from connected accounts (Gmail, GitHub, Slack,
 
 > **⚠️ IMPORTANT:** Do NOT make up or guess trigger names. Always verify trigger slugs before using them:
 > - Use `composio manage triggers list` to discover and `composio manage triggers info "TRIGGER_NAME"` to see configuration schema (CLI)
-> - Use `composio.triggers.list()` to discover available triggers programmatically (SDK)
+> - In `@composio/core@0.6.x`, use `composio.triggers.listTypes({ toolkits: ['<toolkit>'] })` to discover trigger types and `composio.triggers.getType('TRIGGER_NAME')` to inspect config schema.
 >
 > See [Composio CLI Reference](./composio-cli.md) for discovery commands.
 
@@ -157,17 +157,14 @@ try {
 ## Discover Available Triggers
 
 ```typescript
-// Get all triggers
-const triggers = await composio.triggers.list();
-
-// Search by keyword
-const emailTriggers = await composio.triggers.list({ search: 'email' });
+// Get all trigger types
+const triggers = await composio.triggers.listTypes({ limit: 100 });
 
 // Filter by toolkit
-const slackTriggers = await composio.triggers.list({ toolkit: 'slack' });
+const slackTriggers = await composio.triggers.listTypes({ toolkits: ['slack'], limit: 100 });
 
 // Get trigger details
-const trigger = await composio.triggers.getTrigger('GMAIL_NEW_GMAIL_MESSAGE');
+const trigger = await composio.triggers.getType('GMAIL_NEW_GMAIL_MESSAGE');
 console.log(trigger.config); // Shows required config fields
 ```
 
