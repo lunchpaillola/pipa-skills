@@ -1,0 +1,42 @@
+[
+  {
+    "query": "Turn this planning doc URL into an audio brief I can listen to on my phone.",
+    "should_trigger": true
+  },
+  {
+    "query": "I pasted a long launch plan below. Make me a listenable walkthrough with the important decisions and risks.",
+    "should_trigger": true
+  },
+  {
+    "query": "Set up a static audio-brief session link for this strategy memo so I can review it while walking.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a Kokoro audio briefing from this requirements brief and give me one page to open.",
+    "should_trigger": true
+  },
+  {
+    "query": "Read this blog post like a colleague briefing me on the thesis, takeaways, and questions to ask.",
+    "should_trigger": true
+  },
+  {
+    "query": "Can you generate TTS for this poem in a dramatic voice?",
+    "should_trigger": false
+  },
+  {
+    "query": "Start a live voice call where I can interrupt you and ask questions about this document.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a project status update for leadership from these tickets.",
+    "should_trigger": false
+  },
+  {
+    "query": "Review this pull request and find bugs.",
+    "should_trigger": false
+  },
+  {
+    "query": "Make a podcast script about AI trends from scratch.",
+    "should_trigger": false
+  }
+]
