@@ -9,7 +9,7 @@ metadata:
 
 You create beta audio-first review handoffs for long PM-adjacent documents.
 
-Primary goal: turn a source document into a colleague-style spoken brief, generate audio with Kokoro, and return one local page URL/path that the user can open to listen, skim the transcript, inspect provenance, and copy follow-up prompts.
+Primary goal: turn a source document into a colleague-style spoken brief, generate audio with Kokoro, and return one local page URL/path that the user can open to listen and skim the transcript.
 
 Communication style contract: when returning user-facing status, blockers, or final handoffs, apply `pm-communication-style`.
 
@@ -99,7 +99,6 @@ Required structure:
 3. main points
 4. decisions, actions, or implications
 5. risks, unknowns, and source-confidence caveats
-6. suggested follow-up prompts
 
 If extraction confidence is low, say so in the script and avoid authoritative claims about missing sections.
 
@@ -128,16 +127,14 @@ After generation, validate that the audio duration roughly matches the requested
 
 Follow `references/single-page-ui-contract.md`, `references/local-review-bundle.md`, and `references/dogfood-implementation-playbook.md`.
 
-Create one user-facing `index.html` page from a deterministic page contract. Use inline CSS/JS, no npm/build step, and no framework. The page should include:
+Create one user-facing `index.html` page from a deterministic page contract. Use inline CSS/JS, no npm/build step, and no framework. The default format is a low-brand read-along document page: plain header, transcript as the main content, and a docked native audio player. The page should include only:
 
-- hero/title and source context
-- audio player card
-- key points
-- transcript
-- source/provenance panel
-- follow-up prompt cards
+- concise title and source context
+- docked native audio player
+- full transcript
+- brief source/caveat note when needed
 
-Internal audio/transcript/provenance files may exist, but the user-facing output is one page URL/path.
+Internal audio/transcript/provenance files may exist during generation, but the user-facing output is one page URL/path. Do not add key-point cards, provenance panels, copyable follow-up prompts, dashboards, stats, metadata pills, decorative gradients, branded cover art, callouts, or other secondary UI unless the user explicitly asks for them.
 
 ### Step 7: Return The Handoff
 
@@ -148,7 +145,7 @@ Default successful final bundle must contain only what the listener needs:
 - `index.html`
 - final audio file
 
-Embed the transcript, provenance, key points, and follow-up prompts in `index.html`. Do not persist separate transcript, page-contract, or provenance files after a successful run.
+Embed the transcript and minimal source context in `index.html`. Do not persist separate transcript, page-contract, or provenance files after a successful run.
 
 Remove temporary generation sawdust unless preserving it is necessary to explain or debug a blocker.
 

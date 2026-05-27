@@ -24,7 +24,7 @@ Classify every generated file before final handoff.
 - `index.html`
 - final audio file referenced by the page
 
-`index.html` must embed the transcript, source coverage, provenance, privacy posture, key points, and follow-up prompts. Do not keep separate `transcript.md`, `page-contract.json`, or `provenance.json` after success.
+`index.html` must embed the transcript and minimal source context needed to trust the brief. Do not keep separate `transcript.md`, `page-contract.json`, or `provenance.json` after success.
 
 **Temporary sawdust:** delete by default after success.
 
@@ -51,7 +51,7 @@ The final response should not expose sawdust. It should lead with one page URL/p
 - Return a local HTTP URL as the primary result when possible, especially when the user wants to open the brief from a phone, tablet, or another machine.
 - Return `index.html` or a `file://` path only when an HTTP server is unavailable or unnecessary.
 - Embed or link the Kokoro audio internally.
-- Include transcript and provenance inside the page.
+- Include the transcript inside the page. Keep source context minimal and inline. The final page should use the low-brand read-along document format from `single-page-ui-contract.md` unless the user explicitly requests a richer UI.
 - Keep raw artifacts discoverable only when useful or explicitly requested.
 
 ## Local HTTP And Tailscale Links

@@ -1,6 +1,6 @@
 # Single-Page UI Contract
 
-The primary user-facing artifact is one generated `index.html` listening page. The page should feel like a small generated product surface, not a directory listing.
+The primary user-facing artifact is one generated `index.html` listening page. The page should feel like a simple shared working document with audio attached, not a branded media player, directory listing, dashboard, or document portal.
 
 Follow a Frontend Slides-style model:
 
@@ -35,43 +35,92 @@ Follow a Frontend Slides-style model:
     "sanityCheck": "passed | suspiciously_short | blocked"
   },
   "brief": {
-    "bottomLine": "2-4 sentence bottom line",
-    "keyPoints": ["point one"],
-    "decisionsOrActions": ["action one"],
-    "risksAndUnknowns": ["risk one"],
-    "transcript": "full spoken script"
-  },
-  "followUpPrompts": [
-    "Prompt the user can copy back into an agent"
-  ]
+    "transcript": "full spoken script",
+    "caveatNote": "optional one-sentence source confidence or risk note"
+  }
 }
 ```
 
 ## Required Regions
 
-1. **Hero:** title, subtitle, source label, coverage confidence, and privacy posture.
-2. **Audio player card:** prominent player, duration, voice/status, and short instruction.
-3. **Key points:** 3-7 scannable cards or bullets.
-4. **Transcript:** readable transcript with enough spacing for skim-after-listen.
-5. **Source/provenance panel:** extraction method, skipped sections, assumptions, and safety/privacy notes.
-6. **Follow-up prompt cards:** copyable prompts for continuing in an agent.
+1. **Header:** one quiet source label, title, and optional one-sentence subtitle.
+2. **Transcript:** readable transcript as the dominant content, with section headings and optional timestamps when available.
+3. **Audio dock:** fixed or sticky native audio player near the bottom of the viewport, with a simple play/pause affordance and optional time label.
+4. **Source note:** one compact line or details disclosure for coverage confidence, skipped sections, assumptions, or privacy notes when they matter.
+
+## Default Page Format
+
+Use the read-along document format by default:
+
+- page width around `720-780px`, centered
+- plain sticky top bar with the generated title only when useful
+- source label as quiet text, not a badge or pill
+- title in large, restrained sans type
+- transcript sections in the body, not inside cards
+- timestamps in small muted text when the script has obvious sections
+- bottom audio dock with native `<audio controls>`
+- minimal source note at the end of the transcript
+
+Keep the page visually low-brand. It should feel closer to a shared document than an app screen.
+
+Recommended DOM shape:
+
+```html
+<main>
+  <nav aria-label="Page controls">
+    <strong>{{shortTitle}}</strong>
+  </nav>
+
+  <header>
+    <p>{{sourceLabel}}</p>
+    <h1>{{title}}</h1>
+    <p>{{subtitle}}</p>
+  </header>
+
+  <article aria-label="Transcript">
+    <section>
+      <h2><time>{{timestamp}}</time> {{sectionTitle}}</h2>
+      <p>{{transcriptParagraph}}</p>
+    </section>
+  </article>
+</main>
+
+<nav aria-label="Audio controls">
+  <button aria-label="Pause audio">Pause</button>
+  <audio controls preload="metadata">
+    <source src="{{audio.src}}" type="audio/wav" />
+  </audio>
+  <span>{{elapsed}} / {{duration}}</span>
+</nav>
+```
+
+Recommended style constraints:
+
+- use OKLCH tinted near-white background and near-black text, never pure black or white
+- center the document column, around `760px` wide
+- use one system font stack
+- use thin dividers for structure instead of cards
+- use a small rectangular audio dock, not a floating branded media widget
+- avoid shadows unless a subtle dock shadow is needed to separate audio controls from text
 
 ## Interaction Rules
 
 - Provide native audio controls at minimum.
-- Show the Kokoro voice and duration near the player.
+- Show duration near the player when available. Kokoro voice can stay in the final handoff response; do not make it prominent UI unless useful for debugging.
 - If audio duration is suspiciously short, show a visible blocker instead of presenting the brief as ready.
-- Copy buttons for follow-up prompts are allowed with small inline JavaScript.
 - Transcript navigation or chapter links are allowed when sections exist.
 - Do not require a backend.
 - Do not include in-page chat, comments, accounts, or persistent state in V1.
+- Do not include copyable prompt cards, key-point card grids, provenance dashboards, metrics, metadata pills, decorative callouts, branded cover art, or secondary panels unless the user explicitly asks for them.
 
 ## Visual Rules
 
-- Design for mobile listening first and desktop second.
+- Design for mobile listening first and desktop second, but keep the same document-like page structure on both.
 - Keep controls large enough for phone use.
 - Use strong contrast and readable type sizes.
-- Keep provenance compact but visible.
+- Keep source context compact. Prefer one quiet disclosure over a visible panel.
+- Use restrained tinted neutrals with no decorative gradients by default.
+- Avoid badges, pills, shadows, pop-outs, and heavy brand moments.
 - Avoid generic unstyled markdown dumps.
 
 ## Final Response Rule

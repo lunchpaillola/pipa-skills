@@ -40,9 +40,6 @@ What someone should decide, do, watch, or align on next.
 
 ## Risks And Unknowns
 Source gaps, unresolved questions, caveats, and direct-viewing needs for diagrams or visuals.
-
-## Follow-Up Prompts
-3-5 prompts the listener can copy back into an agent.
 ```
 
 ## Source Coverage Rules
@@ -54,10 +51,3 @@ Source gaps, unresolved questions, caveats, and direct-viewing needs for diagram
 ## Visual Or Diagram-Heavy Sources
 
 When important information is visual, say what requires direct viewing. Do not pretend audio captures every diagram, chart, or screenshot detail.
-
-## Follow-Up Prompt Examples
-
-- "Turn the risks from this brief into an owner/action table."
-- "Compare the decisions in this brief against the project scope boundaries."
-- "Create a short Slack update from the bottom line and risks."
-- "List the open questions I should resolve before execution."

@@ -9,7 +9,7 @@ Use this fast path when the user asks to actually generate a local audio brief a
 3. Do not make transcript or page-contract files part of the final successful bundle.
 4. Generate audio with local Kokoro using `af_heart` by default.
 5. Validate audio duration and file type before creating the final page status.
-6. Generate one `index.html` with inline CSS/JS and relative audio path.
+6. Generate one `index.html` with inline CSS/JS, relative audio path, and the low-brand read-along document format from `single-page-ui-contract.md`.
 7. If cross-device viewing is needed, serve the artifact directory over HTTP and return that URL first.
 8. Clean temporary dependency folders, lockfiles, logs, helper scripts, symlinks, test audio, chunk audio, transcript files, page-contract files, and provenance files before final handoff.
 
@@ -93,7 +93,7 @@ Before final response, verify:
 - final audio file exists and has a real audio file type
 - audio duration passes sanity check
 - page references the final audio path correctly
-- transcript, provenance, source coverage, privacy posture, and follow-up prompts are embedded in `index.html`
+- transcript and minimal source context are embedded in `index.html`
 - no separate transcript, page-contract, or provenance file remains after success
 - temporary generation dependencies are cleaned or clearly marked as ephemeral
 - chunk files, test audio, helper scripts, logs, and temporary symlinks are removed after successful generation
