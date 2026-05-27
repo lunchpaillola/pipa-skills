@@ -44,7 +44,7 @@ Never call an unlisted public link private.
 
 - Missing source: ask for URL, file path, pasted text, or exported markdown.
 - Unsafe URL: block fetch and ask for pasted/exported content.
-- Low extraction confidence: ask for a better source or continue with caveats if the user accepts.
+- Unreadable or inaccessible source: block clearly and ask for a local file, exported markdown, or pasted text. Do not generate a partial/caveated audio brief when the source cannot be read well enough to summarize.
 - Kokoro unavailable: return `blocked at Kokoro audio`; do not call V1 successful.
 - Page generation failure: return `blocked at page generation`; do not return multiple raw artifacts as if the single-page experience is ready.
 - User requests hosted sharing: explain that hosting is future/configured-tool behavior and confirm visibility before any upload.

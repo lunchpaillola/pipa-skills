@@ -48,7 +48,7 @@ The final response should not expose sawdust. It should lead with one page URL/p
 
 ## Required User-Facing Behavior
 
-- Return a local HTTP URL as the primary result when possible, especially when the user wants to open the brief from a phone, tablet, or another machine.
+- Return a local HTTP URL as the primary result when possible. Serve the bundle with a static server bound to `0.0.0.0` by default, then verify the URL before returning it.
 - Return `index.html` or a `file://` path only when an HTTP server is unavailable or unnecessary.
 - Embed or link the Kokoro audio internally.
 - Include the transcript inside the page. Keep source context minimal and inline. The final page should use the low-brand read-along document format from `single-page-ui-contract.md` unless the user explicitly requests a richer UI.
@@ -56,17 +56,24 @@ The final response should not expose sawdust. It should lead with one page URL/p
 
 ## Local HTTP And Tailscale Links
 
-If the user asks to view through Tailscale, LAN, phone, mobile, or another device:
+For generated audio briefs, default to local HTTP serving. If the user asks to view through Tailscale, LAN, phone, mobile, or another device, use the same server and prefer the reachable device URL in the final response:
 
 1. Serve the bundle directory with a simple static server.
 2. Bind to a reachable interface such as `0.0.0.0`, not only `127.0.0.1`.
-3. Use the provided Tailscale IP/hostname when available.
-4. Verify the URL with a HEAD/GET request when possible.
-5. Return the HTTP URL first.
+3. Return `http://0.0.0.0:<port>/index.html` for local-host review when no better reachable hostname is known.
+4. Use the provided Tailscale IP/hostname when available.
+5. Verify the URL with a HEAD/GET request when possible.
+6. Return the HTTP URL first.
 
 Prefer one stable port per generated page and record it in the final response. If the server command cannot stay alive in the harness, report that and return the file path instead of pretending the HTTP URL will persist.
 
 Example final link:
+
+```text
+http://0.0.0.0:<port>/index.html
+```
+
+Example cross-device link:
 
 ```text
 http://100.x.y.z:<port>/index.html

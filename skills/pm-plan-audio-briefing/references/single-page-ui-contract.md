@@ -21,7 +21,6 @@ Follow a Frontend Slides-style model:
     "type": "public_url | local_file | pasted_text | exported_markdown | readable_document",
     "location": "safe URL/path/description",
     "extractionMethod": "tool or manual path",
-    "coverageConfidence": "high | medium | low",
     "skippedSections": [],
     "assumptions": [],
     "privacyPosture": "local only"
@@ -36,17 +35,17 @@ Follow a Frontend Slides-style model:
   },
   "brief": {
     "transcript": "full spoken script",
-    "caveatNote": "optional one-sentence source confidence or risk note"
+    "caveatNote": "optional one-sentence caveat only when something concrete affects interpretation"
   }
 }
 ```
 
 ## Required Regions
 
-1. **Header:** one quiet source label, title, and optional one-sentence subtitle.
-2. **Transcript:** readable transcript as the dominant content, with section headings and optional timestamps when available.
+1. **Header:** one quiet source label, title, and optional one-sentence subtitle that frames the brief as an executive orientation.
+2. **Transcript:** readable transcript as the dominant content, with executive-brief section headings and optional timestamps when available.
 3. **Audio dock:** fixed or sticky native audio player near the bottom of the viewport, with a simple play/pause affordance and optional time label.
-4. **Source note:** one compact line or details disclosure for coverage confidence, skipped sections, assumptions, or privacy notes when they matter.
+4. **Source note:** one compact line or details disclosure for concrete caveats or privacy notes when they matter. Do not show source-access scoring.
 
 ## Default Page Format
 
@@ -56,7 +55,7 @@ Use the read-along document format by default:
 - plain sticky top bar with the generated title only when useful
 - source label as quiet text, not a badge or pill
 - title in large, restrained sans type
-- transcript sections in the body, not inside cards
+- transcript sections in the body, not inside cards; headings should mirror the executive brief shape, such as context and flow, attention areas, decisions, routine versus novel, dependencies, and summary
 - timestamps in small muted text when the script has obvious sections
 - bottom audio dock with native `<audio controls>`
 - minimal source note at the end of the transcript
@@ -96,7 +95,7 @@ Recommended DOM shape:
 
 Recommended style constraints:
 
-- use OKLCH tinted near-white background and near-black text, never pure black or white
+- use a white or neutral off-white background with near-black text; avoid warm paper, cream, parchment, sepia, or yellow-tinted backgrounds
 - center the document column, around `760px` wide
 - use one system font stack
 - use thin dividers for structure instead of cards
@@ -119,7 +118,7 @@ Recommended style constraints:
 - Keep controls large enough for phone use.
 - Use strong contrast and readable type sizes.
 - Keep source context compact. Prefer one quiet disclosure over a visible panel.
-- Use restrained tinted neutrals with no decorative gradients by default.
+- Use restrained neutral grays with no decorative gradients by default.
 - Avoid badges, pills, shadows, pop-outs, and heavy brand moments.
 - Avoid generic unstyled markdown dumps.
 
