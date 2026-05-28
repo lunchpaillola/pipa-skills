@@ -1,6 +1,10 @@
 [
   {
-    "query": "Turn this planning doc URL into an audio brief I can listen to on my phone.",
+    "query": "Give me the brief on this agent session so I can listen while walking.",
+    "should_trigger": true
+  },
+  {
+    "query": "Turn this PR into a three-minute audio brief with what changed and what needs review.",
     "should_trigger": true
   },
   {
@@ -8,15 +12,11 @@
     "should_trigger": true
   },
   {
-    "query": "Set up a static audio-brief session link for this strategy memo so I can review it while walking.",
+    "query": "Create a Kokoro audio briefing from this research report and publish the page.",
     "should_trigger": true
   },
   {
-    "query": "Create a Kokoro audio briefing from this requirements brief and give me one page to open.",
-    "should_trigger": true
-  },
-  {
-    "query": "Read this blog post like a colleague briefing me on the thesis, takeaways, and questions to ask.",
+    "query": "Read this blog post like a teammate briefing me on the thesis, takeaways, and questions to ask.",
     "should_trigger": true
   },
   {

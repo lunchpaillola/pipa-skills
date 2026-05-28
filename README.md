@@ -18,7 +18,7 @@ Skills are directory-based instruction packs that help AI agents recognize and e
 
 - Current maturity: baseline complete, with full 31-skill workflow coverage
 - Core pattern: use lane routers to choose focused sub-workflows and return decision-ready handoffs
-- Published skills today: `composio`, `pailflow-triggers`, `pailflow-workflow-automation`, `pm-communication-style`, `pm-initiate`, `pm-initiate-project-context`, `pm-initiate-budget`, `pm-initiate-problem-framing`, `pm-initiate-stakeholder-map`, `pm-initiate-charter-and-viability-gate`, `pm-plan`, `pm-plan-audio-briefing`, `pm-plan-requirements-brief`, `pm-plan-scope-schedule-baseline`, `pm-plan-roadmap-and-prioritization`, `pm-plan-raid-raci-decision-setup`, `pm-execute`, `pm-execute-work-package-coordination`, `pm-execute-iteration-cycle`, `pm-execute-change-control`, `pm-execute-dependency-and-handoff`, `pm-monitor`, `pm-monitor-ticket-triage`, `pm-monitor-status`, `pm-monitor-budget`, `pm-monitor-risk-escalation`, `pm-close`, `pm-close-acceptance-signoff`, `pm-close-handover-transition`, `pm-close-lessons-learned`, `pm-close-benefits-review-and-archive`
+- Published skills today: `agent-audio-brief`, `composio`, `pailflow-triggers`, `pailflow-workflow-automation`, `pm-communication-style`, `pm-initiate`, `pm-initiate-project-context`, `pm-initiate-budget`, `pm-initiate-problem-framing`, `pm-initiate-stakeholder-map`, `pm-initiate-charter-and-viability-gate`, `pm-plan`, `pm-plan-requirements-brief`, `pm-plan-scope-schedule-baseline`, `pm-plan-roadmap-and-prioritization`, `pm-plan-raid-raci-decision-setup`, `pm-execute`, `pm-execute-work-package-coordination`, `pm-execute-iteration-cycle`, `pm-execute-change-control`, `pm-execute-dependency-and-handoff`, `pm-monitor`, `pm-monitor-ticket-triage`, `pm-monitor-status`, `pm-monitor-budget`, `pm-monitor-risk-escalation`, `pm-close`, `pm-close-acceptance-signoff`, `pm-close-handover-transition`, `pm-close-lessons-learned`, `pm-close-benefits-review-and-archive`
 - Strongest current lane: balanced baseline coverage across all lanes
 - Planned growth path: quality refinement, eval coverage, and iterative hardening
 
@@ -90,6 +90,7 @@ As new skills are added, they should reference project context before generating
 
 | Skill | Description |
 |-------|-------------|
+| [agent-audio-brief](skills/agent-audio-brief/) | Work-artifact audio briefing workflow that turns agent sessions, PRs, plans, specs, research reports, docs, URLs, and pasted markdown into a Kokoro-generated brief published as one here.now listening page. |
 | [composio](skills/composio/) | Handles connected-tool workflows through Composio by choosing the right external system, checking connection state, using the smallest reliable tool path, and returning concise provenance with the specific records that support the answer. |
 | [pailflow-triggers](skills/pailflow-triggers/) | Handles event-triggered automation creation, inspection, and deletion for PailFlow by gathering source app/resource/event details, confirming the final execution prompt, and using the gateway trigger subscription API safely. |
 | [pailflow-workflow-automation](skills/pailflow-workflow-automation/) | Handles Slack-driven recurring automation creation, inspection, and deletion for PailFlow by gathering missing schedule/timezone/destination details, confirming the final execution prompt, and using the gateway automation API safely. |
@@ -101,7 +102,6 @@ As new skills are added, they should reference project context before generating
 | [pm-initiate-stakeholder-map](skills/pm-initiate-stakeholder-map/) | Initiate-stage subskill for mapping stakeholders, decision authority, RACI signals, and escalation paths. |
 | [pm-initiate-charter-and-viability-gate](skills/pm-initiate-charter-and-viability-gate/) | Initiate-stage subskill for charter readiness and go/go-with-conditions/no-go viability decisions with explicit gaps. |
 | [pm-plan](skills/pm-plan/) | Plan-stage router that selects planning mode (requirements, baseline, roadmap, or RAID/RACI/decision controls) and returns an execution-ready summary. |
-| [pm-plan-audio-briefing](skills/pm-plan-audio-briefing/) | Plan-stage audio review workflow that turns long docs, URLs, and pasted markdown into a Kokoro-generated brief with one local single-page listening experience. |
 | [pm-plan-requirements-brief](skills/pm-plan-requirements-brief/) | Plan-stage subskill for producing a concise requirements brief with acceptance boundaries, priorities, and open decisions. |
 | [pm-plan-scope-schedule-baseline](skills/pm-plan-scope-schedule-baseline/) | Plan-stage subskill for defining scope boundaries, milestones, assumptions, and tolerance/change triggers. |
 | [pm-plan-roadmap-and-prioritization](skills/pm-plan-roadmap-and-prioritization/) | Plan-stage subskill for now/next/later sequencing and transparent prioritization tradeoffs. |
@@ -164,6 +164,7 @@ cp -r project-management-skills/skills/* .agents/skills/
 ## Current skills
 
 - `composio`
+- `agent-audio-brief`
 - `pailflow-triggers`
 - `pailflow-workflow-automation`
 - `pm-communication-style`
@@ -174,7 +175,6 @@ cp -r project-management-skills/skills/* .agents/skills/
 - `pm-initiate-stakeholder-map`
 - `pm-initiate-charter-and-viability-gate`
 - `pm-plan`
-- `pm-plan-audio-briefing`
 - `pm-plan-requirements-brief`
 - `pm-plan-scope-schedule-baseline`
 - `pm-plan-roadmap-and-prioritization`
@@ -199,9 +199,9 @@ cp -r project-management-skills/skills/* .agents/skills/
 
 - `tooling`: `composio`
 - `pailflow`: `pailflow-triggers`, `pailflow-workflow-automation`
-- `shared`: `pm-communication-style`
+- `shared`: `agent-audio-brief`, `pm-communication-style`
 - `initiate`: `pm-initiate`, `pm-initiate-project-context`, `pm-initiate-budget`, `pm-initiate-problem-framing`, `pm-initiate-stakeholder-map`, `pm-initiate-charter-and-viability-gate`
-- `plan`: `pm-plan`, `pm-plan-audio-briefing`, `pm-plan-requirements-brief`, `pm-plan-scope-schedule-baseline`, `pm-plan-roadmap-and-prioritization`, `pm-plan-raid-raci-decision-setup`
+- `plan`: `pm-plan`, `pm-plan-requirements-brief`, `pm-plan-scope-schedule-baseline`, `pm-plan-roadmap-and-prioritization`, `pm-plan-raid-raci-decision-setup`
 - `execute`: `pm-execute`, `pm-execute-work-package-coordination`, `pm-execute-iteration-cycle`, `pm-execute-change-control`, `pm-execute-dependency-and-handoff`
 - `monitor`: `pm-monitor`, `pm-monitor-ticket-triage`, `pm-monitor-status`, `pm-monitor-budget`, `pm-monitor-risk-escalation`
 - `close`: `pm-close`, `pm-close-acceptance-signoff`, `pm-close-handover-transition`, `pm-close-lessons-learned`, `pm-close-benefits-review-and-archive`
