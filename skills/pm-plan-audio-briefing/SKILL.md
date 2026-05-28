@@ -138,7 +138,7 @@ Create one user-facing `index.html` page from a deterministic page contract. Use
 - full transcript
 - brief note only when a real caveat affects how to interpret the brief
 
-Internal audio/transcript/provenance files may exist during generation, but the user-facing output is one page URL/path. Do not add key-point cards, provenance panels, copyable follow-up prompts, dashboards, stats, metadata pills, decorative gradients, branded cover art, callouts, or other secondary UI unless the user explicitly asks for them.
+The page subtitle should be a plain-language, source-specific one-liner that describes the document being briefed. It must not claim the brief performed verification, review work, or implementation checks beyond summarizing and orienting the listener to the source. Prefer wording like "A quick review of the plan for the 25 PM skills baseline." Avoid "Use this brief to..." framing, dense project jargon, outcome claims, and generic implementation phrasing that describes the local TTS backend or audio-generation process. Internal audio/transcript/provenance files may exist during generation, but the user-facing output is one page URL/path. Do not add key-point cards, provenance panels, copyable follow-up prompts, dashboards, stats, metadata pills, decorative gradients, branded cover art, callouts, TTS voice labels, model names, or other secondary UI unless the user explicitly asks for them.
 
 ### Step 7: Return The Handoff
 

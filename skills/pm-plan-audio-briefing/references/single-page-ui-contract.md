@@ -15,7 +15,7 @@ Follow a Frontend Slides-style model:
 ```json
 {
   "title": "Audio brief title",
-  "subtitle": "What the listener will understand",
+  "subtitle": "Plain-language sentence describing the source document being briefed",
   "source": {
     "label": "Source name",
     "type": "public_url | local_file | pasted_text | exported_markdown | readable_document",
@@ -29,7 +29,7 @@ Follow a Frontend Slides-style model:
     "src": "relative path or data URL",
     "durationLabel": "about 5 minutes",
     "durationSeconds": 300,
-    "voice": "Kokoro af_heart",
+    "voice": "selected voice (internal metadata only; do not render on the page)",
     "status": "generated | blocked",
     "sanityCheck": "passed | suspiciously_short | blocked"
   },
@@ -42,7 +42,7 @@ Follow a Frontend Slides-style model:
 
 ## Required Regions
 
-1. **Header:** one quiet source label, title, and optional one-sentence subtitle that frames the brief as an executive orientation.
+1. **Header:** one quiet source label, title, and optional one-sentence subtitle that is specific to the source content and plainly describes the document being briefed.
 2. **Transcript:** readable transcript as the dominant content, with executive-brief section headings and optional timestamps when available.
 3. **Audio dock:** fixed or sticky native audio player near the bottom of the viewport, with a simple play/pause affordance and optional time label.
 4. **Source note:** one compact line or details disclosure for concrete caveats or privacy notes when they matter. Do not show source-access scoring.
@@ -55,9 +55,10 @@ Use the read-along document format by default:
 - plain sticky top bar with the generated title only when useful
 - source label as quiet text, not a badge or pill
 - title in large, restrained sans type
+- subtitle as a source-specific plain-language description of the document, not an instruction, implementation provenance, or claim that the brief verified implementation state. Avoid "Use this brief to..." phrasing, dense project jargon, outcome claims, and generic process text that describes local generation, TTS, models, voices, or the audio backend.
 - transcript sections in the body, not inside cards; headings should mirror the executive brief shape, such as context and flow, attention areas, decisions, routine versus novel, dependencies, and summary
 - timestamps in small muted text when the script has obvious sections
-- bottom audio dock with native `<audio controls>`
+- bottom audio dock with native `<audio controls>` and, when helpful, duration only
 - minimal source note at the end of the transcript
 
 Keep the page visually low-brand. It should feel closer to a shared document than an app screen.
@@ -89,7 +90,7 @@ Recommended DOM shape:
   <audio controls preload="metadata">
     <source src="{{audio.src}}" type="audio/wav" />
   </audio>
-  <span>{{elapsed}} / {{duration}}</span>
+  <span>{{duration}}</span>
 </nav>
 ```
 
@@ -105,7 +106,7 @@ Recommended style constraints:
 ## Interaction Rules
 
 - Provide native audio controls at minimum.
-- Show duration near the player when available. Kokoro voice can stay in the final handoff response; do not make it prominent UI unless useful for debugging.
+- Show duration near the player when available. Do not show the Kokoro voice, model name, TTS backend, or other implementation details in the page UI unless the page is explicitly a debug artifact.
 - If audio duration is suspiciously short, show a visible blocker instead of presenting the brief as ready.
 - Transcript navigation or chapter links are allowed when sections exist.
 - Do not require a backend.

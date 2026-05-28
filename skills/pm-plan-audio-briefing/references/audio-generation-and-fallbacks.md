@@ -14,7 +14,7 @@ Discovery order:
 4. Check Python package or local service options if the environment already uses them.
 5. If Node/npm is available and installing an artifact-local dependency is acceptable, `kokoro-js` can be used as a local fallback. In Node, prefer `device: "cpu"`; `device: "wasm"` may be browser-only depending on the Transformers.js version.
 
-Use `af_heart` as the default Kokoro voice. It should appear in the generated page metadata and final status unless the user requested another voice.
+Use `af_heart` as the default Kokoro voice. Track the selected voice internally and mention it in the final status, but do not render the voice, model name, or TTS backend on the listening page unless the page is explicitly a debug artifact.
 
 ## Preferred CLI Backend: `kokoro-tts`
 
