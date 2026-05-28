@@ -25,23 +25,27 @@ Very short sources should produce short audio notes. Do not pad to meet a durati
 
 Use this structure unless the user requests another format:
 
-```md
-# Audio Brief Script
-
-## Context And Overview
+```text
+Context And Overview.
 What is this artifact, where did it come from, and why does it matter? Orient the listener quickly. Explain what kind of work or review the artifact supports.
 
-## The Story
+The Story.
 Give the narrative arc. Explain what happened, what changed, what the document argues, what the agent produced, or how the work unfolded. This should be the main body of the brief.
 
-## Attention Areas
+Attention Areas.
 Call out whatever deserves closer attention. This is not only for risks or problems. Depending on the source, attention areas may include strong ideas, surprising points, brittle assumptions, unresolved questions, implementation risks, useful patterns, confusing sections, missing evidence, tradeoffs, or details worth reusing.
 
 Do not force every category. Select only the most useful attention areas for the specific artifact.
 
-## Takeaway
+Takeaway.
 End with the plain-English bottom line. Explain what matters most, what the listener should remember, and the next sensible action if there is one.
 ```
+
+Write the TTS input as plain speakable text, not Markdown. Do not include `#`, `##`, bullets, table pipes, code fences, decorative separators, raw URLs, or punctuation-heavy labels in the script sent to audio generation. If a visible page transcript needs section headings, add those in `index.html`; do not make Kokoro read Markdown syntax aloud.
+
+## Gotchas
+
+- Kokoro may speak Markdown punctuation literally. If the script starts with `# Audio Brief Script` or `## Context And Overview`, the audio can say “hash hash” before the useful content. Keep the generated audio script free of Markdown heading markers, bullets, table syntax, and other notation that is meant for readers rather than listeners.
 
 ## Artifact Adaptation
 
