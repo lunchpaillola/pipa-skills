@@ -2,71 +2,90 @@
 
 Kokoro audio generation is required for success. Script-only output is useful for debugging, but it is not a completed audio brief.
 
-## Deterministic Setup Order
+## Golden Path: Managed `kokoro-onnx`
 
-Use `af_heart` as the default Kokoro voice. Track the selected voice internally and mention it in the final status, but do not render the voice, model name, or TTS backend on the listening page.
+Use one managed local backend by default: cached `kokoro-onnx` in `~/.cache/agent-audio-brief/`.
 
-1. Check for `kokoro-tts` and run `kokoro-tts --help` to confirm syntax.
-2. If `kokoro-tts` is missing and `uv` is available, install it:
+Do not explore a long fallback ladder during a normal brief request. The user asked for a listening artifact, not a dependency debugging session.
+
+Default flow:
+
+1. Write the spoken brief script to a temporary work file outside the publish bundle.
+2. Run `scripts/generate-audio.sh <brief-script.txt> <publish-dir>/audio/brief.wav`.
+3. If the cached backend is missing, the generation script runs `scripts/setup-kokoro.sh` once.
+4. If setup succeeds, generate and validate the WAV.
+5. If setup fails, block clearly and ask for `uv` or `python3.12`.
+
+The managed backend uses:
+
+- `kokoro-onnx==0.5.0`
+- `soundfile==0.13.1`
+- `kokoro-v1.0.onnx`
+- `voices-v1.0.bin`
+
+Cache layout:
+
+```text
+~/.cache/agent-audio-brief/
+  kokoro-onnx-venv/
+  kokoro-models/
+    v1.0/
+      kokoro-v1.0.onnx
+      voices-v1.0.bin
+```
+
+Do not install Kokoro packages into the system Python. Do not assume `python`, `python3`, or Python 3.14 is usable for Kokoro generation.
+
+## Setup Script Contract
+
+Use `scripts/setup-kokoro.sh` for setup. It should be the only normal install path embedded in the skill.
+
+Setup behavior:
+
+1. If `uv` exists, create the backend with uv-managed Python 3.12.
+2. If `uv` is missing but `python3.12` exists, create the backend with `python3.12 -m venv`.
+3. If neither exists, stop and ask for `uv` or `python3.12`.
+4. Install pinned packages into the cached venv.
+5. Download missing model files into the cache.
+6. Smoke-test imports and cached model file presence.
+
+This intentionally avoids global `pip install kokoro`, `uv tool install kokoro-tts`, and ad hoc npm installs as normal behavior.
+
+## Generation Script Contract
+
+Use `scripts/generate-audio.sh` for audio generation:
 
 ```bash
-uv tool install kokoro-tts
+skills/agent-audio-brief/scripts/generate-audio.sh brief-script.txt publish/audio/brief.wav
 ```
 
-3. Retry `kokoro-tts --help` after installation.
-4. If `kokoro-tts` is still unavailable, check for project-provided Kokoro wrappers or installed commands such as `kokoro`.
-5. If no CLI/wrapper is available and npm is available, install `kokoro-js` in a temporary generation directory and use it as a local fallback.
-6. If no local Kokoro path can be installed or run, return that the audio brief cannot be generated.
+The script:
 
-Known setup caveat: `kokoro-tts` currently documents Python 3.11-3.12 support. If the machine's default Python is newer, use `uv` or another Python version manager rather than `pip install` into the system Python.
+- uses `af_heart` by default unless a third voice argument is provided
+- creates the cached backend if needed
+- writes one final browser-playable WAV at the requested output path
+- reports duration and word count
+- fails if the output is suspiciously short for the script length
 
-## Preferred CLI Backend: `kokoro-tts`
+Keep generated audio in the publish bundle at `audio/brief.wav`. Keep scripts, model caches, virtual environments, chunks, helper files, and logs outside the publish bundle.
 
-Prefer `kokoro-tts` because it gives agents a stable local command surface, supports file input and stdin, can emit WAV or MP3, includes voice and speed options, and has chunk-oriented behavior for longer inputs.
+## Why Not The Other Kokoro Paths
 
-Expected happy path:
+`kokoro-tts` is acceptable only when already installed and explicitly requested for debugging. Do not install it as the normal skill path: current releases require Python 3.11-3.12, include extra EPUB/PDF/audio-device dependencies, and require separate model-file handling.
 
-```bash
-kokoro-tts brief-script.txt audio/brief.wav --voice af_heart --lang en-us --format wav
-```
+`pip install kokoro` uses the upstream Python package and may be useful for application development, but it is heavier for this workflow because it pulls Torch/Transformers and still does not support Python 3.14.
 
-If the CLI requires model files in the working directory, run it from the temporary generation directory or documented model directory, then move the final `brief.wav` into the page bundle.
-
-## Kokoro JS Fallback
-
-If no `kokoro` or `kokoro-tts` command works but npm is available, `kokoro-js` can be used as a local fallback. Install it outside the final bundle and delete `node_modules`, lockfiles, helper scripts, logs, chunks, and temporary symlinks after successful publish.
-
-Known defaults:
-
-```js
-import { KokoroTTS, TextSplitterStream } from "kokoro-js";
-
-const tts = await KokoroTTS.from_pretrained("onnx-community/Kokoro-82M-v1.0-ONNX", {
-  dtype: "q8",
-  device: "cpu"
-});
-
-const splitter = new TextSplitterStream();
-const stream = tts.stream(splitter, { voice: "af_heart" });
-```
-
-Practical cautions:
-
-- Prefer `tts.stream()` with `TextSplitterStream` for multi-sentence or multi-paragraph scripts.
-- Do not pass a long multi-minute script as one `generate()` input.
-- Some package versions resolve voices from a parent `voices/` directory. If `af_heart.bin` is missing, point the package at its bundled voices or create a temporary symlink, then clean it up.
-- Model downloads can fail transiently with network errors. Retry once before reporting a setup/network blocker.
-- Avoid dumping binary/minified package output into the user response. Capture errors to a log and summarize the relevant line.
+`kokoro-js` is a last-resort experimental fallback only. Do not use it during normal brief generation unless the user explicitly asks to debug a Python-free path. If used, install it in a scratch directory outside the publish bundle and pin `kokoro-js@1.2.1`.
 
 ## Preferred Behavior
 
 - Use the generated script as the TTS input, not the raw source document.
 - Use `af_heart` by default.
-- Save one final playable audio file for the page, even if generation required multiple chunks internally.
-- Re-encode the final assembled audio to a browser-friendly format such as mono 24 kHz 16-bit PCM WAV rather than relying on stream-copy concatenation of generated WAV chunks.
+- Save one final playable audio file for the page.
 - Preserve a transcript that matches the spoken script inside the generated `index.html`.
 - Name the final audio predictably as `audio/brief.wav` so the deterministic template can reference it.
 - If first-run model download is needed, report that as setup/wait state rather than a content failure.
+- The brief is not a complete readout of the source, but the audio must be a complete rendering of the generated brief script.
 
 ## Duration And Completeness Checks
 
@@ -74,9 +93,10 @@ Do not treat "audio file exists" as success by itself.
 
 After generation, verify duration with available local tools such as `ffprobe`, `afinfo`, `soxi`, media metadata, or the TTS library's returned duration. Then compare it with the script length:
 
-- A 400-450 word default brief should usually land around three minutes.
-- A generated file under one minute for a 400-450 word script is suspicious.
-- A generated file that cuts off words at chunk boundaries is not complete.
+- A 400-450 word default brief should usually land around two to three minutes depending on voice speed.
+- A generated file under 90 seconds for a 350+ word script is suspicious.
+- A generated file under 30 seconds for a 150+ word script is suspicious.
+- A generated file that cuts off before the final section is not complete, even if its duration is plausible.
 
 If duration remains suspicious after retry:
 
@@ -86,7 +106,7 @@ Audio brief blocked.
 - **Blocked at:** Kokoro audio completeness
 - **What worked:** script generated; audio file created
 - **Why:** generated audio duration was <duration>, which is too short for the script
-- **Next:** regenerate with smaller chunks or provide a working Kokoro wrapper that supports long input
+- **Next:** run `skills/agent-audio-brief/scripts/setup-kokoro.sh` after installing `uv` or `python3.12`, then retry generation
 ```
 
 ## Failure Handling

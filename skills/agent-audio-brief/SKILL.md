@@ -96,16 +96,16 @@ Follow `references/audio-generation-and-fallbacks.md`.
 
 Use `af_heart` as the default voice unless the user asks for another voice.
 
-Deterministic setup order:
+Golden path:
 
-1. If `kokoro-tts --help` works, use `kokoro-tts`.
-2. If `kokoro-tts` is missing and `uv` is available, run `uv tool install kokoro-tts`, then retry `kokoro-tts --help`.
-3. If `kokoro-tts` is still unavailable and npm is available, install `kokoro-js` in a temporary generation directory and use `tts.stream()` with `TextSplitterStream`.
-4. If no local Kokoro path can be installed or run, return that the audio brief cannot be generated.
+1. Use the skill-managed cached `kokoro-onnx` backend via `scripts/generate-audio.sh <brief-script.txt> <publish-dir>/audio/brief.wav`.
+2. If the backend is missing, `scripts/generate-audio.sh` runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/agent-audio-brief/kokoro-onnx-venv/` and cached model files under `~/.cache/agent-audio-brief/kokoro-models/v1.0/`.
+3. `scripts/setup-kokoro.sh` uses `uv` with Python 3.12 when available, otherwise `python3.12`. Do not use Python 3.14 for Kokoro generation.
+4. If setup fails, return that the audio brief cannot be generated and ask for `uv` or `python3.12` to be installed. Do not wander through ad hoc fallback installs during the brief request.
 
-For scripts longer than a short paragraph, either use `kokoro-tts` built-in chunking/merge behavior or chunk the script into safe segments before TTS and concatenate or assemble the resulting audio. Do not assume one long Kokoro request will synthesize the whole script. When using `kokoro-js`, prefer its `tts.stream()` API over manual `tts.generate()` chunks.
+Use the generated script as the TTS input, not the raw source document. The brief does not need to summarize every source detail, but the audio must fully render the generated brief script.
 
-After generation, validate that the audio duration roughly matches the 400-450 word script. If the brief produces only a few seconds of audio, treat it as a generation defect, not success.
+After generation, validate that the audio duration roughly matches the script length and that `audio/brief.wav` is playable. If the brief produces only a few seconds of audio or fails the script's duration sanity check, treat it as a generation defect, not success.
 
 If Kokoro fails after the script is generated, return a clear message that the audio brief cannot be generated. Do not call a script-only output successful.
 
@@ -148,7 +148,7 @@ Return only the current `siteUrl` from the publish command as the primary listen
 
 Before returning, apply the artifact lifecycle rules in `references/local-review-bundle.md` and `references/dogfood-implementation-playbook.md`.
 
-After a successful here.now publish, remove the local generated bundle and temporary generation artifacts. The here.now URL is the durable user-facing artifact. Do not keep `.artifacts/audio-briefs/<slug>/`, separate transcript files, page-contract files, provenance files, chunk audio, helper scripts, logs, package folders, or temporary caches unless preserving them is necessary to explain or debug a blocker.
+After a successful here.now publish, remove the local generated bundle and temporary generation artifacts. The here.now URL is the durable user-facing artifact. Do not keep `.artifacts/audio-briefs/<slug>/`, separate transcript files, page-contract files, provenance files, chunk audio, helper scripts, logs, package folders, or temporary per-run caches unless preserving them is necessary to explain or debug a blocker. Do not delete the managed Kokoro cache at `~/.cache/agent-audio-brief/`; it is reused to make future briefs fast.
 
 If generation or publishing is blocked, preserve only the minimal debug artifacts needed to continue and mention where they are.
 
