@@ -15,6 +15,10 @@ Very short sources should produce short audio notes. Do not pad to meet a durati
 - Sound like a sharp teammate explaining what happened and why it matters.
 - Prioritize orientation, judgment, and narrative flow over completeness.
 - Use plain human language and short listenable sentences.
+- Aim most sentences around 11 to 15 words for natural spoken pacing.
+- Shorter sentences are allowed when they improve clarity, rhythm, or emphasis.
+- No sentence should exceed 20 words in the TTS script.
+- Split clause-heavy sentences instead of letting them run long.
 - Avoid dense metadata, tables, and exact wording unless the exact wording is the point.
 - Be opinionated about what deserves attention.
 - Do not flatten every source section into equal-weight summary.
@@ -62,6 +66,8 @@ Before sending the script to TTS, revise once if needed:
 - The brief includes concrete source-specific judgment, not just neutral summary.
 - The brief does not claim verification, review, testing, or implementation checks unless those actually happened.
 - The takeaway gives a useful bottom line or next action.
+- Most sentences are around 11-15 words, with shorter sentences allowed.
+- No sentence is over 20 words.
 - The script is roughly 400-450 words unless the source is short or the user requested a different length.
 
 Do not run repeated optimization loops during normal generation.
@@ -75,6 +81,7 @@ Do not run repeated optimization loops during normal generation.
 - Do not produce a section-by-section recap that gives every source part equal weight.
 - Do not open with filler like "This document discusses" when a sharper source-specific opening is possible.
 - Do not copy source headings into the narration unless they are genuinely useful spoken labels.
+- Do not use long, clause-heavy sentences just to preserve a polished written style.
 - Do not turn Attention Areas into generic risks; name the actual point that deserves attention.
 - Do not bury the listener in caveats. Include only caveats that change how the brief should be interpreted.
 - Do not claim the agent verified, reviewed, tested, or validated anything beyond the source unless that work actually happened.

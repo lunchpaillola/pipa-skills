@@ -32,7 +32,7 @@ If the cached backend is missing, the generation script runs setup:
 skills/agent-audio-brief/scripts/setup-kokoro.sh
 ```
 
-Setup uses `uv` with Python 3.12 when available, otherwise `python3.12`. If neither exists, block and ask for one of those prerequisites. Do not use Python 3.14 for Kokoro generation, and do not perform ad hoc `kokoro-tts`, `pip install kokoro`, or npm fallback installs during a normal brief request.
+Setup uses `uv` with Python 3.12 when available, otherwise `python3.12`. If neither exists, block and ask for one of those prerequisites. Do not use Python 3.14 for Kokoro generation, and do not perform ad hoc package installs during a normal brief request.
 
 ## Publish Bundle Hygiene
 

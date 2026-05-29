@@ -13,9 +13,19 @@ VOICE="${3:-af_heart}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CACHE_ROOT="${AGENT_AUDIO_BRIEF_CACHE:-$HOME/.cache/agent-audio-brief}"
 VENV_DIR="${AGENT_AUDIO_BRIEF_KOKORO_VENV:-$CACHE_ROOT/kokoro-onnx-venv}"
-MODEL_DIR="${AGENT_AUDIO_BRIEF_MODEL_DIR:-$CACHE_ROOT/kokoro-models/v1.0}"
-MODEL_FILE="$MODEL_DIR/kokoro-v1.0.onnx"
+MODEL_VARIANT="${AGENT_AUDIO_BRIEF_MODEL_VARIANT:-int8}"
+MODEL_DIR="${AGENT_AUDIO_BRIEF_MODEL_DIR:-$CACHE_ROOT/kokoro-models/v1.0-$MODEL_VARIANT}"
+MODEL_FILE="${AGENT_AUDIO_BRIEF_MODEL_FILE:-$MODEL_DIR/kokoro-v1.0.$MODEL_VARIANT.onnx}"
+if [[ "$MODEL_VARIANT" == "fp32" || "$MODEL_VARIANT" == "full" ]]; then
+  MODEL_FILE="${AGENT_AUDIO_BRIEF_MODEL_FILE:-$MODEL_DIR/kokoro-v1.0.onnx}"
+fi
 VOICES_FILE="$MODEL_DIR/voices-v1.0.bin"
+MAX_PHONEMES="${AGENT_AUDIO_BRIEF_MAX_PHONEMES:-100}"
+
+export OMP_NUM_THREADS="${OMP_NUM_THREADS:-1}"
+export OPENBLAS_NUM_THREADS="${OPENBLAS_NUM_THREADS:-1}"
+export MKL_NUM_THREADS="${MKL_NUM_THREADS:-1}"
+export NUMEXPR_NUM_THREADS="${NUMEXPR_NUM_THREADS:-1}"
 
 if [[ ! -f "$SCRIPT_INPUT" ]]; then
   printf 'audio_result.status=blocked\n' >&2
@@ -28,7 +38,7 @@ if [[ ! -x "$VENV_DIR/bin/python" || ! -s "$MODEL_FILE" || ! -s "$VOICES_FILE" ]
 fi
 
 PYTHON_BIN="$VENV_DIR/bin/python"
-"$PYTHON_BIN" "$SCRIPT_DIR/kokoro_onnx_generate.py" "$SCRIPT_INPUT" "$OUTPUT_WAV" "$MODEL_FILE" "$VOICES_FILE" --voice "$VOICE"
+"$PYTHON_BIN" "$SCRIPT_DIR/kokoro_onnx_generate.py" "$SCRIPT_INPUT" "$OUTPUT_WAV" "$MODEL_FILE" "$VOICES_FILE" --voice "$VOICE" --max-phonemes "$MAX_PHONEMES"
 
 if command -v ffprobe >/dev/null 2>&1; then
   duration="$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$OUTPUT_WAV")"
@@ -72,6 +82,8 @@ PY
 
 printf 'audio_result.status=ready\n'
 printf 'audio_result.backend=kokoro-onnx\n'
+printf 'audio_result.model_variant=%s\n' "$MODEL_VARIANT"
+printf 'audio_result.max_phonemes=%s\n' "$MAX_PHONEMES"
 printf 'audio_result.voice=%s\n' "$VOICE"
 printf 'audio_result.duration_seconds=%s\n' "$duration"
 printf 'audio_result.word_count=%s\n' "$word_count"

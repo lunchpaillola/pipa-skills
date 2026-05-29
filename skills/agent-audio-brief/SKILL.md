@@ -92,7 +92,7 @@ Adapt to the artifact type:
 
 The goal is not completeness. The goal is fast orientation, useful judgment, and an immersive listen-first review experience.
 
-Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, and roughly the target length unless the source is short. Do not run repeated optimization loops during normal generation.
+Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, sentences mostly around 11-15 words with shorter sentences allowed for emphasis, no sentence over 20 words, and roughly the target length unless the source is short. Do not run repeated optimization loops during normal generation.
 
 ### Step 4: Generate Audio With Kokoro
 
@@ -103,9 +103,10 @@ Use `af_heart` as the default voice unless the user asks for another voice.
 Golden path:
 
 1. Use the skill-managed cached `kokoro-onnx` backend via `scripts/generate-audio.sh <brief-script.txt> <publish-dir>/audio/brief.wav`.
-2. If the backend is missing, `scripts/generate-audio.sh` runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/agent-audio-brief/kokoro-onnx-venv/` and cached model files under `~/.cache/agent-audio-brief/kokoro-models/v1.0/`.
-3. `scripts/setup-kokoro.sh` uses `uv` with Python 3.12 when available, otherwise `python3.12`. Do not use Python 3.14 for Kokoro generation.
-4. If setup fails, return that the audio brief cannot be generated and ask for `uv` or `python3.12` to be installed. Do not wander through ad hoc fallback installs during the brief request.
+2. By default, generation uses the INT8 Kokoro model, `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`, sentence-by-sentence rendering, and streaming WAV writes. Do not increase the phoneme cap unless the user explicitly asks to trade memory for smoother prosody.
+3. If the backend is missing, `scripts/generate-audio.sh` runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/agent-audio-brief/kokoro-onnx-venv/` and cached INT8 model files under `~/.cache/agent-audio-brief/kokoro-models/v1.0-int8/` by default.
+4. `scripts/setup-kokoro.sh` uses `uv` with Python 3.12 when available, otherwise `python3.12`. Do not use Python 3.14 for Kokoro generation.
+5. If Kokoro setup or generation fails because the machine is compute- or memory-constrained, tell the user plainly and offer the single fallback: a browser SpeechSynthesis preview page. Label it as a degraded preview, not as the completed Kokoro-quality brief.
 
 Use the generated script as the TTS input, not the raw source document. The brief does not need to summarize every source detail, but the audio must fully render the generated brief script.
 
