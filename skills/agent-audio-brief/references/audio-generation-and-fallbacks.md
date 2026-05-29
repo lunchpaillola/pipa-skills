@@ -69,10 +69,10 @@ The async job:
 - uses the INT8 Kokoro ONNX model by default
 - defaults to `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`
 - wraps generation with `AGENT_AUDIO_BRIEF_GENERATION_TIMEOUT_SECONDS=600` when `timeout` or `gtimeout` is available
-- streams the final WAV to disk instead of building one full audio buffer in memory
+- streams audio to `audio/brief.wav.partial` instead of building one full audio buffer in memory
 - phonemizes and renders punctuation-delimited text chunks one at a time, with `AGENT_AUDIO_BRIEF_MAX_PHONEMES` as an additional per-inference safety cap
-- writes one final browser-playable WAV at the requested output path
-- reports progress, duration, and word count
+- checks duration with Python's standard WAV reader, then renames the partial file to one final browser-playable WAV at the requested output path
+- reports progress, duration, duration label, sanity check status, and word count
 - fails if the output is suspiciously short for the script length
 
 Keep `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100` as the default. Higher values can smooth prosody but increase ONNX Runtime workspace memory. Only change it when the user explicitly asks to test that tradeoff.
@@ -87,13 +87,21 @@ skills/agent-audio-brief/scripts/generate-audio-job.sh wait <job-id>
 skills/agent-audio-brief/scripts/generate-audio-job.sh status <job-id>
 ```
 
-The job wrapper starts a detached Kokoro generation process with `nohup`, stores job state under `~/.cache/agent-audio-brief/jobs/` by default, and returns immediately with an `audio_job.job_id`. Prefer `wait` for normal runs because it polls quietly and prints the final job state once. `wait` accepts optional `poll-seconds` and `timeout-seconds` arguments, and also respects `AGENT_AUDIO_BRIEF_WAIT_TIMEOUT_SECONDS` with a default of 900 seconds. Use `status` for debugging, progress checks, or when the caller's command timeout is too short for `wait`.
+The job wrapper starts a detached Kokoro generation process with `nohup`, stores job state under `~/.cache/agent-audio-brief/jobs/` by default, and returns immediately with an `audio_job.job_id`. Prefer `wait` for normal runs because it polls and emits progress until the job reaches a terminal state. `wait` accepts optional `poll-seconds` and `timeout-seconds` arguments, and also respects `AGENT_AUDIO_BRIEF_WAIT_TIMEOUT_SECONDS` with a default of 900 seconds. Use `status` for debugging, progress checks, or when the caller's command timeout is shorter than the expected generation time.
 
-Do not treat a partially written `audio/brief.wav` as success while the job is still `running`. The generator writes the final output path during rendering, so the file can exist before it is complete. Only proceed after `wait` or `status` reports `audio_job.status=ready`.
+If `wait` reaches its own timeout, it exits `124` and emits `audio_job.wait_status=timed_out` on stdout and stderr. That does not mean Kokoro failed; it means the wrapper stopped waiting. Call `status <job-id>` and continue polling. `status` reports whether the final output exists as `audio_job.output_ready=true|false` and whether a `.partial` output is still being written.
+
+When `wait` or `status` reports `audio_job.status=ready`, it also reports `audio_job.duration_seconds`, `audio_job.duration_label`, `audio_job.sanity_check`, and `audio_job.word_count` when those values were produced by the generation run. Use these fields directly in the page contract. Do not run a separate WAV duration command unless the fields are missing or suspicious.
+
+`status` reconciles common async races. If the background process has exited but the status file still says `running`, `status` uses the recorded exit code to report `ready` or `failed` instead of leaving agents stuck on a stale running state.
+
+Do not treat command silence, file size, or any partial file as success while the job is still `running`. The generator writes `audio/brief.wav.partial` during rendering and renames it to `audio/brief.wav` only after duration validation passes. Only proceed when `wait` or `status` reports `audio_job.status=ready`, `audio_job.output_ready=true`, and `audio_job.sanity_check=passed`.
+
+Run `scripts/test-generate-audio-job.sh` after changing the async wrapper. It uses synthetic job directories so timeout handling and process-exit races can be tested without running Kokoro.
 
 If Kokoro still cannot run in a compute-constrained environment, block clearly and offer browser SpeechSynthesis as the single degraded preview fallback. When the user accepts it, generate the fallback using the browser speech preview variant in `references/listening-page-template.md`; do not invent a new page design.
 
-Keep generated audio in the publish bundle at `audio/brief.wav`. Keep scripts, model caches, virtual environments, chunks, helper files, and logs outside the publish bundle.
+Keep generated audio in the publish bundle at `audio/brief.wav`. Keep scripts, model caches, virtual environments, chunks, helper files, partial files, and logs outside the publish bundle.
 
 ## Preferred Behavior
 
@@ -103,6 +111,7 @@ Keep generated audio in the publish bundle at `audio/brief.wav`. Keep scripts, m
 - Save one final playable audio file for the page.
 - Preserve a transcript that matches the spoken script inside the generated `index.html`.
 - Name the final audio predictably as `audio/brief.wav` so the deterministic template can reference it.
+- Never publish `audio/brief.wav.partial`; it is a transient generation file, not a success artifact.
 - If first-run model download is needed, report that as setup/wait state rather than a content failure.
 - The brief is not a complete readout of the source, but the audio must be a complete rendering of the generated brief script.
 
@@ -110,7 +119,7 @@ Keep generated audio in the publish bundle at `audio/brief.wav`. Keep scripts, m
 
 Do not treat "audio file exists" as success by itself.
 
-After generation, verify duration with available local tools such as `ffprobe`, `afinfo`, `soxi`, media metadata, or the TTS library's returned duration. Then compare it with the script length:
+The generation job verifies duration using the generated WAV's frame count and sample rate through Python's standard `wave` module. Do not require or install `ffprobe`, `soxi`, `mediainfo`, or other media metadata tools for this skill's normal path. Then compare duration with the script length:
 
 - A 400-450 word default brief should usually land around two to three minutes depending on voice speed.
 - A default brief over 500 words should be trimmed before TTS generation unless the user explicitly requested a deeper listen.

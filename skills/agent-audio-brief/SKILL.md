@@ -102,16 +102,19 @@ Use `af_heart` as the default voice unless the user asks for another voice.
 
 Golden path:
 
-1. Always start audio generation through `scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`, then use `scripts/generate-audio-job.sh wait <job-id>` as the normal completion path. Use `status` only for debugging or when the command timeout is too short for `wait`.
+1. Always start audio generation through `scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`, then use `scripts/generate-audio-job.sh wait <job-id>` as the normal completion path. If `wait` exits `124` with `audio_job.wait_status=timed_out`, the job may still be running; call `status <job-id>` and continue polling instead of restarting or guessing.
 2. The async job validates word count before setup or generation and blocks default briefs over 500 words.
-3. By default, generation uses the INT8 Kokoro model, `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`, sentence-by-sentence rendering, and streaming WAV writes. Do not increase the phoneme cap unless the user explicitly asks to trade memory for smoother prosody.
+3. By default, generation uses the INT8 Kokoro model, `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`, sentence-by-sentence rendering, and streaming writes to `audio/brief.wav.partial`. Do not increase the phoneme cap unless the user explicitly asks to trade memory for smoother prosody.
 4. If the backend is missing, the async job runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/agent-audio-brief/kokoro-onnx-venv/` and cached INT8 model files under `~/.cache/agent-audio-brief/kokoro-models/v1.0-int8/` by default.
 5. `scripts/setup-kokoro.sh` uses `uv` with Python 3.12 when available, otherwise the first available Python 3.10-3.13 executable. Do not use Python 3.14 for Kokoro generation.
-6. If Kokoro setup or generation fails because the machine is compute- or memory-constrained, tell the user plainly and offer the single fallback: a browser SpeechSynthesis preview page. Label it as a degraded preview, not as the completed Kokoro-quality brief.
+6. On successful `wait` or `status`, use the reported `audio_job.duration_seconds`, `audio_job.duration_label`, and `audio_job.sanity_check` fields when filling the page contract. Do not run a separate WAV duration command unless these fields are missing or suspicious.
+7. If Kokoro setup or generation fails because the machine is compute- or memory-constrained, tell the user plainly and offer the single fallback: a browser SpeechSynthesis preview page. Label it as a degraded preview, not as the completed Kokoro-quality brief.
 
 Use the generated script as the TTS input, not the raw source document. The brief does not need to summarize every source detail, but the audio must fully render the generated brief script.
 
-After generation, validate that the audio duration roughly matches the script length and that `audio/brief.wav` is playable. If the brief produces only a few seconds of audio or fails the script's duration sanity check, treat it as a generation defect, not success.
+The requested `audio/brief.wav` is created only after generation and duration checks pass. Treat success as exactly: `wait` or `status` reports `audio_job.status=ready`, `audio_job.output_ready=true`, and `audio_job.sanity_check=passed`. Do not infer success from file size, a partial file, command silence, or a still-running job.
+
+After generation, use the reported `audio_job.duration_seconds` and `audio_job.duration_label` fields for the page contract. The generation script uses Python's standard WAV reader for duration checks; do not require `ffprobe`, `soxi`, `mediainfo`, other media metadata tools, or a separate WAV duration command unless those fields are missing or suspicious. If the brief produces only a few seconds of audio or fails the script's duration sanity check, treat it as a generation defect, not success.
 
 If Kokoro fails after the script is generated, return a clear message that the audio brief cannot be generated. Do not call a script-only output successful.
 

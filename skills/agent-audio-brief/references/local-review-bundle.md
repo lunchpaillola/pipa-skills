@@ -28,7 +28,7 @@ Classify every generated file before final handoff.
 
 `index.html` must embed the transcript and minimal source context needed to trust the brief. Do not keep separate `transcript.md`, `page-contract.json`, or `provenance.json` after success.
 
-The publish bundle must not contain `node_modules`, package files, virtual environments, model files, chunks, helper scripts, logs, or debug artifacts. The normal happy path is only `publish/index.html` and `publish/audio/brief.wav`.
+The publish bundle must not contain `node_modules`, package files, virtual environments, model files, chunks, helper scripts, logs, partial files such as `brief.wav.partial`, or debug artifacts. The normal happy path is only `publish/index.html` and `publish/audio/brief.wav`.
 
 **Temporary sawdust:** delete by default after success.
 
@@ -70,6 +70,8 @@ The final response should not expose sawdust. It should lead with one here.now U
 ## Partial States
 
 - If Kokoro is blocked, do not call the brief complete. Report that audio cannot be generated.
+- If `audio_job.status` is not `ready`, do not call the audio complete even if an audio-like file exists.
+- If `brief.wav.partial` exists, treat it as an incomplete generation artifact, not playable output.
 - If page generation fails after audio generation, report the page-generation blocker and do not publish.
 - If here.now publish fails after page generation, report the publish blocker and preserve the generated bundle only long enough for retry/debugging.
 - If here.now publish succeeds, delete the local generated bundle.

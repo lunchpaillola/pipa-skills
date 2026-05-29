@@ -8,7 +8,7 @@ Use this fast path when the user asks to generate and publish an audio brief.
 2. Create separate `work/` and `publish/` directories under that artifact directory.
 3. Draft the 400-450 word script into `work/brief-script.txt`.
 4. Start audio with `scripts/generate-audio-job.sh`, passing absolute or repo-root-relative artifact paths. Let that job create the cached `kokoro-onnx` backend if needed.
-5. Poll `scripts/generate-audio-job.sh status <job-id>` until it reports `ready` or `failed`, then validate audio duration and file type before creating the page status.
+5. Run `scripts/generate-audio-job.sh wait <job-id>` when the caller timeout is long enough, or poll `status <job-id>` manually when it is not; only `audio_job.status=ready`, `audio_job.output_ready=true`, and `audio_job.sanity_check=passed` mean the audio succeeded.
 6. Render `publish/index.html` from `references/listening-page-template.md`; replace placeholders only.
 7. Verify `publish/` contains only the page and final audio bundle files.
 8. Publish `publish/` with the here.now skill or helper script.
@@ -24,8 +24,10 @@ Use this async path for normal audio generation:
 ```bash
 RUN_DIR=".artifacts/audio-briefs/<slug>"
 skills/agent-audio-brief/scripts/generate-audio-job.sh start "$RUN_DIR/work/brief-script.txt" "$RUN_DIR/publish/audio/brief.wav"
-skills/agent-audio-brief/scripts/generate-audio-job.sh status <job-id>
+skills/agent-audio-brief/scripts/generate-audio-job.sh wait <job-id>
 ```
+
+If the command runner times out before `wait` completes, resume with `status <job-id>` rather than inspecting file size. A `.partial` output means Kokoro is still writing or failed before final validation.
 
 If the cached backend is missing, the job runs setup through the underlying generation script:
 
@@ -50,7 +52,7 @@ Keep generation dependencies and publish artifacts separate:
       brief.wav
 ```
 
-Before here.now publish, fail if `publish/` contains `node_modules`, package files, helper scripts, chunks, logs, model files, virtual environments, or debug artifacts.
+Before here.now publish, fail if `publish/` contains `node_modules`, package files, helper scripts, chunks, logs, model files, virtual environments, partial files, or debug artifacts.
 
 The expected happy-path publish bundle is only:
 
@@ -62,12 +64,7 @@ publish/
 
 ## Duration Sanity Check
 
-Use any available local metadata tool:
-
-- `ffprobe`
-- `afinfo` on macOS
-- `soxi`
-- library-provided duration metadata
+Use `audio_job.duration_seconds` and `audio_job.duration_label` reported by `scripts/generate-audio-job.sh` after it validates the WAV with Python's standard `wave` module. Do not install or require external media metadata tools for the normal path.
 
 Minimum check:
 
@@ -106,7 +103,10 @@ Return `publish_result.site_url` from the script output. Use `publish_result.aut
 Before final response, verify:
 
 - `index.html` existed in the published bundle root before publish
+- `scripts/generate-audio-job.sh wait` or `status` reported `audio_job.status=ready`
+- `scripts/generate-audio-job.sh wait` or `status` reported `audio_job.output_ready=true` and `audio_job.sanity_check=passed`
 - final audio file existed at `audio/brief.wav` before publish
+- no `audio/brief.wav.partial` or other partial audio file existed in the publish bundle
 - audio duration passed sanity check
 - page referenced `audio/brief.wav`
 - transcript and minimal source context were embedded in `index.html`

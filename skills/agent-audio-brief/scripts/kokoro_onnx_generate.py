@@ -69,6 +69,7 @@ def write_streaming_wav(
         mode="w",
         samplerate=SAMPLE_RATE,
         channels=1,
+        format="WAV",
         subtype="PCM_16",
     ) as wav_file:
         for text_chunk in split_text_chunks(text):

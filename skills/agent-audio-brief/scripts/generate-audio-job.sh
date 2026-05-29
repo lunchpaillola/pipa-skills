@@ -17,6 +17,10 @@ log_kv() {
   printf 'audio_job.%s=%s\n' "$1" "$2"
 }
 
+log_kv_err() {
+  printf 'audio_job.%s=%s\n' "$1" "$2" >&2
+}
+
 absolute_path() {
   local path="$1"
   local dir
@@ -67,6 +71,59 @@ write_status() {
   } > "$job_dir/status"
 }
 
+stderr_reason() {
+  local job_dir="$1"
+  local fallback="$2"
+
+  if [[ -s "$job_dir/stderr.log" ]]; then
+    while IFS='=' read -r key value; do
+      if [[ "$key" == "audio_result.reason" ]]; then
+        printf '%s\n' "$value"
+        return 0
+      fi
+    done < "$job_dir/stderr.log"
+  fi
+
+  printf '%s\n' "$fallback"
+}
+
+format_duration_label() {
+  local duration_seconds="$1"
+  local python_bin="$2"
+
+  "$python_bin" - "$duration_seconds" <<'PY'
+import sys
+
+seconds = int(float(sys.argv[1]))
+print(f"{seconds // 60}:{seconds % 60:02d}")
+PY
+}
+
+log_ready_audio_metadata() {
+  local job_dir="$1"
+
+  if [[ ! -s "$job_dir/stdout.log" ]]; then
+    return 0
+  fi
+
+  while IFS='=' read -r key value; do
+    case "$key" in
+      audio_result.duration_seconds)
+        log_kv duration_seconds "$value"
+        ;;
+      audio_result.duration_label)
+        log_kv duration_label "$value"
+        ;;
+      audio_result.sanity_check)
+        log_kv sanity_check "$value"
+        ;;
+      audio_result.word_count)
+        log_kv word_count "$value"
+        ;;
+    esac
+  done < "$job_dir/stdout.log"
+}
+
 find_python() {
   for python_bin in python3.12 python3.11 python3.10 python3 python; do
     if command -v "$python_bin" >/dev/null 2>&1; then
@@ -84,6 +141,7 @@ run_generation() {
 
   local script_input="$1"
   local output_wav="$2"
+  local partial_wav="$output_wav.partial"
   local voice="${3:-af_heart}"
   local venv_dir="${AGENT_AUDIO_BRIEF_KOKORO_VENV:-$CACHE_ROOT/kokoro-onnx-venv}"
   local model_variant="${AGENT_AUDIO_BRIEF_MODEL_VARIANT:-int8}"
@@ -138,6 +196,9 @@ PY
   printf 'audio_result.preflight=ok\n' >&2
   printf 'audio_result.word_count=%s\n' "$word_count" >&2
 
+  rm -f "$output_wav" "$partial_wav"
+  trap 'rm -f "$partial_wav"' EXIT
+
   if [[ ! -x "$venv_dir/bin/python" || ! -s "$model_file" || ! -s "$voices_file" ]]; then
     printf 'audio_result.progress=setting_up_kokoro\n' >&2
     "$SCRIPT_DIR/setup-kokoro.sh"
@@ -145,7 +206,7 @@ PY
 
   local python_bin="$venv_dir/bin/python"
   printf 'audio_result.progress=generating_audio\n' >&2
-  local generate_command=("$python_bin" "$SCRIPT_DIR/kokoro_onnx_generate.py" "$script_input" "$output_wav" "$model_file" "$voices_file" --voice "$voice" --max-phonemes "$max_phonemes")
+  local generate_command=("$python_bin" "$SCRIPT_DIR/kokoro_onnx_generate.py" "$script_input" "$partial_wav" "$model_file" "$voices_file" --voice "$voice" --max-phonemes "$max_phonemes")
   if command -v timeout >/dev/null 2>&1; then
     timeout "$generation_timeout_seconds" "${generate_command[@]}"
   elif command -v gtimeout >/dev/null 2>&1; then
@@ -157,10 +218,7 @@ PY
   printf 'audio_result.progress=checking_duration\n' >&2
 
   local duration
-  if command -v ffprobe >/dev/null 2>&1; then
-    duration="$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$output_wav")"
-  else
-    duration="$($system_python - "$output_wav" <<'PY'
+  duration="$($system_python - "$partial_wav" <<'PY'
 import sys
 import wave
 
@@ -168,7 +226,9 @@ with wave.open(sys.argv[1], "rb") as audio:
     print(audio.getnframes() / audio.getframerate())
 PY
 )"
-  fi
+
+  local duration_label
+  duration_label="$(format_duration_label "$duration" "$system_python")"
 
   "$system_python" - "$duration" "$word_count" <<'PY'
 import sys
@@ -187,6 +247,9 @@ if word_count >= 150 and duration < 30:
     )
 PY
 
+  mv "$partial_wav" "$output_wav"
+  trap - EXIT
+
   printf 'audio_result.status=ready\n'
   printf 'audio_result.backend=kokoro-onnx\n'
   printf 'audio_result.model_variant=%s\n' "$model_variant"
@@ -195,6 +258,8 @@ PY
   printf 'audio_result.generation_timeout_seconds=%s\n' "$generation_timeout_seconds"
   printf 'audio_result.voice=%s\n' "$voice"
   printf 'audio_result.duration_seconds=%s\n' "$duration"
+  printf 'audio_result.duration_label=%s\n' "$duration_label"
+  printf 'audio_result.sanity_check=passed\n'
   printf 'audio_result.word_count=%s\n' "$word_count"
 }
 
@@ -297,6 +362,11 @@ status_job() {
     exit 1
   fi
 
+  local output_path=""
+  if [[ -f "$job_dir/metadata" ]]; then
+    output_path="$(read_field "$job_dir/metadata" output || true)"
+  fi
+
   local status="unknown"
   status="$(read_field "$job_dir/status" status || printf 'unknown')"
 
@@ -305,7 +375,20 @@ status_job() {
     pid="$(cat "$job_dir/pid")"
     if ! kill -0 "$pid" >/dev/null 2>&1; then
       if [[ -f "$job_dir/exit_code" ]]; then
-        :
+        local exit_code
+        exit_code="$(read_field "$job_dir/exit_code" exit_code || printf 'unknown')"
+        if [[ "$exit_code" == "0" ]]; then
+          if [[ -n "$output_path" && -f "$output_path" ]]; then
+            write_status "$job_dir" "ready"
+            status="ready"
+          else
+            write_status "$job_dir" "failed" "generation exited successfully but output file is missing"
+            status="failed"
+          fi
+        else
+          write_status "$job_dir" "failed" "$(stderr_reason "$job_dir" "generation failed with exit code $exit_code")"
+          status="failed"
+        fi
       else
         write_status "$job_dir" "failed" "generation process exited without writing a result"
         status="failed"
@@ -327,7 +410,20 @@ status_job() {
           log_kv "$key" "$value"
           ;;
       esac
+      if [[ "$key" == "output" ]]; then
+        output_path="$value"
+      fi
     done < "$job_dir/metadata"
+  fi
+  if [[ -n "$output_path" ]]; then
+    if [[ -f "$output_path" ]]; then
+      log_kv output_ready "true"
+    else
+      log_kv output_ready "false"
+    fi
+    if [[ -f "$output_path.partial" ]]; then
+      log_kv partial_output "$output_path.partial"
+    fi
   fi
   if [[ -f "$job_dir/status" ]]; then
     while IFS='=' read -r key value; do
@@ -340,6 +436,9 @@ status_job() {
   fi
   if [[ -f "$job_dir/exit_code" ]]; then
     log_kv exit_code "$(read_field "$job_dir/exit_code" exit_code || true)"
+  fi
+  if [[ "$status" == "ready" ]]; then
+    log_ready_audio_metadata "$job_dir"
   fi
   if [[ -f "$job_dir/stdout.log" ]]; then
     log_kv stdout_log "$job_dir/stdout.log"
@@ -373,21 +472,24 @@ wait_job() {
         break
       fi
     done)"
+    now="$(date +%s)"
+    elapsed="$((now - started_at))"
     if [[ "$status" != "running" ]]; then
-      now="$(date +%s)"
-      elapsed="$((now - started_at))"
       printf '%s\n' "$status_output"
       log_kv wait_elapsed_seconds "$elapsed"
       break
     fi
 
-    now="$(date +%s)"
-    elapsed="$((now - started_at))"
+    printf '%s\n' "$status_output"
+    log_kv wait_status "running"
+    log_kv wait_elapsed_seconds "$elapsed"
+
     if [[ "$elapsed" -ge "$timeout_seconds" ]]; then
-      printf '%s\n' "$status_output"
       log_kv wait_status "timed_out"
-      log_kv wait_elapsed_seconds "$elapsed"
       log_kv wait_timeout_seconds "$timeout_seconds"
+      log_kv_err wait_status "timed_out"
+      log_kv_err wait_elapsed_seconds "$elapsed"
+      log_kv_err wait_timeout_seconds "$timeout_seconds"
       exit 124
     fi
 
