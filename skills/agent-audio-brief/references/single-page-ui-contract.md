@@ -8,6 +8,8 @@ Use `references/listening-page-template.md` as the source of truth. For normal r
 
 ```json
 {
+  "pageTitle": "Browser tab title for the listening page",
+  "shortTitle": "Short label shown in the page chrome",
   "title": "Audio brief title",
   "subtitle": "Plain-language sentence describing the source document being briefed",
   "source": {
@@ -38,10 +40,11 @@ Use `references/listening-page-template.md` as the source of truth. For normal r
 
 ## Required Regions
 
-1. **Header:** one quiet source label, title, and one-sentence subtitle specific to the source content.
-2. **Transcript:** four sections matching the script shape: Context And Overview, The Story, Attention Areas, Takeaway.
-3. **Audio dock:** fixed native audio player near the bottom of the viewport with duration. If Kokoro is blocked and the user accepts browser speech preview, use the browser speech preview dock from `references/listening-page-template.md` instead.
-4. **Source note:** one compact line for source context and concrete caveats when they matter.
+1. **Page chrome:** browser tab title from `pageTitle` and compact page label from `shortTitle`.
+2. **Header:** one quiet source label, title, and one-sentence subtitle specific to the source content.
+3. **Transcript:** four sections matching the script shape: Context And Overview, The Story, Attention Areas, Takeaway.
+4. **Audio dock:** fixed native audio player near the bottom of the viewport with duration. If Kokoro is blocked and the user accepts browser speech preview, use the browser speech preview dock from `references/listening-page-template.md` instead.
+5. **Source note:** one compact line for source context and concrete caveats when they matter.
 
 ## Determinism Rules
 
