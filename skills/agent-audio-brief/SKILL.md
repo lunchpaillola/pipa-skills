@@ -72,6 +72,8 @@ Follow `references/audio-brief-script.md`.
 
 The script must be a concise audio brief, not a verbatim readout. It should feel like a sharp teammate giving the listener the story of a work artifact, not like a mechanical summary. Prioritize orientation, judgment, and narrative flow over completeness.
 
+Before drafting, briefly identify internally: artifact type, listener goal, 3-5 source-specific points that matter, and any real caveats. Do not save this as a separate artifact unless debugging a blocker. Use it only to make the script selective, judgment-rich, and source-specific.
+
 Required structure:
 
 1. Context And Overview
@@ -89,6 +91,8 @@ Adapt to the artifact type:
 - For research, emphasize the question, findings, evidence quality, and implications.
 
 The goal is not completeness. The goal is fast orientation, useful judgment, and an immersive listen-first review experience.
+
+Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, and roughly the target length unless the source is short. Do not run repeated optimization loops during normal generation.
 
 ### Step 4: Generate Audio With Kokoro
 

@@ -21,6 +21,17 @@ Very short sources should produce short audio notes. Do not pad to meet a durati
 - Do not force categories that do not help the listener.
 - Point back to the source for precision instead of overloading the audio with quotes.
 
+## Lightweight Source Shaping
+
+Before drafting, identify these internally:
+
+- artifact type
+- listener goal
+- 3-5 source-specific points that matter
+- any real caveats
+
+Do not save this as a separate artifact unless debugging a blocker. Use it only to make the brief more selective, source-specific, and useful.
+
 ## Audio Brief Script Shape
 
 Use this structure unless the user requests another format:
@@ -43,9 +54,30 @@ End with the plain-English bottom line. Explain what matters most, what the list
 
 Write the TTS input as plain speakable text, not Markdown. Do not include `#`, `##`, bullets, table pipes, code fences, decorative separators, raw URLs, or punctuation-heavy labels in the script sent to audio generation. If a visible page transcript needs section headings, add those in `index.html`; do not make Kokoro read Markdown syntax aloud.
 
+## Script Quality Check
+
+Before sending the script to TTS, revise once if needed:
+
+- The script is plain speakable text with no Markdown syntax.
+- The brief includes concrete source-specific judgment, not just neutral summary.
+- The brief does not claim verification, review, testing, or implementation checks unless those actually happened.
+- The takeaway gives a useful bottom line or next action.
+- The script is roughly 400-450 words unless the source is short or the user requested a different length.
+
+Do not run repeated optimization loops during normal generation.
+
 ## Gotchas
 
 - Kokoro may speak Markdown punctuation literally. If the script starts with `# Audio Brief Script` or `## Context And Overview`, the audio can say “hash hash” before the useful content. Keep the generated audio script free of Markdown heading markers, bullets, table syntax, and other notation that is meant for readers rather than listeners.
+
+## Anti-Patterns
+
+- Do not produce a section-by-section recap that gives every source part equal weight.
+- Do not open with filler like "This document discusses" when a sharper source-specific opening is possible.
+- Do not copy source headings into the narration unless they are genuinely useful spoken labels.
+- Do not turn Attention Areas into generic risks; name the actual point that deserves attention.
+- Do not bury the listener in caveats. Include only caveats that change how the brief should be interpreted.
+- Do not claim the agent verified, reviewed, tested, or validated anything beyond the source unless that work actually happened.
 
 ## Artifact Adaptation
 
