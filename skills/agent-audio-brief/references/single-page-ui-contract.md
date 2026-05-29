@@ -2,7 +2,7 @@
 
 The primary user-facing artifact is one generated `index.html` listening page published to here.now. The page should feel like a simple shared working document with audio attached, not a branded media player, directory listing, dashboard, or document portal.
 
-Use `references/listening-page-template.md` as the source of truth. Start from that exact template and replace the content placeholders. Do not create a new visual design each run.
+Use `references/listening-page-template.md` as the source of truth. For normal runs, write the page contract below as JSON and render it with `scripts/render-listening-page.py <page-contract.json> <publish-dir>/index.html`. The renderer extracts the exact HTML template and replaces the content placeholders. Do not create a new visual design each run.
 
 ## Required Page Contract
 
@@ -46,6 +46,7 @@ Use `references/listening-page-template.md` as the source of truth. Start from t
 ## Determinism Rules
 
 - Use the template in `references/listening-page-template.md` exactly.
+- Prefer `scripts/render-listening-page.py` over hand-editing HTML. Hand-render the template only if the helper is unavailable or a fallback speech preview page is explicitly needed.
 - Replace placeholders with escaped HTML content.
 - Render transcript text as real paragraph blocks with visible spacing. Split each section on blank lines when present, escape each paragraph, and wrap each paragraph in `<p>...</p>` rather than inserting one dense text block with collapsed newlines.
 - Keep the audio path as `audio/brief.wav` unless there is a concrete browser-cache reason to change it during debugging.

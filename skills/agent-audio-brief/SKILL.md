@@ -102,7 +102,7 @@ Use `af_heart` as the default voice unless the user asks for another voice.
 
 Golden path:
 
-1. Always start audio generation through `scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`, then poll `scripts/generate-audio-job.sh status <job-id>` until it reports `ready` or `failed`.
+1. Always start audio generation through `scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`, then use `scripts/generate-audio-job.sh wait <job-id>` as the normal completion path. Use `status` only for debugging or when the command timeout is too short for `wait`.
 2. The async job validates word count before setup or generation and blocks default briefs over 500 words.
 3. By default, generation uses the INT8 Kokoro model, `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`, sentence-by-sentence rendering, and streaming WAV writes. Do not increase the phoneme cap unless the user explicitly asks to trade memory for smoother prosody.
 4. If the backend is missing, the async job runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/agent-audio-brief/kokoro-onnx-venv/` and cached INT8 model files under `~/.cache/agent-audio-brief/kokoro-models/v1.0-int8/` by default.
@@ -119,7 +119,7 @@ If Kokoro fails after the script is generated, return a clear message that the a
 
 Follow `references/single-page-ui-contract.md`, `references/listening-page-template.md`, `references/local-review-bundle.md`, and `references/dogfood-implementation-playbook.md`.
 
-Create one user-facing `index.html` page by starting from the exact template in `references/listening-page-template.md` and replacing only the content placeholders. Use inline CSS/JS, no npm/build step, and no framework. Preserve the template structure and styling unless the user explicitly asks for a different design.
+Create one user-facing `index.html` page by writing a JSON page contract that follows `references/single-page-ui-contract.md`, then render it with `scripts/render-listening-page.py <page-contract.json> <publish-dir>/index.html`. The renderer starts from the exact template in `references/listening-page-template.md` and replaces only the content placeholders. Use inline CSS/JS, no npm/build step, and no framework. Preserve the template structure and styling unless the user explicitly asks for a different design.
 
 The page must include only:
 
@@ -154,7 +154,7 @@ Return only the current `siteUrl` from the publish command as the primary listen
 
 Before returning, apply the artifact lifecycle rules in `references/local-review-bundle.md` and `references/dogfood-implementation-playbook.md`.
 
-After a successful here.now publish, remove the local generated bundle and temporary generation artifacts. The here.now URL is the durable user-facing artifact. Do not keep `.artifacts/audio-briefs/<slug>/`, separate transcript files, page-contract files, provenance files, chunk audio, helper scripts, logs, package folders, or temporary per-run caches unless preserving them is necessary to explain or debug a blocker. Do not delete the managed Kokoro cache at `~/.cache/agent-audio-brief/`; it is reused to make future briefs fast.
+After a successful here.now publish, remove the local generated bundle and temporary generation artifacts. The here.now URL is the durable user-facing artifact. Do not keep `.artifacts/audio-briefs/<slug>/`, separate transcript files, page-contract files, provenance files, chunk audio, helper scripts, logs, package folders, or per-run job directories under `~/.cache/agent-audio-brief/jobs/` unless preserving them is necessary to explain or debug a blocker. Do not delete the managed Kokoro backend cache at `~/.cache/agent-audio-brief/kokoro-onnx-venv/` or `~/.cache/agent-audio-brief/kokoro-models/`; it is reused to make future briefs fast.
 
 If generation or publishing is blocked, preserve only the minimal debug artifacts needed to continue and mention where they are.
 

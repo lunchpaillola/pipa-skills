@@ -8,7 +8,7 @@ JOB_ROOT="${AGENT_AUDIO_BRIEF_JOB_DIR:-$CACHE_ROOT/jobs}"
 usage() {
   printf 'usage: %s start <brief-script.txt> <output.wav> [voice]\n' "$0" >&2
   printf '       %s status <job-id>\n' "$0" >&2
-  printf '       %s wait <job-id> [poll-seconds]\n' "$0" >&2
+  printf '       %s wait <job-id> [poll-seconds] [timeout-seconds]\n' "$0" >&2
   printf '       %s stop <job-id>\n' "$0" >&2
   exit 64
 }
@@ -280,6 +280,7 @@ start_job() {
   log_kv job_dir "$job_dir"
   log_kv output "$output_abs"
   log_kv status_command "$0 status $job_id"
+  log_kv wait_command "$0 wait $job_id"
 }
 
 status_job() {
@@ -349,18 +350,23 @@ status_job() {
 }
 
 wait_job() {
-  if [[ $# -lt 1 || $# -gt 2 ]]; then
+  if [[ $# -lt 1 || $# -gt 3 ]]; then
     usage
   fi
 
   local job_id="$1"
   local poll_seconds="${2:-5}"
+  local timeout_seconds="${3:-${AGENT_AUDIO_BRIEF_WAIT_TIMEOUT_SECONDS:-900}}"
+  local started_at
+  local now
+  local elapsed
   local status
   local status_output
 
+  started_at="$(date +%s)"
+
   while true; do
     status_output="$(status_job "$job_id")"
-    printf '%s\n' "$status_output"
     status="$(printf '%s\n' "$status_output" | while IFS='=' read -r key value; do
       if [[ "$key" == "audio_job.status" ]]; then
         printf '%s\n' "$value"
@@ -368,8 +374,23 @@ wait_job() {
       fi
     done)"
     if [[ "$status" != "running" ]]; then
+      now="$(date +%s)"
+      elapsed="$((now - started_at))"
+      printf '%s\n' "$status_output"
+      log_kv wait_elapsed_seconds "$elapsed"
       break
     fi
+
+    now="$(date +%s)"
+    elapsed="$((now - started_at))"
+    if [[ "$elapsed" -ge "$timeout_seconds" ]]; then
+      printf '%s\n' "$status_output"
+      log_kv wait_status "timed_out"
+      log_kv wait_elapsed_seconds "$elapsed"
+      log_kv wait_timeout_seconds "$timeout_seconds"
+      exit 124
+    fi
+
     sleep "$poll_seconds"
   done
 }

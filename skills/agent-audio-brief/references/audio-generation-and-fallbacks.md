@@ -12,10 +12,10 @@ Default flow:
 
 1. Write the spoken brief script to a temporary work file outside the publish bundle.
 2. Run `scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`.
-3. Poll `scripts/generate-audio-job.sh status <job-id>` until it reports `ready` or `failed`.
+3. Run `scripts/generate-audio-job.sh wait <job-id>` and continue only when it reports `ready`.
 4. If the cached backend is missing, the async job runs `scripts/setup-kokoro.sh` once.
 5. If setup succeeds, generate and validate the WAV.
-5. If setup or generation fails because the machine cannot run Kokoro, block clearly and offer a browser speech preview as the only fallback.
+6. If setup or generation fails because the machine cannot run Kokoro, block clearly and offer a browser speech preview as the only fallback.
 
 The managed backend uses:
 
@@ -58,7 +58,7 @@ Use `scripts/generate-audio-job.sh` for normal audio generation so Kokoro does n
 
 ```bash
 skills/agent-audio-brief/scripts/generate-audio-job.sh start brief-script.txt publish/audio/brief.wav
-skills/agent-audio-brief/scripts/generate-audio-job.sh status <job-id>
+skills/agent-audio-brief/scripts/generate-audio-job.sh wait <job-id>
 ```
 
 The async job:
@@ -83,11 +83,13 @@ Always use `scripts/generate-audio-job.sh` for skill execution:
 
 ```bash
 skills/agent-audio-brief/scripts/generate-audio-job.sh start brief-script.txt publish/audio/brief.wav
-skills/agent-audio-brief/scripts/generate-audio-job.sh status <job-id>
 skills/agent-audio-brief/scripts/generate-audio-job.sh wait <job-id>
+skills/agent-audio-brief/scripts/generate-audio-job.sh status <job-id>
 ```
 
-The job wrapper starts a detached Kokoro generation process with `nohup`, stores job state under `~/.cache/agent-audio-brief/jobs/` by default, and returns immediately with an `audio_job.job_id`. Poll `status` until it reports `ready` or `failed`. Use `wait` only when the caller's command timeout is long enough for repeated polling.
+The job wrapper starts a detached Kokoro generation process with `nohup`, stores job state under `~/.cache/agent-audio-brief/jobs/` by default, and returns immediately with an `audio_job.job_id`. Prefer `wait` for normal runs because it polls quietly and prints the final job state once. `wait` accepts optional `poll-seconds` and `timeout-seconds` arguments, and also respects `AGENT_AUDIO_BRIEF_WAIT_TIMEOUT_SECONDS` with a default of 900 seconds. Use `status` for debugging, progress checks, or when the caller's command timeout is too short for `wait`.
+
+Do not treat a partially written `audio/brief.wav` as success while the job is still `running`. The generator writes the final output path during rendering, so the file can exist before it is complete. Only proceed after `wait` or `status` reports `audio_job.status=ready`.
 
 If Kokoro still cannot run in a compute-constrained environment, block clearly and offer browser SpeechSynthesis as the single degraded preview fallback. When the user accepts it, generate the fallback using the browser speech preview variant in `references/listening-page-template.md`; do not invent a new page design.
 
