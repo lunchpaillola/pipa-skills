@@ -32,8 +32,6 @@ Normalize and re-check URLs before and during fetch:
 - fail closed when the host, redirect chain, or resolved address cannot be classified safely
 - never rely on the displayed URL alone after a redirect
 
-Before using a third-party extraction, browser, proxy, or cloud fetch service, apply the privacy confirmation gate because the URL and extracted content may leave the local environment.
-
 ## Extraction Order
 
 1. Use direct local file read for local files.

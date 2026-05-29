@@ -92,7 +92,7 @@ Adapt to the artifact type:
 
 The goal is not completeness. The goal is fast orientation, useful judgment, and an immersive listen-first review experience.
 
-Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, and roughly the target length unless the source is short. Do not run repeated optimization loops during normal generation.
+Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, sentences mostly around 11-15 words with shorter sentences allowed for emphasis, no sentence over 20 words, and roughly the target length unless the source is short. Do not run repeated optimization loops during normal generation.
 
 ### Step 4: Generate Audio With Kokoro
 
