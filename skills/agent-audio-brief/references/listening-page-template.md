@@ -4,6 +4,8 @@ Use this exact HTML structure and styling for every successful audio brief page.
 
 The final generated directory should contain this rendered file as `index.html` and the final audio file at `audio/brief.wav`.
 
+If Kokoro generation is blocked and the user accepts a browser SpeechSynthesis preview, use the same page structure and styling. Replace only the audio dock with the browser speech preview dock below, add the fallback CSS below to the existing `<style>` block, and add the fallback script before `</body>`. Do not create a separate visual design.
+
 ## Required Replacements
 
 - `{{PAGE_TITLE}}`: Browser title, usually `Audio Brief: <source title>`.
@@ -173,3 +175,92 @@ The final generated directory should contain this rendered file as `index.html` 
 </body>
 </html>
 ```
+
+## Browser Speech Preview Fallback
+
+Use this only when Kokoro setup or generation is blocked by the local machine and the user accepts a degraded browser speech preview. The page is still a transcript-first listening page, but it does not include `audio/brief.wav`.
+
+Replace the normal audio dock with:
+
+```html
+  <nav class="audio-dock speech-preview" aria-label="Browser speech preview controls">
+    <button id="speech-toggle" type="button">Play preview</button>
+    <span id="speech-status" class="duration">Browser speech preview</span>
+  </nav>
+```
+
+Add this CSS inside the existing `<style>` block:
+
+```css
+  nav.audio-dock.speech-preview button {
+    border: 1px solid #d0d0d0;
+    background: #ffffff;
+    color: #222222;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  nav.audio-dock.speech-preview button:disabled {
+    color: #999999;
+    cursor: not-allowed;
+  }
+```
+
+Add this script before `</body>`:
+
+```html
+<script>
+  const speechText = [
+    {{CONTEXT_AND_OVERVIEW_JSON}},
+    {{THE_STORY_JSON}},
+    {{ATTENTION_AREAS_JSON}},
+    {{TAKEAWAY_JSON}}
+  ].join("\n\n");
+
+  const toggle = document.getElementById("speech-toggle");
+  const status = document.getElementById("speech-status");
+  let speaking = false;
+
+  if (!("speechSynthesis" in window)) {
+    toggle.disabled = true;
+    status.textContent = "Browser speech unavailable";
+  }
+
+  toggle.addEventListener("click", () => {
+    if (speaking) {
+      window.speechSynthesis.cancel();
+      speaking = false;
+      toggle.textContent = "Play preview";
+      status.textContent = "Browser speech preview";
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(speechText);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.onend = () => {
+      speaking = false;
+      toggle.textContent = "Play preview";
+      status.textContent = "Browser speech preview";
+    };
+    utterance.onerror = utterance.onend;
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    speaking = true;
+    toggle.textContent = "Stop preview";
+    status.textContent = "Playing in browser";
+  });
+</script>
+```
+
+Required fallback replacements:
+
+- `{{CONTEXT_AND_OVERVIEW_JSON}}`: JSON-stringified version of the same plain speakable transcript text rendered in section 1.
+- `{{THE_STORY_JSON}}`: JSON-stringified version of section 2.
+- `{{ATTENTION_AREAS_JSON}}`: JSON-stringified version of section 3.
+- `{{TAKEAWAY_JSON}}`: JSON-stringified version of section 4.
+
+Keep the script text plain and speakable. Do not include Markdown heading markers, bullets, table pipes, code fences, decorative separators, raw URLs, or punctuation-heavy labels in the browser speech text.

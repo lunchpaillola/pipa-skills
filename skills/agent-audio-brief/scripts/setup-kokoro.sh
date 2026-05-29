@@ -3,13 +3,32 @@ set -euo pipefail
 
 CACHE_ROOT="${AGENT_AUDIO_BRIEF_CACHE:-$HOME/.cache/agent-audio-brief}"
 VENV_DIR="${AGENT_AUDIO_BRIEF_KOKORO_VENV:-$CACHE_ROOT/kokoro-onnx-venv}"
-MODEL_DIR="${AGENT_AUDIO_BRIEF_MODEL_DIR:-$CACHE_ROOT/kokoro-models/v1.0}"
-MODEL_FILE="$MODEL_DIR/kokoro-v1.0.onnx"
+MODEL_VARIANT="${AGENT_AUDIO_BRIEF_MODEL_VARIANT:-int8}"
+MODEL_DIR="${AGENT_AUDIO_BRIEF_MODEL_DIR:-$CACHE_ROOT/kokoro-models/v1.0-$MODEL_VARIANT}"
+MODEL_FILE="${AGENT_AUDIO_BRIEF_MODEL_FILE:-$MODEL_DIR/kokoro-v1.0.$MODEL_VARIANT.onnx}"
 VOICES_FILE="$MODEL_DIR/voices-v1.0.bin"
 KOKORO_ONNX_VERSION="${AGENT_AUDIO_BRIEF_KOKORO_ONNX_VERSION:-0.5.0}"
 SOUNDFILE_VERSION="${AGENT_AUDIO_BRIEF_SOUNDFILE_VERSION:-0.13.1}"
 
-MODEL_URL="${AGENT_AUDIO_BRIEF_MODEL_URL:-https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx}"
+case "$MODEL_VARIANT" in
+  int8)
+    DEFAULT_MODEL_URL="https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.int8.onnx"
+    ;;
+  fp16)
+    DEFAULT_MODEL_URL="https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.fp16.onnx"
+    ;;
+  fp32|full)
+    DEFAULT_MODEL_URL="https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx"
+    MODEL_FILE="${AGENT_AUDIO_BRIEF_MODEL_FILE:-$MODEL_DIR/kokoro-v1.0.onnx}"
+    ;;
+  *)
+    printf 'setup_result.status=blocked\n' >&2
+    printf 'setup_result.reason=unsupported AGENT_AUDIO_BRIEF_MODEL_VARIANT: %s\n' "$MODEL_VARIANT" >&2
+    exit 1
+    ;;
+esac
+
+MODEL_URL="${AGENT_AUDIO_BRIEF_MODEL_URL:-$DEFAULT_MODEL_URL}"
 VOICES_URL="${AGENT_AUDIO_BRIEF_VOICES_URL:-https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin}"
 
 log() {

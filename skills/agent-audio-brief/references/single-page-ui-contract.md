@@ -40,7 +40,7 @@ Use `references/listening-page-template.md` as the source of truth. Start from t
 
 1. **Header:** one quiet source label, title, and one-sentence subtitle specific to the source content.
 2. **Transcript:** four sections matching the script shape: Context And Overview, The Story, Attention Areas, Takeaway.
-3. **Audio dock:** fixed native audio player near the bottom of the viewport with duration.
+3. **Audio dock:** fixed native audio player near the bottom of the viewport with duration. If Kokoro is blocked and the user accepts browser speech preview, use the browser speech preview dock from `references/listening-page-template.md` instead.
 4. **Source note:** one compact line for source context and concrete caveats when they matter.
 
 ## Determinism Rules
@@ -48,6 +48,7 @@ Use `references/listening-page-template.md` as the source of truth. Start from t
 - Use the template in `references/listening-page-template.md` exactly.
 - Replace placeholders with escaped HTML content.
 - Keep the audio path as `audio/brief.wav` unless there is a concrete browser-cache reason to change it during debugging.
+- For browser speech preview fallback, keep the same template, spacing, typography, sections, and source note. Replace only the audio dock with the documented preview dock and script. Do not invent a new design.
 - Do not add timestamps unless the template is intentionally revised to include timestamp placeholders.
 - Do not add key-point cards, provenance panels, copyable follow-up prompts, dashboards, stats, metadata pills, decorative gradients, branded cover art, callouts, TTS voice labels, model names, or secondary UI.
 - Do not show source-access scoring.

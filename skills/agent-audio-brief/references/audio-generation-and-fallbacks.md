@@ -6,7 +6,7 @@ Kokoro audio generation is required for success. Script-only output is useful fo
 
 Use one managed local backend by default: cached `kokoro-onnx` in `~/.cache/agent-audio-brief/`.
 
-Do not explore a long fallback ladder during a normal brief request. The user asked for a listening artifact, not a dependency debugging session.
+Do not explore a long fallback ladder during a normal brief request. The user asked for a listening artifact, not a dependency debugging session. There is one degraded fallback: browser SpeechSynthesis preview when local Kokoro is blocked by setup, memory, or compute constraints.
 
 Default flow:
 
@@ -14,13 +14,13 @@ Default flow:
 2. Run `scripts/generate-audio.sh <brief-script.txt> <publish-dir>/audio/brief.wav`.
 3. If the cached backend is missing, the generation script runs `scripts/setup-kokoro.sh` once.
 4. If setup succeeds, generate and validate the WAV.
-5. If setup fails, block clearly and ask for `uv` or `python3.12`.
+5. If setup or generation fails because the machine cannot run Kokoro, block clearly and offer a browser speech preview as the only fallback.
 
 The managed backend uses:
 
 - `kokoro-onnx==0.5.0`
 - `soundfile==0.13.1`
-- `kokoro-v1.0.onnx`
+- `kokoro-v1.0.int8.onnx` by default
 - `voices-v1.0.bin`
 
 Cache layout:
@@ -29,8 +29,8 @@ Cache layout:
 ~/.cache/agent-audio-brief/
   kokoro-onnx-venv/
   kokoro-models/
-    v1.0/
-      kokoro-v1.0.onnx
+    v1.0-int8/
+      kokoro-v1.0.int8.onnx
       voices-v1.0.bin
 ```
 
@@ -49,7 +49,7 @@ Setup behavior:
 5. Download missing model files into the cache.
 6. Smoke-test imports and cached model file presence.
 
-This intentionally avoids global `pip install kokoro`, `uv tool install kokoro-tts`, and ad hoc npm installs as normal behavior.
+This intentionally avoids global or ad hoc package installs as normal behavior.
 
 ## Generation Script Contract
 
@@ -63,24 +63,25 @@ The script:
 
 - uses `af_heart` by default unless a third voice argument is provided
 - creates the cached backend if needed
+- uses the INT8 Kokoro ONNX model by default
+- defaults to `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`
+- streams the final WAV to disk instead of building one full audio buffer in memory
+- phonemizes and renders punctuation-delimited text chunks one at a time, with `AGENT_AUDIO_BRIEF_MAX_PHONEMES` as an additional per-inference safety cap
 - writes one final browser-playable WAV at the requested output path
 - reports duration and word count
 - fails if the output is suspiciously short for the script length
 
+Keep `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100` as the default. Higher values can smooth prosody but increase ONNX Runtime workspace memory. Only change it when the user explicitly asks to test that tradeoff.
+
+If Kokoro still cannot run in a compute-constrained environment, block clearly and offer browser SpeechSynthesis as the single degraded preview fallback. When the user accepts it, generate the fallback using the browser speech preview variant in `references/listening-page-template.md`; do not invent a new page design.
+
 Keep generated audio in the publish bundle at `audio/brief.wav`. Keep scripts, model caches, virtual environments, chunks, helper files, and logs outside the publish bundle.
-
-## Why Not The Other Kokoro Paths
-
-`kokoro-tts` is acceptable only when already installed and explicitly requested for debugging. Do not install it as the normal skill path: current releases require Python 3.11-3.12, include extra EPUB/PDF/audio-device dependencies, and require separate model-file handling.
-
-`pip install kokoro` uses the upstream Python package and may be useful for application development, but it is heavier for this workflow because it pulls Torch/Transformers and still does not support Python 3.14.
-
-`kokoro-js` is a last-resort experimental fallback only. Do not use it during normal brief generation unless the user explicitly asks to debug a Python-free path. If used, install it in a scratch directory outside the publish bundle and pin `kokoro-js@1.2.1`.
 
 ## Preferred Behavior
 
 - Use the generated script as the TTS input, not the raw source document.
 - Use `af_heart` by default.
+- Prefer concise spoken sentences with natural punctuation so Kokoro can render one short chunk at a time without obvious seams.
 - Save one final playable audio file for the page.
 - Preserve a transcript that matches the spoken script inside the generated `index.html`.
 - Name the final audio predictably as `audio/brief.wav` so the deterministic template can reference it.
