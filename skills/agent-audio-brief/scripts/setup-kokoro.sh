@@ -97,14 +97,26 @@ create_venv() {
     return 0
   fi
 
-  if has_command python3.12; then
-    log "Creating Kokoro venv with python3.12..."
-    python3.12 -m venv "$VENV_DIR"
-    return 0
-  fi
+  for python_bin in python3.12 python3.11 python3.10 python3 python; do
+    if ! has_command "$python_bin"; then
+      continue
+    fi
+
+    if "$python_bin" - <<'PY'
+import sys
+
+version = sys.version_info[:2]
+raise SystemExit(0 if (3, 10) <= version < (3, 14) else 1)
+PY
+    then
+      log "Creating Kokoro venv with $python_bin..."
+      "$python_bin" -m venv "$VENV_DIR"
+      return 0
+    fi
+  done
 
   log "setup_result.status=blocked"
-  log "setup_result.reason=Install uv or python3.12 to create the managed Kokoro backend. Do not use Python 3.14 for Kokoro generation."
+  log "setup_result.reason=Install uv or Python 3.10-3.13 to create the managed Kokoro backend. Do not use Python 3.14 for Kokoro generation."
   exit 1
 }
 

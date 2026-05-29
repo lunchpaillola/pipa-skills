@@ -47,6 +47,7 @@ Use `references/listening-page-template.md` as the source of truth. Start from t
 
 - Use the template in `references/listening-page-template.md` exactly.
 - Replace placeholders with escaped HTML content.
+- Render transcript text as real paragraph blocks with visible spacing. Split each section on blank lines when present, escape each paragraph, and wrap each paragraph in `<p>...</p>` rather than inserting one dense text block with collapsed newlines.
 - Keep the audio path as `audio/brief.wav` unless there is a concrete browser-cache reason to change it during debugging.
 - For browser speech preview fallback, keep the same template, spacing, typography, sections, and source note. Replace only the audio dock with the documented preview dock and script. Do not invent a new design.
 - Do not add timestamps unless the template is intentionally revised to include timestamp placeholders.

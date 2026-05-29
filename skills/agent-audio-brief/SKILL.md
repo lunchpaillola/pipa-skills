@@ -92,7 +92,7 @@ Adapt to the artifact type:
 
 The goal is not completeness. The goal is fast orientation, useful judgment, and an immersive listen-first review experience.
 
-Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, sentences mostly around 11-15 words with shorter sentences allowed for emphasis, no sentence over 20 words, and roughly the target length unless the source is short. Do not run repeated optimization loops during normal generation.
+Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, sentences mostly around 11-15 words with shorter sentences allowed for emphasis, no sentence over 20 words, and roughly the target length unless the source is short. Hard cap the default brief at 500 words unless the user explicitly asked for a deeper listen. Do not run repeated optimization loops during normal generation.
 
 ### Step 4: Generate Audio With Kokoro
 
@@ -102,11 +102,12 @@ Use `af_heart` as the default voice unless the user asks for another voice.
 
 Golden path:
 
-1. Use the skill-managed cached `kokoro-onnx` backend via `scripts/generate-audio.sh <brief-script.txt> <publish-dir>/audio/brief.wav`.
-2. By default, generation uses the INT8 Kokoro model, `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`, sentence-by-sentence rendering, and streaming WAV writes. Do not increase the phoneme cap unless the user explicitly asks to trade memory for smoother prosody.
-3. If the backend is missing, `scripts/generate-audio.sh` runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/agent-audio-brief/kokoro-onnx-venv/` and cached INT8 model files under `~/.cache/agent-audio-brief/kokoro-models/v1.0-int8/` by default.
-4. `scripts/setup-kokoro.sh` uses `uv` with Python 3.12 when available, otherwise `python3.12`. Do not use Python 3.14 for Kokoro generation.
-5. If Kokoro setup or generation fails because the machine is compute- or memory-constrained, tell the user plainly and offer the single fallback: a browser SpeechSynthesis preview page. Label it as a degraded preview, not as the completed Kokoro-quality brief.
+1. Always start audio generation through `scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`, then poll `scripts/generate-audio-job.sh status <job-id>` until it reports `ready` or `failed`.
+2. The async job validates word count before setup or generation and blocks default briefs over 500 words.
+3. By default, generation uses the INT8 Kokoro model, `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`, sentence-by-sentence rendering, and streaming WAV writes. Do not increase the phoneme cap unless the user explicitly asks to trade memory for smoother prosody.
+4. If the backend is missing, the async job runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/agent-audio-brief/kokoro-onnx-venv/` and cached INT8 model files under `~/.cache/agent-audio-brief/kokoro-models/v1.0-int8/` by default.
+5. `scripts/setup-kokoro.sh` uses `uv` with Python 3.12 when available, otherwise the first available Python 3.10-3.13 executable. Do not use Python 3.14 for Kokoro generation.
+6. If Kokoro setup or generation fails because the machine is compute- or memory-constrained, tell the user plainly and offer the single fallback: a browser SpeechSynthesis preview page. Label it as a degraded preview, not as the completed Kokoro-quality brief.
 
 Use the generated script as the TTS input, not the raw source document. The brief does not need to summarize every source detail, but the audio must fully render the generated brief script.
 
@@ -124,7 +125,7 @@ The page must include only:
 
 - concise title and source context
 - docked native audio player
-- transcript divided into the four script sections
+- transcript divided into the four script sections, with real paragraph spacing in the generated page
 - brief note only when a real caveat affects how to interpret the brief
 
 The page subtitle should be a plain-language, source-specific one-liner that describes the document being briefed. It must not claim the brief performed verification, review work, or implementation checks beyond summarizing and orienting the listener to the source. Avoid "Use this brief to..." framing, dense project jargon, outcome claims, TTS implementation details, model names, voice labels, and decorative UI extras.
@@ -145,7 +146,7 @@ If npm is unavailable, use:
 curl -fsSL https://here.now/install.sh | bash
 ```
 
-After installation, publish the directory that contains `index.html` at its root and the final audio file at the relative path referenced by the page. Use the here.now skill's `scripts/publish.sh` helper when available.
+After installation, publish the directory that contains `index.html` at its root and the final audio file at the relative path referenced by the page. Prefer this skill's dependency-free `scripts/publish.sh <bundle-dir> --client opencode` helper. If you intentionally use the here.now skill helper instead, it may require system `jq`.
 
 Return only the current `siteUrl` from the publish command as the primary listening link. If publishing is authenticated, state that it is permanent. If publishing is anonymous, state that it expires in 24 hours and include the claim URL when the publish command returns one.
 
