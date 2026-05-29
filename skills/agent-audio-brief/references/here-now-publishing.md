@@ -16,7 +16,15 @@ If npm is unavailable, install here.now directly:
 curl -fsSL https://here.now/install.sh | bash
 ```
 
-After installation, read the local here.now skill instructions when available. Prefer the bundled publish helper:
+After installation, read the local here.now skill instructions when available. Prefer this skill's dependency-free Python publisher:
+
+```bash
+skills/agent-audio-brief/scripts/publish.sh <bundle-dir> --client opencode
+```
+
+The local publisher uses only Python standard-library modules plus network access to here.now. It exists so the audio-brief workflow does not block when the here.now skill helper cannot find `jq`.
+
+The here.now skill's bundled helper is also acceptable when its dependencies are available:
 
 ```bash
 ~/.agents/skills/here-now/scripts/publish.sh <bundle-dir> --client opencode

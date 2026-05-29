@@ -8,6 +8,8 @@ The listener may be away from the screen. Give them fast orientation, useful jud
 
 Default target: **400 to 450 words** for a roughly three-minute spoken brief.
 
+Hard cap: **500 words** for the default brief. If the draft is longer, trim it before audio generation unless the user explicitly requested a deeper listen.
+
 Very short sources should produce short audio notes. Do not pad to meet a duration target. Longer deep-listen briefs are allowed only when the user explicitly asks for depth.
 
 ## Voice And Tone
@@ -69,6 +71,7 @@ Before sending the script to TTS, revise once if needed:
 - Most sentences are around 11-15 words, with shorter sentences allowed.
 - No sentence is over 20 words.
 - The script is roughly 400-450 words unless the source is short or the user requested a different length.
+- The script is 500 words or fewer for the default brief.
 
 Do not run repeated optimization loops during normal generation.
 

@@ -92,7 +92,7 @@ Adapt to the artifact type:
 
 The goal is not completeness. The goal is fast orientation, useful judgment, and an immersive listen-first review experience.
 
-Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, sentences mostly around 11-15 words with shorter sentences allowed for emphasis, no sentence over 20 words, and roughly the target length unless the source is short. Do not run repeated optimization loops during normal generation.
+Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, sentences mostly around 11-15 words with shorter sentences allowed for emphasis, no sentence over 20 words, and roughly the target length unless the source is short. Hard cap the default brief at 500 words unless the user explicitly asked for a deeper listen. Do not run repeated optimization loops during normal generation.
 
 ### Step 4: Generate Audio With Kokoro
 
@@ -102,11 +102,12 @@ Use `af_heart` as the default voice unless the user asks for another voice.
 
 Golden path:
 
-1. Use the skill-managed cached `kokoro-onnx` backend via `scripts/generate-audio.sh <brief-script.txt> <publish-dir>/audio/brief.wav`.
-2. By default, generation uses the INT8 Kokoro model, `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`, sentence-by-sentence rendering, and streaming WAV writes. Do not increase the phoneme cap unless the user explicitly asks to trade memory for smoother prosody.
-3. If the backend is missing, `scripts/generate-audio.sh` runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/agent-audio-brief/kokoro-onnx-venv/` and cached INT8 model files under `~/.cache/agent-audio-brief/kokoro-models/v1.0-int8/` by default.
-4. `scripts/setup-kokoro.sh` uses `uv` with Python 3.12 when available, otherwise `python3.12`. Do not use Python 3.14 for Kokoro generation.
-5. If Kokoro setup or generation fails because the machine is compute- or memory-constrained, tell the user plainly and offer the single fallback: a browser SpeechSynthesis preview page. Label it as a degraded preview, not as the completed Kokoro-quality brief.
+1. Always start audio generation through `scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`, then use `scripts/generate-audio-job.sh wait <job-id>` as the normal completion path. Use `status` only for debugging or when the command timeout is too short for `wait`.
+2. The async job validates word count before setup or generation and blocks default briefs over 500 words.
+3. By default, generation uses the INT8 Kokoro model, `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`, sentence-by-sentence rendering, and streaming WAV writes. Do not increase the phoneme cap unless the user explicitly asks to trade memory for smoother prosody.
+4. If the backend is missing, the async job runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/agent-audio-brief/kokoro-onnx-venv/` and cached INT8 model files under `~/.cache/agent-audio-brief/kokoro-models/v1.0-int8/` by default.
+5. `scripts/setup-kokoro.sh` uses `uv` with Python 3.12 when available, otherwise the first available Python 3.10-3.13 executable. Do not use Python 3.14 for Kokoro generation.
+6. If Kokoro setup or generation fails because the machine is compute- or memory-constrained, tell the user plainly and offer the single fallback: a browser SpeechSynthesis preview page. Label it as a degraded preview, not as the completed Kokoro-quality brief.
 
 Use the generated script as the TTS input, not the raw source document. The brief does not need to summarize every source detail, but the audio must fully render the generated brief script.
 
@@ -118,13 +119,13 @@ If Kokoro fails after the script is generated, return a clear message that the a
 
 Follow `references/single-page-ui-contract.md`, `references/listening-page-template.md`, `references/local-review-bundle.md`, and `references/dogfood-implementation-playbook.md`.
 
-Create one user-facing `index.html` page by starting from the exact template in `references/listening-page-template.md` and replacing only the content placeholders. Use inline CSS/JS, no npm/build step, and no framework. Preserve the template structure and styling unless the user explicitly asks for a different design.
+Create one user-facing `index.html` page by writing a JSON page contract that follows `references/single-page-ui-contract.md`, then render it with `scripts/render-listening-page.py <page-contract.json> <publish-dir>/index.html`. The renderer starts from the exact template in `references/listening-page-template.md` and replaces only the content placeholders. Use inline CSS/JS, no npm/build step, and no framework. Preserve the template structure and styling unless the user explicitly asks for a different design.
 
 The page must include only:
 
 - concise title and source context
 - docked native audio player
-- transcript divided into the four script sections
+- transcript divided into the four script sections, with real paragraph spacing in the generated page
 - brief note only when a real caveat affects how to interpret the brief
 
 The page subtitle should be a plain-language, source-specific one-liner that describes the document being briefed. It must not claim the brief performed verification, review work, or implementation checks beyond summarizing and orienting the listener to the source. Avoid "Use this brief to..." framing, dense project jargon, outcome claims, TTS implementation details, model names, voice labels, and decorative UI extras.
@@ -145,7 +146,7 @@ If npm is unavailable, use:
 curl -fsSL https://here.now/install.sh | bash
 ```
 
-After installation, publish the directory that contains `index.html` at its root and the final audio file at the relative path referenced by the page. Use the here.now skill's `scripts/publish.sh` helper when available.
+After installation, publish the directory that contains `index.html` at its root and the final audio file at the relative path referenced by the page. Prefer this skill's dependency-free `scripts/publish.sh <bundle-dir> --client opencode` helper. If you intentionally use the here.now skill helper instead, it may require system `jq`.
 
 Return only the current `siteUrl` from the publish command as the primary listening link. If publishing is authenticated, state that it is permanent. If publishing is anonymous, state that it expires in 24 hours and include the claim URL when the publish command returns one.
 
@@ -153,7 +154,7 @@ Return only the current `siteUrl` from the publish command as the primary listen
 
 Before returning, apply the artifact lifecycle rules in `references/local-review-bundle.md` and `references/dogfood-implementation-playbook.md`.
 
-After a successful here.now publish, remove the local generated bundle and temporary generation artifacts. The here.now URL is the durable user-facing artifact. Do not keep `.artifacts/audio-briefs/<slug>/`, separate transcript files, page-contract files, provenance files, chunk audio, helper scripts, logs, package folders, or temporary per-run caches unless preserving them is necessary to explain or debug a blocker. Do not delete the managed Kokoro cache at `~/.cache/agent-audio-brief/`; it is reused to make future briefs fast.
+After a successful here.now publish, remove the local generated bundle and temporary generation artifacts. The here.now URL is the durable user-facing artifact. Do not keep `.artifacts/audio-briefs/<slug>/`, separate transcript files, page-contract files, provenance files, chunk audio, helper scripts, logs, package folders, or per-run job directories under `~/.cache/agent-audio-brief/jobs/` unless preserving them is necessary to explain or debug a blocker. Do not delete the managed Kokoro backend cache at `~/.cache/agent-audio-brief/kokoro-onnx-venv/` or `~/.cache/agent-audio-brief/kokoro-models/`; it is reused to make future briefs fast.
 
 If generation or publishing is blocked, preserve only the minimal debug artifacts needed to continue and mention where they are.
 

@@ -8,6 +8,7 @@ The local bundle is a temporary implementation detail used to publish one here.n
 .artifacts/audio-briefs/<safe-slug>/
   work/
     brief-script.txt
+    page-contract.json
   publish/
     index.html
     audio/
@@ -32,6 +33,7 @@ The publish bundle must not contain `node_modules`, package files, virtual envir
 **Temporary sawdust:** delete by default after success.
 
 - `work/brief-script.txt` after its content has been embedded in `index.html`
+- `work/page-contract.json` after `index.html` has been rendered
 - `node_modules`, package lockfiles, temporary virtual environments, model scratch folders, and dependency caches created only for generation
 - temporary Kokoro helper scripts
 - chunk audio files after they have been concatenated into the final audio
@@ -42,9 +44,10 @@ The publish bundle must not contain `node_modules`, package files, virtual envir
 - page-contract JSON, provenance JSON, and transcript markdown after their contents have been embedded in `index.html`
 - raw extracted HTML or intermediate markdown
 - the generated `.artifacts/audio-briefs/<safe-slug>/` bundle after here.now publish succeeds
+- per-run job directories under `~/.cache/agent-audio-brief/jobs/` after here.now publish succeeds
 - `.herenow/` or `.herenow/state.json` when created by this one-off publish run and not present before the run
 
-Do not delete the managed Kokoro cache at `~/.cache/agent-audio-brief/` after a successful run. That cache is the reusable setup that makes future audio briefs fast.
+Do not delete the managed Kokoro backend cache at `~/.cache/agent-audio-brief/kokoro-onnx-venv/` or `~/.cache/agent-audio-brief/kokoro-models/` after a successful run. That cache is the reusable setup that makes future audio briefs fast.
 
 **Debug artifacts:** keep only when needed.
 

@@ -13,10 +13,10 @@ If Kokoro generation is blocked and the user accepts a browser SpeechSynthesis p
 - `{{SOURCE_LABEL}}`: Quiet source label, such as `Plan document` or `Strategy memo`.
 - `{{TITLE}}`: Main page title.
 - `{{SUBTITLE}}`: One plain-language sentence describing the source being briefed.
-- `{{CONTEXT_AND_OVERVIEW}}`: Transcript paragraph for section 1.
-- `{{THE_STORY}}`: Transcript paragraph for section 2.
-- `{{ATTENTION_AREAS}}`: Transcript paragraph for section 3.
-- `{{TAKEAWAY}}`: Transcript paragraph for section 4.
+- `{{CONTEXT_AND_OVERVIEW_PARAGRAPHS}}`: Escaped transcript paragraphs for section 1, rendered as one or more `<p>...</p>` blocks.
+- `{{THE_STORY_PARAGRAPHS}}`: Escaped transcript paragraphs for section 2, rendered as one or more `<p>...</p>` blocks.
+- `{{ATTENTION_AREAS_PARAGRAPHS}}`: Escaped transcript paragraphs for section 3, rendered as one or more `<p>...</p>` blocks.
+- `{{TAKEAWAY_PARAGRAPHS}}`: Escaped transcript paragraphs for section 4, rendered as one or more `<p>...</p>` blocks.
 - `{{SOURCE_NOTE}}`: Compact source and caveat line. Include publish/privacy caveats only when materially useful.
 - `{{DURATION_LABEL}}`: Duration label such as `3:05`.
 
@@ -93,6 +93,7 @@ If Kokoro generation is blocked and the user accepts a browser SpeechSynthesis p
     color: #333333;
     margin-bottom: 14px;
   }
+  article p + p { margin-top: 14px; }
   nav.audio-dock {
     position: fixed;
     bottom: 0;
@@ -144,22 +145,22 @@ If Kokoro generation is blocked and the user accepts a browser SpeechSynthesis p
     <article aria-label="Transcript">
       <section>
         <h2>Context And Overview</h2>
-        <p>{{CONTEXT_AND_OVERVIEW}}</p>
+        {{CONTEXT_AND_OVERVIEW_PARAGRAPHS}}
       </section>
 
       <section>
         <h2>The Story</h2>
-        <p>{{THE_STORY}}</p>
+        {{THE_STORY_PARAGRAPHS}}
       </section>
 
       <section>
         <h2>Attention Areas</h2>
-        <p>{{ATTENTION_AREAS}}</p>
+        {{ATTENTION_AREAS_PARAGRAPHS}}
       </section>
 
       <section>
         <h2>Takeaway</h2>
-        <p>{{TAKEAWAY}}</p>
+        {{TAKEAWAY_PARAGRAPHS}}
       </section>
 
       <p class="source-note">{{SOURCE_NOTE}}</p>

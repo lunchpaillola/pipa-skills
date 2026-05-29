@@ -7,8 +7,8 @@ Use this fast path when the user asks to generate and publish an audio brief.
 1. Create a temporary artifact directory, for example `.artifacts/audio-briefs/<slug>/`.
 2. Create separate `work/` and `publish/` directories under that artifact directory.
 3. Draft the 400-450 word script into `work/brief-script.txt`.
-4. Generate audio with the skill script, passing absolute or repo-root-relative artifact paths. Let that script create the cached `kokoro-onnx` backend if needed.
-5. Validate audio duration and file type before creating the page status.
+4. Start audio with `scripts/generate-audio-job.sh`, passing absolute or repo-root-relative artifact paths. Let that job create the cached `kokoro-onnx` backend if needed.
+5. Poll `scripts/generate-audio-job.sh status <job-id>` until it reports `ready` or `failed`, then validate audio duration and file type before creating the page status.
 6. Render `publish/index.html` from `references/listening-page-template.md`; replace placeholders only.
 7. Verify `publish/` contains only the page and final audio bundle files.
 8. Publish `publish/` with the here.now skill or helper script.
@@ -19,14 +19,15 @@ After success, the durable artifact is the here.now URL, not a local `.artifacts
 
 ## Preferred Managed Kokoro Path
 
-Use this path for normal audio generation:
+Use this async path for normal audio generation:
 
 ```bash
 RUN_DIR=".artifacts/audio-briefs/<slug>"
-skills/agent-audio-brief/scripts/generate-audio.sh "$RUN_DIR/work/brief-script.txt" "$RUN_DIR/publish/audio/brief.wav"
+skills/agent-audio-brief/scripts/generate-audio-job.sh start "$RUN_DIR/work/brief-script.txt" "$RUN_DIR/publish/audio/brief.wav"
+skills/agent-audio-brief/scripts/generate-audio-job.sh status <job-id>
 ```
 
-If the cached backend is missing, the generation script runs setup:
+If the cached backend is missing, the job runs setup through the underlying generation script:
 
 ```bash
 skills/agent-audio-brief/scripts/setup-kokoro.sh
@@ -93,8 +94,10 @@ curl -fsSL https://here.now/install.sh | bash
 Publish the `publish/` bundle directory, not the run root and not the `work/` directory:
 
 ```bash
-~/.agents/skills/here-now/scripts/publish.sh <publish-dir> --client opencode
+skills/agent-audio-brief/scripts/publish.sh <publish-dir> --client opencode
 ```
+
+Use the here.now skill helper instead only when its dependencies, including `jq`, are available.
 
 Return `publish_result.site_url` from the script output. Use `publish_result.auth_mode` and `publish_result.persistence` to state whether the site is permanent or expires.
 
