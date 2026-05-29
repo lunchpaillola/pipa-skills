@@ -68,7 +68,7 @@ The async job:
 - creates the cached backend if needed
 - uses the INT8 Kokoro ONNX model by default
 - defaults to `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`
-- wraps generation with `AGENT_AUDIO_BRIEF_GENERATION_TIMEOUT_SECONDS=600` when `timeout` or `gtimeout` is available
+- wraps generation with `AGENT_AUDIO_BRIEF_GENERATION_TIMEOUT_SECONDS=1200` when `timeout` or `gtimeout` is available
 - streams audio to `audio/brief.wav.partial` instead of building one full audio buffer in memory
 - phonemizes and renders punctuation-delimited text chunks one at a time, with `AGENT_AUDIO_BRIEF_MAX_PHONEMES` as an additional per-inference safety cap
 - checks duration with Python's standard WAV reader, then renames the partial file to one final browser-playable WAV at the requested output path
