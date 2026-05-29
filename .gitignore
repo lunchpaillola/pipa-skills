@@ -3,7 +3,9 @@ node_modules/
 dist/
 coverage/
 *.log
+.herenow/
 examples/
 skills/*-workspace/
+skills/**/prototypes/
 skills/**/evals/private/
 skills/**/autoresearch-*/
