@@ -6,9 +6,9 @@ The listener may be away from the screen. Give them fast orientation, useful jud
 
 ## Default Length
 
-Default target: **400 to 450 words** for a roughly three-minute spoken brief.
+Default target: **300 to 350 words** for a roughly two-minute spoken brief.
 
-Hard cap: **500 words** for the default brief. If the draft is longer, trim it before audio generation unless the user explicitly requested a deeper listen.
+Hard cap: **350 words** for the default brief. If the draft is longer, trim it before audio generation unless the user explicitly requested a deeper listen.
 
 Very short sources should produce short audio notes. Do not pad to meet a duration target. Longer deep-listen briefs are allowed only when the user explicitly asks for depth.
 
@@ -17,9 +17,9 @@ Very short sources should produce short audio notes. Do not pad to meet a durati
 - Sound like a sharp teammate explaining what happened and why it matters.
 - Prioritize orientation, judgment, and narrative flow over completeness.
 - Use plain human language and short listenable sentences.
-- Aim most sentences around 11 to 15 words for natural spoken pacing.
+- Aim most sentences around 7 to 10 words for natural spoken pacing.
 - Shorter sentences are allowed when they improve clarity, rhythm, or emphasis.
-- No sentence should exceed 20 words in the TTS script.
+- No sentence should exceed 10 words in the TTS script.
 - Split clause-heavy sentences instead of letting them run long.
 - Avoid dense metadata, tables, and exact wording unless the exact wording is the point.
 - Be opinionated about what deserves attention.
@@ -68,10 +68,10 @@ Before sending the script to TTS, revise once if needed:
 - The brief includes concrete source-specific judgment, not just neutral summary.
 - The brief does not claim verification, review, testing, or implementation checks unless those actually happened.
 - The takeaway gives a useful bottom line or next action.
-- Most sentences are around 11-15 words, with shorter sentences allowed.
-- No sentence is over 20 words.
-- The script is roughly 400-450 words unless the source is short or the user requested a different length.
-- The script is 500 words or fewer for the default brief.
+- Most sentences are around 7-10 words, with shorter sentences allowed.
+- No sentence is over 10 words.
+- The script is roughly 300-350 words unless the source is short or the user requested a different length.
+- The script is 350 words or fewer for the default brief.
 
 Do not run repeated optimization loops during normal generation.
 
