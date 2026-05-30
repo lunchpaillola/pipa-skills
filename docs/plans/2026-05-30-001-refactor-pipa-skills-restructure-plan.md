@@ -1,7 +1,7 @@
 ---
 title: "refactor: Restructure PM skills into Pipa"
 type: refactor
-status: active
+status: completed
 date: 2026-05-30
 origin: docs/brainstorms/2026-05-30-pipa-skills-restructure-requirements.md
 ---

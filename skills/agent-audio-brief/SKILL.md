@@ -17,7 +17,7 @@ Primary goal: fast orientation, useful judgment, and an immersive listen-first r
 
 Output goal: generate audio with Kokoro, create a deterministic single-page listening experience, publish it with here.now, and return the here.now URL.
 
-Communication style contract: when returning user-facing status, blockers, or final handoffs, apply `pm-communication-style`.
+Communication style contract: when returning user-facing status, blockers, or final handoffs, apply `skills/pipa/references/communication-style.md`.
 
 ## Workflow
 

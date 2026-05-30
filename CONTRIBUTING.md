@@ -1,30 +1,39 @@
 # Contributing
 
-Thanks for your interest in contributing to Project Management Skills.
+Thanks for your interest in contributing to Pipa Skills.
 
-## Adding a skill
+## PM Workflow Changes
 
-1. Create a directory under `skills/` using lowercase kebab-case.
-2. Add a `SKILL.md` file with YAML frontmatter.
-3. Keep the `name` field identical to the directory name.
-4. Write a `description` that clearly explains when the skill should be used.
-5. Add optional `references/`, `scripts/`, or `assets/` only when useful.
-6. For new skills, prefer lifecycle phase prefixes: `pm-initiate-`, `pm-plan-`, `pm-execute-`, `pm-monitor-`, or `pm-close-`.
+New project-management or delivery workflows normally belong inside `skills/pipa/`:
 
-Example:
+1. Add or update the relevant Pipa command route in `skills/pipa/SKILL.md` when the public command surface changes.
+2. Put detailed workflow instructions in `skills/pipa/references/` so the entry skill stays concise.
+3. Add or update lightweight evals under `skills/pipa/evals/` for command routing, natural-language routing, and safety gates.
+4. Update `README.md` when the public command surface changes.
 
-```yaml
----
-name: ticket-triage
-description: Use when the user wants to triage tickets, classify work, identify missing context, or recommend next actions.
----
+Do not add a new public top-level PM skill for routine lifecycle work. Pipa is the PM entry point.
 
-# Ticket Triage
+## Standalone Skills
 
-Instructions for the agent go here.
-```
+Create or preserve a standalone skill only when the workflow is high-value, tool/product-specific, safety-sensitive, or independently discoverable.
 
-## Skill structure
+Current standalone breakouts are:
+
+- `agent-audio-brief`
+- `composio`
+- `pailflow-triggers`
+- `pailflow-workflow-automation`
+
+When adding a standalone skill:
+
+1. Create `skills/<skill-name>/SKILL.md` first.
+2. Use lowercase kebab-case for the directory name.
+3. Keep the `name` frontmatter field identical to the directory name.
+4. Write a concrete trigger description that says when the skill should be used.
+5. Add `references/`, `scripts/`, `assets/`, or `evals/` only when useful.
+6. Update `README.md`.
+
+## Skill Structure
 
 ```text
 skills/your-skill-name/
@@ -32,27 +41,30 @@ skills/your-skill-name/
   references/
   scripts/
   assets/
+  evals/
 ```
 
 ## Guidelines
 
-- Keep skills narrow, reusable, and outcome-oriented.
+- Keep Pipa concise; move detailed instructions into references.
+- Keep standalone workflows narrow, reusable, and outcome-oriented.
 - Prefer practical workflows over theory-heavy notes.
 - Avoid sensitive data, proprietary customer context, or private credentials.
 - Keep public evals generic; put client-specific evals under `skills/<skill-name>/evals/private/`.
-- Keep naming clear enough that agents can route to the skill reliably.
-- Prefer `pm-<phase>-<noun-or-object>` naming for new skills.
-- If a skill overlaps heavily with an existing one, improve the existing skill instead of adding a duplicate.
+- Preserve safety gates, setup checks, confirmations, blockers, and output contracts when Pipa routes into standalone skills.
+- If a change overlaps heavily with an existing Pipa route, improve that route instead of adding a duplicate.
+- Do not bump `metadata.version` or `VERSIONS.md` during draft or branch work; version bumps happen when finalizing for merge to `main`.
 
-## Pull requests
+## Pull Requests
 
 When submitting a change:
 
-- explain what workflow the skill supports
-- include a clear usage description
+- explain which workflow or command changed
+- include a clear trigger/routing description
 - keep the scope focused
-- update documentation if needed
+- add or update eval coverage for behavior changes
+- update docs when the public surface changes
 
 ## Questions
 
-Open an issue if you want to propose a skill before writing it.
+Open an issue if you want to propose a new command, reference, or standalone breakout before writing it.

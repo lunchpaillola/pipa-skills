@@ -1,0 +1,78 @@
+[
+  {
+    "query": "Pipa status for the steering meeting: current state, blockers, and decisions needed.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa triage these customer tickets and tell me what needs response today.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa plan this scattered onboarding work into requirements and a baseline.",
+    "should_trigger": true
+  },
+  {
+    "query": "Give me a project status update with the current risks and next owner actions.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa automate a weekly budget debrief every Monday morning.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa trigger this when a Linear issue is created.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa audio brief this requirements doc so I can listen on my phone.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa use Composio to create a GitHub issue from this bug report.",
+    "should_trigger": true
+  },
+  {
+    "query": "Build a React component for a pricing card grid.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write SQL to backfill missing invoice totals.",
+    "should_trigger": false
+  },
+  {
+    "query": "Summarize this PR in five bullets.",
+    "should_trigger": false
+  },
+  {
+    "query": "Translate this marketing copy into Spanish.",
+    "should_trigger": false
+  },
+  {
+    "query": "Pipa initiate this project and set up plan-ready context.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa execute this delivery cycle and coordinate active handoffs.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa close this project with signoff, handover, lessons, and archive readiness.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa monitor open work and tell me what needs attention now.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa budget health check for Project Delta.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa risk escalation pass for stuck blockers and owner gaps.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa help",
+    "should_trigger": true
+  }
+]

@@ -1,6 +1,6 @@
 # Agent Notes
 
-This repository stores reusable project management skills for AI agents.
+This repository stores Pipa skills for AI agents. Pipa is the primary PM brain and command router for project delivery work.
 
 ## Expectations
 
@@ -13,3 +13,7 @@ This repository stores reusable project management skills for AI agents.
 - When adding or removing skills, update `README.md` to reflect the current repository state.
 - Keep public eval artifacts generic; store client-specific eval prompts/data in `skills/<skill-name>/evals/private/` (gitignored).
 - For connected-tool workflows, especially Composio-backed ones, prefer concise provenance in the skill contract: name the tools used and cite the specific record IDs, doc names, links, or references that materially support the answer.
+- New PM and delivery workflows normally become Pipa commands or references under `skills/pipa/`, not new top-level PM skills.
+- Reserve standalone skills for high-value, tool/product-specific, safety-sensitive, or independently discoverable workflows.
+- Preserve `agent-audio-brief`, `composio`, `pailflow-triggers`, and `pailflow-workflow-automation` as standalone breakouts unless a future plan explicitly changes that architecture.
+- Keep `skills/pipa/SKILL.md` concise and move detailed command instructions into `skills/pipa/references/`.

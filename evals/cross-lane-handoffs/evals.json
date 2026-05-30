@@ -1,5 +1,5 @@
 {
-  "suite_name": "pm-cross-lane-handoffs",
+  "suite_name": "pipa-cross-lane-handoffs",
   "scope": "adjacent-lane-handoff-gates",
   "artifact_type": "public-generic-eval-suite",
   "shared_output_contract_assertions": [
@@ -14,7 +14,7 @@
     {
       "id": "handoff-initiate-to-plan-1",
       "transition": "initiate -> plan",
-      "prompt": "We finished kickoff notes and rough framing. Can you confirm if we're ready to move into planning and tell me the exact minimum missing inputs if not?",
+      "prompt": "Pipa initiate-to-plan check: we finished kickoff notes and rough framing. Can you confirm if we're ready to move into planning and tell me the exact minimum missing inputs if not?",
       "expected_output": "Validates initiate-to-plan gate readiness against framing, stakeholder map, and charter/viability artifacts; if incomplete, returns blocked state with minimum required inputs.",
       "assertions": [
         "Does the output explicitly evaluate problem framing completeness?",
@@ -29,7 +29,7 @@
     {
       "id": "handoff-plan-to-execute-1",
       "transition": "plan -> execute",
-      "prompt": "Before we start delivery this week, validate whether our plan package is execution-ready. If something is missing, keep the ask minimal and specific.",
+      "prompt": "Pipa plan-to-execute check: before we start delivery this week, validate whether our plan package is execution-ready. If something is missing, keep the ask minimal and specific.",
       "expected_output": "Checks plan-to-execute gate requirements (requirements brief, baseline, roadmap/prioritization, RAID/RACI/decision setup) and returns go or blocked with minimal remediation inputs.",
       "assertions": [
         "Does the output explicitly evaluate requirements brief availability?",
@@ -44,7 +44,7 @@
     {
       "id": "handoff-execute-to-monitor-1",
       "transition": "execute -> monitor",
-      "prompt": "We're mid-delivery and need to switch to monitor rhythm. Confirm if execution artifacts are ready for reliable status/risk monitoring and flag any blocking gaps.",
+      "prompt": "Pipa execute-to-monitor check: we're mid-delivery and need to switch to monitor rhythm. Confirm if execution artifacts are ready for reliable status/risk monitoring and flag any blocking gaps.",
       "expected_output": "Validates execute-to-monitor handoff by checking owner/action/date/status evidence completeness for active execution artifacts; returns monitor-ready or blocked.",
       "assertions": [
         "Does the output explicitly verify owner/action/date/status fields on active execution artifacts?",
@@ -58,7 +58,7 @@
     {
       "id": "handoff-monitor-to-close-1",
       "transition": "monitor -> close",
-      "prompt": "We think this project is near completion. Validate whether we're truly ready to enter close and list any must-fix items first.",
+      "prompt": "Pipa monitor-to-close check: we think this project is near completion. Validate whether we're truly ready to enter close and list any must-fix items first.",
       "expected_output": "Evaluates monitor-to-close gate criteria: acceptance readiness signal, open risk disposition, and closure recommendation with explicit go/blocked outcome.",
       "assertions": [
         "Does the output explicitly evaluate acceptance readiness?",
@@ -72,7 +72,7 @@
     {
       "id": "handoff-close-to-archive-1",
       "transition": "close -> archive",
-      "prompt": "We're wrapping this engagement now. Confirm archive readiness and tell me exactly what still blocks final archive if anything.",
+      "prompt": "Pipa close-to-archive check: we're wrapping this engagement now. Confirm archive readiness and tell me exactly what still blocks final archive if anything.",
       "expected_output": "Checks close-to-archive gate requirements (signoff, handover, lessons learned, archive/benefits record) and returns archive-ready or blocked with minimal final inputs.",
       "assertions": [
         "Does the output explicitly evaluate signoff completion?",
