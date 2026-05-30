@@ -126,6 +126,38 @@ What this skill must determine before presentation:
 
 Do not force a wrapper report shape here. The communication layer should decide how much structure the user sees.
 
+When the user asks for monitor-to-close readiness, return the handoff gate in this structure:
+
+```md
+## Objective
+- Monitor-to-close readiness objective:
+
+## Tool Access Check
+- Tools and systems used:
+- Data sources used:
+- Missing tools or data gaps:
+
+## Current Signal
+- What needs attention now:
+- Closure recommendation: `go` | `go-with-conditions` | `blocked`
+- Acceptance readiness:
+- Open risk disposition:
+
+## Actions
+| Item | Owner | Next action | Due/review date | Status | Evidence/source |
+|------|-------|-------------|-----------------|--------|-----------------|
+| | | | | | |
+
+## Unknowns
+- TBD:
+
+## Follow-ups
+- Minimum must-fix items before close:
+- Next checkpoint:
+```
+
+For monitor-to-close readiness, explicitly evaluate acceptance readiness and open risk disposition before recommending `go`, `go-with-conditions`, or `blocked`.
+
 If the routed result already answers the question directly, do not add a second summary layer on top of it.
 
 ## Rules
