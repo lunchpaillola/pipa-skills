@@ -27,7 +27,7 @@ Before executing, copy this checklist and keep it updated in your working notes:
 Audio Brief Progress
 - [ ] Step 1 complete: source and listening goal confirmed
 - [ ] Step 2 complete: source extracted with safety and provenance recorded
-- [ ] Step 3 complete: 400-450 word spoken brief script created
+- [ ] Step 3 complete: 300-350 word spoken brief script created
 - [ ] Step 4 complete: Kokoro audio generated and duration-checked, or clear failure returned
 - [ ] Step 5 complete: deterministic single-page listening UI generated from template
 - [ ] Step 6 complete: here.now installed/available and page published
@@ -46,7 +46,7 @@ Accept these source modes:
 
 If no usable source is present, ask for a URL, file path, pasted text, or exported markdown. Do not invent document content.
 
-Default output is a 400 to 450 word spoken script, suitable for roughly three minutes of audio. The tone should feel like a sharp teammate walking the listener through the artifact while they are away from the screen. Only depart from that when the user explicitly asks for a shorter quick listen or a deeper listen.
+Default output is a 300 to 350 word spoken script, suitable for roughly two minutes of audio. The tone should feel like a sharp teammate walking the listener through the artifact while they are away from the screen. Only depart from that when the user explicitly asks for a shorter quick listen or a deeper listen.
 
 ### Step 2: Read Source Or Block Clearly
 
@@ -81,7 +81,7 @@ Required structure:
 3. Attention Areas
 4. Takeaway
 
-Default to 400-450 words for a roughly three-minute spoken brief. Select only the attention areas that are useful for the specific artifact. Do not force risk, decisions, dependencies, or routine-versus-novel categories when they do not help the listener.
+Default to 300-350 words for a roughly two-minute spoken brief. Select only the attention areas that are useful for the specific artifact. Do not force risk, decisions, dependencies, or routine-versus-novel categories when they do not help the listener.
 
 Adapt to the artifact type:
 
@@ -92,7 +92,7 @@ Adapt to the artifact type:
 
 The goal is not completeness. The goal is fast orientation, useful judgment, and an immersive listen-first review experience.
 
-Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, sentences mostly around 11-15 words with shorter sentences allowed for emphasis, no sentence over 20 words, and roughly the target length unless the source is short. Hard cap the default brief at 500 words unless the user explicitly asked for a deeper listen. Do not run repeated optimization loops during normal generation.
+Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, sentences mostly around 7-10 words with shorter sentences allowed for emphasis, no sentence over 10 words, and roughly the target length unless the source is short. Hard cap the default brief at 350 words unless the user explicitly asked for a deeper listen. Do not run repeated optimization loops during normal generation.
 
 ### Step 4: Generate Audio With Kokoro
 
@@ -103,7 +103,7 @@ Use `af_heart` as the default voice unless the user asks for another voice.
 Golden path:
 
 1. Always start audio generation through `scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`, then use `scripts/generate-audio-job.sh wait <job-id>` as the normal completion path. If `wait` exits `124` with `audio_job.wait_status=timed_out`, the job may still be running; call `status <job-id>` and continue polling instead of restarting or guessing.
-2. The async job validates word count before setup or generation and blocks default briefs over 500 words.
+2. The async job validates word count before setup or generation and blocks default briefs over 350 words.
 3. By default, generation uses the INT8 Kokoro model, `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`, sentence-by-sentence rendering, and streaming writes to `audio/brief.wav.partial`. Do not increase the phoneme cap unless the user explicitly asks to trade memory for smoother prosody.
 4. If the backend is missing, the async job runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/agent-audio-brief/kokoro-onnx-venv/` and cached INT8 model files under `~/.cache/agent-audio-brief/kokoro-models/v1.0-int8/` by default.
 5. `scripts/setup-kokoro.sh` uses `uv` with Python 3.12 when available, otherwise the first available Python 3.10-3.13 executable. Do not use Python 3.14 for Kokoro generation.

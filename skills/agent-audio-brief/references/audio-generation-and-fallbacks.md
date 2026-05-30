@@ -64,7 +64,7 @@ skills/agent-audio-brief/scripts/generate-audio-job.sh wait <job-id>
 The async job:
 
 - uses `af_heart` by default unless a third voice argument is provided
-- validates script word count before setup or generation and blocks default briefs over `AGENT_AUDIO_BRIEF_MAX_WORDS=500`
+- validates script word count before setup or generation and blocks default briefs over `AGENT_AUDIO_BRIEF_MAX_WORDS=350`
 - creates the cached backend if needed
 - uses the INT8 Kokoro ONNX model by default
 - defaults to `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`
@@ -121,8 +121,8 @@ Do not treat "audio file exists" as success by itself.
 
 The generation job verifies duration using the generated WAV's frame count and sample rate through Python's standard `wave` module. Do not require or install `ffprobe`, `soxi`, `mediainfo`, or other media metadata tools for this skill's normal path. Then compare duration with the script length:
 
-- A 400-450 word default brief should usually land around two to three minutes depending on voice speed.
-- A default brief over 500 words should be trimmed before TTS generation unless the user explicitly requested a deeper listen.
+- A 300-350 word default brief should usually land around two minutes depending on voice speed.
+- A default brief over 350 words should be trimmed before TTS generation unless the user explicitly requested a deeper listen.
 - A generated file under 90 seconds for a 350+ word script is suspicious.
 - A generated file under 30 seconds for a 150+ word script is suspicious.
 - A generated file that cuts off before the final section is not complete, even if its duration is plausible.

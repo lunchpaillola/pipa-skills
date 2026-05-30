@@ -152,7 +152,7 @@ run_generation() {
   fi
   local voices_file="$model_dir/voices-v1.0.bin"
   local max_phonemes="${AGENT_AUDIO_BRIEF_MAX_PHONEMES:-100}"
-  local max_words="${AGENT_AUDIO_BRIEF_MAX_WORDS:-500}"
+  local max_words="${AGENT_AUDIO_BRIEF_MAX_WORDS:-350}"
   local generation_timeout_seconds="${AGENT_AUDIO_BRIEF_GENERATION_TIMEOUT_SECONDS:-1200}"
 
   export OMP_NUM_THREADS="${OMP_NUM_THREADS:-1}"

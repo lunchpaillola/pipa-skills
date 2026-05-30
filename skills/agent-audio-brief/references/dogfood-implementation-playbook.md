@@ -6,7 +6,7 @@ Use this fast path when the user asks to generate and publish an audio brief.
 
 1. Create a temporary artifact directory, for example `.artifacts/audio-briefs/<slug>/`.
 2. Create separate `work/` and `publish/` directories under that artifact directory.
-3. Draft the 400-450 word script into `work/brief-script.txt`.
+3. Draft the 300-350 word script into `work/brief-script.txt`.
 4. Start audio with `scripts/generate-audio-job.sh`, passing absolute or repo-root-relative artifact paths. Let that job create the cached `kokoro-onnx` backend if needed.
 5. Run `scripts/generate-audio-job.sh wait <job-id>` when the caller timeout is long enough, or poll `status <job-id>` manually when it is not; only `audio_job.status=ready`, `audio_job.output_ready=true`, and `audio_job.sanity_check=passed` mean the audio succeeded.
 6. Render `publish/index.html` from `references/listening-page-template.md`; replace placeholders only.
@@ -68,7 +68,7 @@ Use `audio_job.duration_seconds` and `audio_job.duration_label` reported by `scr
 
 Minimum check:
 
-- A 400-450 word default script should not produce a 20-30 second file.
+- A 300-350 word default script should not produce a 20-30 second file.
 - A generated file under 90 seconds for a 350+ word script is suspicious.
 - A generated file under 30 seconds for a 150+ word script is suspicious.
 
