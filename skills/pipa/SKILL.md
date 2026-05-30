@@ -36,8 +36,8 @@ If no command is present, route by natural-language PM intent. If the request is
 
 1. If the first word after Pipa is a known command or alias, use that route.
 2. If no command is present but the request clearly matches a project, delivery, PM, stakeholder, or operational follow-through job, route by intent.
-3. If the request implies recurrence, scheduled future delivery, reminders, or existing automation management, route to `pailflow-workflow-automation` through `references/standalone-invocation.md`.
-4. If the request implies event reaction, webhook, watcher, listener, or trigger management, route to `pailflow-triggers` through `references/standalone-invocation.md`.
+3. If the request implies recurrence, scheduled future delivery, reminders, or existing automation management, route to `pipa-workflow-automation` through `references/standalone-invocation.md`.
+4. If the request implies event reaction, webhook, watcher, listener, or trigger management, route to `pipa-triggers` through `references/standalone-invocation.md`.
 5. If the request requires an external app action through Composio, route to `composio` through `references/standalone-invocation.md` and never guess tool slugs.
 6. Route to `agent-audio-brief` only when the user explicitly asks for an audio, listenable, spoken, phone-friendly, or listening-page brief. Generic “brief this,” “write a brief,” “requirements brief,” or “project brief” stays inside Pipa planning or summarization.
 7. If multiple commands match, choose one primary route and list secondary follow-ups unless the user explicitly asks for a chain.
@@ -50,8 +50,8 @@ If no command is present, route by natural-language PM intent. If the request is
 - `budget` means monitor budget health when wording asks “how are we doing,” burn, forecast, variance, margin, or change control. It means initiate budget setup when wording asks to create, initialize, or refresh a tracker. If ambiguous, ask one short question.
 - `plan` means Pipa planning references, not delegation to another top-level PM skill.
 - `brief` alone is not audio. `audio brief`, `listenable brief`, `spoken walkthrough`, and `phone-friendly review` are audio.
-- Recurring words such as `daily`, `weekly`, `every Monday`, `remind me every`, and `send this every` route to PailFlow automation only when the user asks for future scheduled delivery.
-- Event words such as `when`, `webhook`, `trigger`, `listener`, `watch`, and `on Linear issue created` route to PailFlow triggers only when the user asks for event-driven behavior.
+- Recurring words such as `daily`, `weekly`, `every Monday`, `remind me every`, and `send this every` route to Pipa automation only when the user asks for future scheduled delivery.
+- Event words such as `when`, `webhook`, `trigger`, `listener`, `watch`, and `on Linear issue created` route to Pipa triggers only when the user asks for event-driven behavior.
 
 ## Focused Command Routes
 
@@ -93,6 +93,6 @@ Use these direct mappings when the command or user wording is specific enough. O
 - Do not route generic non-PM coding, writing, or research work into Pipa.
 - Do not present Pipa as an acronym.
 - Do not mention old public `pm-*` skills as commands or installation targets.
-- Do not edit or copy the internals of `agent-audio-brief`, `composio`, `pailflow-triggers`, or `pailflow-workflow-automation`; they remain authoritative standalone workflows.
+- Do not edit or copy the internals of `agent-audio-brief`, `composio`, `pipa-triggers`, or `pipa-workflow-automation`; they remain authoritative standalone workflows.
 - Do not weaken confirmation gates for recurring automations or triggers.
 - Do not invent owners, due dates, source facts, external-app slugs, or project decisions. Use `TBD` for unknowns.

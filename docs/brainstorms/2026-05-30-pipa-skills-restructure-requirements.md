@@ -45,13 +45,13 @@ Impeccable's public docs provide the clearest style and layout reference for Pip
   - **Outcome:** Pipa behaves like one PM brain rather than a command-only tool that fails without exact syntax.
   - **Covered by:** R1, R3, R5, R6
 - F3. Breakout skill discovery flow
-  - **Trigger:** A user needs an adjacent high-value workflow such as audio briefing, Composio-connected tool work, or PailFlow automation/trigger management.
+  - **Trigger:** A user needs an adjacent high-value workflow such as audio briefing, Composio-connected tool work, or Pipa automation/trigger management.
   - **Actors:** A1, A2, A3
   - **Steps:** The workflow remains available as its own top-level skill while Pipa may also reference or route to it where useful.
   - **Outcome:** High-value workflows remain discoverable outside the core PM brain instead of being hidden behind Pipa.
   - **Covered by:** R8, R9, R10
 - F3b. Breakout invocation flow
-  - **Trigger:** A user asks Pipa for an explicit audio/listenable/spoken brief, Composio-connected tool work, PailFlow trigger management, or PailFlow recurring automation work.
+  - **Trigger:** A user asks Pipa for an explicit audio/listenable/spoken brief, Composio-connected tool work, Pipa trigger management, or Pipa recurring automation work.
   - **Actors:** A1, A2
   - **Steps:** Pipa recognizes the intent, loads or invokes the appropriate standalone workflow, preserves that workflow's safety rules, and returns the result through the Pipa interaction surface.
   - **Outcome:** Pipa feels like one skill while still reusing high-value standalone workflows.
@@ -96,11 +96,11 @@ Impeccable's public docs provide the clearest style and layout reference for Pip
 **Breakout skills**
 - R11. `agent-audio-brief` must remain a separately discoverable top-level skill.
 - R12. `composio` must remain a separately discoverable top-level skill.
-- R13. `pailflow-triggers` and `pailflow-workflow-automation` must remain separately discoverable top-level skills.
+- R13. `pipa-triggers` and `pipa-workflow-automation` must remain separately discoverable top-level skills.
 - R14. Breakout skills should be reserved for workflows that are high-value, tool/product-specific, or independently discoverable beyond the core PM brain.
-- R15. Pipa must be able to route into or invoke the audio brief, Composio, PailFlow trigger, and PailFlow recurring automation workflows from the Pipa entry skill.
+- R15. Pipa must be able to route into or invoke the audio brief, Composio, Pipa trigger, and Pipa recurring automation workflows from the Pipa entry skill.
 - R16. When Pipa invokes a standalone workflow, it must preserve that workflow's safety gates, setup checks, required confirmations, and output contracts rather than flattening them into a generic Pipa response.
-- R17. `agent-audio-brief`, `composio`, `pailflow-triggers`, and `pailflow-workflow-automation` must be treated as read-only during this restructure. Agent Audio Brief took significant iteration and should stay exactly as it is; the other named breakout skills should also not be edited.
+- R17. `agent-audio-brief`, `composio`, `pipa-triggers`, and `pipa-workflow-automation` must be treated as read-only during this restructure. Agent Audio Brief took significant iteration and should stay exactly as it is; the other named breakout skills should also not be edited.
 - R17a. Pipa must route to Agent Audio Brief only when the user explicitly asks for an audio, listenable, spoken, listening-page, or phone-friendly brief. Generic “brief this,” “write a brief,” “requirements brief,” or “project brief” language must stay in PM/document workflow routing instead.
 
 **Migration and public documentation**
@@ -129,8 +129,8 @@ Impeccable's public docs provide the clearest style and layout reference for Pip
 
 - AE1. **Covers R3, R5, R6.** Given a user asks “give me a project status update,” when Pipa is available, the agent routes the request to the appropriate status workflow without requiring the user to name the old status skill.
 - AE2. **Covers R4, R8, R9.** Given a user invokes a Pipa command for planning, when the command is recognized, the agent uses the appropriate planning workflow reference instead of delegating to a separate top-level PM router skill.
-- AE3. **Covers R11, R12, R13, R14.** Given a user searches available skills for audio brief, Composio, or PailFlow automation work, when the repository is installed or listed, those workflows remain visible as standalone skills.
-- AE4. **Covers R15, R16, R17.** Given a user asks Pipa to create a recurring PailFlow automation, when Pipa routes the request, Pipa points to the existing automation workflow contract without editing it, and the automation workflow still requires schedule, timezone, delivery destination, execution prompt, and final confirmation before create.
+- AE3. **Covers R11, R12, R13, R14.** Given a user searches available skills for audio brief, Composio, or Pipa automation work, when the repository is installed or listed, those workflows remain visible as standalone skills.
+- AE4. **Covers R15, R16, R17.** Given a user asks Pipa to create a recurring Pipa automation, when Pipa routes the request, Pipa points to the existing automation workflow contract without editing it, and the automation workflow still requires schedule, timezone, delivery destination, execution prompt, and final confirmation before create.
 - AE5. **Covers R15, R16, R17, R17a.** Given a user asks Pipa to make an audio brief from a URL, when Pipa routes the request, Pipa points to the existing Agent Audio Brief workflow without editing it, and the audio brief workflow still verifies source access, creates a spoken brief script, runs the audio generation path, and returns the listening result or a clear blocker.
 - AE5b. **Covers R17a.** Given a user says “brief this PR” without asking for audio, listenable, spoken, listening-page, or phone-friendly output, when Pipa routes the request, it must not route to Agent Audio Brief.
 - AE6. **Covers R18, R19, R20.** Given a user reads the Pipa Skills README after migration, when they look for how to start, the first path teaches the Pipa entry point rather than a list of `pm-*` skill names.
@@ -172,7 +172,7 @@ Impeccable's public docs provide the clearest style and layout reference for Pip
 
 - Maintaining all current PM workflows as independent public top-level skills.
 - Providing compatibility shims for every old `pm-*` skill in the first Pipa release.
-- Editing `agent-audio-brief`, `composio`, `pailflow-triggers`, or `pailflow-workflow-automation` as part of this restructure.
+- Editing `agent-audio-brief`, `composio`, `pipa-triggers`, or `pipa-workflow-automation` as part of this restructure.
 - Reframing Pipa as a generic all-purpose agent brain beyond project, delivery, and PM work.
 - Expanding Pipa into a forced acronym.
 - Treating the PM lifecycle lane taxonomy as the main public product story.
@@ -188,7 +188,7 @@ Impeccable's public docs provide the clearest style and layout reference for Pip
 - Commands replace remembered skill names: The interaction model should resemble one skill with verbs, not a catalog of PM lifecycle skills.
 - PM routers collapse into Pipa: Router behavior remains useful, but it belongs inside the Pipa entry point instead of being exposed as separate skills.
 - Old `pm-*` folders are deleted in the first release: The migration is a clean product simplification, not a long compatibility period.
-- Audio brief, Composio, and PailFlow workflows remain standalone: These are discoverable, high-value, or tool/product-specific enough to justify separate top-level skills.
+- Audio brief, Composio, and Pipa workflows remain standalone: These are discoverable, high-value, or tool/product-specific enough to justify separate top-level skills.
 - Pipa invokes the breakouts too: Standalone discoverability and one-skill invocation are both required, not competing options.
 - Impeccable is the docs/layout model: Pipa should adapt its one-skill, many-commands, grouped-docs structure for PM work.
 - README first, docs site later: The first release should establish the product/documentation shape without requiring a full website build.

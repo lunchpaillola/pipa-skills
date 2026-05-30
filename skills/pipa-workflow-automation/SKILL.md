@@ -1,13 +1,13 @@
 ---
-name: pailflow-workflow-automation
-description: Handle Slack-driven recurring automations for PailFlow. Use this whenever the user wants something sent on a schedule, asks for a recurring report or reminder, says things like daily, weekly, every Monday, every month, recurring, automate this, remind me every, send me every, or wants to delete/check an existing recurring automation in natural language. This skill should also trigger for list/read/delete requests about existing automations, even if the user does not use the word automation.
+name: pipa-workflow-automation
+description: Handle Slack-driven recurring automations for Pipa. Use this whenever the user wants something sent on a schedule, asks for a recurring report or reminder, says things like daily, weekly, every Monday, every month, recurring, automate this, remind me every, send me every, or wants to delete/check an existing recurring automation in natural language. This skill should also trigger for list/read/delete requests about existing automations, even if the user does not use the word automation.
 metadata:
   version: 0.1.0
 ---
 
-# PailFlow Workflow Automation
+# Pipa Workflow Automation
 
-Create, inspect, and delete Slack-driven recurring automations for PailFlow.
+Create, inspect, and delete Slack-driven recurring automations for Pipa.
 
 This skill owns the conversation. The gateway should stay simple: the sandbox figures out intent, gathers missing details, confirms the final plan, and calls the automation API.
 
@@ -319,48 +319,48 @@ This skill expects the following environment variables to be injected by the gat
 
 **Injected by the chat gateway:**
 
-- `PAILFLOW_API_BASE_URL` - Base URL for the automation gateway (e.g., `https://api.pailflow.io` or `http://localhost:4110` in local mode)
-- `PAILFLOW_EXECUTION_SECRET` - Bearer token for authenticating API calls to `/v1/automations`
-- `PAILFLOW_ACCOUNT_ID` - Resolved account ID for the current Slack runtime when available
-- `PAILFLOW_ACCOUNT_NAME` - Human-readable account name when available
-- `PAILFLOW_CREATOR_USER_ID` - Internal creator user ID when available
-- `PAILFLOW_REQUESTER_SLACK_USER_ID` - Slack user ID of the requester when available
-- `PAILFLOW_REQUESTER_SLACK_TEAM_ID` - Slack workspace/team ID for the current runtime when available
+- `PIPA_API_BASE_URL` - Base URL for the automation gateway (e.g., `https://api.pipa.io` or `http://localhost:4110` in local mode)
+- `PIPA_EXECUTION_SECRET` - Bearer token for authenticating API calls to `/v1/automations`
+- `PIPA_ACCOUNT_ID` - Resolved account ID for the current Slack runtime when available
+- `PIPA_ACCOUNT_NAME` - Human-readable account name when available
+- `PIPA_CREATOR_USER_ID` - Internal creator user ID when available
+- `PIPA_REQUESTER_SLACK_USER_ID` - Slack user ID of the requester when available
+- `PIPA_REQUESTER_SLACK_TEAM_ID` - Slack workspace/team ID for the current runtime when available
 
 **Usage in API calls:**
 
 When calling the automation API endpoints, include the token in the Authorization header:
 
 ```
-Authorization: Bearer ${PAILFLOW_EXECUTION_SECRET}
+Authorization: Bearer ${PIPA_EXECUTION_SECRET}
 ```
 
 **Derived from request context:**
 
-- `account_id` - Prefer `PAILFLOW_ACCOUNT_ID` when present instead of asking the user
-- `creator_user_id` - Prefer `PAILFLOW_CREATOR_USER_ID` when present
-- `requester_slack_user_id` - Prefer `PAILFLOW_REQUESTER_SLACK_USER_ID` when present
-- `requester_slack_team_id` - Prefer `PAILFLOW_REQUESTER_SLACK_TEAM_ID` when present
+- `account_id` - Prefer `PIPA_ACCOUNT_ID` when present instead of asking the user
+- `creator_user_id` - Prefer `PIPA_CREATOR_USER_ID` when present
+- `requester_slack_user_id` - Prefer `PIPA_REQUESTER_SLACK_USER_ID` when present
+- `requester_slack_team_id` - Prefer `PIPA_REQUESTER_SLACK_TEAM_ID` when present
 
 The actual HTTP client and authentication handling should use the injected environment variables. Never hardcode credentials in this skill.
 
 ## Execution Contract
 
-When this skill is running inside the PailFlow Slack sandbox, you should assume you can call the automation API directly if these environment variables are present:
+When this skill is running inside the Pipa Slack sandbox, you should assume you can call the automation API directly if these environment variables are present:
 
-- `PAILFLOW_API_BASE_URL`
-- `PAILFLOW_EXECUTION_SECRET`
+- `PIPA_API_BASE_URL`
+- `PIPA_EXECUTION_SECRET`
 
 If both variables are present, do **not** tell the user that you lack API access. Use the available shell/HTTP tooling to call the gateway automation API.
 
-If `PAILFLOW_ACCOUNT_ID` is present, do **not** ask the user for an account ID. Use the injected value.
-If `PAILFLOW_REQUESTER_SLACK_USER_ID` is present, do **not** ask the user for their Slack user ID. Use the injected value.
-If `PAILFLOW_REQUESTER_SLACK_TEAM_ID` is present, do **not** ask the user for their Slack team/workspace ID. Use the injected value.
+If `PIPA_ACCOUNT_ID` is present, do **not** ask the user for an account ID. Use the injected value.
+If `PIPA_REQUESTER_SLACK_USER_ID` is present, do **not** ask the user for their Slack user ID. Use the injected value.
+If `PIPA_REQUESTER_SLACK_TEAM_ID` is present, do **not** ask the user for their Slack team/workspace ID. Use the injected value.
 
 Preferred path:
 
-1. Check that `PAILFLOW_API_BASE_URL` and `PAILFLOW_EXECUTION_SECRET` are present.
-2. If `PAILFLOW_ACCOUNT_ID` is present, use it as `account_id`.
+1. Check that `PIPA_API_BASE_URL` and `PIPA_EXECUTION_SECRET` are present.
+2. If `PIPA_ACCOUNT_ID` is present, use it as `account_id`.
 3. Use `bash` with `curl` to call the gateway endpoint.
 4. Parse the JSON response and continue the user flow.
 
@@ -369,8 +369,8 @@ Only say you are blocked on API access if those environment variables are actual
 Example create call shape:
 
 ```bash
-curl -sS -X POST "$PAILFLOW_API_BASE_URL/v1/automations" \
-  -H "Authorization: Bearer $PAILFLOW_EXECUTION_SECRET" \
+curl -sS -X POST "$PIPA_API_BASE_URL/v1/automations" \
+  -H "Authorization: Bearer $PIPA_EXECUTION_SECRET" \
   -H "Content-Type: application/json" \
   -d '{...json payload...}'
 ```
@@ -378,24 +378,24 @@ curl -sS -X POST "$PAILFLOW_API_BASE_URL/v1/automations" \
 Example list call shape:
 
 ```bash
-curl -sS "$PAILFLOW_API_BASE_URL/v1/automations?account_id=<account_id>" \
-  -H "Authorization: Bearer $PAILFLOW_EXECUTION_SECRET"
+curl -sS "$PIPA_API_BASE_URL/v1/automations?account_id=<account_id>" \
+  -H "Authorization: Bearer $PIPA_EXECUTION_SECRET"
 ```
 
 Example delete call shape:
 
 ```bash
-curl -sS -X DELETE "$PAILFLOW_API_BASE_URL/v1/automations/<id>?account_id=<account_id>" \
-  -H "Authorization: Bearer $PAILFLOW_EXECUTION_SECRET"
+curl -sS -X DELETE "$PIPA_API_BASE_URL/v1/automations/<id>?account_id=<account_id>" \
+  -H "Authorization: Bearer $PIPA_EXECUTION_SECRET"
 ```
 
 Failure rule:
 
 - If the env vars are missing, say exactly which ones are missing.
 - Do not vaguely say the environment lacks direct API access unless you verified the env vars are unavailable.
-- Do not ask the user for `account_id` if `PAILFLOW_ACCOUNT_ID` is already available.
-- Do not ask the user for `requester_slack_user_id` if `PAILFLOW_REQUESTER_SLACK_USER_ID` is already available.
-- Do not ask the user for `requester_slack_team_id` if `PAILFLOW_REQUESTER_SLACK_TEAM_ID` is already available.
+- Do not ask the user for `account_id` if `PIPA_ACCOUNT_ID` is already available.
+- Do not ask the user for `requester_slack_user_id` if `PIPA_REQUESTER_SLACK_USER_ID` is already available.
+- Do not ask the user for `requester_slack_team_id` if `PIPA_REQUESTER_SLACK_TEAM_ID` is already available.
 
 ## API Surface
 

@@ -21,8 +21,8 @@ Current standalone breakouts are:
 
 - `agent-audio-brief`
 - `composio`
-- `pailflow-triggers`
-- `pailflow-workflow-automation`
+- `pipa-triggers`
+- `pipa-workflow-automation`
 
 When adding a standalone skill:
 

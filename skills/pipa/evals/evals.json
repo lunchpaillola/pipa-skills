@@ -96,9 +96,9 @@
     {
       "id": "pipa-automation-positive-1",
       "prompt": "Pipa automate a weekly budget debrief every Monday morning.",
-      "expected_output": "Routes to PailFlow recurring automation and requires schedule, timezone, destination, execution prompt, and final confirmation before create.",
+      "expected_output": "Routes to Pipa recurring automation and requires schedule, timezone, destination, execution prompt, and final confirmation before create.",
       "assertions": [
-        "Does the output route to `pailflow-workflow-automation`?",
+        "Does the output route to `pipa-workflow-automation`?",
         "Does it require schedule/cadence, timezone, destination, execution prompt, and final confirmation before create?",
         "Does it avoid creating the automation before confirmation?"
       ],
@@ -121,9 +121,9 @@
     {
       "id": "pipa-trigger-positive-1",
       "prompt": "Pipa trigger this when a Linear issue is created.",
-      "expected_output": "Routes to PailFlow trigger workflow and requires trigger proposal confirmation before create.",
+      "expected_output": "Routes to Pipa trigger workflow and requires trigger proposal confirmation before create.",
       "assertions": [
-        "Does the output route to `pailflow-triggers`?",
+        "Does the output route to `pipa-triggers`?",
         "Does it require event/source/resource details and final trigger proposal confirmation before create?"
       ],
       "files": [

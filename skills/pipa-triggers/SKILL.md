@@ -1,13 +1,13 @@
 ---
-name: pailflow-triggers
-description: Handle event-triggered automations for PailFlow. Use this whenever the user wants PailFlow to run a workflow when an external event happens, such as a GitHub PR opening, a Linear issue being created, a Slack channel changing, a new ticket arriving, or asks to list, inspect, or delete existing event triggers. This skill owns trigger proposal, confirmation, and gateway trigger-subscription API calls.
+name: pipa-triggers
+description: Handle event-triggered automations for Pipa. Use this whenever the user wants Pipa to run a workflow when an external event happens, such as a GitHub PR opening, a Linear issue being created, a Slack channel changing, a new ticket arriving, or asks to list, inspect, or delete existing event triggers. This skill owns trigger proposal, confirmation, and gateway trigger-subscription API calls.
 metadata:
   version: 0.1.0
 ---
 
-# PailFlow Triggers
+# Pipa Triggers
 
-Create, inspect, and delete event-triggered automations for PailFlow.
+Create, inspect, and delete event-triggered automations for Pipa.
 
 This skill owns the conversation. The gateway should stay simple: the sandbox figures out event intent, gathers missing details, confirms the final trigger proposal, and calls the trigger subscription API.
 
@@ -196,12 +196,12 @@ Use Composio as the V1 trigger provider.
 Provider mapping rules:
 
 - `source_app` should be a stable lowercase app slug, such as `github`, `linear`, or `slack`.
-- `event_type` should be normalized and human-readable to PailFlow, such as `pull_request.opened` or `issue.created`.
+- `event_type` should be normalized and human-readable to Pipa, such as `pull_request.opened` or `issue.created`.
 - `provider_trigger_slug` should be the exact Composio trigger slug for the chosen app/event.
 - `config_json` should contain only the provider config needed to create the trigger.
 - `resource_ref` should describe the watched resource in provider-agnostic terms when possible.
 - `scopes` should name only the scopes or permissions needed for the trigger.
-- Do not set `external_user_id`; the gateway uses the canonical PailFlow owner user ID as the Composio user key.
+- Do not set `external_user_id`; the gateway uses the canonical Pipa owner user ID as the Composio user key.
 
 Always use a catalog-first process for provider trigger setup:
 
@@ -354,48 +354,48 @@ This skill expects the following environment variables to be injected by the gat
 
 **Injected by the chat gateway:**
 
-- `PAILFLOW_API_BASE_URL` - Base URL for the automation gateway, such as `https://api.pailflow.io` or `http://localhost:4110` in local mode
-- `PAILFLOW_EXECUTION_SECRET` - Bearer token for authenticating API calls to `/v1/trigger-subscriptions`
-- `PAILFLOW_ACCOUNT_ID` - Resolved account ID for the current Slack runtime when available
-- `PAILFLOW_ACCOUNT_NAME` - Human-readable account name when available
-- `PAILFLOW_CREATOR_USER_ID` - Internal creator user ID when available
-- `PAILFLOW_REQUESTER_SLACK_USER_ID` - Slack user ID of the requester when available
-- `PAILFLOW_REQUESTER_SLACK_TEAM_ID` - Slack workspace/team ID for the current runtime when available
+- `PIPA_API_BASE_URL` - Base URL for the automation gateway, such as `https://api.pipa.io` or `http://localhost:4110` in local mode
+- `PIPA_EXECUTION_SECRET` - Bearer token for authenticating API calls to `/v1/trigger-subscriptions`
+- `PIPA_ACCOUNT_ID` - Resolved account ID for the current Slack runtime when available
+- `PIPA_ACCOUNT_NAME` - Human-readable account name when available
+- `PIPA_CREATOR_USER_ID` - Internal creator user ID when available
+- `PIPA_REQUESTER_SLACK_USER_ID` - Slack user ID of the requester when available
+- `PIPA_REQUESTER_SLACK_TEAM_ID` - Slack workspace/team ID for the current runtime when available
 
 **Usage in API calls:**
 
 When calling the trigger subscription API endpoints, include the token in the Authorization header:
 
 ```text
-Authorization: Bearer ${PAILFLOW_EXECUTION_SECRET}
+Authorization: Bearer ${PIPA_EXECUTION_SECRET}
 ```
 
 **Derived from request context:**
 
-- `account_id` - Prefer `PAILFLOW_ACCOUNT_ID` when present instead of asking the user
-- `creator_user_id` - Prefer `PAILFLOW_CREATOR_USER_ID` when present
-- `requester_slack_user_id` - Prefer `PAILFLOW_REQUESTER_SLACK_USER_ID` when present
-- `requester_slack_team_id` - Prefer `PAILFLOW_REQUESTER_SLACK_TEAM_ID` when present
+- `account_id` - Prefer `PIPA_ACCOUNT_ID` when present instead of asking the user
+- `creator_user_id` - Prefer `PIPA_CREATOR_USER_ID` when present
+- `requester_slack_user_id` - Prefer `PIPA_REQUESTER_SLACK_USER_ID` when present
+- `requester_slack_team_id` - Prefer `PIPA_REQUESTER_SLACK_TEAM_ID` when present
 
 Never hardcode credentials in this skill.
 
 ## Execution Contract
 
-When this skill is running inside the PailFlow Slack sandbox, assume you can call the trigger subscription API directly if these environment variables are present:
+When this skill is running inside the Pipa Slack sandbox, assume you can call the trigger subscription API directly if these environment variables are present:
 
-- `PAILFLOW_API_BASE_URL`
-- `PAILFLOW_EXECUTION_SECRET`
+- `PIPA_API_BASE_URL`
+- `PIPA_EXECUTION_SECRET`
 
 If both variables are present, do **not** tell the user that you lack API access. Use the available shell/HTTP tooling to call the gateway trigger API.
 
-If `PAILFLOW_ACCOUNT_ID` is present, do **not** ask the user for an account ID. Use the injected value.
-If `PAILFLOW_REQUESTER_SLACK_USER_ID` is present, do **not** ask the user for their Slack user ID. Use the injected value.
-If `PAILFLOW_REQUESTER_SLACK_TEAM_ID` is present, do **not** ask the user for their Slack team/workspace ID. Use the injected value.
+If `PIPA_ACCOUNT_ID` is present, do **not** ask the user for an account ID. Use the injected value.
+If `PIPA_REQUESTER_SLACK_USER_ID` is present, do **not** ask the user for their Slack user ID. Use the injected value.
+If `PIPA_REQUESTER_SLACK_TEAM_ID` is present, do **not** ask the user for their Slack team/workspace ID. Use the injected value.
 
 Preferred path:
 
-1. Check that `PAILFLOW_API_BASE_URL` and `PAILFLOW_EXECUTION_SECRET` are present.
-2. If `PAILFLOW_ACCOUNT_ID` is present, use it as `account_id`.
+1. Check that `PIPA_API_BASE_URL` and `PIPA_EXECUTION_SECRET` are present.
+2. If `PIPA_ACCOUNT_ID` is present, use it as `account_id`.
 3. Use `bash` with `curl` to call the gateway endpoint.
 4. Parse the JSON response and continue the user flow.
 
@@ -404,8 +404,8 @@ Only say you are blocked on API access if those environment variables are actual
 Example create call shape:
 
 ```bash
-curl -sS -X POST "$PAILFLOW_API_BASE_URL/v1/trigger-subscriptions" \
-  -H "Authorization: Bearer $PAILFLOW_EXECUTION_SECRET" \
+curl -sS -X POST "$PIPA_API_BASE_URL/v1/trigger-subscriptions" \
+  -H "Authorization: Bearer $PIPA_EXECUTION_SECRET" \
   -H "Content-Type: application/json" \
   -d '{...json payload...}'
 ```
@@ -413,38 +413,38 @@ curl -sS -X POST "$PAILFLOW_API_BASE_URL/v1/trigger-subscriptions" \
 Example trigger catalog list call:
 
 ```bash
-curl -sS "$PAILFLOW_API_BASE_URL/v1/trigger-types?toolkit=<toolkit>" \
-  -H "Authorization: Bearer $PAILFLOW_EXECUTION_SECRET"
+curl -sS "$PIPA_API_BASE_URL/v1/trigger-types?toolkit=<toolkit>" \
+  -H "Authorization: Bearer $PIPA_EXECUTION_SECRET"
 ```
 
 Example trigger catalog detail call:
 
 ```bash
-curl -sS "$PAILFLOW_API_BASE_URL/v1/trigger-types/<provider_trigger_slug>" \
-  -H "Authorization: Bearer $PAILFLOW_EXECUTION_SECRET"
+curl -sS "$PIPA_API_BASE_URL/v1/trigger-types/<provider_trigger_slug>" \
+  -H "Authorization: Bearer $PIPA_EXECUTION_SECRET"
 ```
 
 Example list call shape:
 
 ```bash
-curl -sS "$PAILFLOW_API_BASE_URL/v1/trigger-subscriptions?account_id=<account_id>" \
-  -H "Authorization: Bearer $PAILFLOW_EXECUTION_SECRET"
+curl -sS "$PIPA_API_BASE_URL/v1/trigger-subscriptions?account_id=<account_id>" \
+  -H "Authorization: Bearer $PIPA_EXECUTION_SECRET"
 ```
 
 Example delete call shape:
 
 ```bash
-curl -sS -X DELETE "$PAILFLOW_API_BASE_URL/v1/trigger-subscriptions/<id>?account_id=<account_id>" \
-  -H "Authorization: Bearer $PAILFLOW_EXECUTION_SECRET"
+curl -sS -X DELETE "$PIPA_API_BASE_URL/v1/trigger-subscriptions/<id>?account_id=<account_id>" \
+  -H "Authorization: Bearer $PIPA_EXECUTION_SECRET"
 ```
 
 Failure rule:
 
 - If the env vars are missing, say exactly which ones are missing.
 - Do not vaguely say the environment lacks direct API access unless you verified the env vars are unavailable.
-- Do not ask the user for `account_id` if `PAILFLOW_ACCOUNT_ID` is already available.
-- Do not ask the user for `requester_slack_user_id` if `PAILFLOW_REQUESTER_SLACK_USER_ID` is already available.
-- Do not ask the user for `requester_slack_team_id` if `PAILFLOW_REQUESTER_SLACK_TEAM_ID` is already available.
+- Do not ask the user for `account_id` if `PIPA_ACCOUNT_ID` is already available.
+- Do not ask the user for `requester_slack_user_id` if `PIPA_REQUESTER_SLACK_USER_ID` is already available.
+- Do not ask the user for `requester_slack_team_id` if `PIPA_REQUESTER_SLACK_TEAM_ID` is already available.
 
 ## API Surface
 

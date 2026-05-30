@@ -4,7 +4,7 @@ Pipa is one PM brain for project delivery work. Instead of asking an agent to ch
 
 This repository contains reusable AI agent skills for project managers, delivery managers, implementation teams, and professional services teams that need sharper planning, status, triage, follow-through, and closeout.
 
-Built by [Lola](https://www.linkedin.com/in/lolaojabowale) at [Lunch Pail Labs](https://lunchpaillabs.com). Want a managed setup for these workflows in real client delivery environments? See [PailFlow](https://pailflow.com).
+Built by [Lola](https://www.linkedin.com/in/lolaojabowale) at [Lunch Pail Labs](https://lunchpaillabs.com). Want a managed setup for these workflows in real client delivery environments? See [Pipa](https://www.usepipa.com/).
 
 ## Why Pipa
 
@@ -27,7 +27,7 @@ Pipa turns those asks into one primary route, runs the matching PM workflow, and
 | Execute | `Pipa execute`, `Pipa coordinate`, `Pipa iteration`, `Pipa change`, `Pipa handoff` | Coordinate active work, cycles, changes, dependencies, and handoffs. |
 | Monitor | `Pipa status`, `Pipa triage`, `Pipa budget`, `Pipa risk`, `Pipa escalate` | Produce status, intake triage, budget health, blocker follow-through, and escalation paths. |
 | Close | `Pipa close`, `Pipa signoff`, `Pipa handover`, `Pipa lessons`, `Pipa archive` | Confirm acceptance, transition ownership, capture lessons, review benefits, and package closure records. |
-| Connected | `Pipa audio brief`, `Pipa automate`, `Pipa trigger`, `Pipa composio` | Route into standalone skills for audio briefs, recurring PailFlow automations, event triggers, and external app actions. |
+| Connected | `Pipa audio brief`, `Pipa automate`, `Pipa trigger`, `Pipa composio` | Route into standalone skills for audio briefs, recurring Pipa automations, event triggers, and external app actions. |
 | Help | `Pipa help`, `Pipa menu`, bare `Pipa` | Show recommended next commands and the full grouped menu. |
 
 Pipa also handles natural-language PM requests. For example, “give me a project status update” routes to `Pipa status`; “plan this work” routes to `Pipa plan`; “send this every Friday” routes to `Pipa automate`.
@@ -52,8 +52,8 @@ These remain separately discoverable because they are tool-specific, safety-sens
 |---|---|
 | [`agent-audio-brief`](skills/agent-audio-brief/) | Turns agent sessions, PRs, plans, specs, docs, URLs, and pasted markdown into a Kokoro-generated listenable brief published as a here.now listening page. |
 | [`composio`](skills/composio/) | Routes external app work through Composio with setup/auth checks, search/link/execute discipline, and concise provenance. |
-| [`pailflow-triggers`](skills/pailflow-triggers/) | Creates, inspects, and deletes event-triggered PailFlow automations with explicit trigger proposal confirmation. |
-| [`pailflow-workflow-automation`](skills/pailflow-workflow-automation/) | Creates, inspects, and deletes recurring Slack-driven PailFlow automations with schedule, timezone, destination, prompt, and final confirmation gates. |
+| [`pipa-triggers`](skills/pipa-triggers/) | Creates, inspects, and deletes event-triggered Pipa automations with explicit trigger proposal confirmation. |
+| [`pipa-workflow-automation`](skills/pipa-workflow-automation/) | Creates, inspects, and deletes recurring Slack-driven Pipa automations with schedule, timezone, destination, prompt, and final confirmation gates. |
 
 Pipa can route into these workflows, but their own `SKILL.md` files remain authoritative.
 
@@ -64,8 +64,8 @@ Pipa can route into these workflows, but their own `SKILL.md` files remain autho
 | [`pipa`](skills/pipa/) | Primary PM brain and command router for project delivery work. |
 | [`agent-audio-brief`](skills/agent-audio-brief/) | Work-artifact audio briefing workflow. |
 | [`composio`](skills/composio/) | Connected-tool workflow through Composio. |
-| [`pailflow-triggers`](skills/pailflow-triggers/) | Event-triggered PailFlow automation workflow. |
-| [`pailflow-workflow-automation`](skills/pailflow-workflow-automation/) | Recurring PailFlow automation workflow. |
+| [`pipa-triggers`](skills/pipa-triggers/) | Event-triggered Pipa automation workflow. |
+| [`pipa-workflow-automation`](skills/pipa-workflow-automation/) | Recurring Pipa automation workflow. |
 
 ## Installation
 
@@ -105,8 +105,8 @@ skills/
     evals/
   agent-audio-brief/
   composio/
-  pailflow-triggers/
-  pailflow-workflow-automation/
+  pipa-triggers/
+  pipa-workflow-automation/
 docs/
 evals/
 tasks/

@@ -34,11 +34,11 @@ The current repo has strong PM workflow coverage, but users must choose among ma
 - R10. Preserve shared PM communication behavior as a common Pipa reference or contract.
 - R11. Keep `agent-audio-brief` as a separately discoverable top-level skill.
 - R12. Keep `composio` as a separately discoverable top-level skill.
-- R13. Keep `pailflow-triggers` and `pailflow-workflow-automation` as separately discoverable top-level skills.
+- R13. Keep `pipa-triggers` and `pipa-workflow-automation` as separately discoverable top-level skills.
 - R14. Reserve breakout skills for high-value, tool/product-specific, or independently discoverable workflows.
-- R15. Let Pipa route into audio brief, Composio, PailFlow trigger, and PailFlow recurring automation workflows.
+- R15. Let Pipa route into audio brief, Composio, Pipa trigger, and Pipa recurring automation workflows.
 - R16. Preserve breakout workflow safety gates, setup checks, confirmations, and output contracts when Pipa routes into them.
-- R17. Treat `agent-audio-brief`, `composio`, `pailflow-triggers`, and `pailflow-workflow-automation` as read-only during this restructure. Agent Audio Brief took significant iteration and should stay exactly as it is; the other named breakout skills should also not be edited.
+- R17. Treat `agent-audio-brief`, `composio`, `pipa-triggers`, and `pipa-workflow-automation` as read-only during this restructure. Agent Audio Brief took significant iteration and should stay exactly as it is; the other named breakout skills should also not be edited.
 - R18. Remove old standalone `pm-*` skill folders in the first Pipa release rather than keeping compatibility shims.
 - R19. Lead README with the Pipa mental model before detailed command coverage.
 - R20. Teach users to install/invoke Pipa first and document breakout skills separately.
@@ -56,7 +56,7 @@ The current repo has strong PM workflow coverage, but users must choose among ma
 
 **Origin actors:** A1 User, A2 Agent, A3 Maintainer, A4 Downstream planner/implementer
 **Origin flows:** F1 explicit command routing, F2 natural-language routing, F3 breakout discovery, F3b breakout invocation, F4 repository migration, F5 documentation navigation, F6 evaluation
-**Origin acceptance examples:** AE1 status routing, AE2 planning routing, AE3 breakout discovery, AE4 PailFlow automation safety, AE5 audio brief routing, AE6 README start path, AE7 command docs, AE8 public copy, AE9 eval coverage
+**Origin acceptance examples:** AE1 status routing, AE2 planning routing, AE3 breakout discovery, AE4 Pipa automation safety, AE5 audio brief routing, AE6 README start path, AE7 command docs, AE8 public copy, AE9 eval coverage
 
 ---
 
@@ -74,7 +74,7 @@ The current repo has strong PM workflow coverage, but users must choose among ma
 
 - Maintaining all current PM workflows as independent public top-level skills.
 - Providing compatibility shims for every old `pm-*` skill in the first Pipa release.
-- Editing `agent-audio-brief`, `composio`, `pailflow-triggers`, or `pailflow-workflow-automation` as part of this restructure.
+- Editing `agent-audio-brief`, `composio`, `pipa-triggers`, or `pipa-workflow-automation` as part of this restructure.
 - Reframing Pipa as a generic all-purpose agent brain beyond project, delivery, and PM work.
 - Expanding Pipa into a forced acronym.
 - Treating the PM lifecycle lane taxonomy as the main public product story.
@@ -97,7 +97,7 @@ The current repo has strong PM workflow coverage, but users must choose among ma
 - `skills/pm-communication-style/SKILL.md` is a shared presentation contract referenced by PM skills and `skills/agent-audio-brief/SKILL.md`.
 - `skills/agent-audio-brief/SKILL.md` has source safety, Kokoro generation, publishing, and cleanup rules, plus scripts under `skills/agent-audio-brief/scripts/`.
 - `skills/composio/SKILL.md` and `skills/composio/rules/` cover external app access, setup/auth, search/link/execute, and no guessed tool slugs.
-- `skills/pailflow-triggers/SKILL.md` and `skills/pailflow-workflow-automation/SKILL.md` contain required-input and explicit-confirmation gates for ongoing access.
+- `skills/pipa-triggers/SKILL.md` and `skills/pipa-workflow-automation/SKILL.md` contain required-input and explicit-confirmation gates for ongoing access.
 - Existing evals use lightweight JSON under `skills/*/evals/` and `evals/cross-lane-handoffs/evals.json`.
 - `scripts/validate_skill_frontmatter.rb` and `.github/workflows/validate-skill-frontmatter.yml` validate skill frontmatter.
 
@@ -211,8 +211,8 @@ Runtime routing rules should follow this order:
 
 1. If the first word is a known Pipa command or alias, load the mapped reference or standalone workflow.
 2. If no command is present but the request clearly matches a PM job, route by natural-language intent.
-3. If the request implies recurrence, future scheduled delivery, or existing automation management, route to PailFlow automation rather than one-time PM execution.
-4. If the request implies event reaction, webhook, watcher, listener, or trigger management, route to PailFlow triggers.
+3. If the request implies recurrence, future scheduled delivery, or existing automation management, route to Pipa automation rather than one-time PM execution.
+4. If the request implies event reaction, webhook, watcher, listener, or trigger management, route to Pipa triggers.
 5. If the request requires external app actions through Composio, route to Composio and preserve search/link/execute discipline.
 6. If the request explicitly asks for an audio brief, listenable brief, spoken walkthrough, listening page, or phone-friendly audio review for a work artifact, route to Agent Audio Brief and preserve source safety and publishing rules. Do not route generic “brief this,” “write a brief,” “requirements brief,” or “project brief” language to Agent Audio Brief.
 7. If multiple commands match, choose one primary route and list secondary follow-ups unless the user explicitly asks for a chain.
@@ -338,7 +338,7 @@ Runtime routing rules should follow this order:
 
 ### U3. Wire Pipa invocation to read-only standalone breakouts
 
-**Goal:** Keep `agent-audio-brief`, `composio`, `pailflow-triggers`, and `pailflow-workflow-automation` exactly as they are while making Pipa able to route into them without weakening safety gates.
+**Goal:** Keep `agent-audio-brief`, `composio`, `pipa-triggers`, and `pipa-workflow-automation` exactly as they are while making Pipa able to route into them without weakening safety gates.
 
 **Requirements:** R11, R12, R13, R14, R15, R16, R17; F3, F3b; AE3, AE4, AE5
 
@@ -349,21 +349,21 @@ Runtime routing rules should follow this order:
 - Modify: `skills/pipa/references/standalone-invocation.md`
 - Read-only: `skills/agent-audio-brief/SKILL.md`
 - Read-only: `skills/composio/SKILL.md`
-- Read-only: `skills/pailflow-triggers/SKILL.md`
-- Read-only: `skills/pailflow-workflow-automation/SKILL.md`
+- Read-only: `skills/pipa-triggers/SKILL.md`
+- Read-only: `skills/pipa-workflow-automation/SKILL.md`
 - Test: `skills/pipa/evals/evals.json`
 - Test: `skills/pipa/evals/trigger-eval-set.json`
 
 **Approach:**
 - In Pipa, state that standalone workflows are authoritative when routed: follow their `SKILL.md`, setup checks, required inputs, confirmation gates, blockers, and output contract.
 - Add command aliases or routing entries for likely user language: explicit audio/listenable brief language for Agent Audio Brief, `composio` or external-app action language for Composio, `trigger` for event-driven workflows, and `automate` or recurring language for recurring automations.
-- Do not edit `agent-audio-brief`, `composio`, `pailflow-triggers`, or `pailflow-workflow-automation` in this restructure. Agent Audio Brief took significant iteration and should remain exactly as-is.
+- Do not edit `agent-audio-brief`, `composio`, `pipa-triggers`, or `pipa-workflow-automation` in this restructure. Agent Audio Brief took significant iteration and should remain exactly as-is.
 - Do not copy standalone workflow logic into Pipa. Pipa should point to the existing standalone workflow as authoritative; copying creates drift.
 - If implementation discovers a dangling dependency from a read-only breakout to deleted PM content, stop and raise it as a plan issue instead of editing the breakout skill.
 
 **Patterns to follow:**
-- `skills/pailflow-workflow-automation/SKILL.md` for schedule/timezone/destination/prompt confirmation.
-- `skills/pailflow-triggers/SKILL.md` for event trigger confirmation and stale-event rules.
+- `skills/pipa-workflow-automation/SKILL.md` for schedule/timezone/destination/prompt confirmation.
+- `skills/pipa-triggers/SKILL.md` for event trigger confirmation and stale-event rules.
 - `skills/composio/SKILL.md` and `skills/composio/rules/` for search/link/execute and no guessed slugs.
 - `skills/agent-audio-brief/SKILL.md` for source safety, audio generation, publishing, and clear blockers.
 
@@ -371,15 +371,15 @@ Runtime routing rules should follow this order:
 - Covers AE4. `Pipa automate a weekly budget debrief every Monday` routes to recurring automation and still requires schedule, timezone, destination, execution prompt, and confirmation.
 - Covers AE5. `Pipa make an audio brief from this URL` routes to audio brief and preserves source extraction, script generation, audio generation, and blocker behavior.
 - Happy path: `Pipa use Composio to create a GitHub issue` routes to Composio search/link/execute discipline and does not invent a tool slug.
-- Happy path: `Pipa trigger this when a Linear issue is created` routes to PailFlow trigger workflow and requires trigger proposal confirmation before create.
+- Happy path: `Pipa trigger this when a Linear issue is created` routes to Pipa trigger workflow and requires trigger proposal confirmation before create.
 - Negative: `give me a weekly status update now` should not create a recurring automation unless the user asks for future recurring delivery.
 - Negative: `brief this PR` should not route to Agent Audio Brief unless the user asks for an audio, listenable, spoken, or phone-friendly brief.
 - Negative: `summarize this PR` should not route to Agent Audio Brief unless the user asks for an audio, listenable, spoken, or phone-friendly brief.
-- Negative: a PailFlow create request without final confirmation must not proceed to create.
+- Negative: a Pipa create request without final confirmation must not proceed to create.
 
 **Verification:**
 - Breakout skills remain present under `skills/`.
-- Git diff shows no modifications inside `skills/agent-audio-brief/`, `skills/composio/`, `skills/pailflow-triggers/`, or `skills/pailflow-workflow-automation/`.
+- Git diff shows no modifications inside `skills/agent-audio-brief/`, `skills/composio/`, `skills/pipa-triggers/`, or `skills/pipa-workflow-automation/`.
 - Pipa routing references the standalone workflows without duplicating all specialized rules.
 - Any discovered read-only breakout dependency on deleted PM content is called out for user decision rather than silently changed.
 
@@ -418,7 +418,7 @@ Runtime routing rules should follow this order:
 - Happy path: natural-language PM requests trigger Pipa and select the expected workflow reference.
 - Happy path: no-argument Pipa help/menu returns grouped commands and recommended next commands.
 - Integration: cross-lane handoff evals still validate initiate-to-plan, plan-to-execute, execute-to-monitor, monitor-to-close, and close-to-archive behavior after naming updates.
-- Negative: one-time PM work does not become a PailFlow automation.
+- Negative: one-time PM work does not become a Pipa automation.
 - Negative: event-trigger language requires trigger workflow and confirmation.
 - Negative: Composio flow must not guess slugs.
 - Negative: generic `brief this PR` does not route to Agent Audio Brief.
@@ -526,7 +526,7 @@ Runtime routing rules should follow this order:
 - `AGENTS.md` requirement to update README when skills are added or removed.
 
 **Test scenarios:**
-- Happy path: current public skill list includes `pipa`, `agent-audio-brief`, `composio`, `pailflow-triggers`, and `pailflow-workflow-automation`.
+- Happy path: current public skill list includes `pipa`, `agent-audio-brief`, `composio`, `pipa-triggers`, and `pipa-workflow-automation`.
 - Error path: stale-reference scan finds no live skill instructions pointing to deleted `pm-*` paths.
 - Integration: Pipa evals still cover migrated PM workflows after old folders are removed.
 - Integration: standalone skills still validate and still route independently.
@@ -570,7 +570,7 @@ Runtime routing rules should follow this order:
 - Happy path: all remaining skill frontmatter passes validation.
 - Happy path: Pipa trigger eval positives cover each command group.
 - Negative: Pipa trigger eval negatives prevent non-PM requests from overtriggering.
-- Negative: safety evals catch skipped PailFlow confirmation or guessed Composio slug behavior.
+- Negative: safety evals catch skipped Pipa confirmation or guessed Composio slug behavior.
 - Docs check: README and CONTRIBUTING do not contradict Pipa-first architecture.
 
 **Verification:**
@@ -581,9 +581,9 @@ Runtime routing rules should follow this order:
 
 ## System-Wide Impact
 
-- **Interaction graph:** Pipa becomes the primary PM entry point. It loads internal PM references and routes to standalone skills for audio brief, Composio, PailFlow triggers, and PailFlow automations.
+- **Interaction graph:** Pipa becomes the primary PM entry point. It loads internal PM references and routes to standalone skills for audio brief, Composio, Pipa triggers, and Pipa automations.
 - **Error propagation:** Breakout blockers must remain owned by their workflows. Pipa should not turn setup/auth/source/confirmation blockers into generic PM responses.
-- **State lifecycle risks:** PailFlow recurring automation and trigger workflows create ongoing behavior; confirmation gates and scoped-account behavior must survive Pipa routing.
+- **State lifecycle risks:** Pipa recurring automation and trigger workflows create ongoing behavior; confirmation gates and scoped-account behavior must survive Pipa routing.
 - **API surface parity:** Public skill list, README install examples, eval files, and skill frontmatter all change together.
 - **Integration coverage:** Eval coverage should prove both direct Pipa commands and natural-language routing, plus standalone invocation paths.
 - **Unchanged invariants:** Standalone breakouts remain installable/discoverable as separate skills. PM outputs still preserve owners, actions, dates, status, evidence, unknowns, and source gaps.
@@ -598,7 +598,7 @@ Runtime routing rules should follow this order:
 | Deleting `pm-*` folders removes useful workflow logic | Move PM content into references before deletion and verify every old skill has a destination. |
 | Deleting `pm-*` folders removes eval coverage | Migrate representative evals into Pipa evals before deletion. |
 | `pm-communication-style` deletion breaks standalone audio brief or PM references | Move style contract into Pipa references and make standalone skills self-contained or point to a safe shared reference. |
-| Pipa weakens PailFlow confirmations or Composio verification | Add explicit standalone invocation rule and negative evals for skipped confirmation or guessed slug behavior. |
+| Pipa weakens Pipa confirmations or Composio verification | Add explicit standalone invocation rule and negative evals for skipped confirmation or guessed slug behavior. |
 | README drifts back into catalog mode | Use Impeccable-inspired structure and docs acceptance checks. |
 | Existing eval assertions are stale | Audit migrated PM assertions during migration; do not edit read-only breakout evals as part of this restructure. |
 | Versioning churn during draft work | Do not bump versions or `VERSIONS.md` until merge-finalization. |
@@ -609,7 +609,7 @@ Runtime routing rules should follow this order:
 
 - Keep old `pm-*` skills as shims: Rejected because the requirements call for a clean first release and curation improves trigger reliability.
 - Keep both Pipa and all old PM skills fully maintained: Rejected because it preserves catalog sprawl and doubles maintenance.
-- Move every standalone workflow fully inside Pipa: Rejected because audio brief, Composio, and PailFlow workflows are discoverable and safety-sensitive enough to remain standalone.
+- Move every standalone workflow fully inside Pipa: Rejected because audio brief, Composio, and Pipa workflows are discoverable and safety-sensitive enough to remain standalone.
 - Build a full Pipa docs site in v1: Deferred because README and skill docs can establish the product shape with lower carrying cost.
 
 ---
@@ -633,8 +633,8 @@ Runtime routing rules should follow this order:
 - Current PM router example: [skills/pm-monitor/SKILL.md](../../skills/pm-monitor/SKILL.md)
 - Audio brief skill: [skills/agent-audio-brief/SKILL.md](../../skills/agent-audio-brief/SKILL.md)
 - Composio skill: [skills/composio/SKILL.md](../../skills/composio/SKILL.md)
-- PailFlow triggers skill: [skills/pailflow-triggers/SKILL.md](../../skills/pailflow-triggers/SKILL.md)
-- PailFlow automation skill: [skills/pailflow-workflow-automation/SKILL.md](../../skills/pailflow-workflow-automation/SKILL.md)
+- Pipa triggers skill: [skills/pipa-triggers/SKILL.md](../../skills/pipa-triggers/SKILL.md)
+- Pipa automation skill: [skills/pipa-workflow-automation/SKILL.md](../../skills/pipa-workflow-automation/SKILL.md)
 - Cross-lane evals: [evals/cross-lane-handoffs/evals.json](../../evals/cross-lane-handoffs/evals.json)
 - Impeccable docs reference: [https://impeccable.style/docs/](https://impeccable.style/docs/)
 - Impeccable repository reference: [https://github.com/pbakaus/impeccable](https://github.com/pbakaus/impeccable)
