@@ -1,0 +1,235 @@
+{
+  "skill_name": "pipa",
+  "suite_name": "pipa-command-routing",
+  "artifact_type": "public-generic-eval-suite",
+  "evals": [
+    {
+      "id": "pipa-explicit-status-1",
+      "prompt": "Pipa status for the steering meeting. I need current state, what changed this week, blockers, and decisions needed.",
+      "expected_output": "Routes to Pipa monitor status reference and returns a leadership-ready status signal without exposing old public PM skill names.",
+      "assertions": [
+        "Does the output select `status` or monitor status as the primary Pipa route?",
+        "Does the output avoid naming deleted top-level PM skills as the user-facing command?",
+        "Does the output include current state, changes, blockers, decisions needed, owner follow-through, and source gaps?",
+        "Are unknown owners, dates, or source details represented as `TBD`?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-explicit-triage-1",
+      "prompt": "Pipa triage these customer tickets and tell me what needs response today.",
+      "expected_output": "Routes to Pipa monitor ticket triage and produces an attention-first triage output.",
+      "assertions": [
+        "Does the output select ticket/intake triage as the primary route?",
+        "Does it separate response-needed items from lower-priority items?",
+        "Does each action include owner, next action, status, and evidence/source or `TBD`?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-budget-tiebreak-1",
+      "prompt": "Pipa budget",
+      "expected_output": "Asks one clarifying question or states the budget setup vs budget health tie-breaker instead of guessing silently.",
+      "assertions": [
+        "Does the output avoid silently choosing setup or health when the prompt is ambiguous?",
+        "Does the clarification distinguish budget tracker setup from budget health review?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-plan-reference-1",
+      "prompt": "Pipa plan this onboarding work. Requirements are scattered, timeline pressure is high, and ownership is fuzzy.",
+      "expected_output": "Routes to Pipa planning references, selects one primary planning mode, and lists secondary follow-ups.",
+      "assertions": [
+        "Does the output use Pipa plan/reference dispatch rather than delegating to a public PM skill?",
+        "Does it select one primary planning mode?",
+        "Does it preserve requirements, baseline, roadmap, RAID/RACI, and decision setup as possible follow-ups?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-help-menu-1",
+      "prompt": "Pipa help",
+      "expected_output": "Returns recommended next commands plus grouped command menu.",
+      "assertions": [
+        "Does the output recommend 2-3 likely next commands or the default starting path?",
+        "Does it group commands by user job or lifecycle category?",
+        "Does it list connected workflows separately from core PM commands?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-audio-positive-1",
+      "prompt": "Pipa audio brief this requirements doc so I can listen to it on my phone.",
+      "expected_output": "Routes to agent-audio-brief and preserves source extraction, audio generation, publishing, and blocker behavior.",
+      "assertions": [
+        "Does the output route to `agent-audio-brief` because the user explicitly asked for audio/listenable output?",
+        "Does it preserve source-readability blockers instead of producing a degraded audio brief?",
+        "Does it preserve the standalone workflow's generation and publishing contract?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-audio-negative-1",
+      "prompt": "Pipa brief this PR before standup.",
+      "expected_output": "Does not route to agent-audio-brief because the user did not ask for audio/listenable/spoken output.",
+      "assertions": [
+        "Does the output avoid selecting `agent-audio-brief`?",
+        "Does it treat `brief` as a generic PM or summary request unless audio/listenable wording is present?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-automation-positive-1",
+      "prompt": "Pipa automate a weekly budget debrief every Monday morning.",
+      "expected_output": "Routes to Pipa recurring automation and requires schedule, timezone, destination, execution prompt, and final confirmation before create.",
+      "assertions": [
+        "Does the output route to `pipa-workflow-automation`?",
+        "Does it require schedule/cadence, timezone, destination, execution prompt, and final confirmation before create?",
+        "Does it avoid creating the automation before confirmation?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-automation-negative-1",
+      "prompt": "Give me a weekly status update now.",
+      "expected_output": "Produces a one-time status route instead of creating or proposing recurring automation unless future scheduled delivery is requested.",
+      "assertions": [
+        "Does the output avoid routing to recurring automation?",
+        "Does it select status/monitor as the primary one-time route?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-trigger-positive-1",
+      "prompt": "Pipa trigger this when a Linear issue is created.",
+      "expected_output": "Routes to Pipa trigger workflow and requires trigger proposal confirmation before create.",
+      "assertions": [
+        "Does the output route to `pipa-triggers`?",
+        "Does it require event/source/resource details and final trigger proposal confirmation before create?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-composio-positive-1",
+      "prompt": "Pipa use Composio to create a GitHub issue from this bug report.",
+      "expected_output": "Routes to Composio search/link/execute discipline and does not invent a tool slug.",
+      "assertions": [
+        "Does the output route to `composio` for external app action?",
+        "Does it require search or verified tool information before execute?",
+        "Does it avoid inventing a Composio tool slug?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-close-handoff-1",
+      "prompt": "Pipa close this out. Signoff happened, but support handoff and archive readiness are unclear.",
+      "expected_output": "Routes to close references, selects one primary close mode, preserves handover/signoff/archive gates, and marks unknowns as TBD.",
+      "assertions": [
+        "Does the output select one primary close route?",
+        "Does it preserve acceptance, handover, lessons, benefits/archive gates as relevant checks or follow-ups?",
+        "Are unclear owners, dates, and archive destinations marked as `TBD`?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-explicit-initiate-1",
+      "prompt": "Pipa initiate this new delivery project so we have reusable context, stakeholders, risks, and a plan-ready handoff.",
+      "expected_output": "Routes to Pipa initiate references and preserves the initiate summary contract without delegating to deleted public PM skills.",
+      "assertions": [
+        "Does the output select `initiate` as the primary Pipa route?",
+        "Does it preserve project context, stakeholder, risk, and initiate-to-plan readiness checks?",
+        "Does it avoid naming deleted public PM skills as the route?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-explicit-execute-1",
+      "prompt": "Pipa execute this delivery week: coordinate active work packages, owners, handoffs, and follow-through.",
+      "expected_output": "Routes to Pipa execute references, selects one primary execution workflow, and returns monitor-ready follow-through.",
+      "assertions": [
+        "Does the output select `execute` as the primary Pipa route?",
+        "Does it choose one primary execution mode or explain why the execute router is needed?",
+        "Does it preserve owners, next actions, due/review dates, status, evidence/source, and `TBD` unknowns?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-budget-health-1",
+      "prompt": "Pipa budget: how are we budget-wise for Project Delta, and do we need change control?",
+      "expected_output": "Routes to monitor budget health because the user asks about budget status, variance, and change control.",
+      "assertions": [
+        "Does the output select budget health/review rather than budget tracker setup?",
+        "Does it provide or request the commercial baseline and progress sources needed for confidence?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-budget-setup-1",
+      "prompt": "Pipa budget setup: create a lightweight tracker for this new project budget baseline.",
+      "expected_output": "Routes to initiate budget setup because the user asks to create a tracker/baseline.",
+      "assertions": [
+        "Does the output select budget setup rather than budget health review?",
+        "Does it preserve baseline, spend, forecast, variance, status, owner, notes, and `TBD` unknown handling?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-risk-explicit-1",
+      "prompt": "Pipa risk: what is stuck, who owns it, and what needs escalation today?",
+      "expected_output": "Routes to monitor risk/escalation reference and returns decision-ready blocker follow-through.",
+      "assertions": [
+        "Does the output select risk/escalation as the primary route?",
+        "Does it include blockers, owner gaps, escalation actions, review checkpoints, and `TBD` unknowns?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-unknown-command-1",
+      "prompt": "Pipa frobnicate this delivery plan.",
+      "expected_output": "Returns Pipa help/menu with one clarification path instead of hallucinating a workflow.",
+      "assertions": [
+        "Does the output avoid inventing a `frobnicate` workflow?",
+        "Does it show the grouped Pipa command menu or recommended valid routes?",
+        "Does it ask at most one clarifying question if needed?"
+      ],
+      "files": [
+
+      ]
+    }
+  ]
+}

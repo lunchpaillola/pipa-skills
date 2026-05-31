@@ -44,7 +44,7 @@ Long agent-generated docs, plans, documentation, and blog posts are cognitively 
 - V1 does not require public internet hosting or share links; local listening is acceptable for the first implementation.
 - V1 does not replace careful legal, contractual, or exact-wording review.
 - V1 does not build a full document editor, hosting platform, or collaboration system.
-- V1 does not hardcode private PailFlow, here.now, Proof, or GitHub implementation details that are not publicly reusable.
+- V1 does not hardcode private Pipa, here.now, Proof, or GitHub implementation details that are not publicly reusable.
 - V1 requires Kokoro for the golden-path audio generation step.
 - V1 must not describe unlisted public hosting as private. The skill should use visibility labels that match the publisher’s real guarantees.
 
@@ -70,7 +70,7 @@ Long agent-generated docs, plans, documentation, and blog posts are cognitively 
 - `skills/pm-plan/SKILL.md` shows the plan-lane router pattern: objective confirmation, context/source coverage, mode selection, and execution-ready summary.
 - `skills/pm-plan-requirements-brief/SKILL.md` is the closest pattern for turning source material into a concise review artifact with explicit source quality and unknowns.
 - `skills/pm-communication-style/SKILL.md` provides the right audio-brief writing style: BLUF first, short human language, no dense metadata, and decision-ready summaries.
-- `skills/pailflow-workflow-automation/SKILL.md` and `skills/pailflow-triggers/SKILL.md` show how connected-tool skills should confirm external actions and avoid guessing unavailable integrations.
+- `skills/pipa-workflow-automation/SKILL.md` and `skills/pipa-triggers/SKILL.md` show how connected-tool skills should confirm external actions and avoid guessing unavailable integrations.
 - `skills/composio/SKILL.md` shows the connected-tool pattern: discover available tools, link if needed, use the smallest reliable tool path, and cite concise provenance.
 - `scripts/validate_skill_frontmatter.rb` validates skill frontmatter and should continue passing after adding the new skill.
 - Frontend Slides is a strong reference for generated HTML product UX: a skill can create a deterministic single HTML experience with inline CSS/JS, open it in the browser, and optionally deploy it later without becoming a full app framework.
@@ -324,7 +324,7 @@ flowchart TB
 - Include transcript and metadata alongside audio so the review artifact remains useful even if audio playback fails.
 
 **Patterns to follow:**
-- `skills/pailflow-workflow-automation/SKILL.md` for explicit blocker reporting when environment/configuration is missing.
+- `skills/pipa-workflow-automation/SKILL.md` for explicit blocker reporting when environment/configuration is missing.
 - External Kokoro docs or local Kokoro help output for invocation details.
 
 **Test scenarios:**
@@ -365,7 +365,7 @@ flowchart TB
 - Require a clear partial-success output when page creation or audio generation fails: one page path when available, script status, and exact blocker.
 
 **Patterns to follow:**
-- `skills/pailflow-triggers/SKILL.md` for confirmation before creating external access.
+- `skills/pipa-triggers/SKILL.md` for confirmation before creating external access.
 - `skills/composio/SKILL.md` for connected-tool discovery and concise provenance.
 
 **Test scenarios:**
@@ -502,7 +502,7 @@ flowchart TB
 
 - Conversation source: user brainstorm in this session on 2026-05-25.
 - Related repository guidance: `AGENTS.md`, `README.md`, `CONTRIBUTING.md`.
-- Related skill patterns: `skills/pm-plan/SKILL.md`, `skills/pm-plan-requirements-brief/SKILL.md`, `skills/pm-communication-style/SKILL.md`, `skills/pailflow-workflow-automation/SKILL.md`, `skills/pailflow-triggers/SKILL.md`, `skills/composio/SKILL.md`.
+- Related skill patterns: `skills/pm-plan/SKILL.md`, `skills/pm-plan-requirements-brief/SKILL.md`, `skills/pm-communication-style/SKILL.md`, `skills/pipa-workflow-automation/SKILL.md`, `skills/pipa-triggers/SKILL.md`, `skills/composio/SKILL.md`.
 - Related existing plan: `docs/plans/2026-05-25-feat-agent-session-automatic-marketing-skill-plan.md`.
 - External docs: `https://www.pipecat.ai/`, `https://docs.pipecat.ai/`, `https://here.now/`, `https://www.proofeditor.ai/`.
 - UX analogue: `https://github.com/Lex-Inc/roughdraft`.
