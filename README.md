@@ -1,52 +1,30 @@
 # Pipa Skills
 
-Pipa is one PM brain for project delivery work. Instead of asking an agent to choose from a catalog of lifecycle skills, you invoke Pipa and let it route the request to the right command: initiate, plan, execute, monitor, close, or a connected workflow.
+Pipa skills are the agent workflows that power studio operations and client delivery for [Pipa](https://www.usepipa.com/), the operations agent for craft-led studios.
 
-This repository contains reusable AI agent skills for project managers, delivery managers, implementation teams, and professional services teams that need sharper planning, status, triage, follow-through, and closeout.
+Built and maintained by [Lola](https://www.linkedin.com/in/lolaojabowale) at [Lunch Pail Labs](https://lunchpaillabs.com/). If you want a hosted version of these workflows with Slack, connected tools, and managed setup, see [Pipa](https://www.usepipa.com/).
 
-Built by [Lola](https://www.linkedin.com/in/lolaojabowale) at [Lunch Pail Labs](https://lunchpaillabs.com). Want a managed setup for these workflows in real client delivery environments? See [Pipa](https://www.usepipa.com/).
+## What These Skills Handle
 
-## Why Pipa
+Pipa skills give agents practical operator workflows for the work around the work: client delivery, project operations, updates, handoffs, blockers, briefs, and automations.
 
-Project work does not arrive neatly labeled as “initiate,” “monitor,” or “close.” It arrives as messy asks:
+- Client delivery planning, coordination, and follow-through
+- Project operations for status, blockers, risks, budgets, and escalations
+- Handoffs, signoffs, closeout, and lessons learned
+- Client-ready updates and internal operating briefs
+- Audio briefs from sessions, plans, PRs, docs, and links
+- Connected-tool work through Composio-backed workflows
+- Recurring Slack updates and event-triggered automations
 
-- “What needs attention before steering?”
-- “Turn these notes into a delivery plan.”
-- “Who owns this blocker?”
-- “Make this a weekly update.”
-- “Are we ready to close?”
+## Core Skill
 
-Pipa turns those asks into one primary route, runs the matching PM workflow, and returns a decision-ready answer with owners, next actions, due/review dates, status, evidence, and explicit `TBD` unknowns.
+| Skill | Description |
+|---|---|
+| [`pipa`](skills/pipa/) | Studio operations and client delivery agent. Routes messy asks into the right operating workflow and returns clear next actions, owners, dates, evidence, and unknowns. |
 
-## Command Groups
+## Breakout Skills
 
-| Job | Commands | Use when |
-|---|---|---|
-| Start | `Pipa initiate`, `Pipa context`, `Pipa charter`, `Pipa stakeholders` | Set up project context, frame the problem, map stakeholders, or decide go/no-go readiness. |
-| Plan | `Pipa plan`, `Pipa requirements`, `Pipa scope`, `Pipa roadmap`, `Pipa raid`, `Pipa raci` | Turn intent into requirements, baselines, sequencing, and governance controls. |
-| Execute | `Pipa execute`, `Pipa coordinate`, `Pipa iteration`, `Pipa change`, `Pipa handoff` | Coordinate active work, cycles, changes, dependencies, and handoffs. |
-| Monitor | `Pipa status`, `Pipa triage`, `Pipa budget`, `Pipa risk`, `Pipa escalate` | Produce status, intake triage, budget health, blocker follow-through, and escalation paths. |
-| Close | `Pipa close`, `Pipa signoff`, `Pipa handover`, `Pipa lessons`, `Pipa archive` | Confirm acceptance, transition ownership, capture lessons, review benefits, and package closure records. |
-| Connected | `Pipa audio brief`, `Pipa automate`, `Pipa trigger`, `Pipa composio` | Route into standalone skills for audio briefs, recurring Pipa automations, event triggers, and external app actions. |
-| Help | `Pipa help`, `Pipa menu`, bare `Pipa` | Show recommended next commands and the full grouped menu. |
-
-Pipa also handles natural-language PM requests. For example, “give me a project status update” routes to `Pipa status`; “plan this work” routes to `Pipa plan`; “send this every Friday” routes to `Pipa automate`.
-
-The table above is the user-facing command map. `skills/pipa/SKILL.md` is the authoritative routing matrix and includes additional aliases such as `kickoff`, `delivery`, `blockers`, and `benefits`.
-
-## Common Command Chains
-
-- New project: `Pipa initiate` -> `Pipa plan` -> `Pipa execute`
-- Steering prep: `Pipa status` -> `Pipa budget` -> `Pipa risk`
-- Intake cleanup: `Pipa triage` -> `Pipa status`
-- Delivery risk: `Pipa execute` -> `Pipa risk` -> `Pipa escalate`
-- Closeout: `Pipa close` -> `Pipa handover` -> `Pipa lessons` -> `Pipa archive`
-- Recurring update: `Pipa status` -> `Pipa automate`
-- Event-driven follow-up: `Pipa trigger` -> `Pipa status`
-
-## Standalone Breakout Skills
-
-These remain separately discoverable because they are tool-specific, safety-sensitive, or independently valuable:
+These workflows remain separately installable because they are tool-specific, product-specific, or useful outside the main Pipa route.
 
 | Skill | Description |
 |---|---|
@@ -55,17 +33,14 @@ These remain separately discoverable because they are tool-specific, safety-sens
 | [`pipa-triggers`](skills/pipa-triggers/) | Creates, inspects, and deletes event-triggered Pipa automations with explicit trigger proposal confirmation. |
 | [`pipa-workflow-automation`](skills/pipa-workflow-automation/) | Creates, inspects, and deletes recurring Slack-driven Pipa automations with schedule, timezone, destination, prompt, and final confirmation gates. |
 
-Pipa can route into these workflows, but their own `SKILL.md` files remain authoritative.
+## Example Asks
 
-## Available Skills
-
-| Skill | Description |
-|---|---|
-| [`pipa`](skills/pipa/) | Primary PM brain and command router for project delivery work. |
-| [`agent-audio-brief`](skills/agent-audio-brief/) | Work-artifact audio briefing workflow. |
-| [`composio`](skills/composio/) | Connected-tool workflow through Composio. |
-| [`pipa-triggers`](skills/pipa-triggers/) | Event-triggered Pipa automation workflow. |
-| [`pipa-workflow-automation`](skills/pipa-workflow-automation/) | Recurring Pipa automation workflow. |
+- "Watch this launch and tell me what needs attention before Friday."
+- "Turn these notes into a client-ready update."
+- "Find the blockers, owners, and next actions from this thread."
+- "Make this a weekly operating brief."
+- "Prepare the handoff and list what is still unknown."
+- "Create an audio brief from this plan."
 
 ## Installation
 
@@ -73,50 +48,31 @@ Pipa can route into these workflows, but their own `SKILL.md` files remain autho
 
 ```bash
 # Install the full skill pack
-npx skills add lunchpaillola/project-management-skills
+npx skills add lunchpaillola/pipa-skills
 
 # Install Pipa first
-npx skills add lunchpaillola/project-management-skills --skill pipa
+npx skills add lunchpaillola/pipa-skills --skill pipa
 
-# Install a standalone breakout skill
-npx skills add lunchpaillola/project-management-skills --skill agent-audio-brief
+# Install a breakout skill
+npx skills add lunchpaillola/pipa-skills --skill agent-audio-brief
 
 # List available skills
-npx skills add lunchpaillola/project-management-skills --list
+npx skills add lunchpaillola/pipa-skills --list
 
 # Update installed skills
-npx skills update lunchpaillola/project-management-skills
+npx skills update lunchpaillola/pipa-skills
 ```
 
 ### Clone and Copy
 
 ```bash
-git clone https://github.com/lunchpaillola/project-management-skills.git
-cp -r project-management-skills/skills/* .agents/skills/
+git clone https://github.com/lunchpaillola/pipa-skills.git
+cp -r pipa-skills/skills/* .agents/skills/
 ```
-
-## Repository Shape
-
-```text
-skills/
-  pipa/
-    SKILL.md
-    references/
-    evals/
-  agent-audio-brief/
-  composio/
-  pipa-triggers/
-  pipa-workflow-automation/
-docs/
-evals/
-tasks/
-```
-
-Pipa owns PM command routing and lifecycle workflow references. New PM workflows normally become Pipa commands or references, not new public top-level PM skills.
 
 ## Contributing
 
-Found a way to improve Pipa or a breakout workflow? Open a PR. See [CONTRIBUTING.md](CONTRIBUTING.md) for the rules on Pipa references, standalone breakout justification, eval coverage, and versioning.
+Found a way to improve Pipa or a breakout workflow? Open a PR. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidance on skill structure, eval coverage, and versioning.
 
 ## License
 
