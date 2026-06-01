@@ -1,0 +1,38 @@
+[
+  {
+    "query": "Pipa reach find-threads for this post: https://example.com/posts/practical-guide",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa reach https://example.com/launch/new-tool",
+    "should_trigger": true
+  },
+  {
+    "query": "Find threads this article can answer: https://example.com/posts/practical-guide",
+    "should_trigger": true
+  },
+  {
+    "query": "Where are people discussing this problem and asking for help?",
+    "should_trigger": true
+  },
+  {
+    "query": "Find places to share this launch without being spammy.",
+    "should_trigger": true
+  },
+  {
+    "query": "Write a blog post about our new service.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a full marketing strategy for this product.",
+    "should_trigger": false
+  },
+  {
+    "query": "Schedule social posts for the next 90 days.",
+    "should_trigger": false
+  },
+  {
+    "query": "Comment this link on every Reddit thread you find.",
+    "should_trigger": true
+  }
+]
