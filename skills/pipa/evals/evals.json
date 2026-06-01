@@ -146,9 +146,9 @@
     {
       "id": "pipa-reach-find-threads-positive-1",
       "prompt": "Pipa reach find-threads for this article: https://example.com/posts/practical-guide",
-      "expected_output": "Routes to pipa-reach and preserves experimental find-threads behavior, verified thread discovery, source privacy, and manual-only community participation.",
+      "expected_output": "Routes to experimental-pipa-reach and preserves experimental find-threads behavior, verified thread discovery, source privacy, and manual-only community participation.",
       "assertions": [
-        "Does the output route to `pipa-reach` because the user asked for Reach/thread discovery around existing work?",
+        "Does the output route to `experimental-pipa-reach` because the user asked for Reach/thread discovery around existing work?",
         "Does it preserve the `find-threads` command as the current Reach workflow?",
         "Does it require verified thread URLs or clearly separate unverified query suggestions?",
         "Does it avoid posting, commenting, submitting, voting, scheduling, or remote drafts?"
@@ -160,9 +160,9 @@
     {
       "id": "pipa-reach-negative-marketing-1",
       "prompt": "Pipa create a full marketing strategy for our new service.",
-      "expected_output": "Does not route to pipa-reach because the user asked for broad marketing strategy rather than thread/community discovery around finished work.",
+      "expected_output": "Does not route to experimental-pipa-reach because the user asked for broad marketing strategy rather than thread/community discovery around finished work.",
       "assertions": [
-        "Does the output avoid selecting `pipa-reach`?",
+        "Does the output avoid selecting `experimental-pipa-reach`?",
         "Does it treat broad marketing strategy as outside the current Reach command scope?"
       ],
       "files": [

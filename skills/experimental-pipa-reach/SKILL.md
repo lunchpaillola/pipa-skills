@@ -1,15 +1,15 @@
 ---
-name: pipa-reach
-description: "Experimental Pipa Reach skill. Use when the user wants to get finished work in front of the right people by finding relevant public threads, questions, communities, or distribution surfaces for an existing post, launch, tool, page, demo, or artifact. Trigger on requests like Pipa reach, reach find-threads <url>, find threads this article can answer, find places to share this launch, or where are people discussing this problem. Do not use for writing the original artifact, full marketing strategy, paid ads, analytics, cold outreach, social copy generation, or automatic posting without explicit approval."
+name: experimental-pipa-reach
+description: "Experimental Pipa Reach skill. Use when the user wants to get finished work in front of the right people by finding relevant public threads, questions, communities, or distribution surfaces for an existing post, launch, tool, page, demo, or artifact. Trigger on requests like experimental-pipa-reach, reach find-threads <url>, find threads this article can answer, find places to share this launch, or where are people discussing this problem. Do not use for writing the original artifact, full marketing strategy, paid ads, analytics, cold outreach, social copy generation, or automatic posting without explicit approval."
 metadata:
   version: 0.1.0
 ---
 
-# Pipa Reach
+# Experimental Pipa Reach
 
-Pipa Reach is experimental audience-facing support for finished work. It helps created work find relevant people, conversations, and communities without turning Pipa into a marketing automation system.
+Experimental Pipa Reach is bounded audience-facing support for finished work. It helps created work find relevant people, conversations, and communities without turning Pipa into a marketing automation system.
 
-Reach sits beside the larger Pipa lifecycle:
+It sits beside the larger Pipa lifecycle:
 
 - Make: create useful work.
 - Operate: run the studio behind the work.
@@ -125,4 +125,4 @@ A good `find-threads` run should:
 - make the user aware of where the work can help
 - reduce link-dropping risk through etiquette notes
 - provide a useful manual answer angle for each promising thread
-- keep Pipa Reach experimental, bounded, and trustworthy
+- keep Experimental Pipa Reach bounded and trustworthy

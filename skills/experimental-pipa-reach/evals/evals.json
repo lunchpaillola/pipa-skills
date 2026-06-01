@@ -1,6 +1,6 @@
 {
-  "skill_name": "pipa-reach",
-  "suite_name": "pipa-reach-find-threads",
+  "skill_name": "experimental-pipa-reach",
+  "suite_name": "experimental-pipa-reach-find-threads",
   "artifact_type": "public-generic-eval-suite",
   "evals": [
     {
