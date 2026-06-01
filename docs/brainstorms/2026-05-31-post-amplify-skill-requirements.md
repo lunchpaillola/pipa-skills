@@ -1,13 +1,13 @@
 ---
 date: 2026-05-31
-topic: post-amplification-skill
+topic: post-amplify-skill
 ---
 
-# Post Amplification Skill Requirements
+# Post Amplify Skill Requirements
 
 ## Summary
 
-Create a reusable post-amplification workflow that takes a polished canonical blog post, uses a user amplification profile to choose destination types and adapters, proposes a concise blast plan, and then sends or drafts it to the right external surfaces with minimal rewriting, canonical attribution, and explicit approval.
+Create a reusable post-amplify workflow that takes a polished canonical blog post, uses a user amplification profile to choose destination types and adapters, proposes a concise blast plan, and then sends or drafts it to the right external surfaces with minimal rewriting, canonical attribution, and explicit approval.
 
 ---
 

@@ -7,7 +7,7 @@ Use source intake to decide whether the skill can safely prepare amplification o
 - Public `http` or `https` URL.
 - Local Markdown file/path available in the workspace.
 - Pasted Markdown or plain text.
-- Explicit canonical metadata, such as title, canonical URL, author, publication date, and attribution line, as context for attribution and planning. Metadata alone is not source content for destination payloads.
+- Explicit metadata, such as title, canonical URL, author, publication date, and attribution line, as context for attribution and planning. Metadata alone is not source content for destination payloads.
 
 If source content is missing, ask for a URL, Markdown file/path, pasted Markdown, or pasted source text. Ask for canonical metadata separately when attribution or canonical context is missing. Do not invent content.
 
@@ -27,9 +27,9 @@ Do not log raw fetched HTML, headers, cookies, hidden metadata, or full tool res
 
 ## Canonical Requirement
 
-Before any external syndication, remote draft creation, or publish action, require a trustworthy canonical URL or user-supplied attribution target.
+Before any external syndication, remote draft creation, scheduler action, or publish action, require a trustworthy canonical URL or user-supplied attribution target.
 
-If a Markdown draft has no canonical URL, the skill may prepare a local draft plan, but must block external posting and external draft creation until the attribution target is supplied.
+If a Markdown draft has no canonical URL, the skill may prepare a local amplification plan, but must block external posting, external scheduling, and external draft creation until the attribution target is supplied.
 
 If a fetched page is unreadable, navigation-only, paywalled/private, partially extracted, or obscures canonical source through unsafe redirects, block external action and ask for pasted Markdown or a safe public URL.
 
@@ -41,17 +41,17 @@ Classify enough to choose destinations and discovery behavior:
 - technical/build: code, systems, architecture, tooling, engineering process
 - founder/operator: company-building, sales, delivery, hiring, customer work
 - conceptual: essays, opinion, framing, principles, narratives
-- product/update: launch notes, changelog-like posts, feature announcements
+- product/update: launch notes, changelog-like posts, feature announcements, launch pages
 - community-specific: content intended for one named group or community context
 
-Practical/how-to and technical/build posts are eligible for demand discovery. Conceptual essays are not automatically sent to Reddit discovery unless the user asks and the query can be public, relevant, and non-promotional.
+Practical/how-to and technical/build posts are eligible for answer discovery. Conceptual essays are not automatically sent to community search unless the user asks and the query can be public, relevant, and non-promotional.
 
 ## Minimal-Rewrite Rules
 
 - Preserve title and body structure by default.
 - Change only what a destination requires: formatting, frontmatter, canonical metadata, visible attribution, link normalization, excerpt length, or obvious Markdown cleanup.
 - Do not add claims, quotes, metrics, examples, or endorsements unless source-backed.
-- Do not transform into newsletters, scripts, carousels, threads, or campaigns in V1.
+- Do not transform into newsletters, scripts, carousels, threads, or campaigns unless the user explicitly asks for that follow-up.
 
 ## Private Or Unpublished Material
 
@@ -67,5 +67,5 @@ Block or downgrade to local-only planning when:
 - URL safety checks fail
 - extraction returns only navigation, boilerplate, or too little body text
 - source is private/paywalled and the user has not approved derived external queries
-- canonical URL or attribution target is missing for external syndication
+- canonical URL or attribution target is missing for external syndication, scheduling, or publishing
 - source claims conflict with provided profile attribution or canonical site

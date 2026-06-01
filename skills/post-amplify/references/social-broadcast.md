@@ -1,13 +1,13 @@
 # Social Broadcast
 
-Social broadcast covers short feed posts that point back to the canonical source.
+Social broadcast covers short feed posts that point back to the canonical source. In the default workflow, recommend channels and angles without generating full social copy unless the user asks for it or approves execution planning that requires an exact payload.
 
 ## General Rules
 
 - Keep posts short and source-faithful.
 - Link to the canonical URL.
 - Do not invent claims, metrics, quotes, testimonials, or urgency.
-- Distinguish public publish from remote draft in the blast plan.
+- Distinguish public publish, scheduled item, remote draft, and manual output in the amplification plan.
 - Verify current tool capability, account identity, and schema before any write.
 
 ## V1 Candidate Adapters
@@ -25,11 +25,11 @@ Do not author generic future-feed playbooks in V1. Use the adapter contract for 
 
 For each social destination, show:
 
-- exact post text
+- short angle by default, or exact post text when requested/needed for approval
 - canonical URL
 - account/profile/page when verified
 - visibility
-- action kind: remote draft, public publish, or manual
+- action kind: remote draft, scheduled item, public publish, or manual
 - payload changes that would require renewed approval
 
 ## Fit Rules

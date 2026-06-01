@@ -4,6 +4,18 @@
     "should_trigger": true
   },
   {
+    "query": "post-amplify https://example.com/posts/practical-guide",
+    "should_trigger": true
+  },
+  {
+    "query": "post-amplify discover https://example.com/posts/practical-guide",
+    "should_trigger": true
+  },
+  {
+    "query": "Find questions this article can answer: https://example.com/posts/practical-guide",
+    "should_trigger": true
+  },
+  {
     "query": "Syndicate this essay from my canonical URL to the right article platforms.",
     "should_trigger": true
   },
@@ -24,8 +36,8 @@
     "should_trigger": false
   },
   {
-    "query": "Amplify this launch next week.",
-    "should_trigger": false
+    "query": "Amplify this launch page next week: https://example.com/launch",
+    "should_trigger": true
   },
   {
     "query": "Analyze traffic for this blog post.",
@@ -33,7 +45,7 @@
   },
   {
     "query": "Schedule reminders to repost this every week.",
-    "should_trigger": false
+    "should_trigger": true
   },
   {
     "query": "Turn this post into a YouTube script and carousel.",

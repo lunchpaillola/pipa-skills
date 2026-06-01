@@ -39,7 +39,7 @@ If no command is present, route by natural-language PM intent. If the request is
 3. If the request implies recurrence, scheduled future delivery, reminders, or existing automation management, route to `pipa-workflow-automation` through `references/standalone-invocation.md`.
 4. If the request implies event reaction, webhook, watcher, listener, or trigger management, route to `pipa-triggers` through `references/standalone-invocation.md`.
 5. If the request requires an external app action through Composio, route to `composio` through `references/standalone-invocation.md` and never guess tool slugs.
-6. Route to `post-amplification` only when the user asks to amplify, syndicate, distribute, repost, cross-post, or blast an existing canonical writing artifact/source reference. Generic “write a post,” “create a marketing plan,” “amplify this launch,” or PM requirements briefs stay inside writing/planning unless an existing post/source is provided.
+6. Route to `post-amplify` only when the user asks to amplify, syndicate, distribute, repost, cross-post, or blast an existing writing artifact/source reference. Generic “write a post,” “create a marketing plan,” or PM requirements briefs stay inside writing/planning unless an existing post/source is provided.
 7. Route to `agent-audio-brief` only when the user explicitly asks for an audio, listenable, spoken, phone-friendly, or listening-page brief. Generic “brief this,” “write a brief,” “requirements brief,” or “project brief” stays inside Pipa planning or summarization.
 8. If multiple commands match, choose one primary route and list secondary follow-ups unless the user explicitly asks for a chain.
 9. If unknown, show the help/menu response and ask one clarifying question only when needed.

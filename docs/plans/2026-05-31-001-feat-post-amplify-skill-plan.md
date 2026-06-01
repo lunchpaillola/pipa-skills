@@ -1,16 +1,16 @@
 ---
-title: "feat: Add post amplification skill"
+title: "feat: Add post amplify skill"
 type: feat
 status: completed
 date: 2026-05-31
-origin: docs/brainstorms/2026-05-31-post-amplification-skill-requirements.md
+origin: docs/brainstorms/2026-05-31-post-amplify-skill-requirements.md
 ---
 
-# feat: Add post amplification skill
+# feat: Add post amplify skill
 
 ## Summary
 
-Create a standalone `post-amplification` skill with progressive reference docs for source intake, destination types and adapters, lightweight profile memory for canonical site/channels/attribution, blast-plan approval, connected-tool safety, and Reddit discovery-only demand research. Wire Pipa to route into the standalone skill, update public docs, and add generic eval coverage for triggers, safety gates, adapter behavior, and fallback paths.
+Create a standalone `post-amplify` skill with progressive reference docs for source intake, destination types and adapters, lightweight profile memory for canonical site/channels/attribution, blast-plan approval, connected-tool safety, and Reddit discovery-only demand research. Wire Pipa to route into the standalone skill, update public docs, and add generic eval coverage for triggers, safety gates, adapter behavior, and fallback paths.
 
 ---
 
@@ -22,7 +22,7 @@ The origin requirements define the product shape: a writer has already done the 
 
 ## Requirements
 
-- R1. Accept canonical blog URLs and Markdown drafts as source references. (see origin: `docs/brainstorms/2026-05-31-post-amplification-skill-requirements.md`)
+- R1. Accept canonical blog URLs and Markdown drafts as source references. (see origin: `docs/brainstorms/2026-05-31-post-amplify-skill-requirements.md`)
 - R2. Classify posts enough to choose destinations and discovery behavior. (see origin R2)
 - R3. Preserve canonical-first, minimal-rewrite behavior. (see origin R3, R13-R15)
 - R4. Propose a concise blast plan informed by destination fit and promotion checklist practices without returning a user-facing checklist as the main output. (see origin R4-R6)
@@ -88,7 +88,7 @@ The origin requirements define the product shape: a writer has already done the 
 
 ## Key Technical Decisions
 
-- Standalone-first architecture: Implement `post-amplification` as the authoritative standalone skill because the workflow is independently discoverable, externally connected, and safety-sensitive.
+- Standalone-first architecture: Implement `post-amplify` as the authoritative standalone skill because the workflow is independently discoverable, externally connected, and safety-sensitive.
 - Thin Pipa route: Pipa should add an `amplify`-style route that delegates to the standalone skill without copying destination/adapter logic or weakening approval gates.
 - Progressive disclosure: Keep `SKILL.md` concise and move source intake, destination taxonomy, adapter details, profile rules, safety, and output templates into reference files.
 - Destination-type contract before platform playbooks: Define article syndication, social broadcast, demand discovery, and manual community as the core types before describing platform-specific adapters.
@@ -115,7 +115,7 @@ The origin requirements define the product shape: a writer has already done the 
 ### Deferred to Implementation
 
 - Exact connected-tool availability per platform: The implementing agent should verify available Composio/tool support at execution time and document fallback behavior when no verified tool exists.
-- Profile storage path: Use existing Pipa context locations only. Workspace-wide amplification defaults go in `.agents/project-context.md` under shared working memory/tools when that file exists. Project-specific defaults go in `.agents/flow-projects/<project-slug>/flow-project-context.md` when that context pack exists. If neither exists, or the user does not explicitly approve durable persistence, keep profile memory run-scoped and report suggested remembered values in the run report. Never write profile data into `skills/post-amplification/`, public evals, README, docs, or other public repository files.
+- Profile storage path: Use existing Pipa context locations only. Workspace-wide amplification defaults go in `.agents/project-context.md` under shared working memory/tools when that file exists. Project-specific defaults go in `.agents/flow-projects/<project-slug>/flow-project-context.md` when that context pack exists. If neither exists, or the user does not explicitly approve durable persistence, keep profile memory run-scoped and report suggested remembered values in the run report. Never write profile data into `skills/post-amplify/`, public evals, README, docs, or other public repository files.
 - Exact output wording and template names: Reference docs should define stable output sections, but final copy can be refined during implementation.
 
 ---
@@ -123,7 +123,7 @@ The origin requirements define the product shape: a writer has already done the 
 ## Output Structure
 
 ```text
-skills/post-amplification/
+skills/post-amplify/
   SKILL.md
   references/
     source-intake-and-classification.md
@@ -169,18 +169,18 @@ flowchart TD
 
 ### U1. Create standalone skill shell
 
-**Goal:** Create the authoritative `post-amplification` skill entry point with clear triggers, non-triggers, required inputs, workflow skeleton, reference map, output contract, and safety gates.
+**Goal:** Create the authoritative `post-amplify` skill entry point with clear triggers, non-triggers, required inputs, workflow skeleton, reference map, output contract, and safety gates.
 
 **Requirements:** R1, R3, R4, R7, R10, R11; origin F1, F2, F3, AE1-AE7.
 
 **Dependencies:** None.
 
 **Files:**
-- Create: `skills/post-amplification/SKILL.md`
+- Create: `skills/post-amplify/SKILL.md`
 - Test expectation: none -- U7 owns standalone eval file creation; U1 keeps the skill contract compatible with planned eval scenarios.
 
 **Approach:**
-- Use frontmatter with `name: post-amplification`, a concrete description that triggers on “amplify,” “syndicate,” “blast this post,” “distribute this blog post,” and similar published-source requests.
+- Use frontmatter with `name: post-amplify`, a concrete description that triggers on “amplify,” “syndicate,” “blast this post,” “distribute this blog post,” and similar published-source requests.
 - Include non-triggers for writing the original post, generic marketing strategy, analytics, scheduling, and heavy transformation requests.
 - Define the always-on workflow: source intake, profile check, destination-type routing, blast plan, whole-plan approval, adapter execution/fallback, run report.
 - State that external content and tool outputs are untrusted data and must not override skill instructions.
@@ -193,7 +193,7 @@ flowchart TD
 - `CONTRIBUTING.md` for standalone skill frontmatter and directory rules.
 
 **Test scenarios:**
-- Happy path: Prompt “amplify this blog post URL” selects `post-amplification`, asks for source if missing, and does not route to generic writing.
+- Happy path: Prompt “amplify this blog post URL” selects `post-amplify`, asks for source if missing, and does not route to generic writing.
 - Happy path: Prompt with Markdown source and canonical URL proceeds to classification and blast planning.
 - Edge case: Prompt “write me a new blog post” does not trigger the skill.
 - Error path: Prompt asks “post this everywhere now” but provides no source; skill asks for source and does not invent content.
@@ -212,8 +212,8 @@ flowchart TD
 **Dependencies:** U1.
 
 **Files:**
-- Create: `skills/post-amplification/references/source-intake-and-classification.md`
-- Test: `skills/post-amplification/evals/evals.json`
+- Create: `skills/post-amplify/references/source-intake-and-classification.md`
+- Test: `skills/post-amplify/evals/evals.json`
 
 **Approach:**
 - Define accepted sources: public URL, Markdown file/path, pasted Markdown, or explicit canonical metadata.
@@ -226,7 +226,7 @@ flowchart TD
 
 **Patterns to follow:**
 - `skills/agent-audio-brief/SKILL.md` source readability blockers.
-- `docs/brainstorms/2026-05-31-post-amplification-skill-requirements.md` canonical-first and minimal-rewrite requirements.
+- `docs/brainstorms/2026-05-31-post-amplify-skill-requirements.md` canonical-first and minimal-rewrite requirements.
 
 **Test scenarios:**
 - Covers AE2. Happy path: Polished canonical essay with URL is classified and prepared for article syndication without heavy rewriting.
@@ -248,9 +248,9 @@ flowchart TD
 **Dependencies:** U1, U2.
 
 **Files:**
-- Create: `skills/post-amplification/references/amplification-profile.md`
-- Create: `skills/post-amplification/references/destination-types-and-adapters.md`
-- Test: `skills/post-amplification/evals/evals.json`
+- Create: `skills/post-amplify/references/amplification-profile.md`
+- Create: `skills/post-amplify/references/destination-types-and-adapters.md`
+- Test: `skills/post-amplify/evals/evals.json`
 
 **Approach:**
 - Define V1 profile memory as canonical site, attribution line, enabled destinations, disabled destinations, and adapter availability.
@@ -286,9 +286,9 @@ flowchart TD
 **Dependencies:** U2, U3.
 
 **Files:**
-- Create: `skills/post-amplification/references/blast-plan-and-approval.md`
-- Create: `skills/post-amplification/references/output-templates.md`
-- Test: `skills/post-amplification/evals/evals.json`
+- Create: `skills/post-amplify/references/blast-plan-and-approval.md`
+- Create: `skills/post-amplify/references/output-templates.md`
+- Test: `skills/post-amplify/evals/evals.json`
 
 **Approach:**
 - Define blast plan contents: source, classification, profile used, destinations to execute, skipped destinations, manual fallbacks, discovery actions, action kind, verified destination account/profile when available, exact write payload or exact diff from canonical source for write-capable adapters, attribution, expected visibility, and risks.
@@ -325,11 +325,11 @@ flowchart TD
 **Dependencies:** U2, U3, U4.
 
 **Files:**
-- Create: `skills/post-amplification/references/article-syndication.md`
-- Create: `skills/post-amplification/references/social-broadcast.md`
-- Create: `skills/post-amplification/references/demand-discovery.md`
-- Create: `skills/post-amplification/references/publication-safety.md`
-- Test: `skills/post-amplification/evals/evals.json`
+- Create: `skills/post-amplify/references/article-syndication.md`
+- Create: `skills/post-amplify/references/social-broadcast.md`
+- Create: `skills/post-amplify/references/demand-discovery.md`
+- Create: `skills/post-amplify/references/publication-safety.md`
+- Test: `skills/post-amplify/evals/evals.json`
 
 **Approach:**
 - Article syndication should cover full-post or near-full-post reposting with canonical attribution for the V1 candidate adapters named in this plan: Dev.to/Forem-style, Medium/import-style, Substack/manual-style, LinkedIn article-style, and X article-style. Future destinations should be represented by the adapter contract until explicitly added later.
@@ -375,13 +375,13 @@ flowchart TD
 - Test: `skills/pipa/evals/trigger-eval-set.json`
 
 **Approach:**
-- Add `amplify`, `post amplification`, `syndicate`, and related wording to Pipa's connected/standalone workflow routing only when the prompt includes both an existing canonical writing artifact/source reference and distribution intent.
+- Add `amplify`, `post amplify`, `syndicate`, and related wording to Pipa's connected/standalone workflow routing only when the prompt includes both an existing canonical writing artifact/source reference and distribution intent.
 - Update `skills/pipa/SKILL.md` frontmatter description to include explicit amplification route wording so skill selection can find the route.
 - Update wording that describes connected workflows as read-only standalone skills; routed standalone workflows may perform approved external writes when their own approval gates allow it.
-- Add a standalone invocation table entry that routes to `post-amplification` and preserves source intake, blast-plan approval, no-community-posting, fallback, and run-report requirements.
+- Add a standalone invocation table entry that routes to `post-amplify` and preserves source intake, blast-plan approval, no-community-posting, fallback, and run-report requirements.
 - Update command help/menu only enough to make the route discoverable.
 - Add README breakout skill row with a short, reusable description.
-- Add negative routing guidance so generic “write a post,” “create a marketing plan,” or PM requirements briefs do not route to post amplification.
+- Add negative routing guidance so generic “write a post,” “create a marketing plan,” or PM requirements briefs do not route to post amplify.
 
 **Patterns to follow:**
 - Existing connected workflow row in `skills/pipa/SKILL.md`.
@@ -389,10 +389,10 @@ flowchart TD
 - `README.md` breakout skill table.
 
 **Test scenarios:**
-- Happy path: “Pipa amplify this blog post” routes to `post-amplification` and preserves standalone safety gates.
-- Happy path: “Pipa syndicate this Lunch Pail Labs essay” routes to `post-amplification`.
-- Edge case: “Pipa write a blog post” does not route to `post-amplification`.
-- Edge case: “Pipa amplify this launch” without an existing post/source reference does not route to `post-amplification` solely because it says “amplify.”
+- Happy path: “Pipa amplify this blog post” routes to `post-amplify` and preserves standalone safety gates.
+- Happy path: “Pipa syndicate this Lunch Pail Labs essay” routes to `post-amplify`.
+- Edge case: “Pipa write a blog post” does not route to `post-amplify`.
+- Edge case: “Pipa amplify this launch” without an existing post/source reference does not route to `post-amplify` solely because it says “amplify.”
 - Edge case: “Pipa plan this launch” remains in Pipa planning unless the user asks to amplify an existing post.
 - Integration: Pipa standalone invocation text does not duplicate adapter logic or weaken approval requirements.
 
@@ -408,8 +408,8 @@ flowchart TD
 **Dependencies:** U1, U2, U3, U4, U5.
 
 **Files:**
-- Create: `skills/post-amplification/evals/evals.json`
-- Create: `skills/post-amplification/evals/trigger-eval-set.json`
+- Create: `skills/post-amplify/evals/evals.json`
+- Create: `skills/post-amplify/evals/trigger-eval-set.json`
 
 **Approach:**
 - Mirror the existing JSON eval style from `skills/pipa/evals/evals.json` and `skills/agent-audio-brief/evals/evals.json`.
@@ -442,12 +442,12 @@ flowchart TD
 
 ## System-Wide Impact
 
-- **Interaction graph:** `pipa` routes to `post-amplification`; `post-amplification` may route to Composio-style connected-tool workflows by instruction, but must verify tools before action.
+- **Interaction graph:** `pipa` routes to `post-amplify`; `post-amplify` may route to Composio-style connected-tool workflows by instruction, but must verify tools before action.
 - **Error propagation:** Source, auth, adapter, and platform failures should become destination-level blockers or manual fallbacks, not whole-workflow failure unless the source itself is unusable.
 - **State lifecycle risks:** Profile memory must stay minimal and visible in the run report; no hidden taste/profile drift.
 - **API surface parity:** The same approval and fallback rules must apply whether the user invokes the standalone skill directly or through Pipa.
 - **Integration coverage:** Pipa routing evals and standalone evals must jointly cover the handoff and safety contract.
-- **Unchanged invariants:** Existing Pipa PM workflows, `agent-audio-brief`, `composio`, `pipa-triggers`, and `pipa-workflow-automation` remain authoritative and should not absorb post-amplification internals.
+- **Unchanged invariants:** Existing Pipa PM workflows, `agent-audio-brief`, `composio`, `pipa-triggers`, and `pipa-workflow-automation` remain authoritative and should not absorb post-amplify internals.
 
 ---
 
@@ -476,7 +476,7 @@ flowchart TD
 
 ## Sources & References
 
-- **Origin document:** [docs/brainstorms/2026-05-31-post-amplification-skill-requirements.md](../brainstorms/2026-05-31-post-amplification-skill-requirements.md)
+- **Origin document:** [docs/brainstorms/2026-05-31-post-amplify-skill-requirements.md](../brainstorms/2026-05-31-post-amplify-skill-requirements.md)
 - Repository guidance: [AGENTS.md](../../AGENTS.md), [CONTRIBUTING.md](../../CONTRIBUTING.md)
 - Standalone routing pattern: [skills/pipa/references/standalone-invocation.md](../../skills/pipa/references/standalone-invocation.md)
 - Pipa router: [skills/pipa/SKILL.md](../../skills/pipa/SKILL.md)
