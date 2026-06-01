@@ -1,0 +1,42 @@
+[
+  {
+    "query": "Amplify this blog post: https://example.com/posts/practical-guide",
+    "should_trigger": true
+  },
+  {
+    "query": "Syndicate this essay from my canonical URL to the right article platforms.",
+    "should_trigger": true
+  },
+  {
+    "query": "Blast this post from the Markdown draft and canonical URL I pasted above.",
+    "should_trigger": true
+  },
+  {
+    "query": "Distribute this published post and prepare manual fallbacks where posting is unavailable.",
+    "should_trigger": true
+  },
+  {
+    "query": "Write a new blog post about developer tools.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a marketing strategy for our launch.",
+    "should_trigger": false
+  },
+  {
+    "query": "Amplify this launch next week.",
+    "should_trigger": false
+  },
+  {
+    "query": "Analyze traffic for this blog post.",
+    "should_trigger": false
+  },
+  {
+    "query": "Schedule reminders to repost this every week.",
+    "should_trigger": false
+  },
+  {
+    "query": "Turn this post into a YouTube script and carousel.",
+    "should_trigger": false
+  }
+]

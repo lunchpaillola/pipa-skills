@@ -144,6 +144,57 @@
       ]
     },
     {
+      "id": "pipa-amplify-positive-1",
+      "prompt": "Pipa amplify this blog post: https://example.com/posts/practical-guide",
+      "expected_output": "Routes to post-amplification and preserves source intake, destination fit, blast-plan approval, fallback, and run-report requirements.",
+      "assertions": [
+        "Does the output route to `post-amplification` because the user provided an existing post source and distribution intent?",
+        "Does it require a blast plan before any external draft, publish, or write?",
+        "Does it preserve canonical attribution and destination-type routing?",
+        "Does it avoid posting to communities such as Reddit in V1?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-amplify-positive-2",
+      "prompt": "Pipa syndicate this canonical essay from the URL I pasted above.",
+      "expected_output": "Routes to post-amplification when an existing canonical essay is referenced and preserves standalone safety gates.",
+      "assertions": [
+        "Does the output select `post-amplification` as the primary standalone route?",
+        "Does it require the source/canonical URL if the prior pasted URL is unavailable in context?",
+        "Does it preserve whole-plan approval or explicit subset approval before writes?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-amplify-negative-1",
+      "prompt": "Pipa write a blog post about our new service.",
+      "expected_output": "Does not route to post-amplification because the user is asking to create the original post, not distribute an existing source.",
+      "assertions": [
+        "Does the output avoid selecting `post-amplification`?",
+        "Does it treat this as writing/planning work rather than syndication?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
+      "id": "pipa-amplify-negative-2",
+      "prompt": "Pipa amplify this launch.",
+      "expected_output": "Does not route to post-amplification solely because the prompt says amplify; it asks for or routes around the missing existing post/source reference.",
+      "assertions": [
+        "Does the output avoid selecting `post-amplification` without an existing canonical writing artifact?",
+        "Does it ask one clarifying question or route to planning/marketing strategy instead?"
+      ],
+      "files": [
+
+      ]
+    },
+    {
       "id": "pipa-close-handoff-1",
       "prompt": "Pipa close this out. Signoff happened, but support handoff and archive readiness are unclear.",
       "expected_output": "Routes to close references, selects one primary close mode, preserves handover/signoff/archive gates, and marks unknowns as TBD.",

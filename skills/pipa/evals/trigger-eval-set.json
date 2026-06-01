@@ -32,6 +32,14 @@
     "should_trigger": true
   },
   {
+    "query": "Pipa amplify this blog post: https://example.com/posts/practical-guide",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa syndicate this canonical essay to the right places.",
+    "should_trigger": true
+  },
+  {
     "query": "Build a React component for a pricing card grid.",
     "should_trigger": false
   },
@@ -45,6 +53,10 @@
   },
   {
     "query": "Translate this marketing copy into Spanish.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a blog post about our new service.",
     "should_trigger": false
   },
   {

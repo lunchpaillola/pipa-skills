@@ -15,6 +15,7 @@ Pipa skills give agents practical operator workflows for the work around the wor
 - Audio briefs from sessions, plans, PRs, docs, and links
 - Connected-tool work through Composio-backed workflows
 - Recurring Slack updates and event-triggered automations
+- Post amplification for canonical essays and blog posts
 
 ## Core Skill
 
@@ -30,6 +31,7 @@ These workflows remain separately installable because they are tool-specific, pr
 |---|---|
 | [`agent-audio-brief`](skills/agent-audio-brief/) | Turns agent sessions, PRs, plans, specs, docs, URLs, and pasted markdown into a Kokoro-generated listenable brief published as a here.now listening page. |
 | [`composio`](skills/composio/) | Routes external app work through Composio with setup/auth checks, search/link/execute discipline, and concise provenance. |
+| [`post-amplification`](skills/post-amplification/) | Turns an existing canonical blog post or Markdown draft into an approval-gated syndication, social broadcast, discovery, and manual fallback plan. |
 | [`pipa-triggers`](skills/pipa-triggers/) | Creates, inspects, and deletes event-triggered Pipa automations with explicit trigger proposal confirmation. |
 | [`pipa-workflow-automation`](skills/pipa-workflow-automation/) | Creates, inspects, and deletes recurring Slack-driven Pipa automations with schedule, timezone, destination, prompt, and final confirmation gates. |
 
