@@ -32,11 +32,11 @@
     "should_trigger": true
   },
   {
-    "query": "Pipa amplify this blog post: https://example.com/posts/practical-guide",
+    "query": "Pipa reach find-threads for this article: https://example.com/posts/practical-guide",
     "should_trigger": true
   },
   {
-    "query": "Pipa syndicate this canonical essay to the right places.",
+    "query": "Pipa reach this launch by finding places where people are discussing the problem.",
     "should_trigger": true
   },
   {
@@ -57,6 +57,10 @@
   },
   {
     "query": "Write a blog post about our new service.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a full marketing strategy for our new service.",
     "should_trigger": false
   },
   {

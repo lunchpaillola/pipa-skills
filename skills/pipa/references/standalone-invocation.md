@@ -7,7 +7,7 @@ Pipa can route to selected standalone skills, but those skills remain authoritat
 | Pipa route | Standalone skill | Use when | Must preserve |
 |---|---|---|---|
 | `audio`, `audio brief` | `agent-audio-brief` | User explicitly asks for audio, listenable, spoken, phone-friendly, or listening-page review of a source artifact | Source extraction safety, no degraded brief when source is unreadable, Kokoro generation rules, publishing and cleanup contract |
-| `post-amplify`, `amplify`, `post amplification`, `syndicate` | `post-amplify` | User asks to amplify, syndicate, distribute, repost, cross-post, or blast an existing post, launch page, essay, article, URL, or Markdown source | Source intake, discover/answer/distribute routing, recurring distribution planning, explicit approval before external writes, adapter fallback behavior, run report |
+| `reach`, `find-threads` | `pipa-reach` | User wants finished work to find relevant public conversations, questions, threads, communities, or places to contribute helpfully | Experimental scope, source privacy, verified thread URLs, manual-only community participation, no invented search results |
 | `composio` | `composio` | User wants external app access or action through Composio | Setup/auth checks, search -> link -> execute discipline, no guessed tool slugs, concise provenance |
 | `trigger` | `pipa-triggers` | User wants event-driven automation, watchers, webhooks, listeners, or trigger management | Required trigger details, stale-event rules, final trigger proposal confirmation before create |
 | `automate` | `pipa-workflow-automation` | User wants recurring scheduled PM delivery, reminders, reports, summaries, or automation list/read/delete | Schedule, timezone, destination, execution prompt, scoped account behavior, final confirmation before create |
@@ -23,8 +23,8 @@ Pipa can route to selected standalone skills, but those skills remain authoritat
 ## Negative Routing Rules
 
 - `brief this PR`, `summarize this PR`, `write a brief`, `project brief`, and `requirements brief` do not route to `agent-audio-brief` unless the user explicitly asks for audio/listenable/spoken/phone-friendly output.
-- `write a blog post`, `create a marketing plan`, and `plan this launch` do not route to `post-amplify` unless the user provides or references an existing source.
-- `post this everywhere now` still routes to `post-amplify` only when a source exists, and the standalone skill must show an amplification plan and receive explicit approval before any remote draft, schedule, publish, or write.
+- `write a blog post`, `create a marketing plan`, `run paid ads`, and `build a social calendar` do not route to `pipa-reach` unless the user specifically asks for thread/community discovery around existing work.
+- `post this everywhere now` may route to `pipa-reach` only for discovery guidance; Reach must not post, submit, comment, vote, schedule, or create drafts by default.
 - `give me a weekly status update now` means produce a one-time status update unless the user asks to schedule future delivery.
 - `when we meet Monday, remind me to discuss budget` is not enough to create an automation unless the user asks Pipa to set up recurring/scheduled delivery and confirms the final plan.
 - External app work through Composio must start with search or verified tool/app information. Never invent a slug because a prompt names an app.

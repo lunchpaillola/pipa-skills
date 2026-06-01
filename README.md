@@ -6,7 +6,7 @@ Built and maintained by [Lola](https://www.linkedin.com/in/lolaojabowale) at [Lu
 
 ## What These Skills Handle
 
-Pipa skills give agents practical operator workflows for the work around the work: client delivery, project operations, updates, handoffs, blockers, briefs, and automations.
+Pipa skills give agents practical workflows for making, operating, and reaching: the work itself, the studio behind the work, and the audience-facing motion that helps finished work find the right people.
 
 - Client delivery planning, coordination, and follow-through
 - Project operations for status, blockers, risks, budgets, and escalations
@@ -15,7 +15,7 @@ Pipa skills give agents practical operator workflows for the work around the wor
 - Audio briefs from sessions, plans, PRs, docs, and links
 - Connected-tool work through Composio-backed workflows
 - Recurring Slack updates and event-triggered automations
-- Post amplification for canonical essays and blog posts
+- Experimental reach workflows for finding relevant conversations around finished work
 
 ## Core Skill
 
@@ -31,7 +31,7 @@ These workflows remain separately installable because they are tool-specific, pr
 |---|---|
 | [`agent-audio-brief`](skills/agent-audio-brief/) | Turns agent sessions, PRs, plans, specs, docs, URLs, and pasted markdown into a Kokoro-generated listenable brief published as a here.now listening page. |
 | [`composio`](skills/composio/) | Routes external app work through Composio with setup/auth checks, search/link/execute discipline, and concise provenance. |
-| [`post-amplify`](skills/post-amplify/) | Finds where an existing post or launch should be shared, what questions it can answer, and how to distribute it over time. |
+| [`pipa-reach`](skills/pipa-reach/) | Experimental Reach workflow for finding threads, questions, and communities where finished work can contribute helpfully. |
 | [`pipa-triggers`](skills/pipa-triggers/) | Creates, inspects, and deletes event-triggered Pipa automations with explicit trigger proposal confirmation. |
 | [`pipa-workflow-automation`](skills/pipa-workflow-automation/) | Creates, inspects, and deletes recurring Slack-driven Pipa automations with schedule, timezone, destination, prompt, and final confirmation gates. |
 
@@ -43,6 +43,7 @@ These workflows remain separately installable because they are tool-specific, pr
 - "Make this a weekly operating brief."
 - "Prepare the handoff and list what is still unknown."
 - "Create an audio brief from this plan."
+- "Pipa reach find-threads for this launch."
 
 ## Installation
 

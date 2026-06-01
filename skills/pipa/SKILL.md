@@ -1,13 +1,13 @@
 ---
 name: pipa
-description: "Use when the user wants project-management or delivery help through Pipa: initiate a project, plan scope or requirements, execute delivery work, monitor status/tickets/budget/risk, close a project, triage PM signals, amplify an existing canonical post, or route natural-language PM requests. Also use for explicit commands like Pipa help, Pipa status, Pipa triage, Pipa budget, Pipa plan, Pipa execute, Pipa close, Pipa amplify, Pipa syndicate, Pipa audio brief, Pipa automate, Pipa trigger, or Pipa composio."
+description: "Use when the user wants project-management or delivery help through Pipa: initiate a project, plan scope or requirements, execute delivery work, monitor status/tickets/budget/risk, close a project, triage PM signals, reach the right audience for finished work, or route natural-language PM requests. Also use for explicit commands like Pipa help, Pipa status, Pipa triage, Pipa budget, Pipa plan, Pipa execute, Pipa close, Pipa reach, Pipa audio brief, Pipa automate, Pipa trigger, or Pipa composio."
 metadata:
   version: 0.1.0
 ---
 
 # Pipa
 
-Pipa is one PM brain with commands underneath.
+Pipa is one studio brain with commands underneath. Today this skill mostly covers Operate: the project and delivery workflows that keep studio work moving. Breakout skills can cover Make and Reach without muddling the operating core.
 
 Use Pipa to route project and delivery work into one primary command, run the matching workflow, and return a decision-ready output. Do not expose the old PM lifecycle skill names to the user.
 
@@ -29,7 +29,7 @@ If no command is present, route by natural-language PM intent. If the request is
 | Execute | `execute`, `coordinate`, `delivery`, `iteration`, `change`, `handoff`, `dependency` | `references/execute.md` or a focused execute reference |
 | Monitor | `monitor`, `status`, `triage`, `budget`, `risk`, `escalate`, `blockers` | `references/monitor.md` or a focused monitor reference |
 | Close | `close`, `signoff`, `handover`, `lessons`, `archive`, `benefits` | `references/close.md` or a focused close reference |
-| Connected workflows | `audio`, `audio brief`, `amplify`, `post amplification`, `syndicate`, `automate`, `trigger`, `composio` | Standalone skills through `references/standalone-invocation.md`; some may perform approved external writes under their own gates |
+| Connected workflows | `reach`, `find-threads`, `audio`, `audio brief`, `automate`, `trigger`, `composio` | Standalone skills through `references/standalone-invocation.md`; some may perform approved external writes under their own gates |
 | Help | `help`, `menu`, no argument | `references/command-menu.md` |
 
 ## Routing Rules
@@ -39,7 +39,7 @@ If no command is present, route by natural-language PM intent. If the request is
 3. If the request implies recurrence, scheduled future delivery, reminders, or existing automation management, route to `pipa-workflow-automation` through `references/standalone-invocation.md`.
 4. If the request implies event reaction, webhook, watcher, listener, or trigger management, route to `pipa-triggers` through `references/standalone-invocation.md`.
 5. If the request requires an external app action through Composio, route to `composio` through `references/standalone-invocation.md` and never guess tool slugs.
-6. Route to `post-amplify` only when the user asks to amplify, syndicate, distribute, repost, cross-post, or blast an existing writing artifact/source reference. Generic “write a post,” “create a marketing plan,” or PM requirements briefs stay inside writing/planning unless an existing post/source is provided.
+6. Route to `pipa-reach` when the user asks Pipa to reach an audience for finished work, find threads, find places where a source can help, or locate relevant public discussions for an existing artifact/source.
 7. Route to `agent-audio-brief` only when the user explicitly asks for an audio, listenable, spoken, phone-friendly, or listening-page brief. Generic “brief this,” “write a brief,” “requirements brief,” or “project brief” stays inside Pipa planning or summarization.
 8. If multiple commands match, choose one primary route and list secondary follow-ups unless the user explicitly asks for a chain.
 9. If unknown, show the help/menu response and ask one clarifying question only when needed.
@@ -50,8 +50,8 @@ If no command is present, route by natural-language PM intent. If the request is
 - `triage` means monitor ticket/intake triage unless the user is triaging a Pipa command choice.
 - `budget` means monitor budget health when wording asks “how are we doing,” burn, forecast, variance, margin, or change control. It means initiate budget setup when wording asks to create, initialize, or refresh a tracker. If ambiguous, ask one short question.
 - `plan` means Pipa planning references, not delegation to another top-level PM skill.
+- `reach` and `find-threads` route to `pipa-reach`. Generic marketing strategy, paid ads, analytics, cold outreach, or social copy generation do not route to Reach unless the user specifically asks for thread/community discovery around existing work.
 - `brief` alone is not audio. `audio brief`, `listenable brief`, `spoken walkthrough`, and `phone-friendly review` are audio.
-- `amplify`, `syndicate`, `distribute`, `cross-post`, and `blast this post` route to post amplification only when tied to an existing canonical post, essay, article, URL, or Markdown source. Launch amplification without an existing source remains planning or marketing strategy, not post amplification.
 - Recurring words such as `daily`, `weekly`, `every Monday`, `remind me every`, and `send this every` route to Pipa automation only when the user asks for future scheduled delivery.
 - Event words such as `when`, `webhook`, `trigger`, `listener`, `watch`, and `on Linear issue created` route to Pipa triggers only when the user asks for event-driven behavior.
 
@@ -95,6 +95,6 @@ Use these direct mappings when the command or user wording is specific enough. O
 - Do not route generic non-PM coding, writing, or research work into Pipa.
 - Do not present Pipa as an acronym.
 - Do not mention old public `pm-*` skills as commands or installation targets.
-- Do not edit or copy the internals of `agent-audio-brief`, `composio`, `pipa-triggers`, or `pipa-workflow-automation`; they remain authoritative standalone workflows.
+- Do not edit or copy the internals of `agent-audio-brief`, `composio`, `pipa-reach`, `pipa-triggers`, or `pipa-workflow-automation`; they remain authoritative standalone workflows.
 - Do not weaken confirmation gates for recurring automations or triggers.
 - Do not invent owners, due dates, source facts, external-app slugs, or project decisions. Use `TBD` for unknowns.

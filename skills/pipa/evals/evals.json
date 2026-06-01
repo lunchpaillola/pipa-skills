@@ -144,51 +144,26 @@
       ]
     },
     {
-      "id": "pipa-amplify-positive-1",
-      "prompt": "Pipa amplify this blog post: https://example.com/posts/practical-guide",
-      "expected_output": "Routes to post-amplify and preserves source intake, destination fit, blast-plan approval, fallback, and run-report requirements.",
+      "id": "pipa-reach-find-threads-positive-1",
+      "prompt": "Pipa reach find-threads for this article: https://example.com/posts/practical-guide",
+      "expected_output": "Routes to pipa-reach and preserves experimental find-threads behavior, verified thread discovery, source privacy, and manual-only community participation.",
       "assertions": [
-        "Does the output route to `post-amplify` because the user provided an existing post source and distribution intent?",
-        "Does it require a blast plan before any external draft, publish, or write?",
-        "Does it preserve canonical attribution and destination-type routing?",
-        "Does it avoid posting to communities such as Reddit in V1?"
+        "Does the output route to `pipa-reach` because the user asked for Reach/thread discovery around existing work?",
+        "Does it preserve the `find-threads` command as the current Reach workflow?",
+        "Does it require verified thread URLs or clearly separate unverified query suggestions?",
+        "Does it avoid posting, commenting, submitting, voting, scheduling, or remote drafts?"
       ],
       "files": [
 
       ]
     },
     {
-      "id": "pipa-amplify-positive-2",
-      "prompt": "Pipa syndicate this canonical essay from the URL I pasted above.",
-      "expected_output": "Routes to post-amplify when an existing canonical essay is referenced and preserves standalone safety gates.",
+      "id": "pipa-reach-negative-marketing-1",
+      "prompt": "Pipa create a full marketing strategy for our new service.",
+      "expected_output": "Does not route to pipa-reach because the user asked for broad marketing strategy rather than thread/community discovery around finished work.",
       "assertions": [
-        "Does the output select `post-amplify` as the primary standalone route?",
-        "Does it require the source/canonical URL if the prior pasted URL is unavailable in context?",
-        "Does it preserve whole-plan approval or explicit subset approval before writes?"
-      ],
-      "files": [
-
-      ]
-    },
-    {
-      "id": "pipa-amplify-negative-1",
-      "prompt": "Pipa write a blog post about our new service.",
-      "expected_output": "Does not route to post-amplify because the user is asking to create the original post, not distribute an existing source.",
-      "assertions": [
-        "Does the output avoid selecting `post-amplify`?",
-        "Does it treat this as writing/planning work rather than syndication?"
-      ],
-      "files": [
-
-      ]
-    },
-    {
-      "id": "pipa-amplify-negative-2",
-      "prompt": "Pipa amplify this launch.",
-      "expected_output": "Does not route to post-amplify solely because the prompt says amplify; it asks for or routes around the missing existing post/source reference.",
-      "assertions": [
-        "Does the output avoid selecting `post-amplify` without an existing canonical writing artifact?",
-        "Does it ask one clarifying question or route to planning/marketing strategy instead?"
+        "Does the output avoid selecting `pipa-reach`?",
+        "Does it treat broad marketing strategy as outside the current Reach command scope?"
       ],
       "files": [
 

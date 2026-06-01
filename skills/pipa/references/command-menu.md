@@ -12,7 +12,7 @@ Pipa can take the next PM step from here.
 Recommended next commands:
 - `Pipa status` - summarize current state, blockers, decisions, and next milestones.
 - `Pipa plan` - turn scattered requirements into a usable delivery baseline.
-- `Pipa amplify <post URL>` - prepare an approval-gated blast plan for an existing post.
+- `Pipa reach find-threads <source>` - find public conversations where finished work can help.
 
 Command groups:
 - Start: `initiate`, `kickoff`, `context`, `budget setup`, `problem`, `charter`, `stakeholders`
@@ -20,7 +20,7 @@ Command groups:
 - Execute: `execute`, `coordinate`, `delivery`, `iteration`, `change`, `dependency`, `handoff`
 - Monitor: `monitor`, `status`, `triage`, `budget`, `risk`, `escalate`, `blockers`
 - Close: `close`, `signoff`, `handover`, `lessons`, `archive`, `benefits`
-- Connected: `audio brief`, `amplify`, `syndicate`, `automate`, `trigger`, `composio`
+- Connected: `reach`, `find-threads`, `audio brief`, `automate`, `trigger`, `composio`
 ```
 
 `skills/pipa/SKILL.md` is the authoritative command matrix. This menu mirrors the public command groups and should stay aligned with it when commands change.
@@ -34,7 +34,7 @@ Command groups:
 - Closeout: `Pipa close` -> `Pipa handover` -> `Pipa lessons` -> `Pipa archive`
 - Recurring PM update: `Pipa status` -> `Pipa automate`
 - Event-driven PM follow-up: `Pipa trigger` -> `Pipa status`
-- Published post distribution: `Pipa amplify <canonical URL>` -> approve all or selected destinations
+- Finished work needs an audience: `Pipa reach find-threads <source>` -> review manual answer angles
 
 ## Clarification Rule
 
