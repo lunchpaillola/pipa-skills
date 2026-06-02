@@ -4,11 +4,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GENERATOR="$SCRIPT_DIR/generate-audio-job.sh"
 
-TMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/agent-audio-brief-job-test.XXXXXX")"
+TMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/pipa-audio-brief-job-test.XXXXXX")"
 trap 'rm -rf "$TMP_ROOT"' EXIT
 
-export AGENT_AUDIO_BRIEF_JOB_DIR="$TMP_ROOT/jobs"
-mkdir -p "$AGENT_AUDIO_BRIEF_JOB_DIR"
+export PIPA_AUDIO_BRIEF_JOB_DIR="$TMP_ROOT/jobs"
+mkdir -p "$PIPA_AUDIO_BRIEF_JOB_DIR"
 
 fail() {
   printf 'not ok - %s\n' "$1" >&2
@@ -37,7 +37,7 @@ make_job() {
   local status="$2"
   local pid="$3"
   local output="$TMP_ROOT/$job_id/brief.wav"
-  local job_dir="$AGENT_AUDIO_BRIEF_JOB_DIR/$job_id"
+  local job_dir="$PIPA_AUDIO_BRIEF_JOB_DIR/$job_id"
 
   mkdir -p "$(dirname "$output")" "$job_dir"
   {
@@ -76,8 +76,8 @@ test_status_reconciles_failed_exit_race() {
   local pid output status
   pid="$(dead_pid)"
   output="$(make_job "dead-failed" "running" "$pid")"
-  printf 'exit_code=1\n' > "$AGENT_AUDIO_BRIEF_JOB_DIR/dead-failed/exit_code"
-  printf 'audio_result.reason=kokoro setup failed\n' > "$AGENT_AUDIO_BRIEF_JOB_DIR/dead-failed/stderr.log"
+  printf 'exit_code=1\n' > "$PIPA_AUDIO_BRIEF_JOB_DIR/dead-failed/exit_code"
+  printf 'audio_result.reason=kokoro setup failed\n' > "$PIPA_AUDIO_BRIEF_JOB_DIR/dead-failed/stderr.log"
 
   status="$($GENERATOR status "dead-failed")"
   assert_contains "$status" "audio_job.status=failed" "dead failed job reconciles to failed"
@@ -90,7 +90,7 @@ test_status_reconciles_successful_exit_race() {
   pid="$(dead_pid)"
   output="$(make_job "dead-ready" "running" "$pid")"
   printf 'RIFFstub' > "$output"
-  printf 'exit_code=0\n' > "$AGENT_AUDIO_BRIEF_JOB_DIR/dead-ready/exit_code"
+  printf 'exit_code=0\n' > "$PIPA_AUDIO_BRIEF_JOB_DIR/dead-ready/exit_code"
 
   status="$($GENERATOR status "dead-ready")"
   assert_contains "$status" "audio_job.status=ready" "dead successful job reconciles to ready"
@@ -107,7 +107,7 @@ test_status_reports_ready_audio_metadata() {
     printf 'audio_result.duration_label=2:45\n'
     printf 'audio_result.sanity_check=passed\n'
     printf 'audio_result.word_count=416\n'
-  } > "$AGENT_AUDIO_BRIEF_JOB_DIR/ready-metadata/stdout.log"
+  } > "$PIPA_AUDIO_BRIEF_JOB_DIR/ready-metadata/stdout.log"
 
   status="$($GENERATOR status "ready-metadata")"
   assert_contains "$status" "audio_job.duration_seconds=165.70" "ready job reports duration seconds"

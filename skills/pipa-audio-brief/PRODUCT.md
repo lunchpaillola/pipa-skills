@@ -10,7 +10,7 @@ AI-assisted reviewers, delivery leads, builders, engineers, project managers, an
 
 ## Product Purpose
 
-`agent-audio-brief` turns work artifacts from AI agents, coding tools, and document workflows into a published single-page listening handoff. The page succeeds when the audio and transcript are immediately usable, and source context is available without becoming another interface to manage.
+`pipa-audio-brief` turns work artifacts from AI agents, coding tools, and document workflows into a published single-page listening handoff. The page succeeds when the audio and transcript are immediately usable, and source context is available without becoming another interface to manage.
 
 ## Brand Personality
 

@@ -4,7 +4,7 @@ Kokoro audio generation is required for success. Script-only output is useful fo
 
 ## Golden Path: Managed `kokoro-onnx`
 
-Use one managed local backend by default: cached `kokoro-onnx` in `~/.cache/agent-audio-brief/`.
+Use one managed local backend by default: cached `kokoro-onnx` in `~/.cache/pipa-audio-brief/`.
 
 Do not explore a long fallback ladder during a normal brief request. The user asked for a listening artifact, not a dependency debugging session. There is one degraded fallback: browser SpeechSynthesis preview when local Kokoro is blocked by setup, memory, or compute constraints.
 
@@ -27,7 +27,7 @@ The managed backend uses:
 Cache layout:
 
 ```text
-~/.cache/agent-audio-brief/
+~/.cache/pipa-audio-brief/
   kokoro-onnx-venv/
   kokoro-models/
     v1.0-int8/
@@ -57,37 +57,37 @@ This intentionally avoids global or ad hoc package installs as normal behavior.
 Use `scripts/generate-audio-job.sh` for normal audio generation so Kokoro does not block the agent shell command:
 
 ```bash
-skills/agent-audio-brief/scripts/generate-audio-job.sh start brief-script.txt publish/audio/brief.wav
-skills/agent-audio-brief/scripts/generate-audio-job.sh wait <job-id>
+skills/pipa-audio-brief/scripts/generate-audio-job.sh start brief-script.txt publish/audio/brief.wav
+skills/pipa-audio-brief/scripts/generate-audio-job.sh wait <job-id>
 ```
 
 The async job:
 
 - uses `af_heart` by default unless a third voice argument is provided
-- validates script word count before setup or generation and blocks default briefs over `AGENT_AUDIO_BRIEF_MAX_WORDS=350`
+- validates script word count before setup or generation and blocks default briefs over `PIPA_AUDIO_BRIEF_MAX_WORDS=350`
 - creates the cached backend if needed
 - uses the INT8 Kokoro ONNX model by default
-- defaults to `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`
-- wraps generation with `AGENT_AUDIO_BRIEF_GENERATION_TIMEOUT_SECONDS=1200` when `timeout` or `gtimeout` is available
+- defaults to `PIPA_AUDIO_BRIEF_MAX_PHONEMES=100`
+- wraps generation with `PIPA_AUDIO_BRIEF_GENERATION_TIMEOUT_SECONDS=1200` when `timeout` or `gtimeout` is available
 - streams audio to `audio/brief.wav.partial` instead of building one full audio buffer in memory
-- phonemizes and renders punctuation-delimited text chunks one at a time, with `AGENT_AUDIO_BRIEF_MAX_PHONEMES` as an additional per-inference safety cap
+- phonemizes and renders punctuation-delimited text chunks one at a time, with `PIPA_AUDIO_BRIEF_MAX_PHONEMES` as an additional per-inference safety cap
 - checks duration with Python's standard WAV reader, then renames the partial file to one final browser-playable WAV at the requested output path
 - reports progress, duration, duration label, sanity check status, and word count
 - fails if the output is suspiciously short for the script length
 
-Keep `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100` as the default. Higher values can smooth prosody but increase ONNX Runtime workspace memory. Only change it when the user explicitly asks to test that tradeoff.
+Keep `PIPA_AUDIO_BRIEF_MAX_PHONEMES=100` as the default. Higher values can smooth prosody but increase ONNX Runtime workspace memory. Only change it when the user explicitly asks to test that tradeoff.
 
 ## Async Generation Contract
 
 Always use `scripts/generate-audio-job.sh` for skill execution:
 
 ```bash
-skills/agent-audio-brief/scripts/generate-audio-job.sh start brief-script.txt publish/audio/brief.wav
-skills/agent-audio-brief/scripts/generate-audio-job.sh wait <job-id>
-skills/agent-audio-brief/scripts/generate-audio-job.sh status <job-id>
+skills/pipa-audio-brief/scripts/generate-audio-job.sh start brief-script.txt publish/audio/brief.wav
+skills/pipa-audio-brief/scripts/generate-audio-job.sh wait <job-id>
+skills/pipa-audio-brief/scripts/generate-audio-job.sh status <job-id>
 ```
 
-The job wrapper starts a detached Kokoro generation process with `nohup`, stores job state under `~/.cache/agent-audio-brief/jobs/` by default, and returns immediately with an `audio_job.job_id`. Prefer `wait` for normal runs because it polls and emits progress until the job reaches a terminal state. `wait` accepts optional `poll-seconds` and `timeout-seconds` arguments, and also respects `AGENT_AUDIO_BRIEF_WAIT_TIMEOUT_SECONDS` with a default of 900 seconds. Use `status` for debugging, progress checks, or when the caller's command timeout is shorter than the expected generation time.
+The job wrapper starts a detached Kokoro generation process with `nohup`, stores job state under `~/.cache/pipa-audio-brief/jobs/` by default, and returns immediately with an `audio_job.job_id`. Prefer `wait` for normal runs because it polls and emits progress until the job reaches a terminal state. `wait` accepts optional `poll-seconds` and `timeout-seconds` arguments, and also respects `PIPA_AUDIO_BRIEF_WAIT_TIMEOUT_SECONDS` with a default of 900 seconds. Use `status` for debugging, progress checks, or when the caller's command timeout is shorter than the expected generation time.
 
 If `wait` reaches its own timeout, it exits `124` and emits `audio_job.wait_status=timed_out` on stdout and stderr. That does not mean Kokoro failed; it means the wrapper stopped waiting. Call `status <job-id>` and continue polling. `status` reports whether the final output exists as `audio_job.output_ready=true|false` and whether a `.partial` output is still being written.
 
@@ -135,7 +135,7 @@ Audio brief blocked.
 - **Blocked at:** Kokoro audio completeness
 - **What worked:** script generated; audio file created
 - **Why:** generated audio duration was <duration>, which is too short for the script
-- **Next:** run `skills/agent-audio-brief/scripts/setup-kokoro.sh` after installing `uv` or `python3.12`, then retry generation
+- **Next:** run `skills/pipa-audio-brief/scripts/setup-kokoro.sh` after installing `uv` or `python3.12`, then retry generation
 ```
 
 ## Failure Handling

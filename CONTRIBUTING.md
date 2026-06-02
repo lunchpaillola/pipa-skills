@@ -19,7 +19,7 @@ Create or preserve a standalone skill only when the workflow is high-value, tool
 
 Current standalone breakouts are:
 
-- `agent-audio-brief`
+- `pipa-audio-brief`
 - `composio`
 - `pipa-triggers`
 - `pipa-workflow-automation`

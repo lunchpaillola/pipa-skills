@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free here.now publisher for agent-audio-brief bundles."""
+"""Dependency-free here.now publisher for pipa-audio-brief bundles."""
 
 from __future__ import annotations
 
@@ -156,7 +156,7 @@ def save_state(slug: str, site_url: str, response: dict[str, Any]) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Publish an agent-audio-brief bundle to here.now")
+    parser = argparse.ArgumentParser(description="Publish a pipa-audio-brief bundle to here.now")
     parser.add_argument("target", help="file or directory to publish")
     parser.add_argument("--api-key")
     parser.add_argument("--slug")

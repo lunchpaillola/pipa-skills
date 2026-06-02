@@ -2,7 +2,7 @@
 
 ## v0.3.0
 
-- Added `agent-audio-brief` for turning agent sessions, PRs, plans, specs, research reports, docs, URLs, and pasted markdown into Kokoro-generated here.now listening pages
+- Added `pipa-audio-brief` for turning agent sessions, PRs, plans, specs, research reports, docs, URLs, and pasted markdown into Kokoro-generated here.now listening pages
 - Added managed local Kokoro setup and generation scripts for reusable audio brief creation
 - Added audio brief references for source extraction, script shaping, page generation, privacy, publishing, and local artifact cleanup
 
