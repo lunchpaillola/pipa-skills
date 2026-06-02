@@ -2,8 +2,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CACHE_ROOT="${AGENT_AUDIO_BRIEF_CACHE:-$HOME/.cache/agent-audio-brief}"
-JOB_ROOT="${AGENT_AUDIO_BRIEF_JOB_DIR:-$CACHE_ROOT/jobs}"
+CACHE_ROOT="${PIPA_AUDIO_BRIEF_CACHE:-$HOME/.cache/pipa-audio-brief}"
+JOB_ROOT="${PIPA_AUDIO_BRIEF_JOB_DIR:-$CACHE_ROOT/jobs}"
 
 usage() {
   printf 'usage: %s start <brief-script.txt> <output.wav> [voice]\n' "$0" >&2
@@ -143,17 +143,17 @@ run_generation() {
   local output_wav="$2"
   local partial_wav="$output_wav.partial"
   local voice="${3:-af_heart}"
-  local venv_dir="${AGENT_AUDIO_BRIEF_KOKORO_VENV:-$CACHE_ROOT/kokoro-onnx-venv}"
-  local model_variant="${AGENT_AUDIO_BRIEF_MODEL_VARIANT:-int8}"
-  local model_dir="${AGENT_AUDIO_BRIEF_MODEL_DIR:-$CACHE_ROOT/kokoro-models/v1.0-$model_variant}"
-  local model_file="${AGENT_AUDIO_BRIEF_MODEL_FILE:-$model_dir/kokoro-v1.0.$model_variant.onnx}"
+  local venv_dir="${PIPA_AUDIO_BRIEF_KOKORO_VENV:-$CACHE_ROOT/kokoro-onnx-venv}"
+  local model_variant="${PIPA_AUDIO_BRIEF_MODEL_VARIANT:-int8}"
+  local model_dir="${PIPA_AUDIO_BRIEF_MODEL_DIR:-$CACHE_ROOT/kokoro-models/v1.0-$model_variant}"
+  local model_file="${PIPA_AUDIO_BRIEF_MODEL_FILE:-$model_dir/kokoro-v1.0.$model_variant.onnx}"
   if [[ "$model_variant" == "fp32" || "$model_variant" == "full" ]]; then
-    model_file="${AGENT_AUDIO_BRIEF_MODEL_FILE:-$model_dir/kokoro-v1.0.onnx}"
+    model_file="${PIPA_AUDIO_BRIEF_MODEL_FILE:-$model_dir/kokoro-v1.0.onnx}"
   fi
   local voices_file="$model_dir/voices-v1.0.bin"
-  local max_phonemes="${AGENT_AUDIO_BRIEF_MAX_PHONEMES:-100}"
-  local max_words="${AGENT_AUDIO_BRIEF_MAX_WORDS:-350}"
-  local generation_timeout_seconds="${AGENT_AUDIO_BRIEF_GENERATION_TIMEOUT_SECONDS:-1200}"
+  local max_phonemes="${PIPA_AUDIO_BRIEF_MAX_PHONEMES:-100}"
+  local max_words="${PIPA_AUDIO_BRIEF_MAX_WORDS:-350}"
+  local generation_timeout_seconds="${PIPA_AUDIO_BRIEF_GENERATION_TIMEOUT_SECONDS:-1200}"
 
   export OMP_NUM_THREADS="${OMP_NUM_THREADS:-1}"
   export OPENBLAS_NUM_THREADS="${OPENBLAS_NUM_THREADS:-1}"
@@ -455,7 +455,7 @@ wait_job() {
 
   local job_id="$1"
   local poll_seconds="${2:-5}"
-  local timeout_seconds="${3:-${AGENT_AUDIO_BRIEF_WAIT_TIMEOUT_SECONDS:-900}}"
+  local timeout_seconds="${3:-${PIPA_AUDIO_BRIEF_WAIT_TIMEOUT_SECONDS:-900}}"
   local started_at
   local now
   local elapsed

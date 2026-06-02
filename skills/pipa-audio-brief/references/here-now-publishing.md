@@ -19,7 +19,7 @@ curl -fsSL https://here.now/install.sh | bash
 After installation, read the local here.now skill instructions when available. Prefer this skill's dependency-free Python publisher:
 
 ```bash
-skills/agent-audio-brief/scripts/publish.sh <bundle-dir> --client opencode
+skills/pipa-audio-brief/scripts/publish.sh <bundle-dir> --client opencode
 ```
 
 The local publisher uses only Python standard-library modules plus network access to here.now. It exists so the audio-brief workflow does not block when the here.now skill helper cannot find `jq`.

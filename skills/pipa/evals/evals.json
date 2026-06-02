@@ -71,9 +71,9 @@
     {
       "id": "pipa-audio-positive-1",
       "prompt": "Pipa audio brief this requirements doc so I can listen to it on my phone.",
-      "expected_output": "Routes to agent-audio-brief and preserves source extraction, audio generation, publishing, and blocker behavior.",
+      "expected_output": "Routes to pipa-audio-brief and preserves source extraction, audio generation, publishing, and blocker behavior.",
       "assertions": [
-        "Does the output route to `agent-audio-brief` because the user explicitly asked for audio/listenable output?",
+        "Does the output route to `pipa-audio-brief` because the user explicitly asked for audio/listenable output?",
         "Does it preserve source-readability blockers instead of producing a degraded audio brief?",
         "Does it preserve the standalone workflow's generation and publishing contract?"
       ],
@@ -84,9 +84,9 @@
     {
       "id": "pipa-audio-negative-1",
       "prompt": "Pipa brief this PR before standup.",
-      "expected_output": "Does not route to agent-audio-brief because the user did not ask for audio/listenable/spoken output.",
+      "expected_output": "Does not route to pipa-audio-brief because the user did not ask for audio/listenable/spoken output.",
       "assertions": [
-        "Does the output avoid selecting `agent-audio-brief`?",
+        "Does the output avoid selecting `pipa-audio-brief`?",
         "Does it treat `brief` as a generic PM or summary request unless audio/listenable wording is present?"
       ],
       "files": [

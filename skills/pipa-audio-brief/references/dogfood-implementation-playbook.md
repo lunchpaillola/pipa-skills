@@ -23,8 +23,8 @@ Use this async path for normal audio generation:
 
 ```bash
 RUN_DIR=".artifacts/audio-briefs/<slug>"
-skills/agent-audio-brief/scripts/generate-audio-job.sh start "$RUN_DIR/work/brief-script.txt" "$RUN_DIR/publish/audio/brief.wav"
-skills/agent-audio-brief/scripts/generate-audio-job.sh wait <job-id>
+skills/pipa-audio-brief/scripts/generate-audio-job.sh start "$RUN_DIR/work/brief-script.txt" "$RUN_DIR/publish/audio/brief.wav"
+skills/pipa-audio-brief/scripts/generate-audio-job.sh wait <job-id>
 ```
 
 If the command runner times out before `wait` completes, resume with `status <job-id>` rather than inspecting file size. A `.partial` output means Kokoro is still writing or failed before final validation.
@@ -32,7 +32,7 @@ If the command runner times out before `wait` completes, resume with `status <jo
 If the cached backend is missing, the job runs setup through the underlying generation script:
 
 ```bash
-skills/agent-audio-brief/scripts/setup-kokoro.sh
+skills/pipa-audio-brief/scripts/setup-kokoro.sh
 ```
 
 Setup uses `uv` with Python 3.12 when available, otherwise `python3.12`. If neither exists, block and ask for one of those prerequisites. Do not use Python 3.14 for Kokoro generation, and do not perform ad hoc package installs during a normal brief request.
@@ -91,7 +91,7 @@ curl -fsSL https://here.now/install.sh | bash
 Publish the `publish/` bundle directory, not the run root and not the `work/` directory:
 
 ```bash
-skills/agent-audio-brief/scripts/publish.sh <publish-dir> --client opencode
+skills/pipa-audio-brief/scripts/publish.sh <publish-dir> --client opencode
 ```
 
 Use the here.now skill helper instead only when its dependencies, including `jq`, are available.

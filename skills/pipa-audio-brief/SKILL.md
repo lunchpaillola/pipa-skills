@@ -1,5 +1,5 @@
 ---
-name: agent-audio-brief
+name: pipa-audio-brief
 description: "Use when the user wants a listenable brief for work produced by AI agents, coding tools, or document workflows: agent sessions, code changes, pull requests, plans, specs, research reports, documentation pages, blog posts, URLs, local files, or pasted markdown. Also use for casual requests like give me the brief, audio brief, listenable walkthrough, phone-friendly review, or static review page for understanding work artifacts without reading everything line by line. Do not use for generic TTS or podcast creation from scratch."
 metadata:
   version: 0.1.0
@@ -104,8 +104,8 @@ Golden path:
 
 1. Always start audio generation through `scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`, then use `scripts/generate-audio-job.sh wait <job-id>` as the normal completion path. If `wait` exits `124` with `audio_job.wait_status=timed_out`, the job may still be running; call `status <job-id>` and continue polling instead of restarting or guessing.
 2. The async job validates word count before setup or generation and blocks default briefs over 350 words.
-3. By default, generation uses the INT8 Kokoro model, `AGENT_AUDIO_BRIEF_MAX_PHONEMES=100`, sentence-by-sentence rendering, and streaming writes to `audio/brief.wav.partial`. Do not increase the phoneme cap unless the user explicitly asks to trade memory for smoother prosody.
-4. If the backend is missing, the async job runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/agent-audio-brief/kokoro-onnx-venv/` and cached INT8 model files under `~/.cache/agent-audio-brief/kokoro-models/v1.0-int8/` by default.
+3. By default, generation uses the INT8 Kokoro model, `PIPA_AUDIO_BRIEF_MAX_PHONEMES=100`, sentence-by-sentence rendering, and streaming writes to `audio/brief.wav.partial`. Do not increase the phoneme cap unless the user explicitly asks to trade memory for smoother prosody.
+4. If the backend is missing, the async job runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/pipa-audio-brief/kokoro-onnx-venv/` and cached INT8 model files under `~/.cache/pipa-audio-brief/kokoro-models/v1.0-int8/` by default.
 5. `scripts/setup-kokoro.sh` uses `uv` with Python 3.12 when available, otherwise the first available Python 3.10-3.13 executable. Do not use Python 3.14 for Kokoro generation.
 6. On successful `wait` or `status`, use the reported `audio_job.duration_seconds`, `audio_job.duration_label`, and `audio_job.sanity_check` fields when filling the page contract. Do not run a separate WAV duration command unless these fields are missing or suspicious.
 7. If Kokoro setup or generation fails because the machine is compute- or memory-constrained, tell the user plainly and offer the single fallback: a browser SpeechSynthesis preview page. Label it as a degraded preview, not as the completed Kokoro-quality brief.
@@ -157,7 +157,7 @@ Return only the current `siteUrl` from the publish command as the primary listen
 
 Before returning, apply the artifact lifecycle rules in `references/local-review-bundle.md` and `references/dogfood-implementation-playbook.md`.
 
-After a successful here.now publish, remove the local generated bundle and temporary generation artifacts. The here.now URL is the durable user-facing artifact. Do not keep `.artifacts/audio-briefs/<slug>/`, separate transcript files, page-contract files, provenance files, chunk audio, helper scripts, logs, package folders, or per-run job directories under `~/.cache/agent-audio-brief/jobs/` unless preserving them is necessary to explain or debug a blocker. Do not delete the managed Kokoro backend cache at `~/.cache/agent-audio-brief/kokoro-onnx-venv/` or `~/.cache/agent-audio-brief/kokoro-models/`; it is reused to make future briefs fast.
+After a successful here.now publish, remove the local generated bundle and temporary generation artifacts. The here.now URL is the durable user-facing artifact. Do not keep `.artifacts/audio-briefs/<slug>/`, separate transcript files, page-contract files, provenance files, chunk audio, helper scripts, logs, package folders, or per-run job directories under `~/.cache/pipa-audio-brief/jobs/` unless preserving them is necessary to explain or debug a blocker. Do not delete the managed Kokoro backend cache at `~/.cache/pipa-audio-brief/kokoro-onnx-venv/` or `~/.cache/pipa-audio-brief/kokoro-models/`; it is reused to make future briefs fast.
 
 If generation or publishing is blocked, preserve only the minimal debug artifacts needed to continue and mention where they are.
 

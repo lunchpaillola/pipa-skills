@@ -28,7 +28,7 @@ These workflows remain separately installable because they are tool-specific, pr
 
 | Skill | Description |
 |---|---|
-| [`agent-audio-brief`](skills/agent-audio-brief/) | Turns agent sessions, PRs, plans, specs, docs, URLs, and pasted markdown into a Kokoro-generated listenable brief published as a here.now listening page. |
+| [`pipa-audio-brief`](skills/pipa-audio-brief/) | Turns agent sessions, PRs, plans, specs, docs, URLs, and pasted markdown into a listenable brief with a shareable listening page. |
 | [`composio`](skills/composio/) | Routes external app work through Composio with setup/auth checks, search/link/execute discipline, and concise provenance. |
 | [`pipa-triggers`](skills/pipa-triggers/) | Creates, inspects, and deletes event-triggered Pipa automations with explicit trigger proposal confirmation. |
 | [`pipa-workflow-automation`](skills/pipa-workflow-automation/) | Creates, inspects, and deletes recurring Slack-driven Pipa automations with schedule, timezone, destination, prompt, and final confirmation gates. |
@@ -54,7 +54,7 @@ npx skills add lunchpaillola/pipa-skills
 npx skills add lunchpaillola/pipa-skills --skill pipa
 
 # Install a breakout skill
-npx skills add lunchpaillola/pipa-skills --skill agent-audio-brief
+npx skills add lunchpaillola/pipa-skills --skill pipa-audio-brief
 
 # List available skills
 npx skills add lunchpaillola/pipa-skills --list
