@@ -686,7 +686,6 @@ Rubric should score:
 **Patterns to follow:**
 
 - `evals/` existing repository structure.
-- `.opencode/skills/generate-synthetic-data/SKILL.md` for dimension-based synthetic eval case generation if more cases are needed later.
 
 **Test scenarios:**
 
