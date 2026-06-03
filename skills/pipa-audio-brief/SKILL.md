@@ -15,7 +15,7 @@ The brief should answer the casual request: "Give me the brief."
 
 Primary goal: fast orientation, useful judgment, and an immersive listen-first review experience. Turn a source artifact into an intelligent spoken orientation: the story of the artifact, what matters, what needs attention, and what the listener should do next.
 
-Output goal: generate audio with Kokoro, create a deterministic single-page listening experience, publish it with here.now, and return the here.now URL.
+Output goal: create a deterministic single-page listening experience with browser speech by default, publish it with here.now, and return the here.now URL. Kokoro is an optional polished audio preset when the user explicitly asks for generated audio and accepts the extra setup time and memory requirements.
 
 Communication style contract: when returning user-facing status, blockers, or final handoffs, apply `skills/pipa/references/communication-style.md`.
 
@@ -28,7 +28,7 @@ Audio Brief Progress
 - [ ] Step 1 complete: source and listening goal confirmed
 - [ ] Step 2 complete: source extracted with safety and provenance recorded
 - [ ] Step 3 complete: 300-350 word spoken brief script created
-- [ ] Step 4 complete: Kokoro audio generated and duration-checked, or clear failure returned
+- [ ] Step 4 complete: browser speech mode selected by default, or optional Kokoro audio generated and duration-checked
 - [ ] Step 5 complete: deterministic single-page listening UI generated from template
 - [ ] Step 6 complete: here.now installed/available and page published
 - [ ] Step 7 complete: local artifacts cleaned after successful publish, or debug artifacts preserved intentionally
@@ -94,13 +94,29 @@ The goal is not completeness. The goal is fast orientation, useful judgment, and
 
 Before sending the script to TTS, do one revision pass against these checks: plain speakable text with no Markdown syntax, source-specific judgment rather than generic summary, no unsupported claims of verification or review work, clear bottom-line takeaway, sentences mostly around 7-10 words with shorter sentences allowed for emphasis, no sentence over 10 words, and roughly the target length unless the source is short. Hard cap the default brief at 350 words unless the user explicitly asked for a deeper listen. Do not run repeated optimization loops during normal generation.
 
-### Step 4: Generate Audio With Kokoro
+### Step 4: Select Audio Mode
 
 Follow `references/audio-generation-and-fallbacks.md`.
 
-Use `af_heart` as the default voice unless the user asks for another voice.
+Default to browser SpeechSynthesis. This is the normal successful path, especially in sandboxed or resource-constrained environments. It avoids local model setup, large cached dependencies, and memory-heavy inference while still giving the listener audio controls, sentence highlighting, pause/resume, restart, skip behavior, and compact browser voice selection through the dock's Voice popover.
 
-Golden path:
+Use the generated script as the browser speech input, not the raw source document. The brief does not need to summarize every source detail, but browser speech must cover the generated brief script.
+
+Write the page contract with:
+
+```json
+"audio": {
+  "mode": "browser_speech",
+  "durationLabel": "Browser speech",
+  "status": "browser_speech"
+}
+```
+
+Only use Kokoro when the user explicitly asks for polished generated audio, higher-quality narration, or the Kokoro preset. Before running it, state the tradeoff plainly: Kokoro usually sounds more polished, but it takes longer, downloads/caches model assets, and can fail in memory-constrained sandboxes.
+
+For optional Kokoro mode, use `af_heart` as the default voice unless the user asks for another voice, and write the page contract with `"audio.mode": "kokoro"` after generation succeeds.
+
+Optional Kokoro path:
 
 1. Always start audio generation through `scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`, then use `scripts/generate-audio-job.sh wait <job-id>` as the normal completion path. If `wait` exits `124` with `audio_job.wait_status=timed_out`, the job may still be running; call `status <job-id>` and continue polling instead of restarting or guessing.
 2. The async job validates word count before setup or generation and blocks default briefs over 350 words.
@@ -108,15 +124,13 @@ Golden path:
 4. If the backend is missing, the async job runs `scripts/setup-kokoro.sh` once. Setup creates or reuses `~/.cache/pipa-audio-brief/kokoro-onnx-venv/` and cached INT8 model files under `~/.cache/pipa-audio-brief/kokoro-models/v1.0-int8/` by default.
 5. `scripts/setup-kokoro.sh` uses `uv` with Python 3.12 when available, otherwise the first available Python 3.10-3.13 executable. Do not use Python 3.14 for Kokoro generation.
 6. On successful `wait` or `status`, use the reported `audio_job.duration_seconds`, `audio_job.duration_label`, and `audio_job.sanity_check` fields when filling the page contract. Do not run a separate WAV duration command unless these fields are missing or suspicious.
-7. If Kokoro setup or generation fails because the machine is compute- or memory-constrained, tell the user plainly and offer the single fallback: a browser SpeechSynthesis preview page. Label it as a degraded preview, not as the completed Kokoro-quality brief.
-
-Use the generated script as the TTS input, not the raw source document. The brief does not need to summarize every source detail, but the audio must fully render the generated brief script.
+7. If Kokoro setup or generation fails because the machine is compute- or memory-constrained, switch to the browser speech page unless the user explicitly asked to block instead. Label the final page as browser speech in the status, not as polished Kokoro audio.
 
 The requested `audio/brief.wav` is created only after generation and duration checks pass. Treat success as exactly: `wait` or `status` reports `audio_job.status=ready`, `audio_job.output_ready=true`, and `audio_job.sanity_check=passed`. Do not infer success from file size, a partial file, command silence, or a still-running job.
 
 After generation, use the reported `audio_job.duration_seconds` and `audio_job.duration_label` fields for the page contract. The generation script uses Python's standard WAV reader for duration checks; do not require `ffprobe`, `soxi`, `mediainfo`, other media metadata tools, or a separate WAV duration command unless those fields are missing or suspicious. If the brief produces only a few seconds of audio or fails the script's duration sanity check, treat it as a generation defect, not success.
 
-If Kokoro fails after the script is generated, return a clear message that the audio brief cannot be generated. Do not call a script-only output successful.
+If Kokoro fails after the script is generated, do not return script-only output as successful. Generate the default browser speech listening page instead, unless the user specifically required Kokoro-only output.
 
 ### Step 5: Generate One Listening Page
 
@@ -127,8 +141,8 @@ Create one user-facing `index.html` page by writing a JSON page contract that fo
 The page must include only:
 
 - concise title and source context
-- docked native audio player
-- transcript divided into the four script sections, with real paragraph spacing in the generated page
+- docked browser speech controls by default, including a compact Voice popover for browser voice selection, or native audio player in optional Kokoro mode
+- transcript divided into the four script sections, with real paragraph spacing and sentence-level browser speech highlighting in the generated page
 - brief note only when a real caveat affects how to interpret the brief
 
 The page subtitle should be a plain-language, source-specific one-liner that describes the document being briefed. It must not claim the brief performed verification, review work, or implementation checks beyond summarizing and orienting the listener to the source. Avoid "Use this brief to..." framing, dense project jargon, outcome claims, TTS implementation details, model names, voice labels, and decorative UI extras.
@@ -149,7 +163,7 @@ If npm is unavailable, use:
 curl -fsSL https://here.now/install.sh | bash
 ```
 
-After installation, publish the directory that contains `index.html` at its root and the final audio file at the relative path referenced by the page. Prefer this skill's dependency-free `scripts/publish.sh <bundle-dir> --client opencode` helper. If you intentionally use the here.now skill helper instead, it may require system `jq`.
+After installation, publish the directory that contains `index.html` at its root. In browser speech mode, no audio file is required. In Kokoro mode, include the final audio file at the relative path referenced by the page. Prefer this skill's dependency-free `scripts/publish.sh <bundle-dir> --client opencode` helper. If you intentionally use the here.now skill helper instead, it may require system `jq`.
 
 Return only the current `siteUrl` from the publish command as the primary listening link. If publishing is authenticated, state that it is permanent. If publishing is anonymous, state that it expires in 24 hours and include the claim URL when the publish command returns one.
 
@@ -173,6 +187,16 @@ Audio brief ready: `<here.now URL>`
 - **Publishing:** <authenticated permanent|anonymous expires in 24 hours>
 ```
 
+For the default browser speech path, use:
+
+```md
+Audio brief ready: `<here.now URL>`
+
+- **Status:** browser speech page generated and published
+- **Audio:** browser SpeechSynthesis with sentence highlighting, a Voice popover, and playback controls
+- **Publishing:** <authenticated permanent|anonymous expires in 24 hours>
+```
+
 Blocked final response:
 
 ```md
@@ -193,7 +217,8 @@ Use this skill for:
 - turning an agent session, PR, code change, plan, requirements brief, strategy memo, research report, blog post, or long doc into an audio brief
 - creating a listenable walkthrough for phone or walking review
 - creating a static single-page audio brief session link
-- generating a Kokoro audio handoff from source material
+- generating a browser-speech audio handoff from source material
+- optionally generating a polished Kokoro audio handoff when requested
 
 Do not use this skill for:
 

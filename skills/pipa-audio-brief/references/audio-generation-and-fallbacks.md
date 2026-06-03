@@ -1,12 +1,43 @@
 # Audio Generation And Fallbacks
 
-Kokoro audio generation is required for success. Script-only output is useful for debugging, but it is not a completed audio brief.
+Browser SpeechSynthesis is the default audio path for success. Script-only output is useful for debugging, but it is not a completed audio brief. Kokoro audio generation is an optional polished preset when the user explicitly asks for it and accepts the setup, time, and memory tradeoff.
 
-## Golden Path: Managed `kokoro-onnx`
+## Golden Path: Browser SpeechSynthesis
 
-Use one managed local backend by default: cached `kokoro-onnx` in `~/.cache/pipa-audio-brief/`.
+Use browser speech by default, especially in sandboxed or resource-constrained environments. The product promise is fast orientation to a work artifact, not premium narration. Browser speech keeps the skill portable and avoids making audio brief generation depend on a large local model runtime.
 
-Do not explore a long fallback ladder during a normal brief request. The user asked for a listening artifact, not a dependency debugging session. There is one degraded fallback: browser SpeechSynthesis preview when local Kokoro is blocked by setup, memory, or compute constraints.
+Default flow:
+
+1. Write the spoken brief script as the page transcript.
+2. Render the listening page with `"audio.mode": "browser_speech"`.
+3. Let `scripts/render-listening-page.py` generate the browser speech controls, sentence highlighting, pause/resume, restart, back, forward, and voice selection behavior.
+4. Publish the page. Do not create or require `audio/brief.wav`.
+
+Browser speech page contract:
+
+```json
+"audio": {
+  "mode": "browser_speech",
+  "durationLabel": "Browser speech",
+  "status": "browser_speech"
+}
+```
+
+Browser speech quality guidance:
+
+- Use the generated script as the speech input, not the raw source document.
+- Keep sentences short and plain so browser voices sound less robotic.
+- Use punctuation for natural pauses, especially after transitions and before the takeaway.
+- Avoid Markdown, bullets, table syntax, raw URLs, code fences, dense labels, and punctuation-heavy phrases in speakable text.
+- Prefer a compact two-minute orientation over long passive narration; browser voices fatigue listeners faster than polished generated audio.
+- Let the page UI create value through responsiveness, sentence highlighting, pause/resume, restart, skip controls, and a voice selector.
+- Prefer English Chrome/Google voices when available because they often sound better in Chrome. Otherwise prefer natural or enhanced English voices, then the browser default.
+
+## Optional Preset: Managed `kokoro-onnx`
+
+Use one managed local backend when the user asks for polished generated audio: cached `kokoro-onnx` in `~/.cache/pipa-audio-brief/`.
+
+Do not explore a long fallback ladder during a normal brief request. The user asked for a listening artifact, not a dependency debugging session. Browser speech is the normal path. Kokoro is a preset, not a prerequisite.
 
 Default flow:
 
@@ -15,7 +46,7 @@ Default flow:
 3. Run `scripts/generate-audio-job.sh wait <job-id>` and continue only when it reports `ready`.
 4. If the cached backend is missing, the async job runs `scripts/setup-kokoro.sh` once.
 5. If setup succeeds, generate and validate the WAV.
-6. If setup or generation fails because the machine cannot run Kokoro, block clearly and offer a browser speech preview as the only fallback.
+6. If setup or generation fails because the machine cannot run Kokoro, use browser speech mode unless the user explicitly required Kokoro-only output.
 
 The managed backend uses:
 
@@ -99,7 +130,7 @@ Do not treat command silence, file size, or any partial file as success while th
 
 Run `scripts/test-generate-audio-job.sh` after changing the async wrapper. It uses synthetic job directories so timeout handling and process-exit races can be tested without running Kokoro.
 
-If Kokoro still cannot run in a compute-constrained environment, block clearly and offer browser SpeechSynthesis as the single degraded preview fallback. When the user accepts it, generate the fallback using the browser speech preview variant in `references/listening-page-template.md`; do not invent a new page design.
+If Kokoro still cannot run in a compute-constrained environment, generate the default browser SpeechSynthesis page unless the user explicitly required Kokoro-only output. Use the browser speech variant in `references/listening-page-template.md`; do not invent a new page design.
 
 Keep generated audio in the publish bundle at `audio/brief.wav`. Keep scripts, model caches, virtual environments, chunks, helper files, partial files, and logs outside the publish bundle.
 
@@ -108,9 +139,10 @@ Keep generated audio in the publish bundle at `audio/brief.wav`. Keep scripts, m
 - Use the generated script as the TTS input, not the raw source document.
 - Use `af_heart` by default.
 - Prefer concise spoken sentences with natural punctuation so Kokoro can render one short chunk at a time without obvious seams.
-- Save one final playable audio file for the page.
+- In browser speech mode, do not save an audio file.
+- In Kokoro mode, save one final playable audio file for the page.
 - Preserve a transcript that matches the spoken script inside the generated `index.html`.
-- Name the final audio predictably as `audio/brief.wav` so the deterministic template can reference it.
+- Name the final Kokoro audio predictably as `audio/brief.wav` so the deterministic template can reference it.
 - Never publish `audio/brief.wav.partial`; it is a transient generation file, not a success artifact.
 - If first-run model download is needed, report that as setup/wait state rather than a content failure.
 - The brief is not a complete readout of the source, but the audio must be a complete rendering of the generated brief script.
@@ -144,8 +176,8 @@ When Kokoro fails after script generation:
 
 1. Preserve only the minimal script/log debug artifact needed to retry.
 2. Report the exact command/service blocker when safe.
-3. Say plainly that the audio brief cannot be generated.
-4. Do not claim the page or published brief is ready.
+3. Generate the browser speech page instead, unless the user explicitly required Kokoro-only output.
+4. Do not claim polished generated audio is ready.
 
 When audio playback fails after file generation:
 

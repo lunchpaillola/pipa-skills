@@ -10,7 +10,7 @@ AI-assisted reviewers, delivery leads, builders, engineers, project managers, an
 
 ## Product Purpose
 
-`pipa-audio-brief` turns work artifacts from AI agents, coding tools, and document workflows into a published single-page listening handoff. The page succeeds when the audio and transcript are immediately usable, and source context is available without becoming another interface to manage.
+`pipa-audio-brief` turns work artifacts from AI agents, coding tools, and document workflows into a published single-page listening handoff. The page succeeds when the browser speech controls and transcript are immediately usable, and source context is available without becoming another interface to manage. Polished generated audio is optional, not required for the core orientation job.
 
 ## Brand Personality
 
@@ -22,7 +22,7 @@ Avoid dashboard clutter, repeated SaaS card grids, hero-metric layouts, decorati
 
 ## Design Principles
 
-1. Lead with the listening job: audio controls and transcript are the primary interface.
+1. Lead with the listening job: browser speech controls and transcript are the primary interface.
 2. Collapse supporting material: source context and caveats should be brief, quiet, and secondary.
 3. Prefer reading rhythm over section count: fewer regions, better hierarchy, less chrome.
 4. Keep generated output self-contained and published through here.now.
@@ -30,4 +30,4 @@ Avoid dashboard clutter, repeated SaaS card grids, hero-metric layouts, decorati
 
 ## Accessibility & Inclusion
 
-Use sensible accessibility defaults: readable type, strong contrast, keyboard-friendly native controls, clear focus states, large tap targets on mobile, and reduced-motion-safe behavior.
+Use sensible accessibility defaults: readable type, strong contrast, keyboard-friendly controls, clear focus states, large tap targets on mobile, visible playback state, and reduced-motion-safe behavior.
