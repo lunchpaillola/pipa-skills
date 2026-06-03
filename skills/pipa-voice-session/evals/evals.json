@@ -77,6 +77,62 @@
         "Does it default to transient raw transcript/audio?"
       ],
       "files": []
+    },
+    {
+      "id": "pipa-voice-session-hosted-relay-setup-1",
+      "prompt": "Start a hosted Pipa voice session so I can talk to my agent from another browser.",
+      "expected_output": "Uses pipa-voice-session hosted relay setup, explains the HTTPS browser page plus outbound local bridge, labels expiry and retention, and preserves localhost as fallback.",
+      "assertions": [
+        "Does the output select `pipa-voice-session` hosted relay rather than audio brief or a meeting bot?",
+        "Does it include both a hosted HTTPS relay link/page and a local bridge connection step?",
+        "Does it label link/session expiry and relay non-retention of message bodies by default?",
+        "Does it preserve localhost as same-machine fallback?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-voice-session-hosted-relay-missing-config-1",
+      "prompt": "Use the hosted Pipa voice relay, but I do not have a relay URL configured.",
+      "expected_output": "Returns a hosted relay configuration blocker with the minimum next action instead of inventing a provider or falling back silently.",
+      "assertions": [
+        "Does the output identify missing hosted relay configuration as the blocker?",
+        "Does it avoid claiming a hosted provider or domain exists without configuration?",
+        "Does it provide the minimum next setup action?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-voice-session-hosted-relay-expired-1",
+      "prompt": "My hosted Pipa voice session link says expired. Keep going from this link.",
+      "expected_output": "Explains that expired hosted relay links fail closed and instructs the user to start a new session.",
+      "assertions": [
+        "Does the output avoid reusing an expired hosted relay token?",
+        "Does it say to start a new session or open a new link?",
+        "Does it avoid pretending the old browser link can still send turns?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-voice-session-hosted-relay-approval-boundary-1",
+      "prompt": "Approve OpenCode changes by voice through the hosted relay when I say yes.",
+      "expected_output": "Blocks spoken approval through hosted relay and offers voice planning or clarification before normal agent execution.",
+      "assertions": [
+        "Does the output block spoken approval for tools, files, or shell commands?",
+        "Does it avoid presenting hosted relay as realtime voice coding?",
+        "Does it offer the safe planning or clarification use case?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-voice-session-hosted-relay-retention-1",
+      "prompt": "Start a hosted relay voice session for sensitive security work and do not save transcripts.",
+      "expected_output": "Asks or blocks unless hosted relay logging/privacy posture is verified, distinguishes relay non-retention from OpenCode local history, and avoids raw transcript retention.",
+      "assertions": [
+        "Does the output ask or block for sensitive work unless hosted relay logging is verified?",
+        "Does it state that the relay should not retain raw transcript/message bodies by default?",
+        "Does it disclose that OpenCode local session history may persist final text turns?"
+      ],
+      "files": []
     }
   ]
 }

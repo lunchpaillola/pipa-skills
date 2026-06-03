@@ -2,6 +2,9 @@
 
 import { createServer } from "node:http";
 import { spawn } from "node:child_process";
+import WebSocket from "ws";
+
+import { parseRelayFrame, validateRelayMessage } from "./relay-protocol.mjs";
 
 const port = Number(process.env.PIPA_VOICE_SESSION_PORT || 8787);
 const host = process.env.PIPA_VOICE_SESSION_HOST || "127.0.0.1";
@@ -9,6 +12,14 @@ const projectDir = process.env.PIPA_VOICE_SESSION_DIR || process.cwd();
 const opencodeBin = process.env.OPENCODE_BIN || "opencode";
 const sessionId = process.env.PIPA_VOICE_SESSION_OPENCODE_SESSION || "";
 const publicMode = process.env.PIPA_VOICE_SESSION_PUBLIC || readFlag("--public") || (process.argv.includes("--ngrok") ? "ngrok" : "");
+let relayUrl = process.env.PIPA_VOICE_RELAY_URL || readFlag("--relay-url");
+let relaySessionId = process.env.PIPA_VOICE_RELAY_SESSION_ID || readFlag("--relay-session-id");
+let relayBridgeToken = process.env.PIPA_VOICE_RELAY_BRIDGE_TOKEN || readFlag("--relay-bridge-token");
+const hostedRequested = process.argv.includes("--hosted") || /^(1|true|yes)$/i.test(process.env.PIPA_VOICE_SESSION_HOSTED || "");
+const relayBaseUrl = (process.env.PIPA_VOICE_RELAY_PUBLIC_BASE_URL || readFlag("--relay") || "https://voice.usepipa.com").replace(/\/$/, "");
+const relayOperatorToken = process.env.PIPA_VOICE_RELAY_OPERATOR_TOKEN || readFlag("--operator-token");
+const restrictedArgsRaw = process.env.PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS || "";
+const hostedRelayMode = hostedRequested || Boolean(relayUrl || relaySessionId || relayBridgeToken);
 let ngrokProcess = null;
 
 function readFlag(name) {
@@ -123,7 +134,7 @@ const html = String.raw`<!doctype html>
         </div>
       </details>
 
-      <p class="small">Browser speech may use browser or OS speech services. The server binds to localhost by default. OpenCode session history follows local OpenCode behavior.</p>
+        <p class="small">Browser speech may use browser or OS speech services. Local mode keeps browser transcript state in memory and binds to localhost by default. Ngrok testing exposes a public HTTPS tunnel. Hosted relay mode forwards final text turns without relay body retention by default. OpenCode session history follows local OpenCode behavior.</p>
     </main>
 
     <script>
@@ -335,9 +346,47 @@ function stripAnsi(value) {
   return value.replace(/\u001b\[[0-9;]*m/g, "").trim();
 }
 
-function runOpenCodeTurn(message) {
+function splitArgs(value) {
+  return String(value || "").match(/(?:[^\s"']+|"[^"]*"|'[^']*')+/g)?.map((item) => item.replace(/^['"]|['"]$/g, "")) || [];
+}
+
+function restrictedOpenCodeArgs() {
+  return splitArgs(restrictedArgsRaw);
+}
+
+function argsContainKnownSafetyMode(args) {
+  const joined = args.join(" ").toLowerCase();
+  return [
+    "--no-tools",
+    "--disable-tools",
+    "--read-only",
+    "--readonly",
+    "--planning-only",
+    "--mode=plan",
+    "--mode planning",
+    "--permission=read-only",
+    "--permission read-only"
+  ].some((marker) => joined.includes(marker));
+}
+
+function ensureHostedSafetyBoundary() {
+  if (!hostedRelayMode) return [];
+  const args = restrictedOpenCodeArgs();
+  if (!args.length || !argsContainKnownSafetyMode(args)) {
+    throw new Error("Hosted relay mode requires PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS with recognizable mechanical no-tool/read-only/planning OpenCode restrictions such as --no-tools, --read-only, or --planning-only. Refusing to run normal opencode from a hosted browser turn.");
+  }
+  return args;
+}
+
+function isSpokenApprovalOrExecutionRequest(message) {
+  const text = String(message || "").toLowerCase();
+  return /\b(approve|approval|yes|go ahead|run|execute|edit|write|modify|delete|shell|terminal|command|tool)\b/.test(text) && /\b(file|files|shell|terminal|command|tool|edit|change|permission|approval|approve)\b/.test(text);
+}
+
+function runOpenCodeTurn(message, extraArgs = []) {
   return new Promise((resolve, reject) => {
     const args = ["run", message, "--dir", projectDir];
+    args.push(...extraArgs);
     if (sessionId) args.push("--session", sessionId);
     else args.push("--continue");
 
@@ -389,6 +438,126 @@ async function startNgrokTunnel() {
   console.log("Open this HTTPS URL on another device for browser mic support.");
 }
 
+async function createHostedRelaySession() {
+  const headers = { "Content-Type": "application/json" };
+  if (relayOperatorToken) headers.Authorization = `Bearer ${relayOperatorToken}`;
+
+  const response = await fetch(`${relayBaseUrl}/api/sessions`, { method: "POST", headers });
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const setup = response.status === 401
+      ? "The hosted relay requires operator authorization. Use the Pipa managed relay when available, or set PIPA_VOICE_RELAY_OPERATOR_TOKEN only for operator testing."
+      : body.error || "Hosted relay session creation failed";
+    throw new Error(setup);
+  }
+
+  relaySessionId = body.session_id;
+  relayBridgeToken = body.bridge?.token;
+  relayUrl = `${relayBaseUrl.replace(/^http/, "ws")}/ws`;
+  return body;
+}
+
+async function startHostedRelayBridge() {
+  let sessionPackage = null;
+  if (hostedRequested && (!relayUrl || !relaySessionId || !relayBridgeToken)) {
+    try {
+      sessionPackage = await createHostedRelaySession();
+    } catch (error) {
+      console.error(`Hosted voice session blocked: ${error.message}`);
+      console.error(`Relay: ${relayBaseUrl}`);
+      console.error("Local mode still works with: node skills/pipa-voice-session/scripts/start-voice-session.mjs");
+      process.exitCode = 1;
+      return;
+    }
+  }
+
+  if (!relayUrl || !relaySessionId || !relayBridgeToken) {
+    console.error("Hosted relay mode requires PIPA_VOICE_RELAY_URL, PIPA_VOICE_RELAY_SESSION_ID, and PIPA_VOICE_RELAY_BRIDGE_TOKEN.");
+    process.exitCode = 1;
+    return;
+  }
+
+  let extraArgs;
+  try {
+    extraArgs = ensureHostedSafetyBoundary();
+  } catch (error) {
+    console.error(`Hosted relay blocked: ${error.message}`);
+    process.exitCode = 1;
+    return;
+  }
+
+  const url = new URL(relayUrl);
+
+  console.log("Pipa hosted relay bridge");
+  console.log(`Project directory: ${projectDir}`);
+  console.log(sessionId ? `OpenCode session: ${sessionId}` : "OpenCode session: --continue");
+  console.log(`Hosted relay: ${relayUrl}`);
+  console.log(`Hosted safe-mode args: ${extraArgs.join(" ")}`);
+  if (sessionPackage?.browser_url) console.log(`Browser voice session: ${sessionPackage.browser_url}`);
+  if (sessionPackage?.browser?.pairing_expires_at) console.log(`Pairing link expires if unused: ${sessionPackage.browser.pairing_expires_at}`);
+  console.log("Hosted mode is for planning and discussion, not spoken tool approval or live shell/file execution.");
+
+  const seenTurns = new Set();
+  const ws = new WebSocket(url, ["pipa-relay", "pipa-role.bridge", `pipa-session.${relaySessionId}`, `pipa-token.${relayBridgeToken}`], { perMessageDeflate: false });
+
+  ws.on("open", () => {
+    ws.send(JSON.stringify({ type: "status", message: "Local bridge connected. Hosted turns will use restricted OpenCode mode." }));
+  });
+
+  ws.on("message", async (data, isBinary) => {
+    const parsed = parseRelayFrame(isBinary ? Buffer.from(data) : data.toString());
+    if (!parsed.ok) {
+      ws.send(JSON.stringify({ type: "error", message: parsed.error }));
+      return;
+    }
+
+    if (["status", "error"].includes(parsed.message.type)) {
+      const relayMessage = String(parsed.message.message || "Relay status update");
+      console.log(`Hosted relay ${parsed.message.type}: ${relayMessage}`);
+      return;
+    }
+
+    if (parsed.message.type === "end") {
+      ws.close(1000, "session ended");
+      return;
+    }
+
+    const validation = validateRelayMessage("browser", parsed.message, { seenTurnIds: seenTurns });
+    if (!validation.ok) {
+      ws.send(JSON.stringify({ type: "error", message: validation.error }));
+      return;
+    }
+
+    const message = validation.message;
+    if (message.type === "interrupt") {
+      ws.send(JSON.stringify({ type: "status", message: "Interrupt received. The bridge will not auto-replay an in-flight hosted turn." }));
+      return;
+    }
+    if (message.type !== "user_turn") return;
+
+    if (isSpokenApprovalOrExecutionRequest(message.text)) {
+      ws.send(JSON.stringify({ type: "error", message: "Hosted voice sessions cannot approve OpenCode tools, file edits, or shell commands by speech. Use voice for planning, then return to the normal permission flow for execution." }));
+      return;
+    }
+
+    seenTurns.add(message.turn_id);
+    ws.send(JSON.stringify({ type: "status", message: "Running restricted OpenCode planning turn." }));
+    try {
+      const reply = await runOpenCodeTurn(message.text, extraArgs);
+      ws.send(JSON.stringify({ type: "assistant_reply", turn_id: message.turn_id, text: reply }));
+    } catch (error) {
+      ws.send(JSON.stringify({ type: "error", message: error.message }));
+    }
+  });
+
+  ws.on("close", () => {
+    console.error("Hosted relay bridge disconnected. If this happened mid-turn, delivery is uncertain; do not auto-replay without confirmation.");
+  });
+  ws.on("error", (error) => {
+    console.error(`Hosted relay bridge error: ${error.message}`);
+  });
+}
+
 async function waitForNgrokUrl() {
   const startedAt = Date.now();
   while (Date.now() - startedAt < 15_000) {
@@ -409,7 +578,8 @@ async function waitForNgrokUrl() {
 
 function shutdown() {
   if (ngrokProcess && !ngrokProcess.killed) ngrokProcess.kill("SIGTERM");
-  server.close(() => process.exit(0));
+  if (server.listening) server.close(() => process.exit(0));
+  else process.exit(0);
 }
 
 const server = createServer(async (req, res) => {
@@ -449,18 +619,22 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(port, host, async () => {
-  console.log(`Pipa voice session: http://${host}:${port}`);
-  console.log(`Project directory: ${projectDir}`);
-  console.log(sessionId ? `OpenCode session: ${sessionId}` : "OpenCode session: --continue");
-  if (publicMode === "ngrok") {
-    try {
-      await startNgrokTunnel();
-    } catch (error) {
-      console.error(`ngrok public mode failed: ${error.message}`);
+if (hostedRelayMode) {
+  startHostedRelayBridge();
+} else {
+  server.listen(port, host, async () => {
+    console.log(`Pipa voice session: http://${host}:${port}`);
+    console.log(`Project directory: ${projectDir}`);
+    console.log(sessionId ? `OpenCode session: ${sessionId}` : "OpenCode session: --continue");
+    if (publicMode === "ngrok") {
+      try {
+        await startNgrokTunnel();
+      } catch (error) {
+        console.error(`ngrok public mode failed: ${error.message}`);
+      }
     }
-  }
-});
+  });
+}
 
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);

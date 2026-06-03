@@ -16,6 +16,18 @@
     "should_trigger": true
   },
   {
+    "query": "Start a hosted Pipa voice session.",
+    "should_trigger": true
+  },
+  {
+    "query": "Use a relay-backed voice session so I can talk to my agent from another browser.",
+    "should_trigger": true
+  },
+  {
+    "query": "Open a hosted voice link for Pipa from my sandbox.",
+    "should_trigger": true
+  },
+  {
     "query": "Create an audio brief from this requirements doc and publish a listening page.",
     "should_trigger": false
   },

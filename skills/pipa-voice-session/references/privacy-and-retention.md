@@ -20,6 +20,24 @@ Use this wording unless implementation verifies stronger guarantees:
 
 The bridge should bind to `127.0.0.1` by default. Treat `0.0.0.0` or LAN use as explicit testing mode.
 
+## ngrok Public Testing
+
+Use this wording unless implementation verifies stronger guarantees:
+
+> Browser speech is browser-mediated and may use cloud speech services depending on the browser and OS. The ngrok link is a public HTTPS tunnel to the local bridge for testing. Browser transcript state is in-memory. Turns sent to OpenCode become part of local OpenCode session history according to OpenCode's normal behavior.
+
+Do not call an unlisted ngrok URL private. Require tokenized or otherwise unguessable access before sharing beyond a controlled test.
+
+## Hosted Relay
+
+Use this wording unless implementation verifies stronger guarantees:
+
+> Browser speech is browser-mediated and may use cloud speech services depending on the browser and OS. The hosted relay forwards final text turns and assistant replies between the browser and the local bridge without retaining message bodies by default. The local bridge should avoid raw turn logging. Turns sent to OpenCode may become part of local OpenCode session history according to OpenCode's normal behavior.
+
+Hosted relay logs should contain lifecycle/security metadata only: created, waiting, paired, reconnecting, expired, ended, rejected handshake, invalid frame, and rate-limit events. They must not contain token values, raw transcripts, assistant reply bodies, audio, local filesystem paths, or full request bodies.
+
+If the platform, proxy, APM, or crash reporter logging posture is unknown, block hosted use for sensitive topics and prefer local mode.
+
 ## Provider Rooms
 
 If using Daily/WebRTC or another hosted provider, document before use:
@@ -39,4 +57,4 @@ The optional handoff is a concise durable output for V1. It should contain synth
 
 ## Sensitive Work
 
-For confidential client, hiring, legal, health, financial, or security topics, prefer the local bridge unless the configured provider privacy posture is known. Ask before creating any shareable link.
+For confidential client, hiring, legal, health, financial, or security topics, prefer the local bridge unless the configured provider or hosted relay privacy posture is known. Ask before creating or using any shareable link.

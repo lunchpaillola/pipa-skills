@@ -1,7 +1,7 @@
 ---
 title: "feat: Add Pipa voice session hosted relay"
 type: feat
-status: active
+status: completed
 date: 2026-06-03
 origin: docs/plans/2026-06-03-001-feat-pipa-voice-session-plan.md
 ---

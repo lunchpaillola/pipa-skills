@@ -29,7 +29,7 @@ Voice Session Progress
 
 ### Step 1: Confirm Intent
 
-Use this skill when the user asks to talk with Pipa or the active agent by voice. Route audio artifacts to `pipa-audio-brief`, human video meetings elsewhere, and realtime voice coding or spoken approvals to a clear scope blocker.
+Use this skill when the user asks to talk with Pipa or the active agent by voice, including hosted or relay-backed sessions from another browser. Route audio artifacts to `pipa-audio-brief`, human video meetings elsewhere, and realtime voice coding or spoken approvals to a clear scope blocker.
 
 ### Step 2: Frame The Session Contract
 
@@ -46,9 +46,11 @@ Do not imply that voice mode is a separate agent brain. The voice session is an 
 
 ### Step 3: Start The Local OpenCode Voice Bridge
 
-Follow `references/transport-prototype.md` and `references/privacy-and-retention.md`.
+Follow `references/transport-prototype.md`, `references/hosted-relay.md`, and `references/privacy-and-retention.md`.
 
-Use the bundled same-computer bridge at `skills/pipa-voice-session/scripts/start-voice-session.mjs` as the V1 path. It serves a localhost browser UI, captures speech with browser APIs, sends each turn to `opencode run`, and speaks the OpenCode response with browser TTS.
+Use the hosted relay path for sandboxed or remote-browser use when a compliant relay URL is configured. The hosted relay serves an HTTPS browser page and pairs it with a local bridge that connects outbound to the relay.
+
+Use the bundled same-computer bridge at `skills/pipa-voice-session/scripts/start-voice-session.mjs` as the local fallback and development path. It serves a localhost browser UI, captures speech with browser APIs, sends each turn to `opencode run`, and speaks the OpenCode response with browser TTS.
 
 Default launch command from the repository root:
 
@@ -61,6 +63,14 @@ Quick public HTTPS test with ngrok:
 ```bash
 node skills/pipa-voice-session/scripts/start-voice-session.mjs --public ngrok
 ```
+
+Hosted relay prototype:
+
+```bash
+node skills/pipa-voice-session/scripts/start-voice-session.mjs --hosted
+```
+
+Hosted mode should create the relay session, connect the local bridge, and print one browser URL. It must fail closed unless the local bridge has an explicit mechanical no-tool/read-only/planning-only OpenCode restriction configured. Do not rely on prompt instructions as the safety boundary.
 
 If the bridge cannot start, block clearly. Do not pretend that browser STT, Daily/WebRTC, or another provider is available without checking.
 
@@ -88,8 +98,8 @@ Happy-path final response:
 Voice session ready: `<session URL or local prototype URL>`
 
 - **Context:** <agent/context available>
-- **Mode:** <browser voice through local OpenCode bridge|debug text through local OpenCode bridge|configured provider>
-- **Retention:** <transient raw audio/transcript; optional handoff only if saved>
+- **Mode:** <hosted HTTPS relay plus outbound local bridge|browser voice through local OpenCode bridge|debug text through local OpenCode bridge|configured provider>
+- **Retention:** <relay forwards final text turns without retaining bodies by default; transient raw audio/transcript; optional handoff only if saved>
 ```
 
 Blocked final response:
@@ -107,4 +117,5 @@ Voice session blocked.
 - `references/session-contract.md`
 - `references/context-handoff.md`
 - `references/transport-prototype.md`
+- `references/hosted-relay.md`
 - `references/privacy-and-retention.md`

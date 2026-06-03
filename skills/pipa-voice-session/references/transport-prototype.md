@@ -2,6 +2,8 @@
 
 V1 uses a same-computer localhost bridge. It is intentionally small but real: browser voice captures the user's turn, a local Node server sends that turn to OpenCode, and the browser speaks the OpenCode reply.
 
+For sandboxed or remote-browser use, the hosted relay path in `hosted-relay.md` is the primary transport. It preserves this local bridge loop while putting an HTTPS/WSS relay in front of it. Localhost remains the development and same-machine fallback.
+
 ## V1 Runtime
 
 Run from the repository root:
@@ -38,6 +40,14 @@ Environment variables:
 - `PIPA_VOICE_SESSION_OPENCODE_SESSION`: optional explicit OpenCode session id; otherwise uses `--continue`
 - `PIPA_VOICE_SESSION_PUBLIC`: set to `ngrok` to start an HTTPS ngrok tunnel
 - `OPENCODE_BIN`: defaults to `opencode`
+
+Hosted relay bridge mode environment variables:
+
+- Normal user path: `node skills/pipa-voice-session/scripts/start-voice-session.mjs --hosted`
+- `PIPA_VOICE_RELAY_URL`: hosted relay WebSocket URL
+- `PIPA_VOICE_RELAY_SESSION_ID`: hosted relay session id
+- `PIPA_VOICE_RELAY_BRIDGE_TOKEN`: bridge role token for the session
+- `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS`: required hosted-mode OpenCode restriction args; must include recognizable no-tool/read-only/planning flags such as `--no-tools`, `--read-only`, or `--planning-only`
 
 Text entry is a debug/accessibility input path. It still sends the turn to OpenCode; it is not a canned simulation.
 
@@ -80,6 +90,12 @@ Use the same-computer OpenCode bridge as the default V1 path:
 - Do not add spoken permission approval.
 - Do not require video or avatar presence.
 - Do not persist raw transcript/audio by default.
+
+## Hosted Relay Guardrail
+
+Hosted relay mode routes remote browser text into the local bridge, so it must be explicitly requested with `--hosted` and mechanically restricted. If `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS` is absent, the local bridge must block hosted turns instead of calling normal `opencode run`.
+
+The relay route is not a generic pipe. It validates role, session, message type, size, and direction before forwarding. Unknown message types, binary frames, duplicate browser tabs, wrong-role tokens, and command-like payloads are blockers.
 
 ## LAN Testing Guardrail
 

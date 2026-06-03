@@ -1,0 +1,13 @@
+{
+  "name": "project-management-skills",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start:hosted-relay": "node skills/pipa-voice-session/scripts/start-hosted-relay.mjs",
+    "test:relay": "node --test skills/pipa-voice-session/scripts/relay-protocol.test.mjs",
+    "test": "npm run test:relay"
+  },
+  "dependencies": {
+    "ws": "^8.18.3"
+  }
+}
