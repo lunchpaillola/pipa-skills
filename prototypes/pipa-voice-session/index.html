@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PROTOTYPE - Pipa Voice Session</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #151514;
+        --muted: #6f6a61;
+        --paper: #f5efe3;
+        --card: #fffaf0;
+        --line: #ded3bf;
+        --dark: #25241f;
+        --accent: #ff7748;
+        --blue: #4d72ff;
+        --green: #247a4b;
+        --red: #b33825;
+        --shadow: 0 22px 70px rgba(38, 31, 21, 0.13);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top left, rgba(255, 119, 72, 0.2), transparent 28rem),
+          radial-gradient(circle at top right, rgba(77, 114, 255, 0.15), transparent 24rem),
+          linear-gradient(180deg, #fff8ec 0%, var(--paper) 44%, #efe6d6 100%);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .shell {
+        width: min(1180px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 34px 0 80px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 24px;
+        align-items: end;
+        margin-bottom: 24px;
+      }
+
+      .eyebrow {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 790px;
+        margin: 10px 0 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(44px, 8vw, 92px);
+        font-weight: 500;
+        letter-spacing: -0.065em;
+        line-height: 0.92;
+      }
+
+      .intro {
+        max-width: 610px;
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.55;
+      }
+
+      .notice {
+        border: 1px solid rgba(179, 56, 37, 0.25);
+        border-radius: 22px;
+        background: rgba(255, 250, 240, 0.86);
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+
+      .notice strong,
+      .card h2,
+      .card h3 {
+        display: block;
+        margin: 0 0 8px;
+      }
+
+      .notice p,
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(330px, 0.92fr);
+        gap: 20px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: rgba(255, 250, 240, 0.9);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .pad {
+        padding: clamp(20px, 4vw, 34px);
+      }
+
+      .status-row,
+      .actions,
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .status-row {
+        margin: 24px 0;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fffdf7;
+        color: var(--muted);
+        padding: 9px 12px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--red);
+      }
+
+      .dot.ok {
+        background: var(--green);
+      }
+
+      .dot.maybe {
+        background: var(--accent);
+      }
+
+      .primary,
+      .secondary,
+      .danger {
+        border: 0;
+        border-radius: 999px;
+        padding: 13px 17px;
+        font-weight: 900;
+      }
+
+      .primary {
+        background: var(--dark);
+        color: white;
+      }
+
+      .secondary {
+        border: 1px solid var(--line);
+        background: white;
+        color: var(--ink);
+      }
+
+      .danger {
+        background: #ffe2d8;
+        color: var(--red);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 116px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fffdf7;
+        color: var(--ink);
+        padding: 14px;
+        line-height: 1.5;
+      }
+
+      .turns {
+        display: grid;
+        gap: 12px;
+        min-height: 260px;
+        max-height: 430px;
+        overflow: auto;
+        padding: 4px;
+      }
+
+      .turn {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fffdf7;
+        padding: 14px;
+      }
+
+      .turn.agent {
+        background: #f0f4ff;
+        border-color: rgba(77, 114, 255, 0.25);
+      }
+
+      .turn strong {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 13px;
+      }
+
+      .turn p {
+        margin: 0;
+        color: var(--ink);
+      }
+
+      .state-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .state-item {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fffdf7;
+        padding: 14px;
+      }
+
+      .state-item b {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .state-item ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .handoff {
+        white-space: pre-wrap;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #171714;
+        color: #fff8ea;
+        padding: 16px;
+        min-height: 210px;
+        overflow: auto;
+        line-height: 1.45;
+      }
+
+      .small {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 860px) {
+        .hero,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <div class="eyebrow">Prototype - not production</div>
+          <h1>Pipa voice session</h1>
+          <p class="intro">A same-computer voice bridge for talking with OpenCode. Browser speech captures your turn, localhost sends it to `opencode run`, and the browser speaks the agent reply.</p>
+        </div>
+        <aside class="notice" id="lanNotice" hidden>
+          <strong>LAN testing warning</strong>
+          <p>This page appears to be served beyond localhost. Do not share it without an explicit tokenized URL or equivalent guard.</p>
+        </aside>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <div class="pad">
+            <h2>Session Loop</h2>
+            <p>Speak if your browser supports it, or type a debug turn. Each user turn is sent to the local OpenCode bridge.</p>
+
+            <div class="status-row">
+              <span class="pill"><span class="dot" id="secureDot"></span><span id="secureLabel">Checking context</span></span>
+              <span class="pill"><span class="dot" id="micDot"></span><span id="micLabel">Mic not checked</span></span>
+              <span class="pill"><span class="dot" id="speechDot"></span><span id="speechLabel">Speech APIs unknown</span></span>
+              <span class="pill"><span class="dot" id="bridgeDot"></span><span id="bridgeLabel">Bridge not checked</span></span>
+            </div>
+
+            <div class="actions">
+              <button class="primary" id="startBtn" type="button">Start Browser Voice</button>
+              <button class="secondary" id="speakBtn" type="button">Speak Pipa Reply</button>
+              <button class="danger" id="endBtn" type="button">End / Clear Raw Transcript</button>
+            </div>
+
+            <p class="small" id="privacyNote">Browser speech is browser-mediated and may use cloud speech services depending on the browser and OS. Browser transcript state is in-memory; OpenCode session history follows local OpenCode behavior.</p>
+
+            <h3 style="margin-top: 28px">Debug Text Turn</h3>
+            <textarea id="simInput" placeholder="Example: I want to build a voice session skill, but I do not want it to become realtime voice coding. Privacy matters."></textarea>
+            <div class="actions">
+              <button class="primary" id="sendBtn" type="button">Send To OpenCode</button>
+              <button class="secondary" id="handoffBtn" type="button">Generate Handoff Preview</button>
+            </div>
+
+            <h3 style="margin-top: 28px">Live Transcript</h3>
+            <div class="turns" id="turns"></div>
+          </div>
+        </div>
+
+        <aside class="card">
+          <div class="pad">
+            <h2>Session State</h2>
+            <div class="state-list" style="margin-top: 16px">
+              <div class="state-item">
+                <b>Useful Context</b>
+                <ul id="contextList"></ul>
+              </div>
+              <div class="state-item">
+                <b>Decisions / Preferences</b>
+                <ul id="decisionList"></ul>
+              </div>
+              <div class="state-item">
+                <b>Open Questions</b>
+                <ul id="questionList"></ul>
+              </div>
+            </div>
+
+            <h3 style="margin-top: 24px">Optional Handoff</h3>
+            <div class="handoff" id="handoff">No handoff generated yet.</div>
+            <p class="small">The handoff is the only intended durable output. Copy it manually if you want to continue in an agent.</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script>
+      const state = {
+        turns: [],
+        context: ["Local bridge calls OpenCode from this repository directory."],
+        decisions: ["Voice session sends turns to OpenCode; it is not a canned simulation."],
+        questions: [],
+        lastReply: "Voice bridge is ready when OpenCode responds.",
+        busy: false
+      };
+
+      const els = {
+        secureDot: document.querySelector("#secureDot"),
+        secureLabel: document.querySelector("#secureLabel"),
+        micDot: document.querySelector("#micDot"),
+        micLabel: document.querySelector("#micLabel"),
+        speechDot: document.querySelector("#speechDot"),
+        speechLabel: document.querySelector("#speechLabel"),
+        bridgeDot: document.querySelector("#bridgeDot"),
+        bridgeLabel: document.querySelector("#bridgeLabel"),
+        startBtn: document.querySelector("#startBtn"),
+        speakBtn: document.querySelector("#speakBtn"),
+        endBtn: document.querySelector("#endBtn"),
+        sendBtn: document.querySelector("#sendBtn"),
+        handoffBtn: document.querySelector("#handoffBtn"),
+        simInput: document.querySelector("#simInput"),
+        turns: document.querySelector("#turns"),
+        contextList: document.querySelector("#contextList"),
+        decisionList: document.querySelector("#decisionList"),
+        questionList: document.querySelector("#questionList"),
+        handoff: document.querySelector("#handoff"),
+        lanNotice: document.querySelector("#lanNotice")
+      };
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const isLocalhost = ["localhost", "127.0.0.1", "::1", ""].includes(window.location.hostname);
+
+      function setDot(dot, label, status, text) {
+        dot.className = `dot ${status}`.trim();
+        label.textContent = text;
+      }
+
+      function addUnique(list, item) {
+        if (item && !list.includes(item)) list.push(item);
+      }
+
+      function renderList(el, list) {
+        el.innerHTML = list.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+      }
+
+      function render() {
+        els.turns.innerHTML = state.turns.map((turn) => `
+          <div class="turn ${turn.role === "Pipa" ? "agent" : ""}">
+            <strong>${escapeHtml(turn.role)}</strong>
+            <p>${escapeHtml(turn.text)}</p>
+          </div>
+        `).join("");
+        renderList(els.contextList, state.context);
+        renderList(els.decisionList, state.decisions);
+        renderList(els.questionList, state.questions);
+        els.turns.scrollTop = els.turns.scrollHeight;
+      }
+
+      function escapeHtml(value) {
+        return value.replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" })[char]);
+      }
+
+      function classifyTurn(text) {
+        const lower = text.toLowerCase();
+        addUnique(state.context, text.length > 110 ? `${text.slice(0, 110)}...` : text);
+        if (lower.includes("privacy") || lower.includes("transcript") || lower.includes("audio")) {
+          addUnique(state.decisions, "Privacy/retention must be explicit before voice transport is used.");
+        }
+        if (lower.includes("not") || lower.includes("non-goal") || lower.includes("scope")) {
+          addUnique(state.decisions, "Scope boundaries should be stated before session start.");
+        }
+        if (lower.includes("?") || lower.includes("which") || lower.includes("how")) {
+          addUnique(state.questions, text.length > 100 ? `${text.slice(0, 100)}...` : text);
+        }
+      }
+
+      function addTurn(role, text) {
+        state.turns.push({ role, text });
+        render();
+      }
+
+      async function sendTurnToOpenCode(text) {
+        const response = await fetch("/api/turn", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text, continueLast: true })
+        });
+        const body = await response.json();
+        if (!response.ok || !body.ok) throw new Error(body.error || "OpenCode bridge failed");
+        return body.reply;
+      }
+
+      async function submitTurn(text, role = "You") {
+        const clean = text.trim();
+        if (!clean) return;
+        if (state.busy && role === "You") return;
+
+        addTurn(role, clean);
+        if (role !== "You") return;
+
+        classifyTurn(clean);
+        state.busy = true;
+        els.sendBtn.disabled = true;
+        els.startBtn.disabled = true;
+        addTurn("System", "Sending turn to OpenCode...");
+
+        try {
+          const reply = await sendTurnToOpenCode(clean);
+          state.lastReply = reply;
+          addTurn("OpenCode", reply);
+          speakReply();
+        } catch (error) {
+          addTurn("System", `OpenCode bridge blocked: ${error.message}`);
+        } finally {
+          state.busy = false;
+          els.sendBtn.disabled = false;
+          els.startBtn.disabled = false;
+          render();
+        }
+      }
+
+      async function startVoice() {
+        if (!navigator.mediaDevices?.getUserMedia) {
+          setDot(els.micDot, els.micLabel, "", "Mic API unavailable");
+          addTurn("System", "Browser microphone APIs are unavailable. Use the debug text turn instead.");
+          return;
+        }
+
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          stream.getTracks().forEach((track) => track.stop());
+          setDot(els.micDot, els.micLabel, "ok", "Mic permission granted");
+        } catch (_err) {
+          setDot(els.micDot, els.micLabel, "", "Mic permission denied");
+          addTurn("System", "Microphone permission was denied. Use the debug text turn or allow mic access in the browser.");
+          return;
+        }
+
+        if (!SpeechRecognition) {
+          setDot(els.speechDot, els.speechLabel, "", "STT unavailable; use debug text");
+          addTurn("System", "SpeechRecognition is unavailable in this browser. Use the debug text turn instead.");
+          return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        recognition.onresult = (event) => submitTurn(event.results[0][0].transcript);
+        recognition.onerror = () => addTurn("System", "Speech recognition failed. Use the debug text turn instead.");
+        recognition.start();
+        addTurn("System", "Browser voice listening started for one turn. Speak now.");
+      }
+
+      function speakReply() {
+        if (!window.speechSynthesis) {
+          addTurn("System", "SpeechSynthesis is unavailable in this browser.");
+          return;
+        }
+        const utterance = new SpeechSynthesisUtterance(state.lastReply);
+        utterance.rate = 0.95;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+      }
+
+      function generateHandoff() {
+        els.handoff.textContent = `## Voice Session Handoff\n\n**Topic:** Pipa voice session with OpenCode\n\n**Useful Context:**\n${state.context.map((item) => `- ${item}`).join("\n")}\n\n**Decisions And Preferences:**\n${state.decisions.map((item) => `- ${item}`).join("\n")}\n\n**Open Questions:**\n${state.questions.length ? state.questions.map((item) => `- ${item}`).join("\n") : "- None captured yet."}\n\n**Recommended Next Agent Step:**\nContinue in the active OpenCode session using the confirmed decisions above.\n\n**Continuation Prompt:**\nContinue from this voice-session handoff. Use the useful context and decisions/preferences as confirmed input. Resolve open questions before implementation. Do not treat exploratory comments as confirmed requirements unless listed under Decisions And Preferences.`;
+      }
+
+      function resetSession() {
+        window.speechSynthesis?.cancel();
+        state.turns = [];
+        state.context = ["Browser transcript state was cleared from memory by End / Clear Raw Transcript."];
+        state.decisions = [];
+        state.questions = [];
+        state.lastReply = "Raw transcript has been cleared.";
+        els.handoff.textContent = "No handoff generated yet.";
+        render();
+      }
+
+      setDot(els.secureDot, els.secureLabel, window.isSecureContext ? "ok" : "", window.isSecureContext ? "Secure context" : "Insecure context");
+      setDot(els.speechDot, els.speechLabel, SpeechRecognition ? "maybe" : "", SpeechRecognition ? "STT available" : "STT unavailable");
+      if (!isLocalhost) els.lanNotice.hidden = false;
+
+      async function checkBridge() {
+        try {
+          const response = await fetch("/api/status");
+          const body = await response.json();
+          if (!response.ok || !body.ok) throw new Error(body.error || "Bridge unavailable");
+          setDot(els.bridgeDot, els.bridgeLabel, "ok", "OpenCode bridge ready");
+          addUnique(state.context, `Project: ${body.projectDir}`);
+          render();
+        } catch (_error) {
+          setDot(els.bridgeDot, els.bridgeLabel, "", "OpenCode bridge unavailable");
+          addTurn("System", "Start this page with `node server.mjs`; static file serving cannot call OpenCode.");
+        }
+      }
+
+      els.startBtn.addEventListener("click", startVoice);
+      els.speakBtn.addEventListener("click", speakReply);
+      els.endBtn.addEventListener("click", resetSession);
+      els.sendBtn.addEventListener("click", () => {
+        submitTurn(els.simInput.value);
+        els.simInput.value = "";
+      });
+      els.handoffBtn.addEventListener("click", generateHandoff);
+
+      addTurn("System", "Session framed: browser voice -> localhost bridge -> OpenCode. Browser transcript state is transient; OpenCode history follows local OpenCode behavior.");
+      checkBridge();
+      render();
+    </script>
+  </body>
+</html>

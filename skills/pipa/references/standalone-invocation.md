@@ -7,6 +7,7 @@ Pipa can route to selected standalone skills, but those skills remain authoritat
 | Pipa route | Standalone skill | Use when | Must preserve |
 |---|---|---|---|
 | `audio`, `audio brief` | `pipa-audio-brief` | User explicitly asks for audio, listenable, spoken, phone-friendly, or listening-page review of a source artifact | Source extraction safety, no degraded brief when source is unreadable, Kokoro generation rules, publishing and cleanup contract |
+| `voice session`, `talk by voice`, `walking work session` | `pipa-voice-session` | User explicitly asks for live voice conversation with Pipa or the active agent, including plan-by-voice or talk-through requests | Voice-session scope, transport/privacy blockers, no realtime voice coding or spoken permission approval, optional synthesized handoff instead of raw transcript |
 | `composio` | `composio` | User wants external app access or action through Composio | Setup/auth checks, search -> link -> execute discipline, no guessed tool slugs, concise provenance |
 | `trigger` | `pipa-triggers` | User wants event-driven automation, watchers, webhooks, listeners, or trigger management | Required trigger details, stale-event rules, final trigger proposal confirmation before create |
 | `automate` | `pipa-workflow-automation` | User wants recurring scheduled PM delivery, reminders, reports, summaries, or automation list/read/delete | Schedule, timezone, destination, execution prompt, scoped account behavior, final confirmation before create |
@@ -22,6 +23,9 @@ Pipa can route to selected standalone skills, but those skills remain authoritat
 ## Negative Routing Rules
 
 - `brief this PR`, `summarize this PR`, `write a brief`, `project brief`, and `requirements brief` do not route to `pipa-audio-brief` unless the user explicitly asks for audio/listenable/spoken/phone-friendly output.
+- `plan this project`, `talk through this plan` without voice wording, and generic planning requests do not route to `pipa-voice-session`.
+- `create an audio brief`, `make a listening page`, and `generate TTS` do not route to `pipa-voice-session` unless the user asks for live back-and-forth voice conversation.
+- `join my Zoom`, `join my Meet`, and human video-call bot requests do not route to `pipa-voice-session`.
 - `give me a weekly status update now` means produce a one-time status update unless the user asks to schedule future delivery.
 - `when we meet Monday, remind me to discuss budget` is not enough to create an automation unless the user asks Pipa to set up recurring/scheduled delivery and confirms the final plan.
 - External app work through Composio must start with search or verified tool/app information. Never invent a slug because a prompt names an app.

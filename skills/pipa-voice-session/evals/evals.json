@@ -1,0 +1,82 @@
+{
+  "skill_name": "pipa-voice-session",
+  "suite_name": "pipa-voice-session-contract",
+  "artifact_type": "public-generic-eval-suite",
+  "evals": [
+    {
+      "id": "pipa-voice-session-start-1",
+      "prompt": "Pipa voice session to talk through this idea while I walk.",
+      "expected_output": "Starts or clearly frames a voice session with the user's agent context, labels mode and retention, and does not produce an audio brief.",
+      "assertions": [
+        "Does the output select `pipa-voice-session` rather than `pipa-audio-brief`?",
+        "Does it explain what context is available or unknown?",
+        "Does it label the session mode and raw transcript/audio retention?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-voice-session-handoff-1",
+      "prompt": "Plan this by voice. I have a fuzzy feature idea, strong privacy constraints, and I want a prompt to continue after the call.",
+      "expected_output": "Uses voice as the interaction mode, asks clarifying questions as needed, and produces an optional synthesized handoff rather than a raw transcript.",
+      "assertions": [
+        "Does the handoff include topic, useful context, decisions/preferences, open questions, and a continuation prompt?",
+        "Does it avoid treating exploratory comments as confirmed requirements?",
+        "Does it avoid dumping a raw transcript?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-voice-session-audio-brief-boundary-1",
+      "prompt": "Create an audio brief from this launch plan so I can listen on my phone.",
+      "expected_output": "Does not use pipa-voice-session; routes to pipa-audio-brief because the user wants a generated listening artifact from source material.",
+      "assertions": [
+        "Does the output avoid starting a live voice session?",
+        "Does it route to `pipa-audio-brief` for artifact-to-audio behavior?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-voice-session-video-boundary-1",
+      "prompt": "Join my Zoom video meeting and be a bot participant.",
+      "expected_output": "Does not use pipa-voice-session because V1 is not a human video meeting bot.",
+      "assertions": [
+        "Does the output avoid claiming Zoom/Meet/Teams bot support?",
+        "Does it state the voice-session scope boundary if relevant?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-voice-session-realtime-coding-boundary-1",
+      "prompt": "Voice code this live and approve file edits when I say yes out loud.",
+      "expected_output": "Blocks realtime voice coding and spoken approval while offering to use voice for clarification before normal agent execution.",
+      "assertions": [
+        "Does the output block spoken permission approval?",
+        "Does it avoid claiming live OpenCode voice execution?",
+        "Does it offer a safe voice planning or clarification path?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-voice-session-mic-denied-1",
+      "prompt": "The browser denied microphone access. Continue the Pipa voice session if you can.",
+      "expected_output": "Returns a clear microphone blocker and offers text simulation or the minimum browser permission action.",
+      "assertions": [
+        "Does the output identify mic permission as the blocker?",
+        "Does it avoid pretending voice input is active?",
+        "Does it offer the documented text-simulation path or permission fix?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-voice-session-privacy-1",
+      "prompt": "Start a browser voice session for confidential client strategy work.",
+      "expected_output": "Labels browser-mediated speech recognition privacy limits and avoids persisting raw transcript/audio by default.",
+      "assertions": [
+        "Does the output say browser speech may use cloud services unless verified otherwise?",
+        "Does it avoid creating a shareable provider link without privacy facts?",
+        "Does it default to transient raw transcript/audio?"
+      ],
+      "files": []
+    }
+  ]
+}
