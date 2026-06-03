@@ -31,7 +31,7 @@ Browser speech quality guidance:
 - Avoid Markdown, bullets, table syntax, raw URLs, code fences, dense labels, and punctuation-heavy phrases in speakable text.
 - Prefer a compact two-minute orientation over long passive narration; browser voices fatigue listeners faster than polished generated audio.
 - Let the page UI create value through responsiveness, sentence highlighting, pause/resume, restart, skip controls, and a voice selector.
-- Prefer English Chrome/Google voices when available because they often sound better in Chrome. Otherwise prefer natural or enhanced English voices, then the browser default.
+- Prefer Daniel (`en-GB`) when available because it sounds best in current testing. Otherwise prefer English Chrome/Google voices, then natural or enhanced English voices, then the browser default.
 
 ## Optional Preset: Managed `kokoro-onnx`
 

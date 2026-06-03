@@ -175,6 +175,7 @@ def browser_speech_script(segments: list[str]) -> str:
     const name = voice.name.toLowerCase();
     const lang = (voice.lang || \"\").toLowerCase();
     let score = lang.startsWith(\"en\") ? 10 : 0;
+    if (name.includes(\"daniel\") && lang === \"en-gb\") score += 30;
     if (name.includes(\"google\") || name.includes(\"chrome\")) score += 8;
     if (name.includes(\"natural\") || name.includes(\"enhanced\") || name.includes(\"premium\")) score += 5;
     if (name.includes(\"samantha\") || name.includes(\"victoria\")) score += 2;

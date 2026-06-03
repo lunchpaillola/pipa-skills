@@ -98,7 +98,7 @@ Before sending the script to TTS, do one revision pass against these checks: pla
 
 Follow `references/audio-generation-and-fallbacks.md`.
 
-Default to browser SpeechSynthesis. This is the normal successful path, especially in sandboxed or resource-constrained environments. It avoids local model setup, large cached dependencies, and memory-heavy inference while still giving the listener audio controls, sentence highlighting, pause/resume, restart, skip behavior, and compact browser voice selection through the dock's Voice popover.
+Default to browser SpeechSynthesis. This is the normal successful path, especially in sandboxed or resource-constrained environments. It avoids local model setup, large cached dependencies, and memory-heavy inference while still giving the listener audio controls, sentence highlighting, pause/resume, restart, skip behavior, and compact browser voice selection through the dock's Voice popover. Prefer Daniel (`en-GB`) as the selected browser voice when the browser exposes it.
 
 Use the generated script as the browser speech input, not the raw source document. The brief does not need to summarize every source detail, but browser speech must cover the generated brief script.
 

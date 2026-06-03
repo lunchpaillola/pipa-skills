@@ -425,6 +425,7 @@ The renderer fills `{{BROWSER_SPEECH_SCRIPT}}` with:
     const name = voice.name.toLowerCase();
     const lang = (voice.lang || "").toLowerCase();
     let score = lang.startsWith("en") ? 10 : 0;
+    if (name.includes("daniel") && lang === "en-gb") score += 30;
     if (name.includes("google") || name.includes("chrome")) score += 8;
     if (name.includes("natural") || name.includes("enhanced") || name.includes("premium")) score += 5;
     if (name.includes("samantha") || name.includes("victoria")) score += 2;
@@ -580,7 +581,7 @@ Required speech replacement:
 
 - `{{SPEECH_SEGMENTS_JSON}}`: JSON array of speakable transcript sentences in reading order. Each rendered transcript sentence must have a matching `data-speech-segment` index so highlighting stays aligned.
 - Browser speech should highlight sentences, not whole paragraphs. Word-level highlighting depends on inconsistent browser boundary events and should not be the default.
-- The voice selector should prefer English Chrome/Google voices when available, then other natural/enhanced English voices, then the browser default.
+- The voice selector should prefer Daniel (`en-GB`) when available, then English Chrome/Google voices, then other natural/enhanced English voices, then the browser default.
 
 Keep the script text plain and speakable. Do not include Markdown heading markers, bullets, table pipes, code fences, decorative separators, raw URLs, or punctuation-heavy labels in the browser speech text.
 
