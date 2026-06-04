@@ -4,10 +4,15 @@
   "type": "module",
   "scripts": {
     "start:hosted-relay": "node skills/pipa-voice-session/scripts/start-hosted-relay.mjs",
+    "deploy:voice-relay": "npx wrangler deploy --config skills/pipa-voice-session/cloudflare/wrangler.jsonc",
+    "dry-run:voice-relay": "npx wrangler deploy --dry-run --config skills/pipa-voice-session/cloudflare/wrangler.jsonc",
     "test:relay": "node --test skills/pipa-voice-session/scripts/relay-protocol.test.mjs",
     "test": "npm run test:relay"
   },
   "dependencies": {
     "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "wrangler": "^4.97.0"
   }
 }

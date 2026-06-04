@@ -1,6 +1,6 @@
 # Hosted Relay
 
-The hosted relay is the primary path when the user needs to talk to the active agent from a sandboxed or remote browser. It wraps the existing local OpenCode bridge with outbound-only WebSocket connections and a stable HTTPS browser page. Localhost remains the same-machine development and fallback path.
+The hosted relay is the primary path when the user needs to talk to the active agent from a sandboxed or remote browser. Production runs at `https://voice.usepipa.com` as a Cloudflare Worker with one Durable Object per voice session. It wraps the existing local OpenCode bridge with outbound-only WebSocket connections and a stable HTTPS browser page. Localhost remains the same-machine development and fallback path.
 
 ## When To Use It
 
@@ -16,7 +16,7 @@ Prefer local mode for confidential client, hiring, legal, health, financial, or 
 ## Runtime Shape
 
 ```text
-Browser HTTPS page -> hosted WSS relay <- local bridge WebSocket client -> opencode run
+Browser HTTPS page `/s/<session-id>` -> hosted WSS relay `/ws/<session-id>` <- local bridge WebSocket client -> `opencode run`
 ```
 
 Both participants connect outbound to the relay. The relay never opens an inbound connection to the user's machine.
@@ -30,6 +30,8 @@ The relay routes only these message families:
 The relay must reject generic RPC, command, shell, file, tool, or execution messages. A message such as `{ "type": "exec", "command": "rm -rf" }` is invalid and must not be forwarded.
 
 ## Session Lifecycle
+
+Each hosted session gets its own generated session id and role-separated credentials. Browser links use `https://voice.usepipa.com/s/<session-id>#token=...`. The browser token stays in the URL fragment and the bridge token is printed only to the local bridge process.
 
 Each hosted session is in one of these states:
 
@@ -62,7 +64,7 @@ Browser bootstrap keeps the browser token in the URL fragment and sends WebSocke
 
 Hosted relay mode can send remote browser text to a local agent, so the local bridge must fail closed unless a mechanical OpenCode restriction is configured. Prompt instructions alone are not a safety boundary.
 
-Acceptable restrictions are explicit OpenCode CLI flags or environment-level controls that enforce no-tool, read-only, planning-only, or equivalent behavior before a hosted turn reaches `opencode run`. The local bridge only accepts recognizable safety flags such as `--no-tools`, `--read-only`, `--readonly`, `--planning-only`, `--mode=plan`, or `--permission=read-only`; unknown non-empty args do not satisfy the boundary. If the bridge cannot verify such a restriction, it must return setup guidance and must not call normal `opencode run`.
+Hosted mode does not add OpenCode flags by default and does not pass `--dangerously-skip-permissions`. It forwards spoken/text turns to `opencode run`; OpenCode's normal session and permission behavior still applies. The bridge pins the OpenCode session id at startup and then uses `--session <id>` for turns, so the voice session stays on the thread that was active when the bridge started instead of following whatever later becomes the last session. Custom `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS` must use flags supported by the installed OpenCode version; unsupported safety flags such as `--no-tools` are not passed through.
 
 Hosted relay mode is not spoken approval. If the user asks to approve file edits, shell commands, or tool calls by voice, return a scope blocker and offer to use voice for planning or clarification before normal agent execution.
 
@@ -92,13 +94,21 @@ For sandboxed or remote-browser voice sessions, use the Pipa hosted relay path:
 node skills/pipa-voice-session/scripts/start-voice-session.mjs --hosted
 ```
 
-The command should create a relay session, connect the local bridge, and print one browser URL. It should not ask the user to manually assemble relay URLs, session ids, or bridge tokens.
+The command should create a relay session, connect the local bridge, and print one browser URL. It should not ask the user to manually assemble relay URLs, session ids, bridge tokens, Wrangler commands, or Cloudflare settings.
 
 The active session stays alive while it is being used. An unused pairing link expires after about 15 minutes. A paired but idle session ends after about 10 minutes without meaningful activity. Manual end revokes immediately.
 
 ## Operator Configuration
 
-A hosted deployment needs:
+Production deployment uses:
+
+- `cloudflare/worker.mjs`: Worker and `VoiceSession` Durable Object
+- `cloudflare/wrangler.jsonc`: `voice.usepipa.com/*` route, Durable Object binding, migration, and production vars
+- `POST /api/sessions`: creates one session package
+- `GET /s/<session-id>#token=...`: browser voice page
+- `WSS /ws/<session-id>`: browser and bridge WebSocket endpoint
+
+The local Node relay remains for development/debugging. Its configuration is:
 
 - `PIPA_VOICE_RELAY_PUBLIC_BASE_URL`: public HTTPS origin for browser links
 - `PIPA_VOICE_RELAY_ALLOWED_ORIGINS`: comma-separated allowed browser origins
@@ -109,7 +119,7 @@ A hosted deployment needs:
 - `PIPA_VOICE_RELAY_MAX_SESSIONS`: max in-memory concurrent sessions
 - `PIPA_VOICE_RELAY_DISABLED`: kill switch; when truthy, new session creation is blocked
 - `PIPA_VOICE_RELAY_PRINT_SESSION`: local-dev convenience only; prints initial session credentials when explicitly enabled
-- `PIPA_VOICE_RELAY_OPERATOR_TOKEN`: required bearer or `x-pipa-relay-operator-token` credential for `POST /api/sessions`
+- `PIPA_VOICE_RELAY_OPERATOR_TOKEN`: optional bearer or `x-pipa-relay-operator-token` credential for `POST /api/sessions`; when unset, session creation is self-serve and protected by capability-token pairing
 - `PIPA_VOICE_RELAY_ALLOW_QUERY_TOKEN`: local/debug-only compatibility switch for query-string WebSocket credentials
 
 The local bridge hosted mode can accept explicit internals for operator debugging, but normal users should use `--hosted` instead:
@@ -117,7 +127,8 @@ The local bridge hosted mode can accept explicit internals for operator debuggin
 - `PIPA_VOICE_RELAY_URL`: hosted relay WebSocket URL
 - `PIPA_VOICE_RELAY_SESSION_ID`: session id returned by the relay
 - `PIPA_VOICE_RELAY_BRIDGE_TOKEN`: bridge role credential
-- `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS`: explicit OpenCode args that mechanically enforce planning/no-tool/read-only behavior
+- `PIPA_VOICE_SESSION_OPENCODE_SESSION`: optional explicit OpenCode session id to pin; otherwise resolved at bridge startup
+- `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS`: optional OpenCode args for hosted mode; unset by default
 
 ## Deployment Checklist
 
@@ -129,7 +140,9 @@ Before exposing a public relay URL:
 - configure secrets through the hosting platform or secret store
 - keep all session state in memory unless a later design explicitly adds encrypted storage
 - disable or redact request URL, authorization header, token, and body logging
-- keep `PIPA_VOICE_RELAY_OPERATOR_TOKEN` in a managed secret store before exposing `POST /api/sessions`
+- decide whether session creation is self-serve or operator-authorized before exposing `POST /api/sessions`
+- if operator-authorized, keep `PIPA_VOICE_RELAY_OPERATOR_TOKEN` in a managed secret store
+- if self-serve, keep pairing TTLs short and use Cloudflare rate limiting or WAF rules if abuse appears
 - keep query-string WebSocket token auth disabled for hosted deployments
 - ensure APM and crash tooling do not capture message bodies or local paths
 - emit lifecycle-only structured app logs
@@ -138,7 +151,7 @@ Before exposing a public relay URL:
 
 Operational signals may include active sessions, rejected handshakes, invalid frames, rate-limit events, reconnects, expiries, and relay-disabled state. They must not include transcript text or assistant replies.
 
-DNS, final branded domain copy, production monitoring, accounts, and team access controls are follow-up work.
+Production should not use a Cloudflare Tunnel to a developer machine. Deploy the Worker with `npm run deploy:voice-relay` after `npx wrangler login`; the route `voice.usepipa.com/*` should point at the Worker. Production monitoring, accounts, and team access controls are follow-up work.
 
 ## Blocker Wording
 
@@ -148,8 +161,8 @@ Missing relay configuration:
 Voice session blocked.
 
 - **Blocked at:** hosted relay configuration
-- **Why:** no hosted relay URL/session credentials are configured
-- **Next:** start `start-hosted-relay.mjs`, create a session, then connect the local bridge with the printed bridge credentials
+- **Why:** no reachable hosted relay can create a session for this bridge
+- **Next:** restore or deploy the Worker at `voice.usepipa.com`, or use local mode until hosted relay is available
 ```
 
 Expired link:
@@ -182,12 +195,12 @@ Voice session blocked.
 - **Next:** use local mode for this topic, or verify relay/platform logs before using a hosted link
 ```
 
-Spoken approval request:
+OpenCode permission prompt:
 
 ```md
 Voice session blocked.
 
-- **Blocked at:** scope
-- **Why:** hosted voice sessions cannot approve OpenCode tools, file edits, or shell commands by speech
-- **Next:** use voice for planning, then return to the normal agent permission flow for execution
+- **Blocked at:** OpenCode permission flow
+- **Why:** OpenCode requires normal permission handling for this action
+- **Next:** respond through the normal OpenCode session permission flow
 ```

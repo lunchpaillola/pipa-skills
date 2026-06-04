@@ -288,10 +288,11 @@ export function createRelayStore(options = {}) {
 
 export function publicSessionPackage(session, publicBaseUrl = "") {
   const base = publicBaseUrl.replace(/\/$/, "");
-  const fragment = `session=${encodeURIComponent(session.id)}&token=${encodeURIComponent(session.browser.token)}`;
+  const path = `/s/${encodeURIComponent(session.id)}`;
+  const fragment = `token=${encodeURIComponent(session.browser.token)}`;
   return {
     session_id: session.id,
-    browser_url: base ? `${base}/session#${fragment}` : `/session#${fragment}`,
+    browser_url: base ? `${base}${path}#${fragment}` : `${path}#${fragment}`,
     idle_timeout_seconds: Math.floor(session.idleTimeoutMs / 1000),
     browser: {
       role: "browser",

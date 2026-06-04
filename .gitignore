@@ -1,4 +1,7 @@
 .DS_Store
+.env
+.env.*
+.dev.vars
 .opencode/
 node_modules/
 dist/

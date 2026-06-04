@@ -29,7 +29,7 @@ ngrok config add-authtoken <token>
 The bridge does this for each user turn:
 
 ```text
-Browser SpeechRecognition -> POST /api/turn -> opencode run <message> --continue --dir <repo> -> browser SpeechSynthesis
+Browser SpeechRecognition -> POST /api/turn -> opencode run <message> --session <startup-session-id> --dir <repo> -> browser SpeechSynthesis
 ```
 
 Environment variables:
@@ -37,17 +37,18 @@ Environment variables:
 - `PIPA_VOICE_SESSION_PORT`: defaults to `8787`
 - `PIPA_VOICE_SESSION_HOST`: defaults to `127.0.0.1`
 - `PIPA_VOICE_SESSION_DIR`: defaults to the server working directory
-- `PIPA_VOICE_SESSION_OPENCODE_SESSION`: optional explicit OpenCode session id; otherwise uses `--continue`
+- `PIPA_VOICE_SESSION_OPENCODE_SESSION`: optional explicit OpenCode session id; otherwise pins the latest session id from `opencode session list --format json --max-count 1` at bridge startup
 - `PIPA_VOICE_SESSION_PUBLIC`: set to `ngrok` to start an HTTPS ngrok tunnel
 - `OPENCODE_BIN`: defaults to `opencode`
 
 Hosted relay bridge mode environment variables:
 
 - Normal user path: `node skills/pipa-voice-session/scripts/start-voice-session.mjs --hosted`
-- `PIPA_VOICE_RELAY_URL`: hosted relay WebSocket URL
-- `PIPA_VOICE_RELAY_SESSION_ID`: hosted relay session id
-- `PIPA_VOICE_RELAY_BRIDGE_TOKEN`: bridge role token for the session
-- `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS`: required hosted-mode OpenCode restriction args; must include recognizable no-tool/read-only/planning flags such as `--no-tools`, `--read-only`, or `--planning-only`
+- `PIPA_VOICE_RELAY_PUBLIC_BASE_URL`: optional override for session creation; defaults to `https://voice.usepipa.com`
+- `PIPA_VOICE_RELAY_URL`: operator/debug-only hosted relay WebSocket URL
+- `PIPA_VOICE_RELAY_SESSION_ID`: operator/debug-only hosted relay session id
+- `PIPA_VOICE_RELAY_BRIDGE_TOKEN`: operator/debug-only bridge role token for the session
+- `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS`: optional hosted-mode OpenCode args; unset by default and must use flags supported by the installed `opencode run`
 
 Text entry is a debug/accessibility input path. It still sends the turn to OpenCode; it is not a canned simulation.
 
@@ -77,7 +78,7 @@ Each candidate should prove:
 Use the same-computer OpenCode bridge as the default V1 path:
 
 - serve the bundled UI through `node skills/pipa-voice-session/scripts/start-voice-session.mjs`
-- call `opencode run --continue --dir <repo>` for turns unless a session id is wired later
+- call `opencode run --session <startup-session-id> --dir <repo>` for turns after resolving the startup session id
 - use `--public ngrok` for the quickest remote HTTPS test
 - label browser STT as browser-mediated and not guaranteed on-device
 - keep browser transcript state in memory only
@@ -93,7 +94,7 @@ Use the same-computer OpenCode bridge as the default V1 path:
 
 ## Hosted Relay Guardrail
 
-Hosted relay mode routes remote browser text into the local bridge, so it must be explicitly requested with `--hosted` and mechanically restricted. If `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS` is absent, the local bridge must block hosted turns instead of calling normal `opencode run`.
+Hosted relay mode routes remote browser text into the local bridge, so it must be explicitly requested with `--hosted`. Hosted mode does not add OpenCode flags by default. If custom `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS` are set, they must be supported by the installed `opencode run` or the bridge blocks instead of invoking OpenCode.
 
 The relay route is not a generic pipe. It validates role, session, message type, size, and direction before forwarding. Unknown message types, binary frames, duplicate browser tabs, wrong-role tokens, and command-like payloads are blockers.
 

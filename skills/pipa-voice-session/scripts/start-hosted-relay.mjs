@@ -187,7 +187,8 @@ function hostedHtml() {
     </main>
     <script>
       const params = new URLSearchParams(window.location.hash.slice(1));
-      const sessionId = params.get("session");
+      const pathSession = window.location.pathname.match(/^\/s\/([^/]+)$/);
+      const sessionId = params.get("session") || (pathSession ? decodeURIComponent(pathSession[1]) : "");
       const token = params.get("token");
       const wsUrl = window.location.protocol === "https:" ? "wss://" + window.location.host + "/ws" : "ws://" + window.location.host + "/ws";
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -218,7 +219,7 @@ const server = createServer((req, res) => {
     sendJson(res, 200, { ok: true, disabled, active_sessions: store.sessions.size });
     return;
   }
-  if (req.method === "GET" && (req.url === "/" || req.url === "/session" || req.url === "/index.html")) {
+  if (req.method === "GET" && (req.url === "/" || req.url === "/session" || req.url === "/index.html" || /^\/s\/[^/]+$/.test(req.url || ""))) {
     sendHtml(res, hostedHtml());
     return;
   }
@@ -377,7 +378,7 @@ server.listen(port, host, () => {
     console.log(`PIPA_VOICE_RELAY_URL=${publicBaseUrl.replace(/^http/, "ws")}/ws`);
     console.log(`PIPA_VOICE_RELAY_SESSION_ID=${initial.package.session_id}`);
     console.log(`PIPA_VOICE_RELAY_BRIDGE_TOKEN=${initial.package.bridge.token}`);
-    console.log("PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS=<required no-tool/read-only/planning args>");
+    console.log("PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS=<optional supported opencode run args>");
   } else if (initial.ok) {
     console.log("Initial relay session created. Credentials are not printed because this does not look like local development.");
     console.log("Create a new session through POST /api/sessions from a trusted control plane or local operator channel.");

@@ -2,6 +2,9 @@
 
 import { createServer } from "node:http";
 import { spawn } from "node:child_process";
+import { mkdirSync, openSync, writeFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import WebSocket from "ws";
 
 import { parseRelayFrame, validateRelayMessage } from "./relay-protocol.mjs";
@@ -10,22 +13,31 @@ const port = Number(process.env.PIPA_VOICE_SESSION_PORT || 8787);
 const host = process.env.PIPA_VOICE_SESSION_HOST || "127.0.0.1";
 const projectDir = process.env.PIPA_VOICE_SESSION_DIR || process.cwd();
 const opencodeBin = process.env.OPENCODE_BIN || "opencode";
-const sessionId = process.env.PIPA_VOICE_SESSION_OPENCODE_SESSION || "";
+const scriptPath = fileURLToPath(import.meta.url);
+let sessionId = process.env.PIPA_VOICE_SESSION_OPENCODE_SESSION || "";
 const publicMode = process.env.PIPA_VOICE_SESSION_PUBLIC || readFlag("--public") || (process.argv.includes("--ngrok") ? "ngrok" : "");
 let relayUrl = process.env.PIPA_VOICE_RELAY_URL || readFlag("--relay-url");
 let relaySessionId = process.env.PIPA_VOICE_RELAY_SESSION_ID || readFlag("--relay-session-id");
 let relayBridgeToken = process.env.PIPA_VOICE_RELAY_BRIDGE_TOKEN || readFlag("--relay-bridge-token");
 const hostedRequested = process.argv.includes("--hosted") || /^(1|true|yes)$/i.test(process.env.PIPA_VOICE_SESSION_HOSTED || "");
+const daemonRequested = process.argv.includes("--daemon") || /^(1|true|yes)$/i.test(process.env.PIPA_VOICE_SESSION_DAEMON || "");
+const printUrlJson = process.argv.includes("--print-url-json") || /^(1|true|yes)$/i.test(process.env.PIPA_VOICE_SESSION_PRINT_URL_JSON || "");
 const relayBaseUrl = (process.env.PIPA_VOICE_RELAY_PUBLIC_BASE_URL || readFlag("--relay") || "https://voice.usepipa.com").replace(/\/$/, "");
 const relayOperatorToken = process.env.PIPA_VOICE_RELAY_OPERATOR_TOKEN || readFlag("--operator-token");
 const restrictedArgsRaw = process.env.PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS || "";
 const hostedRelayMode = hostedRequested || Boolean(relayUrl || relaySessionId || relayBridgeToken);
+const runtimeDir = process.env.PIPA_VOICE_SESSION_RUNTIME_DIR || path.join(projectDir, ".pipa", "voice-session");
 let ngrokProcess = null;
 
 function readFlag(name) {
   const index = process.argv.indexOf(name);
   if (index === -1) return "";
   return process.argv[index + 1] || "";
+}
+
+function emitJson(event, fields = {}) {
+  if (!printUrlJson) return;
+  console.log(JSON.stringify({ event, ...fields }));
 }
 
 const html = String.raw`<!doctype html>
@@ -307,16 +319,24 @@ const html = String.raw`<!doctype html>
         }
       }
 
-      function generateHandoff() {
-        const userTurns = state.turns.filter((turn) => turn.role === "You").map((turn) => "- " + turn.text).join("\n") || "- None captured.";
-        els.handoff.textContent = "## Voice Session Handoff\n\n**Topic:** OpenCode voice session\n\n**Useful Context:**\n" + userTurns + "\n\n**Decisions And Preferences:**\n- Review the OpenCode replies in the active session for confirmed decisions.\n\n**Open Questions:**\n- TBD from the conversation if not already resolved.\n\n**Recommended Next Agent Step:**\nContinue in OpenCode from the latest voice-session turn. Resolve open questions before implementation.";
+      async function generateHandoff() {
+        if (!state.turns.length) { els.handoff.textContent = "No turns captured yet."; return; }
+        els.handoff.textContent = "Synthesizing handoff with OpenCode...";
+        try {
+          const response = await fetch("/api/handoff", { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ turns:state.turns }) });
+          const body = await response.json();
+          if (!response.ok || !body.ok) throw new Error(body.error || "Handoff generation failed");
+          els.handoff.textContent = body.handoff;
+        } catch (error) {
+          els.handoff.textContent = "Handoff blocked: " + error.message;
+        }
       }
 
       els.startBtn.addEventListener("click", startVoiceTurn);
       els.testSpeakerBtn.addEventListener("click", () => speak("Speaker test. If you can hear this, Pipa voice output is working."));
       els.clearBtn.addEventListener("click", () => { window.speechSynthesis?.cancel(); clearSpeechTimers(); try { state.recognition?.stop(); } catch (_error) {} state.recognition = null; state.listening = false; state.turns = []; state.lastReply = ""; els.handoff.textContent = "No handoff generated yet."; render(); setStatus("Ready", "Press the orb, speak naturally, then pause.", "ready"); });
       els.sendBtn.addEventListener("click", () => { submitTurn(els.textInput.value); els.textInput.value = ""; });
-      els.handoffBtn.addEventListener("click", generateHandoff);
+      els.handoffBtn.addEventListener("click", () => generateHandoff());
       checkBridge();
     </script>
   </body>
@@ -346,6 +366,37 @@ function stripAnsi(value) {
   return value.replace(/\u001b\[[0-9;]*m/g, "").trim();
 }
 
+function captureCommand(command, args, timeoutMs = 15_000) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { cwd: projectDir, env: process.env, stdio: ["ignore", "pipe", "pipe"] });
+    let stdout = "";
+    let stderr = "";
+    const timeout = setTimeout(() => {
+      child.kill("SIGTERM");
+      reject(new Error(`${command} timed out`));
+    }, timeoutMs);
+    child.stdout.on("data", (chunk) => { stdout += chunk.toString(); });
+    child.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
+    child.on("error", (error) => { clearTimeout(timeout); reject(error); });
+    child.on("close", (code) => {
+      clearTimeout(timeout);
+      if (code === 0) resolve(stripAnsi(stdout));
+      else reject(new Error(stripAnsi(stderr) || `Command exited with code ${code}`));
+    });
+  });
+}
+
+async function resolveOpenCodeSessionId() {
+  if (sessionId) return sessionId;
+  const output = await captureCommand(opencodeBin, ["session", "list", "--format", "json", "--max-count", "1"]);
+  const sessions = JSON.parse(output || "[]");
+  const latest = Array.isArray(sessions) ? sessions[0] : null;
+  if (!latest?.id) return "";
+  sessionId = latest.id;
+  process.env.PIPA_VOICE_SESSION_OPENCODE_SESSION = sessionId;
+  return sessionId;
+}
+
 function splitArgs(value) {
   return String(value || "").match(/(?:[^\s"']+|"[^"]*"|'[^']*')+/g)?.map((item) => item.replace(/^['"]|['"]$/g, "")) || [];
 }
@@ -354,7 +405,7 @@ function restrictedOpenCodeArgs() {
   return splitArgs(restrictedArgsRaw);
 }
 
-function argsContainKnownSafetyMode(args) {
+function argsContainUnsupportedHostedFlags(args) {
   const joined = args.join(" ").toLowerCase();
   return [
     "--no-tools",
@@ -372,15 +423,10 @@ function argsContainKnownSafetyMode(args) {
 function ensureHostedSafetyBoundary() {
   if (!hostedRelayMode) return [];
   const args = restrictedOpenCodeArgs();
-  if (!args.length || !argsContainKnownSafetyMode(args)) {
-    throw new Error("Hosted relay mode requires PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS with recognizable mechanical no-tool/read-only/planning OpenCode restrictions such as --no-tools, --read-only, or --planning-only. Refusing to run normal opencode from a hosted browser turn.");
+  if (argsContainUnsupportedHostedFlags(args)) {
+    throw new Error("Hosted relay mode is configured with OpenCode flags this installed version does not support. Remove PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS or set it only to flags supported by `opencode run --help`.");
   }
   return args;
-}
-
-function isSpokenApprovalOrExecutionRequest(message) {
-  const text = String(message || "").toLowerCase();
-  return /\b(approve|approval|yes|go ahead|run|execute|edit|write|modify|delete|shell|terminal|command|tool)\b/.test(text) && /\b(file|files|shell|terminal|command|tool|edit|change|permission|approval|approve)\b/.test(text);
 }
 
 function runOpenCodeTurn(message, extraArgs = []) {
@@ -446,15 +492,98 @@ async function createHostedRelaySession() {
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
     const setup = response.status === 401
-      ? "The hosted relay requires operator authorization. Use the Pipa managed relay when available, or set PIPA_VOICE_RELAY_OPERATOR_TOKEN only for operator testing."
+      ? "The hosted relay requires operator authorization. Set PIPA_VOICE_RELAY_OPERATOR_TOKEN for that relay, or use a self-serve relay deployment."
       : body.error || "Hosted relay session creation failed";
     throw new Error(setup);
   }
 
   relaySessionId = body.session_id;
   relayBridgeToken = body.bridge?.token;
-  relayUrl = `${relayBaseUrl.replace(/^http/, "ws")}/ws`;
+  relayUrl = body.relay_ws_url || `${relayBaseUrl.replace(/^http/, "ws")}/ws`;
   return body;
+}
+
+function childArgsForDaemon() {
+  const args = process.argv.slice(1).filter((arg) => !["--daemon", "--print-url-json"].includes(arg));
+  if (!args.includes(scriptPath)) args.unshift(scriptPath);
+  return args;
+}
+
+function processAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (_error) {
+    return false;
+  }
+}
+
+function writeDaemonMetadata(info) {
+  mkdirSync(runtimeDir, { recursive: true });
+  writeFileSync(path.join(runtimeDir, "bridge.pid"), `${info.pid}\n`, { mode: 0o600 });
+  writeFileSync(path.join(runtimeDir, "session.json"), `${JSON.stringify(info, null, 2)}\n`, { mode: 0o600 });
+}
+
+async function startDaemonBridge() {
+  mkdirSync(runtimeDir, { recursive: true });
+  const logPath = path.join(runtimeDir, "bridge.log");
+  const out = openSync(logPath, "a");
+  const err = openSync(logPath, "a");
+  const childEnv = { ...process.env, PIPA_VOICE_SESSION_DAEMON: "" };
+  if (sessionId) childEnv.PIPA_VOICE_SESSION_OPENCODE_SESSION = sessionId;
+  let browserUrl = `http://${host}:${port}`;
+  let mode = "local";
+  let sessionPackage = null;
+
+  if (hostedRequested && (!relayUrl || !relaySessionId || !relayBridgeToken)) {
+    sessionPackage = await createHostedRelaySession();
+    relaySessionId = sessionPackage.session_id;
+    relayBridgeToken = sessionPackage.bridge?.token;
+    relayUrl = sessionPackage.relay_ws_url || `${relayBaseUrl.replace(/^http/, "ws")}/ws/${encodeURIComponent(relaySessionId)}`;
+    browserUrl = sessionPackage.browser_url;
+    mode = "hosted";
+    childEnv.PIPA_VOICE_RELAY_URL = relayUrl;
+    childEnv.PIPA_VOICE_RELAY_SESSION_ID = relaySessionId;
+    childEnv.PIPA_VOICE_RELAY_BRIDGE_TOKEN = relayBridgeToken;
+  } else if (hostedRelayMode) {
+    mode = "hosted";
+    browserUrl = relaySessionId ? `${relayBaseUrl}/s/${encodeURIComponent(relaySessionId)}` : "";
+  }
+
+  const child = spawn(process.execPath, childArgsForDaemon(), {
+    cwd: projectDir,
+    env: childEnv,
+    detached: true,
+    stdio: ["ignore", out, err]
+  });
+  child.unref();
+
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  const info = {
+    ok: processAlive(child.pid),
+    mode,
+    pid: child.pid,
+    opencode_session_id: sessionId || null,
+    pid_path: path.join(runtimeDir, "bridge.pid"),
+    log_path: logPath,
+    metadata_path: path.join(runtimeDir, "session.json"),
+    browser_url: browserUrl,
+    relay_state: mode === "hosted" ? "bridge_waiting_until_browser_joins" : "local_server_starting",
+    pairing_expires_at: sessionPackage?.browser?.pairing_expires_at || null,
+    stop_command: `kill ${child.pid}`
+  };
+  writeDaemonMetadata(info);
+
+  if (printUrlJson) {
+    console.log(JSON.stringify({ event: "voice_session_daemon_started", ...info }));
+    return;
+  }
+
+  console.log(`Pipa voice bridge daemon started: ${info.pid}`);
+  if (browserUrl) console.log(`Browser voice session: ${browserUrl}`);
+  console.log(`PID file: ${info.pid_path}`);
+  console.log(`Log file: ${info.log_path}`);
+  console.log(`Stop with: ${info.stop_command}`);
 }
 
 async function startHostedRelayBridge() {
@@ -490,18 +619,37 @@ async function startHostedRelayBridge() {
 
   console.log("Pipa hosted relay bridge");
   console.log(`Project directory: ${projectDir}`);
-  console.log(sessionId ? `OpenCode session: ${sessionId}` : "OpenCode session: --continue");
+  console.log(sessionId ? `OpenCode session pinned: ${sessionId}` : "OpenCode session: --continue fallback");
   console.log(`Hosted relay: ${relayUrl}`);
-  console.log(`Hosted safe-mode args: ${extraArgs.join(" ")}`);
+  console.log(extraArgs.length ? `Hosted OpenCode args: ${extraArgs.join(" ")}` : "Hosted OpenCode args: none");
   if (sessionPackage?.browser_url) console.log(`Browser voice session: ${sessionPackage.browser_url}`);
   if (sessionPackage?.browser?.pairing_expires_at) console.log(`Pairing link expires if unused: ${sessionPackage.browser.pairing_expires_at}`);
   console.log("Hosted mode is for planning and discussion, not spoken tool approval or live shell/file execution.");
+  emitJson("voice_session_created", {
+    ok: true,
+    mode: "hosted",
+    pid: process.pid,
+    opencode_session_id: sessionId || null,
+    browser_url: sessionPackage?.browser_url || null,
+    relay_ws_url: relayUrl,
+    relay_state: "connecting",
+    pairing_expires_at: sessionPackage?.browser?.pairing_expires_at || null
+  });
 
   const seenTurns = new Set();
   const ws = new WebSocket(url, ["pipa-relay", "pipa-role.bridge", `pipa-session.${relaySessionId}`, `pipa-token.${relayBridgeToken}`], { perMessageDeflate: false });
 
   ws.on("open", () => {
-    ws.send(JSON.stringify({ type: "status", message: "Local bridge connected. Hosted turns will use restricted OpenCode mode." }));
+    emitJson("voice_session_bridge_connected", {
+      ok: true,
+      mode: "hosted",
+      pid: process.pid,
+      opencode_session_id: sessionId || null,
+      browser_url: sessionPackage?.browser_url || null,
+      relay_ws_url: relayUrl,
+      relay_state: "bridge_waiting_until_browser_joins"
+    });
+    ws.send(JSON.stringify({ type: "status", message: "Local bridge connected. Hosted turns will use normal OpenCode session behavior." }));
   });
 
   ws.on("message", async (data, isBinary) => {
@@ -535,13 +683,8 @@ async function startHostedRelayBridge() {
     }
     if (message.type !== "user_turn") return;
 
-    if (isSpokenApprovalOrExecutionRequest(message.text)) {
-      ws.send(JSON.stringify({ type: "error", message: "Hosted voice sessions cannot approve OpenCode tools, file edits, or shell commands by speech. Use voice for planning, then return to the normal permission flow for execution." }));
-      return;
-    }
-
     seenTurns.add(message.turn_id);
-    ws.send(JSON.stringify({ type: "status", message: "Running restricted OpenCode planning turn." }));
+    ws.send(JSON.stringify({ type: "status", message: "Running OpenCode turn." }));
     try {
       const reply = await runOpenCodeTurn(message.text, extraArgs);
       ws.send(JSON.stringify({ type: "assistant_reply", turn_id: message.turn_id, text: reply }));
@@ -613,19 +756,54 @@ const server = createServer(async (req, res) => {
       return;
     }
 
+    if (req.method === "POST" && req.url === "/api/handoff") {
+      const body = JSON.parse((await readBody(req)) || "{}");
+      const turns = Array.isArray(body.turns) ? body.turns : [];
+      const transcript = turns
+        .map((turn) => `${String(turn.role || "Unknown").slice(0, 40)}: ${String(turn.text || "").slice(0, 4_000)}`)
+        .join("\n\n")
+        .slice(0, 16_000);
+      if (!transcript) {
+        sendJson(res, 400, { ok: false, error: "No turns captured" });
+        return;
+      }
+      const prompt = `Synthesize this voice session into a concise continuation handoff. Use exactly these sections: Context discussed, Decisions made, Open questions, Confirmed next actions, What the agent should continue doing, What not to assume. Be honest about uncertainty and do not treat exploratory comments as confirmed decisions.\n\n${transcript}`;
+      const handoff = await runOpenCodeTurn(prompt);
+      sendJson(res, 200, { ok: true, handoff });
+      return;
+    }
+
     sendJson(res, 404, { ok: false, error: "Not found" });
   } catch (error) {
     sendJson(res, 500, { ok: false, error: error.message });
   }
 });
 
-if (hostedRelayMode) {
-  startHostedRelayBridge();
-} else {
+async function main() {
+  try {
+    const pinnedSessionId = await resolveOpenCodeSessionId();
+    if (pinnedSessionId) emitJson("opencode_session_pinned", { ok: true, opencode_session_id: pinnedSessionId });
+  } catch (error) {
+    console.error(`OpenCode session pinning warning: ${error.message}`);
+    emitJson("opencode_session_pin_failed", { ok: false, error: error.message });
+  }
+
+  if (daemonRequested) {
+    await startDaemonBridge();
+    return;
+  }
+
+  if (hostedRelayMode) {
+    await startHostedRelayBridge();
+    return;
+  }
+
   server.listen(port, host, async () => {
-    console.log(`Pipa voice session: http://${host}:${port}`);
+    const browserUrl = `http://${host}:${port}`;
+    console.log(`Pipa voice session: ${browserUrl}`);
     console.log(`Project directory: ${projectDir}`);
-    console.log(sessionId ? `OpenCode session: ${sessionId}` : "OpenCode session: --continue");
+    console.log(sessionId ? `OpenCode session pinned: ${sessionId}` : "OpenCode session: --continue fallback");
+    emitJson("voice_session_ready", { ok: true, mode: "local", pid: process.pid, browser_url: browserUrl, relay_state: "local_ready", opencode_session_id: sessionId || null });
     if (publicMode === "ngrok") {
       try {
         await startNgrokTunnel();
@@ -635,6 +813,12 @@ if (hostedRelayMode) {
     }
   });
 }
+
+main().catch((error) => {
+  if (printUrlJson) console.log(JSON.stringify({ event: "voice_session_failed", ok: false, error: error.message }));
+  console.error(`Pipa voice session blocked: ${error.message}`);
+  process.exitCode = 1;
+});
 
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
