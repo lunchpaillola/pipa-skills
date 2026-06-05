@@ -312,7 +312,7 @@ function sessionRevoked(session, env) {
 }
 
 function goneSessionHtml() {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pipa Voice Session Ended</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:680px;margin:64px auto;padding:0 24px;line-height:1.6;color:#2d2a25;background:#fbfaf7}.muted{color:#706b61}</style></head><body><p class="muted">Hosted relay</p><h1>This voice session does not exist anymore.</h1><p>Start a new voice session to continue with your agent.</p></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pipa Voice Session Ended</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:680px;margin:64px auto;padding:0 24px;line-height:1.6;color:#2d2a25;background:#fbfaf7}.muted{color:#706b61}</style></head><body><p class="muted">Hosted relay</p><h1>This voice session is disconnected.</h1><p>To connect a new session and get a new URL, tell your agent to follow the pipa-voice-session skill.</p></body></html>`;
 }
 
 function json(body, status = 200) {
@@ -467,6 +467,7 @@ function hostedSessionHtml(sessionId) {
             <label class="voice-control"><span>Voice</span><select class="voice-select" id="voice"><option value="">System default</option></select></label>
             <button class="secondary" id="speaker" type="button">Test speaker</button>
             <button class="quiet" id="clear" type="button">Clear transcript</button>
+            <button class="quiet" id="end" type="button">End session</button>
           </div>
         </div>
       </section>
@@ -491,9 +492,9 @@ function hostedSessionHtml(sessionId) {
       const token = params.get("token");
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const wsUrl = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws/" + encodeURIComponent(sessionId);
-      const state = { ws:null, paired:false, busy:false, listening:false, recognition:null, finalTranscript:"", interimTranscript:"", turns:[], turnSeq:0, voices:[] };
+      const state = { ws:null, paired:false, busy:false, listening:false, ended:false, recognition:null, finalTranscript:"", interimTranscript:"", turns:[], turnSeq:0, voices:[] };
       const $ = (id) => document.getElementById(id);
-      const els = { status:$("status"), detail:$("detail"), replyPreview:$("replyPreview"), currentReply:$("currentReply"), start:$("start"), speaker:$("speaker"), clear:$("clear"), voice:$("voice"), text:$("text"), send:$("send"), turns:$("turns") };
+      const els = { status:$("status"), detail:$("detail"), replyPreview:$("replyPreview"), currentReply:$("currentReply"), start:$("start"), speaker:$("speaker"), clear:$("clear"), end:$("end"), voice:$("voice"), text:$("text"), send:$("send"), turns:$("turns") };
 
       function escapeHtml(value) { return String(value).replace(/[&<>"]/g, (char) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;" })[char]); }
       function render() { els.turns.innerHTML = state.turns.map((turn) => '<div class="turn"><strong>' + escapeHtml(turn.role) + '</strong><p>' + escapeHtml(turn.text) + '</p></div>').join(""); els.turns.scrollTop = els.turns.scrollHeight; }
@@ -514,20 +515,21 @@ function hostedSessionHtml(sessionId) {
         els.voice.innerHTML = state.voices.map((voice) => '<option value="' + escapeHtml(voice.name) + '">' + escapeHtml(voice.name + (voice.lang ? ' · ' + voice.lang : '')) + '</option>').join("");
         els.voice.value = selected;
       }
-      function speak(text) {
-        if (!window.speechSynthesis) return;
+      function speak(text, onDone) {
+        if (!window.speechSynthesis) { if (onDone) window.setTimeout(onDone, 250); return; }
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         const voice = selectedVoice();
         if (voice) utterance.voice = voice;
         utterance.rate = 1;
+        if (onDone) { utterance.onend = onDone; utterance.onerror = onDone; }
         window.speechSynthesis.speak(utterance);
       }
       function currentTranscript() { return (state.finalTranscript + " " + state.interimTranscript).trim(); }
 
       function submit(text) {
         const clean = text.trim();
-        if (!clean || !state.paired || state.busy) return;
+        if (!clean || !state.paired || state.busy || state.ended) return;
         const turn_id = "browser-" + Date.now() + "-" + (++state.turnSeq);
         state.busy = true;
         setReady(false);
@@ -551,6 +553,7 @@ function hostedSessionHtml(sessionId) {
       }
 
       function listen() {
+        if (state.ended) { setReady(false); setLive(false); setStatus("Disconnected", "To connect a new session and get a new URL, tell your agent to follow the pipa-voice-session skill."); return; }
         if (state.listening) return stopListening(true);
         if (!SpeechRecognition) { setStatus("Speech unavailable", "Use text input. The relay path is still available."); addTurn("System", "SpeechRecognition is unavailable. Use text input."); return; }
         const recognition = new SpeechRecognition();
@@ -579,7 +582,7 @@ function hostedSessionHtml(sessionId) {
       }
 
       function connect() {
-        if (!token) { setStatus("Expired", "This link is missing session credentials. Start a new session."); return; }
+        if (!token) { state.ended = true; setReady(false); setStatus("Disconnected", "This link is missing session credentials. Ask your agent to follow the pipa-voice-session skill for a new URL."); return; }
         state.ws = new WebSocket(wsUrl, ["pipa-relay", "pipa-role.browser", "pipa-session." + sessionId, "pipa-token." + token]);
         state.ws.onopen = () => setStatus("Waiting for local bridge", "Keep the bridge command running on the machine with OpenCode.");
         state.ws.onmessage = (event) => {
@@ -587,7 +590,7 @@ function hostedSessionHtml(sessionId) {
           if (message.type === "status") {
             state.paired = message.state === "paired" || message.state === "active_turn";
             if (state.paired && !state.busy) { setReady(true); setStatus(message.message || "Paired", "Press the orb to huddle. Browser speech keeps the session light and reliable."); }
-            else if (message.state === "expired" || message.state === "ended") { setReady(false); setStatus(message.message, "Start a new session."); }
+            else if (message.state === "expired" || message.state === "ended") { state.ended = true; setReady(false); setLive(false); setStatus(message.message || "Disconnected", "To connect a new session and get a new URL, tell your agent to follow the pipa-voice-session skill."); }
             else setStatus(message.message || "Waiting", "Waiting for the other side of the relay.");
           }
           if (message.type === "assistant_reply") {
@@ -596,17 +599,31 @@ function hostedSessionHtml(sessionId) {
             setCurrentReply(message.text);
             addTurn("OpenCode", message.text);
             setStatus("Speaking", "Reading the reply aloud now.");
-            speak(message.text);
+            speak(message.text, () => { if (state.paired && !state.busy && !state.ended) listen(); });
           }
           if (message.type === "error") { state.busy = false; setReady(state.paired); addTurn("System", "Blocked: " + message.message); setStatus("Blocked", message.message); }
-          if (message.type === "end") { setReady(false); setStatus("Ended", message.message || "This session has ended."); }
+          if (message.type === "end") { state.ended = true; setReady(false); setLive(false); setStatus("Disconnected", message.message || "This session has ended. Tell your agent to follow the pipa-voice-session skill for a new URL."); }
         };
-        state.ws.onclose = () => { state.paired = false; setReady(false); setStatus("Reconnecting", "The relay connection closed. Refresh before sending more turns."); };
+        state.ws.onclose = () => { state.paired = false; setReady(false); setLive(false); if (!state.ended) setStatus("Disconnected", "The relay or local bridge is no longer available. Tell your agent to follow the pipa-voice-session skill for a new URL."); };
+      }
+
+      function endSession() {
+        state.ended = true;
+        state.paired = false;
+        state.busy = false;
+        window.speechSynthesis?.cancel();
+        try { state.recognition?.stop(); } catch (_error) {}
+        send({ type:"end" });
+        try { state.ws?.close(1000, "ended"); } catch (_error) {}
+        setReady(false);
+        setLive(false);
+        setStatus("Disconnected", "To connect a new session and get a new URL, tell your agent to follow the pipa-voice-session skill.");
       }
 
       els.start.addEventListener("click", listen);
       els.send.addEventListener("click", () => { submit(els.text.value); els.text.value = ""; });
       els.speaker.addEventListener("click", () => speak("Huddle speaker test. Browser speech is working."));
+      els.end.addEventListener("click", endSession);
       els.voice.addEventListener("change", () => localStorage.setItem("pipa.voice.name", els.voice.value));
       els.clear.addEventListener("click", () => { window.speechSynthesis?.cancel(); state.turns = []; setCurrentReply(""); render(); });
       loadVoices();

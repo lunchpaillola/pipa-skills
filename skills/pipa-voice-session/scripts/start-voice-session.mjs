@@ -2,7 +2,7 @@
 
 import { createServer } from "node:http";
 import { spawn } from "node:child_process";
-import { mkdirSync, openSync, writeFileSync } from "node:fs";
+import { mkdirSync, openSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import WebSocket from "ws";
@@ -14,6 +14,7 @@ const host = process.env.PIPA_VOICE_SESSION_HOST || "127.0.0.1";
 const projectDir = process.env.PIPA_VOICE_SESSION_DIR || process.cwd();
 const opencodeBin = process.env.OPENCODE_BIN || "opencode";
 const scriptPath = fileURLToPath(import.meta.url);
+const scriptDir = path.dirname(scriptPath);
 let sessionId = process.env.PIPA_VOICE_SESSION_OPENCODE_SESSION || "";
 const publicMode = process.env.PIPA_VOICE_SESSION_PUBLIC || readFlag("--public") || (process.argv.includes("--ngrok") ? "ngrok" : "");
 let relayUrl = process.env.PIPA_VOICE_RELAY_URL || readFlag("--relay-url");
@@ -27,12 +28,19 @@ const relayOperatorToken = process.env.PIPA_VOICE_RELAY_OPERATOR_TOKEN || readFl
 const restrictedArgsRaw = process.env.PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS || "";
 const hostedRelayMode = hostedRequested || Boolean(relayUrl || relaySessionId || relayBridgeToken);
 const runtimeDir = process.env.PIPA_VOICE_SESSION_RUNTIME_DIR || path.join(projectDir, ".pipa", "voice-session");
+const templatePath = process.env.PIPA_VOICE_SESSION_TEMPLATE || path.join(scriptDir, "..", "templates", "huddle.html");
+const openCodeTurnTimeoutMs = Number(process.env.PIPA_VOICE_SESSION_TURN_TIMEOUT_SECONDS || 300) * 1000;
 let ngrokProcess = null;
+let localSessionEnded = false;
 
 function readFlag(name) {
   const index = process.argv.indexOf(name);
   if (index === -1) return "";
   return process.argv[index + 1] || "";
+}
+
+function voiceSessionHtml() {
+  return readFileSync(templatePath, "utf8");
 }
 
 function emitJson(event, fields = {}) {
@@ -450,8 +458,8 @@ function runOpenCodeTurn(message, extraArgs = []) {
     let stderr = "";
     const timeout = setTimeout(() => {
       child.kill("SIGTERM");
-      reject(new Error("OpenCode turn timed out after 120 seconds"));
-    }, 120_000);
+      reject(new Error(`OpenCode turn timed out after ${Math.round(openCodeTurnTimeoutMs / 1000)} seconds`));
+    }, openCodeTurnTimeoutMs);
 
     child.stdout.on("data", (chunk) => { stdout += chunk.toString(); });
     child.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
@@ -738,7 +746,7 @@ const server = createServer(async (req, res) => {
   try {
     if (req.method === "GET" && (req.url === "/" || req.url === "/index.html")) {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
-      res.end(html);
+      res.end(voiceSessionHtml());
       return;
     }
 
@@ -786,6 +794,11 @@ const server = createServer(async (req, res) => {
       const prompt = `Synthesize this voice session into a concise continuation handoff. Use exactly these sections: Context discussed, Decisions made, Open questions, Confirmed next actions, What the agent should continue doing, What not to assume. Be honest about uncertainty and do not treat exploratory comments as confirmed decisions.\n\n${transcript}`;
       const handoff = await runOpenCodeTurn(prompt);
       sendJson(res, 200, { ok: true, handoff });
+      return;
+    }
+
+    if (req.method === "POST" && req.url === "/api/end") {
+      sendJson(res, 200, { ok: true, state: "ended", message: "Local voice session disconnected." });
       return;
     }
 

@@ -391,13 +391,14 @@
       }
       .transcript-modal.is-open { display: grid; }
       .transcript-sheet {
-        width: 100%;
-        max-width: 520px;
-        max-height: calc(100vh - 40px);
-        overflow-y: auto;
+        width: min(420px, 100%);
+        max-height: min(520px, calc(100vh - 72px));
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
         background: var(--page);
         border-radius: 20px;
-        padding: 24px;
+        padding: 18px;
         text-align: left;
         box-shadow: 0 24px 80px rgba(0,0,0,0.12);
       }
@@ -405,10 +406,11 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 20px;
+        flex: 0 0 auto;
+        margin-bottom: 14px;
       }
       .transcript-sheet h2 {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
         letter-spacing: -0.02em;
       }
@@ -424,22 +426,26 @@
         transition: background 150ms var(--ease-out);
       }
       .transcript-sheet .close:hover { background: var(--surface); }
-      .transcript-section { margin-bottom: 24px; }
+      .transcript-turns {
+        overflow-y: auto;
+        padding-right: 4px;
+      }
+      .transcript-section { margin-bottom: 14px; }
       .transcript-section:last-child { margin-bottom: 0; }
       .transcript-section h3 {
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.18em;
         text-transform: uppercase;
         color: var(--muted);
-        margin-bottom: 10px;
+        margin-bottom: 6px;
       }
       .transcript-bubble {
-        border-radius: 14px;
+        border-radius: 12px;
         background: var(--surface);
-        padding: 14px 16px;
-        font-size: 14px;
-        line-height: 1.5;
+        padding: 10px 12px;
+        font-size: 13px;
+        line-height: 1.45;
         color: var(--ink);
       }
       .transcript-bubble.agent { background: transparent; padding-left: 0; padding-right: 0; }
@@ -505,7 +511,8 @@
         }
         .huddle-stage { padding: 8px 0; }
         .orb-zone { min-height: 240px; }
-        .transcript-sheet { padding: 20px; border-radius: 16px; }
+        .transcript-modal { padding: 16px; }
+        .transcript-sheet { width: min(380px, 100%); max-height: min(480px, calc(100vh - 48px)); padding: 16px; border-radius: 16px; }
       }
 
       @media (max-width: 380px) {
@@ -569,6 +576,9 @@
               <button class="dock-button" type="button" data-transcript aria-label="Open transcript" title="Open transcript">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg>
               </button>
+              <button class="dock-button" type="button" data-pause aria-label="Pause listening" title="Pause listening">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14"/><path d="M16 5v14"/></svg>
+              </button>
               <button class="dock-button danger" type="button" data-end-session aria-label="End session" title="End session">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
               </button>
@@ -615,7 +625,7 @@
 
     <script>
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const labels = { ready: "Ready", listening: "Listening", processing: "Thinking", speaking: "Speaking", disconnected: "Disconnected", blocked: "Ready" };
+      const labels = { ready: "Ready", listening: "Listening", processing: "Thinking", speaking: "Speaking", paused: "Paused", disconnected: "Disconnected", blocked: "Ready" };
       const screens = Array.from(document.querySelectorAll("[data-screen]"));
       const transcriptModal = document.querySelector("[data-transcript-modal]");
       const voicePanel = document.querySelector("[data-voice-panel]");
@@ -631,7 +641,7 @@
       let demoStateIndex = 0;
       let currentUserName = "You";
       const demoStates = ["ready", "listening", "processing", "speaking"];
-      const state = { bridgeReady: false, busy: false, listening: false, muted: false, ended: false, recognition: null, finalTranscript: "", interimTranscript: "", silenceTimer: null, maxListenTimer: null, stopRequested: false, turns: [] };
+      const state = { bridgeReady: false, busy: false, listening: false, muted: false, paused: false, ended: false, recognition: null, finalTranscript: "", interimTranscript: "", silenceTimer: null, maxListenTimer: null, stopRequested: false, turns: [] };
 
       function escapeHtml(value) {
         return String(value).replace(/[&<>\"]/g, (char) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;" })[char]);
@@ -756,6 +766,11 @@
           speak(reply, () => {
             state.busy = false;
             if (state.ended) return;
+            if (state.paused) {
+              setState("paused");
+              setLiveTranscript("Paused. Press resume when you want the huddle to listen again.", { kind: "interim" });
+              return;
+            }
             startVoiceTurn({ automatic: true });
           });
         } catch (error) {
@@ -787,6 +802,11 @@
         if (state.ended) {
           setState("disconnected");
           setLiveTranscript("The session is disconnected. To connect a new session and get a new URL, tell your agent to follow the pipa-voice-session skill.", { kind: "interim" });
+          return;
+        }
+        if (state.paused) {
+          setState("paused");
+          setLiveTranscript("Paused. Press resume when you want the huddle to listen again.", { kind: "interim" });
           return;
         }
         if (!state.bridgeReady) return cycleDemoState();
@@ -917,6 +937,28 @@
         btn.classList.toggle("is-active", state.muted);
         btn.setAttribute("aria-label", state.muted ? "Unmute agent voice" : "Mute agent voice");
         btn.title = state.muted ? "Unmute agent voice" : "Mute agent voice";
+        setLiveTranscript(state.muted ? "Agent voice muted. Replies will still appear in the transcript." : "Agent voice unmuted.", { kind: "interim" });
+      }));
+
+      document.querySelectorAll("[data-pause]").forEach((btn) => btn.addEventListener("click", () => {
+        state.paused = !state.paused;
+        if (state.paused) {
+          clearSpeechTimers();
+          try { state.recognition?.stop(); } catch (_error) {}
+          state.recognition = null;
+          state.listening = false;
+          btn.classList.add("is-active");
+          btn.setAttribute("aria-label", "Resume listening");
+          btn.title = "Resume listening";
+          setState("paused");
+          setLiveTranscript("Paused. Press resume when you want the huddle to listen again.", { kind: "interim" });
+          return;
+        }
+        btn.classList.remove("is-active");
+        btn.setAttribute("aria-label", "Pause listening");
+        btn.title = "Pause listening";
+        setLiveTranscript("Resuming listening...", { kind: "interim" });
+        startVoiceTurn({ automatic: true });
       }));
 
       renderVoiceOptions();
@@ -935,6 +977,7 @@
         state.listening = false;
         state.busy = false;
         state.ended = true;
+        state.paused = false;
         await sendEndSignal();
         voicePanel?.classList.remove("is-open");
         document.querySelectorAll("[data-voice]").forEach((voiceBtn) => voiceBtn.classList.remove("is-active"));

@@ -29,7 +29,7 @@ ngrok config add-authtoken <token>
 The bridge does this for each user turn:
 
 ```text
-Browser SpeechRecognition -> POST /api/turn -> opencode run <message> --session <startup-session-id> --dir <repo> -> browser SpeechSynthesis at 1.15x
+Pipa Huddle template -> Browser SpeechRecognition -> POST /api/turn -> opencode run <message> --session <startup-session-id> --dir <repo> -> browser SpeechSynthesis
 ```
 
 Environment variables:
@@ -39,6 +39,7 @@ Environment variables:
 - `PIPA_VOICE_SESSION_DIR`: defaults to the server working directory
 - `PIPA_VOICE_SESSION_OPENCODE_SESSION`: optional explicit OpenCode session id; otherwise pins the latest session id from `opencode session list --format json --max-count 1` at bridge startup
 - `PIPA_VOICE_SESSION_PUBLIC`: set to `ngrok` to start an HTTPS ngrok tunnel
+- `PIPA_VOICE_SESSION_TEMPLATE`: optional absolute HTML template path; defaults to the skill-local `templates/huddle.html`
 - `OPENCODE_BIN`: defaults to `opencode`
 
 Hosted relay bridge mode environment variables:
@@ -78,6 +79,7 @@ Each candidate should prove:
 Use the same-computer OpenCode bridge as the default V1 path:
 
 - serve the bundled UI through `node skills/pipa-voice-session/scripts/start-voice-session.mjs`
+- keep the UI deterministic through `references/template-contract.md`
 - call `opencode run --session <startup-session-id> --dir <repo>` for turns after resolving the startup session id
 - use `--public ngrok` for the quickest remote HTTPS test
 - use browser speech synthesis as the default reply voice for lower memory pressure and faster startup

@@ -22,7 +22,8 @@ At startup, the bridge resolves the latest OpenCode session id and pins voice tu
 
 ## What It Does
 
-- browser captures one spoken turn or text fallback
+- renders the deterministic Pipa Huddle template from `templates/huddle.html`
+- browser captures one spoken turn from the huddle orb
 - hosted relay forwards the final text turn only
 - local bridge runs `opencode run` against the pinned OpenCode session
 - browser speaks the assistant reply with browser speech synthesis by default
@@ -39,11 +40,25 @@ node skills/pipa-voice-session/scripts/start-voice-session.mjs
 
 Then open `http://127.0.0.1:8787` on the same machine.
 
+For a public HTTPS local test, use ngrok:
+
+```bash
+node skills/pipa-voice-session/scripts/start-voice-session.mjs --public ngrok
+```
+
+The local bridge serves the skill-local template documented in `references/template-contract.md`. Override it only for explicit experiments:
+
+```bash
+PIPA_VOICE_SESSION_TEMPLATE=/absolute/path/to/index.html node skills/pipa-voice-session/scripts/start-voice-session.mjs
+```
+
 ## Browser Speech
 
-Browser speech synthesis is the default voice output for hosted and local sessions. It has lower memory pressure, starts faster, and is less likely to fail in small sandbox environments. The page speaks replies at `1.15x` to keep short huddle turns moving.
+Browser speech synthesis is the default voice output for hosted and local sessions. It has lower memory pressure, starts faster, and is less likely to fail in small sandbox environments. The page speaks replies at normal browser speed to keep the huddle calm and legible.
 
 Voice-session replies should stay conversational: one or two short sentences, no bullets or long markdown by default. Longer written detail belongs in the visible transcript or a handoff, not the spoken turn.
+
+After the agent finishes speaking, the huddle automatically returns to listening for the next turn when browser speech recognition is available. If the session is ended, expired, or the bridge/relay disconnects, the UI shows a disconnected state and instructs the user to ask the agent to follow the skill for a fresh session URL.
 
 ## Operator Notes
 

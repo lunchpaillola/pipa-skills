@@ -46,11 +46,13 @@ Do not imply that voice mode is a separate agent brain. The voice session is an 
 
 ### Step 3: Start The Local OpenCode Voice Bridge
 
-Follow `references/transport-prototype.md`, `references/hosted-relay.md`, and `references/privacy-and-retention.md`.
+Follow `references/transport-prototype.md`, `references/hosted-relay.md`, `references/template-contract.md`, and `references/privacy-and-retention.md`.
 
 Use the hosted relay path for sandboxed or remote-browser use. The production relay is `https://voice.usepipa.com`; each launch creates a separate session URL under `/s/<session-id>` and pairs it with a local bridge that connects outbound to `/ws/<session-id>`.
 
 Use the bundled same-computer bridge at `skills/pipa-voice-session/scripts/start-voice-session.mjs` as the local fallback and development path. It serves a localhost browser UI, captures speech with browser APIs, sends each turn to `opencode run`, and speaks the OpenCode response with browser speech synthesis.
+
+The local bridge serves the deterministic huddle template defined in `references/template-contract.md`. By default it renders the skill-local file `templates/huddle.html`; set `PIPA_VOICE_SESSION_TEMPLATE=/absolute/path/to/index.html` only for explicit template experiments.
 
 Default hosted launch command from the repository root:
 
@@ -122,4 +124,5 @@ Voice session blocked.
 - `references/context-handoff.md`
 - `references/transport-prototype.md`
 - `references/hosted-relay.md`
+- `references/template-contract.md`
 - `references/privacy-and-retention.md`
