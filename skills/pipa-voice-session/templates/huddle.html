@@ -433,10 +433,10 @@
       .transcript-section { margin-bottom: 14px; }
       .transcript-section:last-child { margin-bottom: 0; }
       .transcript-section h3 {
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0;
+        text-transform: none;
         color: var(--muted);
         margin-bottom: 6px;
       }
@@ -511,8 +511,12 @@
         }
         .huddle-stage { padding: 8px 0; }
         .orb-zone { min-height: 240px; }
-        .transcript-modal { padding: 16px; }
-        .transcript-sheet { width: min(380px, 100%); max-height: min(480px, calc(100vh - 48px)); padding: 16px; border-radius: 16px; }
+        .transcript-modal { padding: 14px; align-items: center; }
+        .transcript-sheet { width: min(340px, 100%); max-height: min(380px, calc(100vh - 96px)); padding: 14px; border-radius: 16px; }
+        .transcript-sheet h2 { font-size: 15px; }
+        .transcript-sheet .close { width: 30px; height: 30px; }
+        .transcript-section { margin-bottom: 12px; }
+        .transcript-bubble { font-size: 12.5px; padding: 9px 10px; }
       }
 
       @media (max-width: 380px) {
@@ -567,6 +571,9 @@
             </div>
 
             <div class="compact-dock">
+              <button class="dock-button" type="button" data-pause aria-label="Pause listening" title="Pause listening">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14"/><path d="M16 5v14"/></svg>
+              </button>
               <button class="dock-button" type="button" data-mute aria-label="Mute agent voice" title="Mute agent voice">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z"/><path d="M18 9l3 3-3 3"/><path d="M21 9l-3 3 3 3"/></svg>
               </button>
@@ -575,9 +582,6 @@
               </button>
               <button class="dock-button" type="button" data-transcript aria-label="Open transcript" title="Open transcript">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg>
-              </button>
-              <button class="dock-button" type="button" data-pause aria-label="Pause listening" title="Pause listening">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14"/><path d="M16 5v14"/></svg>
               </button>
               <button class="dock-button danger" type="button" data-end-session aria-label="End session" title="End session">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
