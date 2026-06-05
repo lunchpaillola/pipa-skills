@@ -20,8 +20,8 @@ The template must be a static HTML file with no build step. It must load over lo
 
 The current template has two user-facing views:
 
-- Join view: collects display name, tests browser speech output, and plays `Ready to get started.` before entering the huddle.
-- Huddle view: shows the orb, current state label, inline live transcript, voice picker, compact transcript modal, mute control, pause/resume control, and end-session control.
+- Join view: collects display name, tests browser speech output, then starts the huddle entry sequence on Join.
+- Huddle view: shows the orb, current state label, inline live transcript, voice picker, compact transcript modal, microphone mute control, pause/resume control, and end-session control.
 
 ## Required Local Bridge Endpoints
 
@@ -68,13 +68,15 @@ The template should preserve the current product register:
 - transcript in a compact borderless modal with internal scrolling
 - voice picker populated from real browser `speechSynthesis.getVoices()` values
 - no borders on buttons or popups
+- entry and thinking sound cues served by the local bridge from `sound-design-entering-chat.mp3` and `sound-design-thinking.mp3`
+- animated `Thinking...` state as the reliable fallback when mobile browsers block delayed thinking audio
 
 ## Lifecycle Contract
 
 The local bridge lifecycle is deterministic:
 
 ```text
-Join -> speaker intro -> Huddle ready -> SpeechRecognition final turn -> POST /api/turn -> OpenCode reply -> SpeechSynthesis reply -> Listening for next turn
+Join -> `Entering the huddle.` -> Huddle ready -> entry sound -> `Hi {name}, excited to speak to you! What's on your mind?` -> Listening -> SpeechRecognition final turn -> thinking sound -> POST /api/turn -> OpenCode reply -> SpeechSynthesis reply -> Listening for next turn
 ```
 
 Speech recognition failures, non-HTTPS public URLs, missing bridge APIs, and OpenCode errors must surface as visible inline transcript messages rather than silent failures.
@@ -83,4 +85,6 @@ After the agent finishes speaking, the template should automatically start the n
 
 Pause keeps the session open but stops automatic listening until the user resumes. It must not disconnect the bridge or erase transcript state.
 
-When the user ends the session or the bridge/relay becomes unavailable, the UI should stay in the huddle and show a disconnected state with this action: tell the agent to follow the `pipa-voice-session` skill to connect a new session and get a new URL.
+Mute is microphone mute. It must stop active `SpeechRecognition`, prevent auto-listening while muted, and resume listening after unmute when the session is otherwise active.
+
+When the user ends the session or the bridge/relay becomes unavailable, the UI should stay in the huddle and show this disconnected state copy: `The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill`

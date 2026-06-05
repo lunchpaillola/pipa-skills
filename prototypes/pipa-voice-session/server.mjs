@@ -11,6 +11,14 @@ const port = Number(process.env.PIPA_VOICE_SESSION_PORT || 8787);
 const host = process.env.PIPA_VOICE_SESSION_HOST || "127.0.0.1";
 const projectDir = process.env.PIPA_VOICE_SESSION_DIR || process.cwd();
 const opencodeBin = process.env.OPENCODE_BIN || "opencode";
+const openCodeTurnTimeoutMs = Number(process.env.PIPA_VOICE_SESSION_TURN_TIMEOUT_SECONDS || 300) * 1000;
+let localSessionEnded = false;
+
+function soundDesignAsset(url) {
+  if (url === "/sound-design-entering-chat.mp3") return join(projectDir, "sound-design-entering-chat.mp3");
+  if (url === "/sound-design-thinking.mp3") return join(projectDir, "sound-design-thinking.mp3");
+  return "";
+}
 
 function sendJson(res, status, body) {
   res.writeHead(status, {
@@ -83,8 +91,8 @@ function runOpenCodeTurn({ message, sessionId, continueLast }) {
     let stderr = "";
     const timeout = setTimeout(() => {
       child.kill("SIGTERM");
-      reject(new Error("OpenCode turn timed out after 120 seconds"));
-    }, 120_000);
+      reject(new Error(`OpenCode turn timed out after ${Math.round(openCodeTurnTimeoutMs / 1000)} seconds`));
+    }, openCodeTurnTimeoutMs);
 
     child.stdout.on("data", (chunk) => {
       stdout += chunk.toString();
@@ -121,7 +129,24 @@ const server = createServer(async (req, res) => {
       return;
     }
 
+    if (req.method === "GET") {
+      const assetPath = soundDesignAsset(req.url || "");
+      if (assetPath) {
+        const audio = await readFile(assetPath);
+        res.writeHead(200, {
+          "Content-Type": "audio/mpeg",
+          "Cache-Control": "no-store"
+        });
+        res.end(audio);
+        return;
+      }
+    }
+
     if (req.method === "GET" && req.url === "/api/status") {
+      if (localSessionEnded) {
+        sendJson(res, 410, { ok: false, state: "ended", error: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill" });
+        return;
+      }
       sendJson(res, 200, {
         ok: true,
         mode: "local-opencode-bridge",
@@ -133,6 +158,10 @@ const server = createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && req.url === "/api/turn") {
+      if (localSessionEnded) {
+        sendJson(res, 410, { ok: false, state: "ended", error: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill" });
+        return;
+      }
       const rawBody = await readRequestBody(req);
       const body = JSON.parse(rawBody || "{}");
       const message = String(body.message || "").trim();
@@ -147,6 +176,12 @@ const server = createServer(async (req, res) => {
         continueLast: body.continueLast !== false
       });
       sendJson(res, 200, { ok: true, reply: result.text, stderr: result.stderr });
+      return;
+    }
+
+    if (req.method === "POST" && req.url === "/api/end") {
+      localSessionEnded = true;
+      sendJson(res, 200, { ok: true, state: "ended", message: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill" });
       return;
     }
 

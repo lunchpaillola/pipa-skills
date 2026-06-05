@@ -43,6 +43,12 @@ function voiceSessionHtml() {
   return readFileSync(templatePath, "utf8");
 }
 
+function soundDesignAsset(url) {
+  if (url === "/sound-design-entering-chat.mp3") return path.join(projectDir, "sound-design-entering-chat.mp3");
+  if (url === "/sound-design-thinking.mp3") return path.join(projectDir, "sound-design-thinking.mp3");
+  return "";
+}
+
 function emitJson(event, fields = {}) {
   if (!printUrlJson) return;
   console.log(JSON.stringify({ event, ...fields }));
@@ -756,9 +762,16 @@ const server = createServer(async (req, res) => {
       return;
     }
 
+    const audioPath = req.method === "GET" ? soundDesignAsset(req.url) : "";
+    if (audioPath) {
+      res.writeHead(200, { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" });
+      res.end(readFileSync(audioPath));
+      return;
+    }
+
     if (req.method === "GET" && req.url === "/api/status") {
       if (localSessionEnded) {
-        sendJson(res, 410, { ok: false, state: "ended", error: "Local voice session disconnected. Start a new voice session for a fresh URL." });
+        sendJson(res, 410, { ok: false, state: "ended", error: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill" });
         return;
       }
       sendJson(res, 200, {
@@ -774,7 +787,7 @@ const server = createServer(async (req, res) => {
 
     if (req.method === "POST" && req.url === "/api/turn") {
       if (localSessionEnded) {
-        sendJson(res, 410, { ok: false, state: "ended", error: "Local voice session disconnected. Start a new voice session for a fresh URL." });
+        sendJson(res, 410, { ok: false, state: "ended", error: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill" });
         return;
       }
       const body = JSON.parse((await readBody(req)) || "{}");
@@ -790,7 +803,7 @@ const server = createServer(async (req, res) => {
 
     if (req.method === "POST" && req.url === "/api/handoff") {
       if (localSessionEnded) {
-        sendJson(res, 410, { ok: false, state: "ended", error: "Local voice session disconnected. Start a new voice session for a fresh URL." });
+        sendJson(res, 410, { ok: false, state: "ended", error: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill" });
         return;
       }
       const body = JSON.parse((await readBody(req)) || "{}");
@@ -811,7 +824,7 @@ const server = createServer(async (req, res) => {
 
     if (req.method === "POST" && req.url === "/api/end") {
       localSessionEnded = true;
-      sendJson(res, 200, { ok: true, state: "ended", message: "Local voice session disconnected." });
+      sendJson(res, 200, { ok: true, state: "ended", message: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill" });
       return;
     }
 

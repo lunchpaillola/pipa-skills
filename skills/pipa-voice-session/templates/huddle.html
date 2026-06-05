@@ -483,6 +483,20 @@
       }
       .live-transcript-text.interim,
       .live-transcript-text.agent { color: var(--soft-ink); }
+      [data-state="processing"] [data-orb-state]::after,
+      .live-transcript-text.thinking::after {
+        content: ".";
+        display: inline-block;
+        min-width: 1.6em;
+        text-align: left;
+        animation: thinking-dots 1.2s steps(1, end) infinite;
+      }
+      @keyframes thinking-dots {
+        0%, 24% { content: "."; }
+        25%, 49% { content: ".."; }
+        50%, 74% { content: "..."; }
+        75%, 100% { content: ""; }
+      }
 
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -529,7 +543,7 @@
   <body>
     <div class="app">
       <header class="topbar">
-        <div class="brand"><span class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span> Pipa Huddle</div>
+        <div class="brand"><span class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span> Agent Huddle</div>
       </header>
 
       <main class="shell">
@@ -574,8 +588,8 @@
               <button class="dock-button" type="button" data-pause aria-label="Pause listening" title="Pause listening">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14"/><path d="M16 5v14"/></svg>
               </button>
-              <button class="dock-button" type="button" data-mute aria-label="Mute agent voice" title="Mute agent voice">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z"/><path d="M18 9l3 3-3 3"/><path d="M21 9l-3 3 3 3"/></svg>
+              <button class="dock-button" type="button" data-mute aria-label="Mute microphone" title="Mute microphone">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/><path d="M8 22h8"/></svg>
               </button>
               <button class="dock-button" type="button" data-voice aria-label="Choose voice" title="Choose voice">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4"/><path d="M9 7v10"/><path d="M13 5v14"/><path d="M17 8v8"/><path d="M21 11v2"/></svg>
@@ -629,7 +643,7 @@
 
     <script>
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const labels = { ready: "Ready", listening: "Listening", processing: "Thinking", speaking: "Speaking", paused: "Paused", disconnected: "Disconnected", blocked: "Ready" };
+      const labels = { ready: "Ready", listening: "Listening", processing: "Thinking", speaking: "Speaking", paused: "Paused", muted: "Muted", disconnected: "Disconnected", blocked: "Ready" };
       const screens = Array.from(document.querySelectorAll("[data-screen]"));
       const transcriptModal = document.querySelector("[data-transcript-modal]");
       const voicePanel = document.querySelector("[data-voice-panel]");
@@ -645,7 +659,11 @@
       let demoStateIndex = 0;
       let currentUserName = "You";
       const demoStates = ["ready", "listening", "processing", "speaking"];
-      const state = { bridgeReady: false, busy: false, listening: false, muted: false, paused: false, ended: false, recognition: null, finalTranscript: "", interimTranscript: "", silenceTimer: null, maxListenTimer: null, stopRequested: false, turns: [] };
+      const state = { bridgeReady: false, busy: false, listening: false, muted: false, paused: false, ended: false, recognition: null, finalTranscript: "", interimTranscript: "", silenceTimer: null, maxListenTimer: null, stopRequested: false, thinkingAudio: null, turns: [] };
+      const sounds = {
+        entering: "/sound-design-entering-chat.mp3",
+        thinking: "/sound-design-thinking.mp3"
+      };
 
       function escapeHtml(value) {
         return String(value).replace(/[&<>\"]/g, (char) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;" })[char]);
@@ -704,8 +722,29 @@
         return (state.finalTranscript + " " + state.interimTranscript).trim();
       }
 
+      function playSound(src, options = {}) {
+        const audio = new Audio(src);
+        audio.loop = Boolean(options.loop);
+        audio.volume = options.volume ?? 0.55;
+        const started = audio.play();
+        if (started?.catch) started.catch(() => {});
+        return audio;
+      }
+
+      function startThinkingSound() {
+        stopThinkingSound();
+        state.thinkingAudio = playSound(sounds.thinking, { loop: true, volume: 0.35 });
+      }
+
+      function stopThinkingSound() {
+        if (!state.thinkingAudio) return;
+        state.thinkingAudio.pause();
+        state.thinkingAudio.currentTime = 0;
+        state.thinkingAudio = null;
+      }
+
       function speak(text, onDone) {
-        if (!window.speechSynthesis || state.muted) {
+        if (!window.speechSynthesis) {
           if (onDone) window.setTimeout(onDone, 250);
           return;
         }
@@ -723,6 +762,12 @@
 
       function enterHuddle(name) {
         currentUserName = name === "there" ? "You" : name;
+        if (!state.bridgeReady && state.ended) {
+          setVariant("orb");
+          setState("disconnected");
+          setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill", { kind: "interim" });
+          return;
+        }
         state.ended = false;
         setVariant("orb");
         setState("ready");
@@ -735,6 +780,12 @@
           const response = await fetch("/api/status");
           const body = await response.json();
           state.bridgeReady = Boolean(response.ok && body.ok);
+          if (!state.bridgeReady && body.state === "ended") {
+            state.ended = true;
+            setVariant("orb");
+            setState("disconnected");
+            setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill", { kind: "interim" });
+          }
         } catch (_error) {
           state.bridgeReady = false;
         }
@@ -751,6 +802,7 @@
       async function sendToBridge(message) {
         const response = await fetch("/api/turn", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message }) });
         const body = await response.json();
+        if (body.state === "ended") state.ended = true;
         if (!response.ok || !body.ok) throw new Error(body.error || "Voice bridge failed");
         return body.reply;
       }
@@ -761,15 +813,22 @@
         state.busy = true;
         addTurn("user", clean);
         setState("processing");
-        setLiveTranscript("Your agent is preparing a reply...", { kind: "interim" });
+        setLiveTranscript("Thinking", { kind: "thinking" });
+        startThinkingSound();
         try {
           const reply = await sendToBridge(clean);
+          stopThinkingSound();
           addTurn("agent", reply);
           setState("speaking");
           setLiveTranscript(reply, { kind: "agent" });
           speak(reply, () => {
             state.busy = false;
             if (state.ended) return;
+            if (state.muted) {
+              setState("muted");
+              setLiveTranscript("Microphone muted. Unmute when you want the huddle to listen again.", { kind: "interim" });
+              return;
+            }
             if (state.paused) {
               setState("paused");
               setLiveTranscript("Paused. Press resume when you want the huddle to listen again.", { kind: "interim" });
@@ -778,7 +837,13 @@
             startVoiceTurn({ automatic: true });
           });
         } catch (error) {
+          stopThinkingSound();
           state.busy = false;
+          if (state.ended) {
+            setState("disconnected");
+            setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill", { kind: "interim" });
+            return;
+          }
           setState("ready");
           setLiveTranscript("Bridge blocked: " + error.message, { kind: "interim" });
         }
@@ -805,7 +870,12 @@
       function startVoiceTurn(options = {}) {
         if (state.ended) {
           setState("disconnected");
-          setLiveTranscript("The session is disconnected. To connect a new session and get a new URL, tell your agent to follow the pipa-voice-session skill.", { kind: "interim" });
+          setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill", { kind: "interim" });
+          return;
+        }
+        if (state.muted) {
+          setState("muted");
+          setLiveTranscript("Microphone muted. Unmute when you want the huddle to listen again.", { kind: "interim" });
           return;
         }
         if (state.paused) {
@@ -842,6 +912,7 @@
           state.maxListenTimer = setTimeout(() => stopListening(true), 30000);
         };
         recognition.onresult = (event) => {
+          if (state.muted) return;
           let interim = "";
           for (let index = event.resultIndex; index < event.results.length; index += 1) {
             const transcript = event.results[index][0].transcript.trim();
@@ -871,6 +942,7 @@
           state.finalTranscript = "";
           state.interimTranscript = "";
           if (state.stopRequested) return;
+          if (state.muted) { setState("muted"); setLiveTranscript("Microphone muted. Unmute when you want the huddle to listen again.", { kind: "interim" }); return; }
           if (text) submitTurn(text);
           else if (!state.busy) { setState("ready"); setLiveTranscript(""); }
         };
@@ -884,10 +956,10 @@
         const examples = {
           ready: "",
           listening: "I think the voice page should feel more like a huddle...",
-          processing: "Your agent is preparing a reply...",
+          processing: "Thinking",
           speaking: "That points to a lobby-first layout: join, then speak."
         };
-        setLiveTranscript(examples[name], { kind: name === "speaking" ? "agent" : "interim" });
+        setLiveTranscript(examples[name], { kind: name === "speaking" ? "agent" : name === "processing" ? "thinking" : "interim" });
       }
 
       function renderVoiceOptions() {
@@ -922,13 +994,36 @@
       document.querySelectorAll("[data-join]").forEach((btn) => btn.addEventListener("click", () => {
         const nameInput = document.querySelector("[data-name-input]");
         const name = nameInput.value.trim() || "there";
-        btn.disabled = true;
-        btn.textContent = "Intro...";
-        speak("Ready to get started.", () => {
+        const greetingName = name === "there" ? "there" : name;
+        let entrySoundStarted = false;
+        let greetingStarted = false;
+        const finishJoin = () => {
           btn.disabled = false;
           btn.textContent = "Join";
+          if (!state.ended && !state.paused && !state.muted) startVoiceTurn({ automatic: true });
+        };
+        const speakGreeting = () => {
+          if (greetingStarted) return;
+          greetingStarted = true;
+          speak(`Hi ${greetingName}, excited to speak to you! What's on your mind?`, finishJoin);
+        };
+        const playEntrySound = () => {
+          if (entrySoundStarted) return;
+          entrySoundStarted = true;
           enterHuddle(name);
-        });
+          const introAudio = new Audio(sounds.entering);
+          introAudio.volume = 0.5;
+          introAudio.addEventListener("ended", speakGreeting, { once: true });
+          introAudio.addEventListener("error", speakGreeting, { once: true });
+          const introPlayback = introAudio.play();
+          if (introPlayback?.catch) introPlayback.catch(speakGreeting);
+          window.setTimeout(speakGreeting, 1800);
+        };
+
+        btn.disabled = true;
+        btn.textContent = "Joining...";
+        speak("Entering the huddle.", playEntrySound);
+        window.setTimeout(playEntrySound, 2200);
       }));
 
       document.querySelectorAll("[data-transcript]").forEach((btn) => btn.addEventListener("click", () => transcriptModal.classList.add("is-open")));
@@ -937,11 +1032,17 @@
 
       document.querySelectorAll("[data-mute]").forEach((btn) => btn.addEventListener("click", () => {
         state.muted = !state.muted;
-        if (state.muted) window.speechSynthesis?.cancel();
+        if (state.muted) {
+          stopListening(false);
+          setState("muted");
+          setLiveTranscript("Microphone muted. Unmute when you want the huddle to listen again.", { kind: "interim" });
+        } else {
+          setLiveTranscript("Microphone unmuted. Resuming listening...", { kind: "interim" });
+        }
         btn.classList.toggle("is-active", state.muted);
-        btn.setAttribute("aria-label", state.muted ? "Unmute agent voice" : "Mute agent voice");
-        btn.title = state.muted ? "Unmute agent voice" : "Mute agent voice";
-        setLiveTranscript(state.muted ? "Agent voice muted. Replies will still appear in the transcript." : "Agent voice unmuted.", { kind: "interim" });
+        btn.setAttribute("aria-label", state.muted ? "Unmute microphone" : "Mute microphone");
+        btn.title = state.muted ? "Unmute microphone" : "Mute microphone";
+        if (!state.muted && !state.ended && !state.paused && !state.busy) startVoiceTurn({ automatic: true });
       }));
 
       document.querySelectorAll("[data-pause]").forEach((btn) => btn.addEventListener("click", () => {
@@ -975,6 +1076,7 @@
 
       document.querySelectorAll("[data-end-session]").forEach((btn) => btn.addEventListener("click", async () => {
         window.speechSynthesis?.cancel();
+        stopThinkingSound();
         clearSpeechTimers();
         try { state.recognition?.stop(); } catch (_error) {}
         state.recognition = null;
@@ -987,7 +1089,7 @@
         document.querySelectorAll("[data-voice]").forEach((voiceBtn) => voiceBtn.classList.remove("is-active"));
         setVariant("orb");
         setState("disconnected");
-        setLiveTranscript("The session is disconnected. To connect a new session and get a new URL, tell your agent to follow the pipa-voice-session skill.", { kind: "interim" });
+        setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill", { kind: "interim" });
         renderTranscript();
       }));
 

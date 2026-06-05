@@ -40,6 +40,7 @@ Environment variables:
 - `PIPA_VOICE_SESSION_OPENCODE_SESSION`: optional explicit OpenCode session id; otherwise pins the latest session id from `opencode session list --format json --max-count 1` at bridge startup
 - `PIPA_VOICE_SESSION_PUBLIC`: set to `ngrok` to start an HTTPS ngrok tunnel
 - `PIPA_VOICE_SESSION_TEMPLATE`: optional absolute HTML template path; defaults to the skill-local `templates/huddle.html`
+- `PIPA_VOICE_SESSION_TURN_TIMEOUT_SECONDS`: OpenCode turn timeout, defaults to `300`
 - `OPENCODE_BIN`: defaults to `opencode`
 
 Hosted relay bridge mode environment variables:

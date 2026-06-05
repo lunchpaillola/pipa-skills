@@ -312,7 +312,7 @@ function sessionRevoked(session, env) {
 }
 
 function goneSessionHtml() {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pipa Voice Session Ended</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:680px;margin:64px auto;padding:0 24px;line-height:1.6;color:#2d2a25;background:#fbfaf7}.muted{color:#706b61}</style></head><body><p class="muted">Hosted relay</p><h1>This voice session is disconnected.</h1><p>To connect a new session and get a new URL, tell your agent to follow the pipa-voice-session skill.</p></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pipa Voice Session Ended</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:680px;margin:64px auto;padding:0 24px;line-height:1.6;color:#2d2a25;background:#fbfaf7}.muted{color:#706b61}</style></head><body><p class="muted">Hosted relay</p><h1>The session is disconnected.</h1><p>To connect a new session, ask your agent to reconnect using the pipa-voice-session skill</p></body></html>`;
 }
 
 function json(body, status = 200) {
@@ -553,7 +553,7 @@ function hostedSessionHtml(sessionId) {
       }
 
       function listen() {
-        if (state.ended) { setReady(false); setLive(false); setStatus("Disconnected", "To connect a new session and get a new URL, tell your agent to follow the pipa-voice-session skill."); return; }
+        if (state.ended) { setReady(false); setLive(false); setStatus("Disconnected", "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill"); return; }
         if (state.listening) return stopListening(true);
         if (!SpeechRecognition) { setStatus("Speech unavailable", "Use text input. The relay path is still available."); addTurn("System", "SpeechRecognition is unavailable. Use text input."); return; }
         const recognition = new SpeechRecognition();
@@ -590,7 +590,7 @@ function hostedSessionHtml(sessionId) {
           if (message.type === "status") {
             state.paired = message.state === "paired" || message.state === "active_turn";
             if (state.paired && !state.busy) { setReady(true); setStatus(message.message || "Paired", "Press the orb to huddle. Browser speech keeps the session light and reliable."); }
-            else if (message.state === "expired" || message.state === "ended") { state.ended = true; setReady(false); setLive(false); setStatus(message.message || "Disconnected", "To connect a new session and get a new URL, tell your agent to follow the pipa-voice-session skill."); }
+            else if (message.state === "expired" || message.state === "ended") { state.ended = true; setReady(false); setLive(false); setStatus(message.message || "Disconnected", "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill"); }
             else setStatus(message.message || "Waiting", "Waiting for the other side of the relay.");
           }
           if (message.type === "assistant_reply") {
@@ -617,7 +617,7 @@ function hostedSessionHtml(sessionId) {
         try { state.ws?.close(1000, "ended"); } catch (_error) {}
         setReady(false);
         setLive(false);
-        setStatus("Disconnected", "To connect a new session and get a new URL, tell your agent to follow the pipa-voice-session skill.");
+        setStatus("Disconnected", "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill");
       }
 
       els.start.addEventListener("click", listen);
