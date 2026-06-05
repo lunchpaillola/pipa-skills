@@ -757,6 +757,10 @@ const server = createServer(async (req, res) => {
     }
 
     if (req.method === "GET" && req.url === "/api/status") {
+      if (localSessionEnded) {
+        sendJson(res, 410, { ok: false, state: "ended", error: "Local voice session disconnected. Start a new voice session for a fresh URL." });
+        return;
+      }
       sendJson(res, 200, {
         ok: true,
         mode: "local-opencode-bridge",
@@ -769,6 +773,10 @@ const server = createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && req.url === "/api/turn") {
+      if (localSessionEnded) {
+        sendJson(res, 410, { ok: false, state: "ended", error: "Local voice session disconnected. Start a new voice session for a fresh URL." });
+        return;
+      }
       const body = JSON.parse((await readBody(req)) || "{}");
       const message = String(body.message || "").trim();
       if (!message) {
@@ -781,6 +789,10 @@ const server = createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && req.url === "/api/handoff") {
+      if (localSessionEnded) {
+        sendJson(res, 410, { ok: false, state: "ended", error: "Local voice session disconnected. Start a new voice session for a fresh URL." });
+        return;
+      }
       const body = JSON.parse((await readBody(req)) || "{}");
       const turns = Array.isArray(body.turns) ? body.turns : [];
       const transcript = turns
@@ -798,6 +810,7 @@ const server = createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && req.url === "/api/end") {
+      localSessionEnded = true;
       sendJson(res, 200, { ok: true, state: "ended", message: "Local voice session disconnected." });
       return;
     }
