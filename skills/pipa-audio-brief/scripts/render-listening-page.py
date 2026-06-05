@@ -106,21 +106,34 @@ def paragraph_html(
     return "\n        ".join(rendered)
 
 
-def browser_speech_dock() -> str:
-    return """<nav class=\"audio-dock speech-dock\" aria-label=\"Browser speech controls\">
+def browser_speech_dock(segment_count: int = 0) -> str:
+    return f"""<nav class=\"audio-dock speech-dock\" aria-label=\"Browser speech controls\">
     <div class=\"speech-status\" aria-live=\"polite\">
-      <span id=\"speech-status\" class=\"duration\">Browser speech</span>
+      <span id="speech-status" class="duration">Playing 0 of {segment_count}</span>
+      <div class=\"speech-progress\" aria-hidden=\"true\"><span id=\"speech-progress-fill\"></span></div>
     </div>
     <div class=\"speech-controls\">
-      <button id=\"speech-back\" type=\"button\" aria-label=\"Back one sentence\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M11 6 5 12l6 6\"/><path d=\"M19 6 13 12l6 6\"/></svg><span>Back</span></button>
+      <button id=\"speech-back\" class=\"icon-only\" type=\"button\" aria-label=\"Back one sentence\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M11 6 5 12l6 6\"/><path d=\"M19 6 13 12l6 6\"/></svg><span>Back</span></button>
       <button id=\"speech-toggle\" class=\"primary\" type=\"button\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path data-play-icon d=\"M8 5v14l11-7Z\"/><path data-pause-icon d=\"M8 5v14\" style=\"display:none\"/><path data-pause-icon d=\"M16 5v14\" style=\"display:none\"/></svg><span>Play</span></button>
-      <button id=\"speech-restart\" type=\"button\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 7v6h6\"/><path d=\"M20 17a8 8 0 0 0-14-5.3L4 13\"/></svg><span>Restart</span></button>
-      <button id=\"speech-forward\" type=\"button\" aria-label=\"Forward one sentence\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m13 6 6 6-6 6\"/><path d=\"m5 6 6 6-6 6\"/></svg><span>Forward</span></button>
-      <details id=\"voice-menu\" class=\"voice-menu\">
-        <summary aria-label=\"Choose voice\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 7h10\"/><path d=\"M18 7h2\"/><path d=\"M16 5v4\"/><path d=\"M4 17h2\"/><path d=\"M10 17h10\"/><path d=\"M8 15v4\"/></svg><span>Voice</span></summary>
-        <div class=\"voice-panel\">
-          <label for=\"speech-voice\">Voice</label>
-          <select id=\"speech-voice\"></select>
+      <button id=\"speech-forward\" class=\"icon-only\" type=\"button\" aria-label=\"Forward one sentence\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m13 6 6 6-6 6\"/><path d=\"m5 6 6 6-6 6\"/></svg><span>Forward</span></button>
+      <button id=\"speech-restart\" type=\"button\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 7v6h6\"/><path d=\"M20 17a8 8 0 0 0-14-5.3L4 13\"/></svg><span>Replay</span></button>
+      <details id=\"settings-menu\" class=\"speech-menu settings-menu\">
+        <summary aria-label=\"Open settings\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 7h10\"/><path d=\"M18 7h2\"/><path d=\"M16 5v4\"/><path d=\"M4 17h2\"/><path d=\"M10 17h10\"/><path d=\"M8 15v4\"/></svg><span>Settings</span></summary>
+        <div class=\"speech-panel settings-panel\">
+          <div class=\"settings-field\">
+            <label for=\"speech-rate\">Speed</label>
+            <select id=\"speech-rate\">
+              <option value=\"0.85\">0.85x</option>
+              <option value=\"1\" selected>1x</option>
+              <option value=\"1.15\">1.15x</option>
+              <option value=\"1.25\">1.25x</option>
+              <option value=\"1.5\">1.5x</option>
+            </select>
+          </div>
+          <div class=\"settings-field\">
+            <label for=\"speech-voice\">Voice</label>
+            <select id=\"speech-voice\"></select>
+          </div>
         </div>
       </details>
     </div>
@@ -149,7 +162,9 @@ def browser_speech_script(segments: list[str]) -> str:
   const back = document.getElementById(\"speech-back\");
   const forward = document.getElementById(\"speech-forward\");
   const status = document.getElementById(\"speech-status\");
-  const voiceMenu = document.getElementById(\"voice-menu\");
+  const progressFill = document.getElementById(\"speech-progress-fill\");
+  const rateSelect = document.getElementById(\"speech-rate\");
+  const settingsMenu = document.getElementById(\"settings-menu\");
   const voiceSelect = document.getElementById(\"speech-voice\");
   let currentIndex = 0;
   let speaking = false;
@@ -169,6 +184,7 @@ def browser_speech_script(segments: list[str]) -> str:
     }});
     const active = document.querySelector(`[data-speech-segment=\"${{index}}\"]`);
     if (active) active.scrollIntoView({{ block: \"center\", behavior: \"smooth\" }});
+    progressFill.style.width = index >= 0 ? `${{Math.min(100, ((index + 1) / segments.length) * 100)}}%` : \"0%\";
   }}
 
   function voiceScore(voice) {{
@@ -200,6 +216,10 @@ def browser_speech_script(segments: list[str]) -> str:
     return voices.find((voice) => voice.name === voiceSelect.value) || voices[0] || null;
   }}
 
+  function selectedRate() {{
+    return Number.parseFloat(rateSelect.value) || 1.0;
+  }}
+
   function speakFrom(index) {{
     runId += 1;
     const token = runId;
@@ -208,8 +228,8 @@ def browser_speech_script(segments: list[str]) -> str:
       speaking = false;
       paused = false;
       currentIndex = 0;
-      setToggle(\"Play\", \"play\");
-      status.textContent = \"Browser speech\";
+      setToggle("Play", "play");
+      status.textContent = `Playing 0 of ${{segments.length}}`;
       setActive(-1);
       return;
     }}
@@ -218,7 +238,7 @@ def browser_speech_script(segments: list[str]) -> str:
     const utterance = new SpeechSynthesisUtterance(segments[currentIndex]);
     const voice = selectVoice();
     if (voice) utterance.voice = voice;
-    utterance.rate = 0.95;
+    utterance.rate = selectedRate();
     utterance.pitch = 1;
     utterance.onstart = () => {{
       if (token === runId) setActive(currentIndex);
@@ -230,8 +250,8 @@ def browser_speech_script(segments: list[str]) -> str:
       if (token !== runId) return;
       speaking = false;
       paused = false;
-      setToggle(\"Play\", \"play\");
-      status.textContent = \"Browser speech stopped\";
+      setToggle("Play", "play");
+      status.textContent = `Playing 0 of ${{segments.length}}`;
     }};
     speaking = true;
     paused = false;
@@ -241,9 +261,10 @@ def browser_speech_script(segments: list[str]) -> str:
   }}
 
   if (!(\"speechSynthesis\" in window)) {{
-    [toggle, restart, back, forward, voiceSelect].forEach((control) => {{ control.disabled = true; }});
-    status.textContent = \"Browser speech unavailable\";
+    [toggle, restart, back, forward, rateSelect, voiceSelect].forEach((control) => {{ control.disabled = true; }});
+    status.textContent = "Speech unavailable";
   }} else {{
+    status.textContent = `Playing 0 of ${{segments.length}}`;
     loadVoices();
     window.speechSynthesis.addEventListener(\"voiceschanged\", loadVoices);
   }}
@@ -276,8 +297,8 @@ def browser_speech_script(segments: list[str]) -> str:
     }}
     if (e.key === \"Escape\") {{
       e.preventDefault();
-      if (voiceMenu.open) {{
-        voiceMenu.open = false;
+      if (settingsMenu.open) {{
+        settingsMenu.open = false;
         return;
       }}
       runId += 1;
@@ -285,14 +306,14 @@ def browser_speech_script(segments: list[str]) -> str:
       speaking = false;
       paused = false;
       currentIndex = 0;
-      setToggle(\"Play\", \"play\");
-      status.textContent = \"Browser speech\";
+      setToggle("Play", "play");
+      status.textContent = `Playing 0 of ${{segments.length}}`;
       setActive(-1);
     }}
   }});
 
   document.addEventListener(\"click\", (e) => {{
-    if (voiceMenu.open && !voiceMenu.contains(e.target)) voiceMenu.open = false;
+    if (settingsMenu.open && !settingsMenu.contains(e.target)) settingsMenu.open = false;
   }});
 
   toggle.addEventListener(\"click\", () => {{
@@ -309,13 +330,16 @@ def browser_speech_script(segments: list[str]) -> str:
     }}
     window.speechSynthesis.pause();
     paused = true;
-    setToggle(\"Resume\", \"play\");
-    status.textContent = \"Paused\";
+    setToggle("Resume", "play");
+    status.textContent = `Paused at ${{currentIndex + 1}} of ${{segments.length}}`;
   }});
 
   restart.addEventListener(\"click\", () => speakFrom(0));
   back.addEventListener(\"click\", () => speakFrom(Math.max(0, currentIndex - 1)));
   forward.addEventListener(\"click\", () => speakFrom(Math.min(segments.length - 1, currentIndex + 1)));
+  rateSelect.addEventListener(\"change\", () => {{
+    if (speaking) speakFrom(currentIndex);
+  }});
   voiceSelect.addEventListener(\"change\", () => {{
     if (speaking) speakFrom(currentIndex);
   }});
@@ -348,15 +372,15 @@ def render(template: str, data: dict) -> str:
             section_indexes.append(None)
 
     if audio_mode == "browser_speech":
-        audio_dock = browser_speech_dock()
+        audio_dock = browser_speech_dock(len(speech_segments))
         speech_script = browser_speech_script(speech_segments)
         duration_label = data.get("audio", {}).get("durationLabel", "Browser speech")
-    elif audio_mode == "kokoro":
+    elif audio_mode in {"kokoro", "piper"}:
         duration_label = required_string(data, ("audio", "durationLabel"))
         audio_dock = native_audio_dock(duration_label)
         speech_script = ""
     else:
-        raise SystemExit("Expected audio.mode to be browser_speech or kokoro")
+        raise SystemExit("Expected audio.mode to be browser_speech, kokoro, or piper")
 
     replacements = {
         "PAGE_TITLE": html.escape(required_string(data, ("pageTitle",))),

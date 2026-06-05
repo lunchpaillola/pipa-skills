@@ -35,7 +35,7 @@ The publish bundle must not contain `node_modules`, package files, virtual envir
 - `work/brief-script.txt` after its content has been embedded in `index.html`
 - `work/page-contract.json` after `index.html` has been rendered
 - `node_modules`, package lockfiles, temporary virtual environments, model scratch folders, and dependency caches created only for generation
-- temporary Kokoro helper scripts
+- temporary Piper or Kokoro helper scripts
 - chunk audio files after they have been concatenated into the final audio
 - test audio files
 - server logs
@@ -47,7 +47,7 @@ The publish bundle must not contain `node_modules`, package files, virtual envir
 - per-run job directories under `~/.cache/pipa-audio-brief/jobs/` after here.now publish succeeds
 - `.herenow/` or `.herenow/state.json` when created by this one-off publish run and not present before the run
 
-Do not delete the managed Kokoro backend cache at `~/.cache/pipa-audio-brief/kokoro-onnx-venv/` or `~/.cache/pipa-audio-brief/kokoro-models/` after a successful run. That cache is the reusable setup that makes future audio briefs fast.
+Do not delete the managed Piper backend cache at `~/.cache/pipa-audio-brief/piper-venv/` or `~/.cache/pipa-audio-brief/piper-models/` after a successful run. Do not delete the managed Kokoro backend cache at `~/.cache/pipa-audio-brief/kokoro-onnx-venv/` or `~/.cache/pipa-audio-brief/kokoro-models/` after a successful run. Those caches are reusable setup that make future audio briefs fast when the environment persists them.
 
 **Debug artifacts:** keep only when needed.
 
@@ -69,7 +69,7 @@ The final response should not expose sawdust. It should lead with one here.now U
 
 ## Partial States
 
-- If Kokoro is blocked, do not call the brief complete. Report that audio cannot be generated.
+- If generated audio is blocked, do not call the generated-audio path complete. Report that local audio cannot be generated or fall back to browser speech when allowed.
 - If `audio_job.status` is not `ready`, do not call the audio complete even if an audio-like file exists.
 - If `brief.wav.partial` exists, treat it as an incomplete generation artifact, not playable output.
 - If page generation fails after audio generation, report the page-generation blocker and do not publish.

@@ -19,6 +19,10 @@ export default {
 
     const sessionPage = url.pathname.match(/^\/s\/([^/]+)$/);
     if (request.method === "GET" && sessionPage) {
+      const id = env.VOICE_SESSION.idFromName(sessionPage[1]);
+      const status = await env.VOICE_SESSION.get(id).fetch("https://voice-session/internal/status");
+      const body = await status.json().catch(() => ({}));
+      if (!status.ok || body.gone) return html(goneSessionHtml(), status.status === 404 ? 404 : 410);
       return html(hostedSessionHtml(sessionPage[1]));
     }
 
@@ -50,6 +54,18 @@ export class VoiceSession {
       return json({ ok: true });
     }
 
+    if (request.method === "GET" && url.pathname === "/internal/status") {
+      const session = await this.ctx.storage.get("session");
+      if (!session) return json({ ok: false, gone: true, state: "missing" }, 404);
+      if (sessionRevoked(session, this.env)) return json({ ok: false, gone: true, state: "revoked" }, 410);
+      if (session.endedAt) return json({ ok: false, gone: true, state: session.state || "ended" }, 410);
+      if (!this.isPaired() && Date.now() > session.pairingExpiresAt) {
+        await this.expire(session, "Expired. Start a new session.");
+        return json({ ok: false, gone: true, state: "expired" }, 410);
+      }
+      return json({ ok: true, gone: false, state: this.state(session) });
+    }
+
     const match = url.pathname.match(/^\/ws\/([^/]+)$/);
     if (!match || request.headers.get("Upgrade") !== "websocket") {
       return json({ ok: false, error: "Expected WebSocket upgrade" }, 426);
@@ -57,6 +73,7 @@ export class VoiceSession {
 
     const session = await this.ctx.storage.get("session");
     if (!session || session.id !== match[1]) return json({ ok: false, error: "Unknown session" }, 404);
+    if (sessionRevoked(session, this.env)) return json({ ok: false, error: "Session no longer exists" }, 410);
     if (session.endedAt) return json({ ok: false, error: "Session ended" }, 410);
 
     const auth = authFromProtocols(request.headers.get("Sec-WebSocket-Protocol"));
@@ -289,12 +306,21 @@ function label(state) {
   }[state] || state;
 }
 
+function sessionRevoked(session, env) {
+  const cutoff = Number(env.REVOKE_SESSIONS_BEFORE_UNIX_MS || 0);
+  return Boolean(cutoff && Number(session.createdAt || 0) <= cutoff);
+}
+
+function goneSessionHtml() {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pipa Voice Session Ended</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:680px;margin:64px auto;padding:0 24px;line-height:1.6;color:#2d2a25;background:#fbfaf7}.muted{color:#706b61}</style></head><body><p class="muted">Hosted relay</p><h1>This voice session does not exist anymore.</h1><p>Start a new voice session to continue with your agent.</p></body></html>`;
+}
+
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" } });
 }
 
-function html(body) {
-  return new Response(body, { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" } });
+function html(body, status = 200) {
+  return new Response(body, { status, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" } });
 }
 
 function indexHtml() {
@@ -419,9 +445,9 @@ function hostedSessionHtml(sessionId) {
       </nav>
 
       <header>
-        <p class="eyebrow">Voice bridge</p>
-        <h1>Talk to your agent.</h1>
-        <p class="lede">Speak one complete turn, then pause. Pipa routes the final text through your local bridge and reads the answer back.</p>
+        <p class="eyebrow">Voice huddle</p>
+        <h1>Start a huddle with your agent.</h1>
+        <p class="lede">Speak one complete turn, then pause. Pipa routes the final text through your local bridge and reads back a short browser-speech reply with low memory overhead.</p>
       </header>
 
       <section class="stage" aria-live="polite">
@@ -456,7 +482,7 @@ function hostedSessionHtml(sessionId) {
         <div class="transcript" id="turns"></div>
       </details>
 
-      <p class="small">Browser speech may use browser, OS, or vendor speech services. The relay forwards final text turns and replies without retaining message bodies by default. OpenCode local session history may persist final text turns according to local behavior.</p>
+      <p class="small">Browser speech is the default because it is low-memory, quick to start, and less likely to fail in small sandboxes. It may use browser, OS, or vendor speech services. The relay forwards final text turns and replies without retaining message bodies by default. OpenCode local session history may persist final text turns according to local behavior.</p>
     </main>
 
     <script>
@@ -494,7 +520,7 @@ function hostedSessionHtml(sessionId) {
         const utterance = new SpeechSynthesisUtterance(text);
         const voice = selectedVoice();
         if (voice) utterance.voice = voice;
-        utterance.rate = 0.95;
+        utterance.rate = 1;
         window.speechSynthesis.speak(utterance);
       }
       function currentTranscript() { return (state.finalTranscript + " " + state.interimTranscript).trim(); }
@@ -560,11 +586,18 @@ function hostedSessionHtml(sessionId) {
           const message = JSON.parse(event.data);
           if (message.type === "status") {
             state.paired = message.state === "paired" || message.state === "active_turn";
-            if (state.paired && !state.busy) { setReady(true); setStatus(message.message || "Paired", "Press the orb, or use text input if speech is unavailable."); }
+            if (state.paired && !state.busy) { setReady(true); setStatus(message.message || "Paired", "Press the orb to huddle. Browser speech keeps the session light and reliable."); }
             else if (message.state === "expired" || message.state === "ended") { setReady(false); setStatus(message.message, "Start a new session."); }
             else setStatus(message.message || "Waiting", "Waiting for the other side of the relay.");
           }
-          if (message.type === "assistant_reply") { state.busy = false; setReady(true); setCurrentReply(message.text); addTurn("OpenCode", message.text); setStatus("Speaking", "Reading the reply aloud now."); speak(message.text); }
+          if (message.type === "assistant_reply") {
+            state.busy = false;
+            setReady(true);
+            setCurrentReply(message.text);
+            addTurn("OpenCode", message.text);
+            setStatus("Speaking", "Reading the reply aloud now.");
+            speak(message.text);
+          }
           if (message.type === "error") { state.busy = false; setReady(state.paired); addTurn("System", "Blocked: " + message.message); setStatus("Blocked", message.message); }
           if (message.type === "end") { setReady(false); setStatus("Ended", message.message || "This session has ended."); }
         };
@@ -573,9 +606,9 @@ function hostedSessionHtml(sessionId) {
 
       els.start.addEventListener("click", listen);
       els.send.addEventListener("click", () => { submit(els.text.value); els.text.value = ""; });
-      els.speaker.addEventListener("click", () => speak("Speaker test. If you can hear this, hosted Pipa voice output is working."));
+      els.speaker.addEventListener("click", () => speak("Huddle speaker test. Browser speech is working."));
       els.voice.addEventListener("change", () => localStorage.setItem("pipa.voice.name", els.voice.value));
-      els.clear.addEventListener("click", () => { state.turns = []; setCurrentReply(""); render(); });
+      els.clear.addEventListener("click", () => { window.speechSynthesis?.cancel(); state.turns = []; setCurrentReply(""); render(); });
       loadVoices();
       if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = loadVoices;
       connect();

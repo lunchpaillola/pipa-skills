@@ -27,7 +27,7 @@ The relay routes only these message families:
 - bridge to browser: `assistant_reply`, `status`, `error`, `end`
 - relay lifecycle status to either side: waiting, paired, reconnecting, expired, ended, blocked
 
-The relay must reject generic RPC, command, shell, file, tool, or execution messages. A message such as `{ "type": "exec", "command": "rm -rf" }` is invalid and must not be forwarded.
+The relay must reject generic RPC, command, shell, file, tool, or execution messages. A message such as `{ "type": "exec", "command": "rm -rf" }` is invalid and must not be forwarded. Voice output is browser speech synthesis on the hosted page; the Worker does not generate or store audio.
 
 ## Session Lifecycle
 

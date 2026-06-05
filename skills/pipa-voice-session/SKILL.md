@@ -50,7 +50,7 @@ Follow `references/transport-prototype.md`, `references/hosted-relay.md`, and `r
 
 Use the hosted relay path for sandboxed or remote-browser use. The production relay is `https://voice.usepipa.com`; each launch creates a separate session URL under `/s/<session-id>` and pairs it with a local bridge that connects outbound to `/ws/<session-id>`.
 
-Use the bundled same-computer bridge at `skills/pipa-voice-session/scripts/start-voice-session.mjs` as the local fallback and development path. It serves a localhost browser UI, captures speech with browser APIs, sends each turn to `opencode run`, and speaks the OpenCode response with browser TTS.
+Use the bundled same-computer bridge at `skills/pipa-voice-session/scripts/start-voice-session.mjs` as the local fallback and development path. It serves a localhost browser UI, captures speech with browser APIs, sends each turn to `opencode run`, and speaks the OpenCode response with browser speech synthesis.
 
 Default hosted launch command from the repository root:
 
@@ -80,7 +80,9 @@ If the bridge cannot start, block clearly. Do not pretend that browser STT, Dail
 
 During the session:
 
-- keep turns conversational and short enough for spoken use
+- keep turns extremely short and conversational because browser speech is the output
+- default to 1-2 short sentences for spoken replies
+- avoid bullets, numbered lists, headings, markdown formatting, and long explanations unless the user explicitly asks for detail
 - ask clarifying questions when the user's direction is fuzzy or contradictory
 - track useful context, decisions, preferences, blockers, and open questions
 - treat rambly speech as discovery input, not as final instructions unless the user confirms

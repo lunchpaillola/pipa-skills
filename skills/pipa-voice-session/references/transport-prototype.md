@@ -29,7 +29,7 @@ ngrok config add-authtoken <token>
 The bridge does this for each user turn:
 
 ```text
-Browser SpeechRecognition -> POST /api/turn -> opencode run <message> --session <startup-session-id> --dir <repo> -> browser SpeechSynthesis
+Browser SpeechRecognition -> POST /api/turn -> opencode run <message> --session <startup-session-id> --dir <repo> -> browser SpeechSynthesis at 1.15x
 ```
 
 Environment variables:
@@ -56,7 +56,7 @@ Text entry is a debug/accessibility input path. It still sends the turn to OpenC
 
 | Candidate | What It Proves | Main Risk |
 |---|---|---|
-| Browser STT/TTS | Same-computer voice loop with minimal setup | `SpeechRecognition` is limited and may use browser/cloud services |
+| Browser STT/TTS | Low-memory voice loop with minimal setup | `SpeechRecognition` is limited and may use browser/cloud services |
 | Daily/WebRTC audio room | Shareable hosted room and production-like audio session | Requires provider setup, room lifecycle, and privacy docs |
 | Same-computer/browser-session path | Agent-adjacent local session with the least infrastructure | May only work on localhost and may not generalize to remote machines |
 
@@ -80,7 +80,9 @@ Use the same-computer OpenCode bridge as the default V1 path:
 - serve the bundled UI through `node skills/pipa-voice-session/scripts/start-voice-session.mjs`
 - call `opencode run --session <startup-session-id> --dir <repo>` for turns after resolving the startup session id
 - use `--public ngrok` for the quickest remote HTTPS test
-- label browser STT as browser-mediated and not guaranteed on-device
+- use browser speech synthesis as the default reply voice for lower memory pressure and faster startup
+- label browser STT/TTS as browser-mediated and not guaranteed on-device
+- shape voice replies for browser speech: short, conversational, and no bullets by default
 - keep browser transcript state in memory only
 - treat OpenCode's own session history as the durable agent-side record
 - use the handoff preview only when the user wants a concise continuation artifact

@@ -23,6 +23,13 @@ test("valid bridge assistant_reply with matching turn_id passes schema validatio
   assert.equal(result.message.type, "assistant_reply");
 });
 
+test("audio frames are not part of the browser-speech relay protocol", () => {
+  const result = validateRelayMessage("bridge", { type: "audio_start", turn_id: "turn-1", audio_id: "audio-1", size: 12_345 });
+
+  assert.equal(result.ok, false);
+  assert.equal(result.code, "unknown_type");
+});
+
 test("session creation returns separate browser and bridge credentials", () => {
   const session = createRelaySession({ now: 1_000, pairingTtlMs: 60_000 });
 

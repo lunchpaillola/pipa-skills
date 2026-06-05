@@ -21,7 +21,7 @@ Use `references/listening-page-template.md` as the source of truth. For normal r
     "assumptions": []
   },
   "audio": {
-    "mode": "browser_speech | kokoro",
+    "mode": "browser_speech | piper | kokoro",
     "src": "audio/brief.wav",
     "durationLabel": "Browser speech or 3:05",
     "durationSeconds": 185,
@@ -44,7 +44,7 @@ Use `references/listening-page-template.md` as the source of truth. For normal r
 1. **Page chrome:** browser tab title from `pageTitle` and compact page label from `shortTitle`.
 2. **Header:** one quiet source label, title, and one-sentence subtitle specific to the source content.
 3. **Transcript:** four sections matching the script shape: Context And Overview, The Story, Attention Areas, Takeaway.
-4. **Audio dock:** fixed browser speech controls near the bottom of the viewport by default, including a compact Voice popover for browser voice selection. If the user requested optional Kokoro mode and generation succeeded, use the native audio player with duration.
+4. **Audio dock:** fixed browser speech controls near the bottom of the viewport by default, including a compact Settings popover for browser speech rate and voice selection. If the user requested optional Piper or Kokoro mode and generation succeeded, use the native audio player with duration.
 5. **Source note:** one compact line for source context and concrete caveats when they matter.
 
 ## Determinism Rules
@@ -54,13 +54,13 @@ Use `references/listening-page-template.md` as the source of truth. For normal r
 - Replace placeholders with escaped HTML content.
 - Render transcript text as real paragraph blocks with visible spacing. Split each section on blank lines when present, escape each paragraph, and wrap each paragraph in `<p>...</p>` rather than inserting one dense text block with collapsed newlines.
 - Set `audio.mode` to `browser_speech` by default. This mode does not require `audio.src`, `durationSeconds`, `voice`, or `sanityCheck`.
-- Set `audio.mode` to `kokoro` only when the user requested polished generated audio and Kokoro generation succeeded.
-- Keep the Kokoro audio path as `audio/brief.wav` unless there is a concrete browser-cache reason to change it during debugging.
-- For browser speech mode, keep the same template, spacing, typography, sections, source note, compact playback dock, and Voice popover. Replace only the audio dock with the documented speech dock and script. Do not invent a new design.
+- Set `audio.mode` to `piper` or `kokoro` only when the user requested local generated audio and generation succeeded.
+- Keep the generated audio path as `audio/brief.wav` unless there is a concrete browser-cache reason to change it during debugging.
+- For browser speech mode, keep the same template, spacing, typography, sections, source note, compact playback dock, and Settings popover. Replace only the audio dock with the documented speech dock and script. Do not invent a new design.
 - Do not add timestamps unless the template is intentionally revised to include timestamp placeholders.
 - Do not add key-point cards, provenance panels, copyable follow-up prompts, dashboards, stats, metadata pills, decorative gradients, branded cover art, callouts, static TTS voice labels, model names, or secondary UI.
 - Do not show source-access scoring.
-- Do not mention the Kokoro backend, model, or voice in the page UI. In browser speech mode, the dock may say `Browser speech` and show a browser voice selector so the user understands playback depends on browser support.
+- Do not mention the Piper/Kokoro backend, model, or voice in the page UI. In browser speech mode, the dock may say `Browser speech` and include a Settings popover so the user can choose speed and browser voice.
 
 ## Subtitle Rule
 

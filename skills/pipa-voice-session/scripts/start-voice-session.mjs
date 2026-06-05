@@ -106,8 +106,8 @@ const html = String.raw`<!doctype html>
       <nav class="top" aria-label="Session"><strong>Pipa Voice Session</strong></nav>
       <header>
         <p class="source-label">Local OpenCode bridge</p>
-        <h1>Talk to your agent.</h1>
-        <p class="subtitle">Press once, speak one turn, then pause. Pipa sends it to OpenCode and reads the reply aloud.</p>
+        <h1>Start a huddle with your agent.</h1>
+        <p class="subtitle">Press once, speak one turn, then pause. Pipa sends it to OpenCode and reads back a short browser-speech reply with low memory overhead.</p>
       </header>
 
       <section class="voice-stage state-ready" id="voiceStage" aria-live="polite">
@@ -213,7 +213,7 @@ const html = String.raw`<!doctype html>
           state.lastReply = reply;
           addTurn("OpenCode", reply);
           setStatus("Speaking", "Reading the reply aloud now. If you hear nothing, press Test speaker.", "speaking");
-          speak(reply);
+          await speak(reply);
         } catch (error) {
           addTurn("System", "Blocked: " + error.message);
           setStatus("Blocked", error.message, "blocked");
@@ -289,15 +289,20 @@ const html = String.raw`<!doctype html>
         addTurn("System", "Listening. Click the orb again to stop and send immediately.");
       }
 
-      function speak(text) {
+      function speakWithBrowser(text) {
         if (!text) { addTurn("System", "There is no OpenCode reply to speak yet. Send a voice or text turn first."); return; }
         if (!window.speechSynthesis) { addTurn("System", "SpeechSynthesis is unavailable in this browser."); return; }
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.95;
+        utterance.rate = 1;
         utterance.onend = () => { if (!state.busy) setStatus("Ready", "Press the orb for another voice turn.", "ready"); };
         utterance.onerror = utterance.onend;
         window.speechSynthesis.speak(utterance);
+      }
+
+      async function speak(text) {
+        if (!text) { addTurn("System", "There is no OpenCode reply to speak yet. Send a voice or text turn first."); return; }
+        speakWithBrowser(text);
       }
 
       async function checkBridge() {
@@ -310,9 +315,9 @@ const html = String.raw`<!doctype html>
             els.secureBlocker.classList.add("is-visible");
             setStatus("Text mode ready", "The OpenCode bridge is ready, but voice input is blocked on this HTTP network URL.", "blocked");
           } else {
-            setStatus("Ready", "Press the orb, speak one turn, then pause. Use Test speaker if you want to confirm audio output.", "ready");
+            setStatus("Ready", "Press the orb, speak one turn, then pause. Browser speech keeps startup light and reliable.", "ready");
           }
-          addTurn("System", "Bridge ready. Project: " + body.projectDir);
+          addTurn("System", "Bridge ready. Project: " + body.projectDir + ". Voice output: browser speech synthesis at 1.15x for low-memory sessions.");
         } catch (_error) {
           setStatus("Bridge unavailable", "Start the skill script from the repository root, then refresh this page.", "blocked");
           addTurn("System", "Bridge unavailable. Start with node skills/pipa-voice-session/scripts/start-voice-session.mjs.");
@@ -333,7 +338,7 @@ const html = String.raw`<!doctype html>
       }
 
       els.startBtn.addEventListener("click", startVoiceTurn);
-      els.testSpeakerBtn.addEventListener("click", () => speak("Speaker test. If you can hear this, Pipa voice output is working."));
+      els.testSpeakerBtn.addEventListener("click", () => speak("Huddle speaker test. Browser speech is working."));
       els.clearBtn.addEventListener("click", () => { window.speechSynthesis?.cancel(); clearSpeechTimers(); try { state.recognition?.stop(); } catch (_error) {} state.recognition = null; state.listening = false; state.turns = []; state.lastReply = ""; els.handoff.textContent = "No handoff generated yet."; render(); setStatus("Ready", "Press the orb, speak naturally, then pause.", "ready"); });
       els.sendBtn.addEventListener("click", () => { submitTurn(els.textInput.value); els.textInput.value = ""; });
       els.handoffBtn.addEventListener("click", () => generateHandoff());
@@ -395,6 +400,10 @@ async function resolveOpenCodeSessionId() {
   sessionId = latest.id;
   process.env.PIPA_VOICE_SESSION_OPENCODE_SESSION = sessionId;
   return sessionId;
+}
+
+function voiceTurnPrompt(message) {
+  return `Voice huddle response rules: answer conversationally in 1-2 short sentences. Avoid bullets, numbered lists, headings, markdown, and long explanations unless the user explicitly asks for detail.\n\nUser said: ${message}`;
 }
 
 function splitArgs(value) {
@@ -686,7 +695,7 @@ async function startHostedRelayBridge() {
     seenTurns.add(message.turn_id);
     ws.send(JSON.stringify({ type: "status", message: "Running OpenCode turn." }));
     try {
-      const reply = await runOpenCodeTurn(message.text, extraArgs);
+      const reply = await runOpenCodeTurn(voiceTurnPrompt(message.text), extraArgs);
       ws.send(JSON.stringify({ type: "assistant_reply", turn_id: message.turn_id, text: reply }));
     } catch (error) {
       ws.send(JSON.stringify({ type: "error", message: error.message }));
@@ -740,7 +749,14 @@ const server = createServer(async (req, res) => {
     }
 
     if (req.method === "GET" && req.url === "/api/status") {
-      sendJson(res, 200, { ok: true, mode: "local-opencode-bridge", projectDir, opencodeBin, sessionId: sessionId || null });
+      sendJson(res, 200, {
+        ok: true,
+        mode: "local-opencode-bridge",
+        projectDir,
+        opencodeBin,
+        sessionId: sessionId || null,
+        tts: { mode: "browser", rate: 1 }
+      });
       return;
     }
 
@@ -751,7 +767,7 @@ const server = createServer(async (req, res) => {
         sendJson(res, 400, { ok: false, error: "Missing message" });
         return;
       }
-      const reply = await runOpenCodeTurn(message);
+      const reply = await runOpenCodeTurn(voiceTurnPrompt(message));
       sendJson(res, 200, { ok: true, reply });
       return;
     }

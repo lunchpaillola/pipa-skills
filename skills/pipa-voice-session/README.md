@@ -25,7 +25,7 @@ At startup, the bridge resolves the latest OpenCode session id and pins voice tu
 - browser captures one spoken turn or text fallback
 - hosted relay forwards the final text turn only
 - local bridge runs `opencode run` against the pinned OpenCode session
-- browser speaks the assistant reply
+- browser speaks the assistant reply with browser speech synthesis by default
 
 Hosted mode does not add OpenCode flags by default. It forwards your spoken/text turn to the local OpenCode bridge; OpenCode's normal session and permission behavior still applies.
 
@@ -38,6 +38,12 @@ node skills/pipa-voice-session/scripts/start-voice-session.mjs
 ```
 
 Then open `http://127.0.0.1:8787` on the same machine.
+
+## Browser Speech
+
+Browser speech synthesis is the default voice output for hosted and local sessions. It has lower memory pressure, starts faster, and is less likely to fail in small sandbox environments. The page speaks replies at `1.15x` to keep short huddle turns moving.
+
+Voice-session replies should stay conversational: one or two short sentences, no bullets or long markdown by default. Longer written detail belongs in the visible transcript or a handoff, not the spoken turn.
 
 ## Operator Notes
 

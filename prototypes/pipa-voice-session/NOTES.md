@@ -1,8 +1,27 @@
 # PROTOTYPE - Pipa Voice Session
 
-This is a same-computer OpenCode voice bridge for the `pipa-voice-session` skill.
+This is a prototype area for the `pipa-voice-session` skill.
 
-It demonstrates the session contract with real agent turns: browser voice when available, a localhost Node bridge, `opencode run`, spoken responses, live transcript display, session-state extraction, and optional context handoff.
+The current `index.html` is a static UI exploration for the next hosted voice-session design. It focuses on the Quiet Lobby direction: pre-join, speaker activation, hands-free turns, centered orb states, processing audio cues, and live transcript text that appears only when useful.
+
+The older local OpenCode bridge server is still present as scratch infrastructure, but the active production path now lives in `skills/pipa-voice-session/scripts/start-voice-session.mjs` and the hosted relay Worker.
+
+## Prototype Directions
+
+- **Join Lobby:** the baseline pre-join screen with optional name, manual speaker test, and a simple join moment before the orb appears.
+- **Live Words:** the same lobby shape, but with a compact text area under the orb for interim transcription, the user's finalized turn, and the generated agent reply.
+- **Chat Strip:** a ChatGPT Voice inspired direction where transcript is the main surface and a smaller orb sits near the bottom composer.
+
+## Interaction Ideas Captured
+
+- Ask for a name on pre-join, while allowing a known name to be prefilled.
+- Speak an intro such as "You're in a huddle. Let's talk through updates" after the user manually tests speaker or joins.
+- Make test speaker a first-class pre-join action to satisfy Safari and mobile audio activation requirements.
+- Let the user speak hands-free, then auto-submit after a short silence window, likely 2 to 3 seconds.
+- Play `processing.mp3` or another bundled file during the processing state once the asset exists.
+- Keep transcript and typed fallback available, but hide them in popovers rather than making them primary page regions.
+- Center the orb and let it carry ready, listening, processing, and speaking states.
+- Explore whether transcript belongs as a quiet lobby module or as the primary surface with a smaller bottom orb.
 
 ## One Command
 
@@ -24,13 +43,11 @@ This prototype folder is retained only as development scratch space.
 
 ## Prototype Status
 
-- Local Node server plus static browser UI.
-- Calls local OpenCode with `opencode run <message> --continue --dir <repo>`.
-- Browser `SpeechRecognition` is used only when available.
-- Browser speech is browser-mediated and may use cloud speech services depending on browser and OS.
-- Browser transcript state is kept in memory only and clears when the page reloads or the end/clear action runs.
-- OpenCode session history follows normal local OpenCode behavior.
-- The handoff preview is optional, and only durable if the user copies it.
+- Static browser UI for comparing design directions.
+- No production Worker or bridge behavior changed by this prototype.
+- Browser `speechSynthesis` is used only for the test-speaker demo.
+- `processing.mp3` is referenced as an optional future asset hook. If the file is missing, playback fails silently.
+- Transcript content is sample prototype content, not stored session data.
 
 ## LAN Warning
 
@@ -38,9 +55,8 @@ Default to `localhost`. If testing on `0.0.0.0`, the page shows a visible LAN wa
 
 ## What To Look For
 
-- Does the page make the session contract clear before voice use?
-- Does the browser voice turn reach OpenCode and get a real response?
-- Does debug text still reach OpenCode when STT is unavailable?
-- Does the handoff synthesize useful context instead of dumping transcript?
-- Does the privacy/retention copy feel clear enough for confidential work?
-- Does this support choosing one V1 transport rather than shipping many fallback branches?
+- Does the pre-join screen make joining feel intentional without adding ceremony?
+- Does the speaker test feel necessary and reassuring, especially for Safari on mobile?
+- Does the centered orb carry enough state by itself?
+- Should live transcription sit under the orb, or should the transcript become the main surface with a smaller bottom orb?
+- Which direction feels most like a calm operator workflow rather than a chatbot UI?

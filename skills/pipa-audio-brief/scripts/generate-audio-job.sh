@@ -7,6 +7,7 @@ JOB_ROOT="${PIPA_AUDIO_BRIEF_JOB_DIR:-$CACHE_ROOT/jobs}"
 
 usage() {
   printf 'usage: %s start <brief-script.txt> <output.wav> [voice]\n' "$0" >&2
+  printf '       PIPA_AUDIO_BRIEF_BACKEND=kokoro|piper %s start <brief-script.txt> <output.wav> [voice-or-speaker]\n' "$0" >&2
   printf '       %s status <job-id>\n' "$0" >&2
   printf '       %s wait <job-id> [poll-seconds] [timeout-seconds]\n' "$0" >&2
   printf '       %s stop <job-id>\n' "$0" >&2
@@ -120,6 +121,12 @@ log_ready_audio_metadata() {
       audio_result.word_count)
         log_kv word_count "$value"
         ;;
+      audio_result.backend)
+        log_kv backend "$value"
+        ;;
+      audio_result.model_name)
+        log_kv model_name "$value"
+        ;;
     esac
   done < "$job_dir/stdout.log"
 }
@@ -142,6 +149,7 @@ run_generation() {
   local script_input="$1"
   local output_wav="$2"
   local partial_wav="$output_wav.partial"
+  local backend="${PIPA_AUDIO_BRIEF_BACKEND:-kokoro}"
   local voice="${3:-af_heart}"
   local venv_dir="${PIPA_AUDIO_BRIEF_KOKORO_VENV:-$CACHE_ROOT/kokoro-onnx-venv}"
   local model_variant="${PIPA_AUDIO_BRIEF_MODEL_VARIANT:-int8}"
@@ -187,7 +195,7 @@ PY
 
   if [[ "$word_count" -gt "$max_words" ]]; then
     printf 'audio_result.status=blocked\n' >&2
-    printf 'audio_result.reason=script has %s words; trim to %s words or less before Kokoro generation\n' "$word_count" "$max_words" >&2
+    printf 'audio_result.reason=script has %s words; trim to %s words or less before generated audio\n' "$word_count" "$max_words" >&2
     printf 'audio_result.word_count=%s\n' "$word_count" >&2
     printf 'audio_result.max_words=%s\n' "$max_words" >&2
     exit 1
@@ -198,6 +206,92 @@ PY
 
   rm -f "$output_wav" "$partial_wav"
   trap 'rm -f "$partial_wav"' EXIT
+
+  case "$backend" in
+    kokoro)
+      ;;
+    piper)
+      local piper_venv_dir="${PIPA_AUDIO_BRIEF_PIPER_VENV:-$CACHE_ROOT/piper-venv}"
+      local piper_model_name="${PIPA_AUDIO_BRIEF_PIPER_MODEL_NAME:-en_US-libritts_r-medium}"
+      local piper_model_dir="${PIPA_AUDIO_BRIEF_PIPER_MODEL_DIR:-$CACHE_ROOT/piper-models/$piper_model_name}"
+      local piper_model_file="${PIPA_AUDIO_BRIEF_PIPER_MODEL_FILE:-$piper_model_dir/$piper_model_name.onnx}"
+      local piper_config_file="${PIPA_AUDIO_BRIEF_PIPER_CONFIG_FILE:-$piper_model_dir/$piper_model_name.onnx.json}"
+      local piper_bin="$piper_venv_dir/bin/piper"
+      local piper_speaker="${PIPA_AUDIO_BRIEF_PIPER_SPEAKER:-${3:-}}"
+
+      if [[ ! -x "$piper_bin" || ! -s "$piper_model_file" || ! -s "$piper_config_file" ]]; then
+        printf 'audio_result.progress=setting_up_piper\n' >&2
+        "$SCRIPT_DIR/setup-piper.sh"
+      fi
+
+      printf 'audio_result.progress=generating_audio\n' >&2
+      local piper_command=("$piper_bin" --model "$piper_model_file" --config "$piper_config_file" --output-file "$partial_wav" --input-file "$script_input")
+      if [[ -n "$piper_speaker" ]]; then
+        piper_command+=(--speaker "$piper_speaker")
+      fi
+      if command -v timeout >/dev/null 2>&1; then
+        timeout "$generation_timeout_seconds" "${piper_command[@]}"
+      elif command -v gtimeout >/dev/null 2>&1; then
+        gtimeout "$generation_timeout_seconds" "${piper_command[@]}"
+      else
+        printf 'audio_result.progress=no_timeout_command_available\n' >&2
+        "${piper_command[@]}"
+      fi
+      printf 'audio_result.progress=checking_duration\n' >&2
+
+      local duration
+      duration="$($system_python - "$partial_wav" <<'PY'
+import sys
+import wave
+
+with wave.open(sys.argv[1], "rb") as audio:
+    print(audio.getnframes() / audio.getframerate())
+PY
+)"
+
+      local duration_label
+      duration_label="$(format_duration_label "$duration" "$system_python")"
+
+      "$system_python" - "$duration" "$word_count" <<'PY'
+import sys
+
+duration = float(sys.argv[1])
+word_count = int(sys.argv[2])
+
+if word_count >= 350 and duration < 90:
+    raise SystemExit(
+        f"audio duration {duration:.1f}s is suspiciously short for {word_count} words"
+    )
+
+if word_count >= 150 and duration < 30:
+    raise SystemExit(
+        f"audio duration {duration:.1f}s is suspiciously short for {word_count} words"
+    )
+PY
+
+      mv "$partial_wav" "$output_wav"
+      trap - EXIT
+
+      printf 'audio_result.status=ready\n'
+      printf 'audio_result.backend=piper\n'
+      printf 'audio_result.model_name=%s\n' "$piper_model_name"
+      printf 'audio_result.max_words=%s\n' "$max_words"
+      printf 'audio_result.generation_timeout_seconds=%s\n' "$generation_timeout_seconds"
+      if [[ -n "$piper_speaker" ]]; then
+        printf 'audio_result.speaker=%s\n' "$piper_speaker"
+      fi
+      printf 'audio_result.duration_seconds=%s\n' "$duration"
+      printf 'audio_result.duration_label=%s\n' "$duration_label"
+      printf 'audio_result.sanity_check=passed\n'
+      printf 'audio_result.word_count=%s\n' "$word_count"
+      return 0
+      ;;
+    *)
+      printf 'audio_result.status=blocked\n' >&2
+      printf 'audio_result.reason=unsupported PIPA_AUDIO_BRIEF_BACKEND: %s\n' "$backend" >&2
+      exit 1
+      ;;
+  esac
 
   if [[ ! -x "$venv_dir/bin/python" || ! -s "$model_file" || ! -s "$voices_file" ]]; then
     printf 'audio_result.progress=setting_up_kokoro\n' >&2
@@ -270,7 +364,11 @@ start_job() {
 
   local input="$1"
   local output="$2"
-  local voice="${3:-af_heart}"
+  local backend="${PIPA_AUDIO_BRIEF_BACKEND:-kokoro}"
+  local voice="${3:-}"
+  if [[ -z "$voice" && "$backend" == "kokoro" ]]; then
+    voice="af_heart"
+  fi
 
   if [[ ! -f "$input" ]]; then
     printf 'audio_job.status=blocked\n' >&2
@@ -295,6 +393,7 @@ start_job() {
     printf 'input=%s\n' "$input_abs"
     printf 'output=%s\n' "$output_abs"
     printf 'voice=%s\n' "$voice"
+    printf 'backend=%s\n' "$backend"
     printf 'started_at=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
     printf 'generator=%s/generate-audio-job.sh\n' "$SCRIPT_DIR"
   } > "$job_dir/metadata"
@@ -406,7 +505,7 @@ status_job() {
   if [[ -f "$job_dir/metadata" ]]; then
     while IFS='=' read -r key value; do
       case "$key" in
-        output|voice|started_at)
+        output|voice|backend|started_at)
           log_kv "$key" "$value"
           ;;
       esac
