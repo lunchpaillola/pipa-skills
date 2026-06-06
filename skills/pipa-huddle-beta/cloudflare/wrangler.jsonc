@@ -1,0 +1,34 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pipa-voice-relay",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-06-03",
+  "routes": [
+    {
+      "pattern": "voice.usepipa.com/*",
+      "zone_name": "usepipa.com"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "VOICE_SESSION",
+        "class_name": "VoiceSession"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["VoiceSession"]
+    }
+  ],
+  "vars": {
+    "PUBLIC_BASE_URL": "https://voice.usepipa.com",
+    "ALLOWED_ORIGINS": "https://voice.usepipa.com",
+    "PAIRING_TTL_SECONDS": "900",
+    "IDLE_TIMEOUT_SECONDS": "600",
+    "MAX_MESSAGE_BYTES": "32000",
+    "REVOKE_SESSIONS_BEFORE_UNIX_MS": "1780588436000"
+  }
+}

@@ -1,23 +1,77 @@
 # Audio Generation And Fallbacks
 
-Kokoro audio generation is required for success. Script-only output is useful for debugging, but it is not a completed audio brief.
+Browser SpeechSynthesis is the default audio path for success. Script-only output is useful for debugging, but it is not a completed audio brief. Piper and Kokoro audio generation are optional local generated-audio presets when the user explicitly asks for them and accepts the setup, time, and memory tradeoff.
 
-## Golden Path: Managed `kokoro-onnx`
+## Golden Path: Browser SpeechSynthesis
 
-Use one managed local backend by default: cached `kokoro-onnx` in `~/.cache/pipa-audio-brief/`.
+Use browser speech by default, especially in sandboxed or resource-constrained environments. The product promise is fast orientation to a work artifact, not premium narration. Browser speech keeps the skill portable and avoids making audio brief generation depend on a large local model runtime.
 
-Do not explore a long fallback ladder during a normal brief request. The user asked for a listening artifact, not a dependency debugging session. There is one degraded fallback: browser SpeechSynthesis preview when local Kokoro is blocked by setup, memory, or compute constraints.
+Default flow:
+
+1. Write the spoken brief script as the page transcript.
+2. Render the listening page with `"audio.mode": "browser_speech"`.
+3. Let `scripts/render-listening-page.py` generate the browser speech controls, sentence highlighting, pause/resume, restart, back, forward, speed selection, and voice selection behavior.
+4. Publish the page. Do not create or require `audio/brief.wav`.
+
+Browser speech page contract:
+
+```json
+"audio": {
+  "mode": "browser_speech",
+  "durationLabel": "Browser speech",
+  "status": "browser_speech"
+}
+```
+
+Browser speech quality guidance:
+
+- Use the generated script as the speech input, not the raw source document.
+- Keep sentences short and plain so browser voices sound less robotic.
+- Use punctuation for natural pauses, especially after transitions and before the takeaway.
+- Avoid Markdown, bullets, table syntax, raw URLs, code fences, dense labels, and punctuation-heavy phrases in speakable text.
+- Prefer a compact two-minute orientation over long passive narration; browser voices fatigue listeners faster than polished generated audio.
+- Let the page UI create value through responsiveness, sentence highlighting, pause/resume, restart, skip controls, and a Settings popover for speed and voice selection.
+- Do not preselect a named browser voice. Leave SpeechSynthesis on the browser default unless the listener chooses another voice.
+
+## Optional Preset: Managed Piper
+
+Prefer Piper when the user asks for local generated audio without naming a backend. Use the cached `piper-tts` backend in `~/.cache/pipa-audio-brief/` with `en_US-libritts_r-medium` by default.
+
+Piper is faster than Kokoro in local benchmarking, but it is not a low-memory backend. Treat it as an operational-simplicity and latency improvement, not a memory fix. Benchmark guidance for `en_US-libritts_r-medium` on macOS x86_64: roughly 278-344 MiB max RSS for a 300-ish word brief, depending on thread settings.
 
 Default flow:
 
 1. Write the spoken brief script to a temporary work file outside the publish bundle.
-2. Run `scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`.
+2. Run `PIPA_AUDIO_BRIEF_BACKEND=piper scripts/generate-audio-job.sh start <brief-script.txt> <publish-dir>/audio/brief.wav`.
 3. Run `scripts/generate-audio-job.sh wait <job-id>` and continue only when it reports `ready`.
-4. If the cached backend is missing, the async job runs `scripts/setup-kokoro.sh` once.
+4. If the cached backend is missing, the async job runs `scripts/setup-piper.sh` once.
 5. If setup succeeds, generate and validate the WAV.
-6. If setup or generation fails because the machine cannot run Kokoro, block clearly and offer a browser speech preview as the only fallback.
+6. If setup or generation fails because the machine cannot run Piper, use browser speech mode unless the user explicitly required generated audio only.
 
-The managed backend uses:
+The managed Piper backend uses:
+
+- `piper-tts==1.4.2`
+- `en_US-libritts_r-medium.onnx` by default
+- `en_US-libritts_r-medium.onnx.json`
+
+Cache layout:
+
+```text
+~/.cache/pipa-audio-brief/
+  piper-venv/
+  piper-models/
+    en_US-libritts_r-medium/
+      en_US-libritts_r-medium.onnx
+      en_US-libritts_r-medium.onnx.json
+```
+
+Do not install Piper packages into the system Python. Do not assume `python`, `python3`, or Python 3.14 is usable for Piper generation. If the runtime environment is ephemeral and does not preserve `~/.cache`, Piper may need to download and install again on each fresh environment. Do not bundle the Piper binary or voice model into this skill repository.
+
+## Optional Preset: Managed Kokoro
+
+Use Kokoro when the user specifically asks for Kokoro or when Piper is not desired: cached `kokoro-onnx` in `~/.cache/pipa-audio-brief/`.
+
+Kokoro setup uses:
 
 - `kokoro-onnx==0.5.0`
 - `soundfile==0.13.1`
@@ -35,11 +89,11 @@ Cache layout:
       voices-v1.0.bin
 ```
 
-Do not install Kokoro packages into the system Python. Do not assume `python`, `python3`, or Python 3.14 is usable for Kokoro generation.
+Use `scripts/setup-kokoro.sh` for Kokoro setup. Do not install Kokoro packages into the system Python. Do not assume `python`, `python3`, or Python 3.14 is usable for Kokoro generation.
 
 ## Setup Script Contract
 
-Use `scripts/setup-kokoro.sh` for setup. It should be the only normal install path embedded in the skill.
+Use `scripts/setup-piper.sh` or `scripts/setup-kokoro.sh` for setup. They should be the only normal install paths embedded in the skill.
 
 Setup behavior:
 
@@ -48,34 +102,35 @@ Setup behavior:
 3. If no Python 3.10-3.13 executable exists, stop and ask for `uv` or Python 3.10-3.13.
 4. Install pinned packages into the cached venv.
 5. Download missing model files into the cache.
-6. Smoke-test imports and cached model file presence.
+6. Smoke-test the backend and cached model file presence.
 
 This intentionally avoids global or ad hoc package installs as normal behavior.
 
 ## Generation Script Contract
 
-Use `scripts/generate-audio-job.sh` for normal audio generation so Kokoro does not block the agent shell command:
+Use `scripts/generate-audio-job.sh` for normal audio generation so local TTS does not block the agent shell command:
 
 ```bash
 skills/pipa-audio-brief/scripts/generate-audio-job.sh start brief-script.txt publish/audio/brief.wav
+PIPA_AUDIO_BRIEF_BACKEND=piper skills/pipa-audio-brief/scripts/generate-audio-job.sh start brief-script.txt publish/audio/brief.wav
 skills/pipa-audio-brief/scripts/generate-audio-job.sh wait <job-id>
 ```
 
 The async job:
 
-- uses `af_heart` by default unless a third voice argument is provided
+- uses Piper `en_US-libritts_r-medium` when `PIPA_AUDIO_BRIEF_BACKEND=piper`
+- uses Kokoro `af_heart` by default unless a third voice argument is provided
 - validates script word count before setup or generation and blocks default briefs over `PIPA_AUDIO_BRIEF_MAX_WORDS=350`
 - creates the cached backend if needed
-- uses the INT8 Kokoro ONNX model by default
-- defaults to `PIPA_AUDIO_BRIEF_MAX_PHONEMES=100`
 - wraps generation with `PIPA_AUDIO_BRIEF_GENERATION_TIMEOUT_SECONDS=1200` when `timeout` or `gtimeout` is available
-- streams audio to `audio/brief.wav.partial` instead of building one full audio buffer in memory
-- phonemizes and renders punctuation-delimited text chunks one at a time, with `PIPA_AUDIO_BRIEF_MAX_PHONEMES` as an additional per-inference safety cap
+- streams audio to `audio/brief.wav.partial` instead of treating partial files as complete
 - checks duration with Python's standard WAV reader, then renames the partial file to one final browser-playable WAV at the requested output path
-- reports progress, duration, duration label, sanity check status, and word count
+- reports backend, progress, duration, duration label, sanity check status, and word count
 - fails if the output is suspiciously short for the script length
 
-Keep `PIPA_AUDIO_BRIEF_MAX_PHONEMES=100` as the default. Higher values can smooth prosody but increase ONNX Runtime workspace memory. Only change it when the user explicitly asks to test that tradeoff.
+For Kokoro only, the job also uses the INT8 Kokoro ONNX model by default, defaults to `PIPA_AUDIO_BRIEF_MAX_PHONEMES=100`, and renders punctuation-delimited text chunks one at a time. Keep `PIPA_AUDIO_BRIEF_MAX_PHONEMES=100` as the default. Higher values can smooth prosody but increase ONNX Runtime workspace memory.
+
+For Piper, optional model overrides are available through `PIPA_AUDIO_BRIEF_PIPER_MODEL_NAME`, `PIPA_AUDIO_BRIEF_PIPER_MODEL_DIR`, `PIPA_AUDIO_BRIEF_PIPER_MODEL_FILE`, `PIPA_AUDIO_BRIEF_PIPER_CONFIG_FILE`, `PIPA_AUDIO_BRIEF_PIPER_MODEL_URL`, and `PIPA_AUDIO_BRIEF_PIPER_CONFIG_URL`. Do not change these during normal skill use unless the user explicitly asks for another Piper voice.
 
 ## Async Generation Contract
 
@@ -87,30 +142,27 @@ skills/pipa-audio-brief/scripts/generate-audio-job.sh wait <job-id>
 skills/pipa-audio-brief/scripts/generate-audio-job.sh status <job-id>
 ```
 
-The job wrapper starts a detached Kokoro generation process with `nohup`, stores job state under `~/.cache/pipa-audio-brief/jobs/` by default, and returns immediately with an `audio_job.job_id`. Prefer `wait` for normal runs because it polls and emits progress until the job reaches a terminal state. `wait` accepts optional `poll-seconds` and `timeout-seconds` arguments, and also respects `PIPA_AUDIO_BRIEF_WAIT_TIMEOUT_SECONDS` with a default of 900 seconds. Use `status` for debugging, progress checks, or when the caller's command timeout is shorter than the expected generation time.
+The job wrapper starts a detached generation process with `nohup`, stores job state under `~/.cache/pipa-audio-brief/jobs/` by default, and returns immediately with an `audio_job.job_id`. Prefer `wait` for normal runs because it polls and emits progress until the job reaches a terminal state. `wait` accepts optional `poll-seconds` and `timeout-seconds` arguments, and also respects `PIPA_AUDIO_BRIEF_WAIT_TIMEOUT_SECONDS` with a default of 900 seconds. Use `status` for debugging, progress checks, or when the caller's command timeout is shorter than the expected generation time.
 
-If `wait` reaches its own timeout, it exits `124` and emits `audio_job.wait_status=timed_out` on stdout and stderr. That does not mean Kokoro failed; it means the wrapper stopped waiting. Call `status <job-id>` and continue polling. `status` reports whether the final output exists as `audio_job.output_ready=true|false` and whether a `.partial` output is still being written.
+If `wait` reaches its own timeout, it exits `124` and emits `audio_job.wait_status=timed_out` on stdout and stderr. That does not mean generation failed; it means the wrapper stopped waiting. Call `status <job-id>` and continue polling.
 
 When `wait` or `status` reports `audio_job.status=ready`, it also reports `audio_job.duration_seconds`, `audio_job.duration_label`, `audio_job.sanity_check`, and `audio_job.word_count` when those values were produced by the generation run. Use these fields directly in the page contract. Do not run a separate WAV duration command unless the fields are missing or suspicious.
 
-`status` reconciles common async races. If the background process has exited but the status file still says `running`, `status` uses the recorded exit code to report `ready` or `failed` instead of leaving agents stuck on a stale running state.
+Do not treat command silence, file size, or any partial file as success while the job is still `running`. Only proceed when `wait` or `status` reports `audio_job.status=ready`, `audio_job.output_ready=true`, and `audio_job.sanity_check=passed`.
 
-Do not treat command silence, file size, or any partial file as success while the job is still `running`. The generator writes `audio/brief.wav.partial` during rendering and renames it to `audio/brief.wav` only after duration validation passes. Only proceed when `wait` or `status` reports `audio_job.status=ready`, `audio_job.output_ready=true`, and `audio_job.sanity_check=passed`.
-
-Run `scripts/test-generate-audio-job.sh` after changing the async wrapper. It uses synthetic job directories so timeout handling and process-exit races can be tested without running Kokoro.
-
-If Kokoro still cannot run in a compute-constrained environment, block clearly and offer browser SpeechSynthesis as the single degraded preview fallback. When the user accepts it, generate the fallback using the browser speech preview variant in `references/listening-page-template.md`; do not invent a new page design.
+Run `scripts/test-generate-audio-job.sh` after changing the async wrapper. It uses synthetic job directories so timeout handling and process-exit races can be tested without running local TTS.
 
 Keep generated audio in the publish bundle at `audio/brief.wav`. Keep scripts, model caches, virtual environments, chunks, helper files, partial files, and logs outside the publish bundle.
 
 ## Preferred Behavior
 
 - Use the generated script as the TTS input, not the raw source document.
-- Use `af_heart` by default.
-- Prefer concise spoken sentences with natural punctuation so Kokoro can render one short chunk at a time without obvious seams.
-- Save one final playable audio file for the page.
+- Prefer Piper for optional local generated audio unless the user asks for Kokoro.
+- Prefer concise spoken sentences with natural punctuation so local TTS can render cleanly.
+- In browser speech mode, do not save an audio file.
+- In Piper or Kokoro mode, save one final playable audio file for the page.
 - Preserve a transcript that matches the spoken script inside the generated `index.html`.
-- Name the final audio predictably as `audio/brief.wav` so the deterministic template can reference it.
+- Name the final generated audio predictably as `audio/brief.wav` so the deterministic template can reference it.
 - Never publish `audio/brief.wav.partial`; it is a transient generation file, not a success artifact.
 - If first-run model download is needed, report that as setup/wait state rather than a content failure.
 - The brief is not a complete readout of the source, but the audio must be a complete rendering of the generated brief script.
@@ -132,20 +184,20 @@ If duration remains suspicious after retry:
 ```md
 Audio brief blocked.
 
-- **Blocked at:** Kokoro audio completeness
+- **Blocked at:** generated audio completeness
 - **What worked:** script generated; audio file created
 - **Why:** generated audio duration was <duration>, which is too short for the script
-- **Next:** run `skills/pipa-audio-brief/scripts/setup-kokoro.sh` after installing `uv` or `python3.12`, then retry generation
+- **Next:** run `skills/pipa-audio-brief/scripts/setup-piper.sh` or `skills/pipa-audio-brief/scripts/setup-kokoro.sh` after installing `uv` or Python 3.10-3.13, then retry generation
 ```
 
 ## Failure Handling
 
-When Kokoro fails after script generation:
+When generated audio fails after script generation:
 
 1. Preserve only the minimal script/log debug artifact needed to retry.
 2. Report the exact command/service blocker when safe.
-3. Say plainly that the audio brief cannot be generated.
-4. Do not claim the page or published brief is ready.
+3. Generate the browser speech page instead, unless the user explicitly required generated-audio-only output.
+4. Do not claim polished generated audio is ready.
 
 When audio playback fails after file generation:
 

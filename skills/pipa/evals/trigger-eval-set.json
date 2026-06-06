@@ -28,6 +28,10 @@
     "should_trigger": true
   },
   {
+    "query": "Pipa voice session so I can talk this plan through while walking.",
+    "should_trigger": true
+  },
+  {
     "query": "Pipa use Composio to create a GitHub issue from this bug report.",
     "should_trigger": true
   },
@@ -73,6 +77,10 @@
   },
   {
     "query": "Pipa help",
+    "should_trigger": true
+  },
+  {
+    "query": "Start a voice session with my agent to shape this project.",
     "should_trigger": true
   }
 ]

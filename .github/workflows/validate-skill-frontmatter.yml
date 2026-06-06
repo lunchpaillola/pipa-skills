@@ -1,21 +1,25 @@
-name: Validate Skill Frontmatter
+name: Validate Skills
 
 on:
   pull_request:
     paths:
       - "skills/**/SKILL.md"
+      - "skills/**/evals/*.json"
       - "scripts/validate_skill_frontmatter.rb"
+      - "scripts/validate_skill_evals.rb"
       - ".github/workflows/validate-skill-frontmatter.yml"
   push:
     branches:
       - main
     paths:
       - "skills/**/SKILL.md"
+      - "skills/**/evals/*.json"
       - "scripts/validate_skill_frontmatter.rb"
+      - "scripts/validate_skill_evals.rb"
       - ".github/workflows/validate-skill-frontmatter.yml"
 
 jobs:
-  validate-frontmatter:
+  validate-skills:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,5 +31,20 @@ jobs:
         with:
           ruby-version: "3.2"
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
       - name: Validate SKILL.md frontmatter
         run: ruby scripts/validate_skill_frontmatter.rb
+
+      - name: Validate skill eval fixtures
+        run: ruby scripts/validate_skill_evals.rb
+
+      - name: Run relay protocol tests
+        run: npm run test:relay

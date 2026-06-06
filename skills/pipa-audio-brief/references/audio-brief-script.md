@@ -58,7 +58,7 @@ Takeaway.
 End with the plain-English bottom line. Explain what matters most, what the listener should remember, and the next sensible action if there is one.
 ```
 
-Write the TTS input as plain speakable text, not Markdown. Do not include `#`, `##`, bullets, table pipes, code fences, decorative separators, raw URLs, or punctuation-heavy labels in the script sent to audio generation. If a visible page transcript needs section headings, add those in `index.html`; do not make Kokoro read Markdown syntax aloud.
+Write the TTS input as plain speakable text, not Markdown. Do not include `#`, `##`, bullets, table pipes, code fences, decorative separators, raw URLs, or punctuation-heavy labels in the script sent to audio generation. If a visible page transcript needs section headings, add those in `index.html`; do not make local TTS read Markdown syntax aloud.
 
 ## Script Quality Check
 
@@ -77,7 +77,7 @@ Do not run repeated optimization loops during normal generation.
 
 ## Gotchas
 
-- Kokoro may speak Markdown punctuation literally. If the script starts with `# Audio Brief Script` or `## Context And Overview`, the audio can say “hash hash” before the useful content. Keep the generated audio script free of Markdown heading markers, bullets, table syntax, and other notation that is meant for readers rather than listeners.
+- Local TTS may speak Markdown punctuation literally. If the script starts with `# Audio Brief Script` or `## Context And Overview`, the audio can say “hash hash” before the useful content. Keep the generated audio script free of Markdown heading markers, bullets, table syntax, and other notation that is meant for readers rather than listeners.
 
 ## Anti-Patterns
 
