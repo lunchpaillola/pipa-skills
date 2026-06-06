@@ -10,6 +10,7 @@ import {
   validateRelayMessage,
   createRelayStore
 } from "./relay-protocol.mjs";
+import { hostedSessionHtml } from "../cloudflare/hosted-session-template.mjs";
 
 const port = Number(process.env.PIPA_VOICE_RELAY_PORT || 8788);
 const host = process.env.PIPA_VOICE_RELAY_HOST || "127.0.0.1";
@@ -115,6 +116,10 @@ function authFromUpgrade(req, url) {
   };
 }
 
+function devIndexHtml() {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pipa Huddle Dev Relay</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:680px;margin:64px auto;padding:0 24px;line-height:1.6;color:#2d2a25;background:#fbfaf7}.muted{color:#706b61}code{background:#efede7;border-radius:6px;padding:2px 5px}</style></head><body><p class="muted">Development relay</p><h1>Pipa Huddle relay is running.</h1><p>Create a session with <code>POST /api/sessions</code>, then open the returned <code>/s/&lt;session-id&gt;#token=...</code> browser URL.</p></body></html>`;
+}
+
 function hasOperatorAccess(req) {
   if (!operatorToken) return false;
   const authorization = String(req.headers.authorization || "");
@@ -123,104 +128,18 @@ function hasOperatorAccess(req) {
   return bearer === operatorToken || headerToken === operatorToken;
 }
 
-function hostedHtml() {
-  return String.raw`<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pipa Hosted Voice Session</title>
-    <style>
-      :root { color-scheme: light; --page:oklch(0.985 0.006 75); --surface:oklch(0.965 0.008 75); --ink:oklch(0.235 0.012 65); --muted:oklch(0.52 0.012 65); --line:oklch(0.88 0.008 75); --accent:oklch(0.58 0.13 42); --accent-soft:oklch(0.82 0.08 42); --bad:oklch(0.52 0.13 28); }
-      * { box-sizing:border-box; }
-      body { margin:0; min-height:100vh; background:var(--page); color:var(--ink); font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height:1.65; -webkit-font-smoothing:antialiased; }
-      button, textarea { font:inherit; } button { cursor:pointer; }
-      main { max-width:760px; margin:0 auto; padding:48px 24px 150px; }
-      nav.top { position:sticky; top:0; background:var(--page); padding:12px 0; border-bottom:1px solid var(--line); z-index:10; margin-bottom:34px; }
-      nav.top strong { font-size:13px; color:var(--muted); letter-spacing:.02em; }
-      .source-label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin:0 0 8px; }
-      h1 { margin:0 0 12px; color:var(--ink); font-size:30px; font-weight:650; line-height:1.22; letter-spacing:-.025em; }
-      .subtitle { max-width:65ch; margin:0; color:var(--muted); font-size:15px; line-height:1.5; }
-      .voice-stage { display:grid; justify-items:center; gap:18px; padding:30px 0 36px; border-bottom:1px solid var(--line); }
-      .orb-button { width:190px; height:190px; border:1px solid var(--line); border-radius:999px; background:var(--surface); color:var(--ink); display:grid; place-items:center; position:relative; box-shadow:0 18px 60px oklch(0.35 0.03 65 / .12); }
-      .orb-button::before { content:""; position:absolute; inset:18px; border-radius:inherit; background:oklch(0.92 0.035 42); opacity:.65; transform:scale(.92); transition:transform 220ms ease-out, opacity 220ms ease-out; }
-      .orb-button:focus-visible { outline:3px solid var(--accent-soft); outline-offset:5px; }
-      .bars { position:relative; z-index:1; display:flex; align-items:center; gap:9px; height:70px; }
-      .bars span { width:15px; height:30px; border-radius:999px; background:var(--accent); opacity:.9; transform-origin:center; transition:height 180ms ease-out, opacity 180ms ease-out; }
-      .bars span:nth-child(2) { height:58px; } .bars span:nth-child(3) { height:24px; } .bars span:nth-child(4) { height:44px; } .bars span:nth-child(5) { height:62px; }
-      .state-listening .orb-button::before, .state-speaking .orb-button::before, .state-paired .orb-button::before { opacity:1; transform:scale(1.08); }
-      .state-listening .bars span, .state-speaking .bars span, .state-reconnecting .bars span { animation:voiceBars 820ms ease-in-out infinite; }
-      .state-sending .orb-button::before, .state-waiting .orb-button::before { background:oklch(0.9 0.025 75); opacity:.95; }
-      .state-blocked .orb-button::before, .state-expired .orb-button::before, .state-ended .orb-button::before { background:oklch(0.88 0.045 28); opacity:.85; }
-      .state-blocked .bars span, .state-expired .bars span, .state-ended .bars span { background:var(--bad); }
-      @keyframes voiceBars { 0%, 100% { transform:scaleY(.55); opacity:.7; } 50% { transform:scaleY(1.15); opacity:1; } }
-      .status { text-align:center; max-width:560px; } .status strong { display:block; margin-bottom:4px; font-size:20px; letter-spacing:-.02em; } .status p { margin:0; color:var(--muted); font-size:15px; line-height:1.5; }
-      .under-actions { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
-      .secondary, .quiet { border:1px solid var(--line); border-radius:999px; background:var(--page); color:var(--ink); padding:8px 13px; font-size:13px; }
-      .quiet { color:var(--muted); } details { border-bottom:1px solid var(--line); padding:22px 0; } summary { cursor:pointer; color:var(--ink); font-weight:650; } .panel { padding-top:16px; }
-      textarea { width:100%; min-height:96px; resize:vertical; border:1px solid var(--line); border-radius:14px; background:var(--surface); color:var(--ink); padding:12px; line-height:1.5; }
-      .transcript { display:grid; gap:12px; margin-top:14px; max-height:360px; overflow:auto; } .turn { border-top:1px solid var(--line); padding-top:12px; } .turn strong { display:block; margin-bottom:3px; font-size:12px; color:var(--muted); } .turn p { margin:0; color:var(--ink); white-space:pre-wrap; }
-      .small { color:var(--muted); font-size:12px; line-height:1.45; }
-      @media (prefers-reduced-motion: reduce) { .bars span { animation:none !important; } .orb-button::before { transition:none; } }
-      @media (max-width:640px) { main { padding:32px 18px 140px; } .orb-button { width:170px; height:170px; } }
-    </style>
-  </head>
-  <body>
-    <main>
-      <nav class="top" aria-label="Session"><strong>Pipa Voice Session</strong></nav>
-      <header>
-        <p class="source-label">Hosted relay</p>
-        <h1>Talk to your agent from this browser.</h1>
-        <p class="subtitle">This page pairs with your local bridge over WSS. It sends final text turns only, then reads the bridge reply aloud.</p>
-      </header>
-      <section class="voice-stage state-waiting" id="voiceStage" aria-live="polite">
-        <button class="orb-button" id="startBtn" type="button" aria-label="Start listening" disabled><span class="bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span></button>
-        <div class="status"><strong id="sessionStatus">Connecting to relay...</strong><p id="sessionDetail">Waiting for the local bridge to pair.</p></div>
-        <div class="under-actions"><button class="secondary" id="testSpeakerBtn" type="button">Test speaker</button><button class="quiet" id="clearBtn" type="button">Clear transcript</button></div>
-      </section>
-      <details>
-        <summary>Text input if speech is unavailable</summary>
-        <div class="panel"><textarea id="textInput" placeholder="Type a turn. This still routes through the relay and local bridge."></textarea><p><button class="secondary" id="sendBtn" type="button" disabled>Send to bridge</button></p></div>
-      </details>
-      <details open><summary>Transcript</summary><div class="transcript" id="turns"></div></details>
-      <p class="small">Browser speech may use browser, OS, or vendor speech services. The relay forwards final text turns and replies without retaining message bodies by default. OpenCode local session history may persist final text turns according to local behavior.</p>
-    </main>
-    <script>
-      const params = new URLSearchParams(window.location.hash.slice(1));
-      const pathSession = window.location.pathname.match(/^\/s\/([^/]+)$/);
-      const sessionId = params.get("session") || (pathSession ? decodeURIComponent(pathSession[1]) : "");
-      const token = params.get("token");
-      const wsUrl = window.location.protocol === "https:" ? "wss://" + window.location.host + "/ws" : "ws://" + window.location.host + "/ws";
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const state = { ws:null, paired:false, busy:false, listening:false, recognition:null, finalTranscript:"", interimTranscript:"", turns:[], turnSeq:0 };
-      const $ = (id) => document.getElementById(id);
-      const els = { voiceStage:$("voiceStage"), sessionStatus:$("sessionStatus"), sessionDetail:$("sessionDetail"), startBtn:$("startBtn"), testSpeakerBtn:$("testSpeakerBtn"), clearBtn:$("clearBtn"), sendBtn:$("sendBtn"), textInput:$("textInput"), turns:$("turns") };
-      function escapeHtml(value) { return String(value).replace(/[&<>"]/g, (char) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;" })[char]); }
-      function render() { els.turns.innerHTML = state.turns.map((turn) => "<div class=\"turn\"><strong>" + escapeHtml(turn.role) + "</strong><p>" + escapeHtml(turn.text) + "</p></div>").join(""); els.turns.scrollTop = els.turns.scrollHeight; }
-      function addTurn(role, text) { state.turns.push({ role, text }); render(); }
-      function setState(name) { els.voiceStage.className = "voice-stage state-" + name; }
-      function setStatus(status, detail, name) { els.sessionStatus.textContent = status; els.sessionDetail.textContent = detail; if (name) setState(name); }
-      function setReady(ready) { els.startBtn.disabled = !ready; els.sendBtn.disabled = !ready; }
-      function send(message) { if (state.ws?.readyState === WebSocket.OPEN) state.ws.send(JSON.stringify(message)); }
-      function submitTurn(text) { const clean = text.trim(); if (!clean || !state.paired || state.busy) return; const turn_id = "browser-" + Date.now() + "-" + (++state.turnSeq); state.busy = true; setReady(false); addTurn("You", clean); addTurn("System", "Sending turn to local bridge..."); setStatus("Sending to OpenCode", "The local bridge is handling this turn.", "sending"); send({ type:"user_turn", turn_id, text:clean }); }
-      function speak(text) { if (!window.speechSynthesis) return; window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.rate = 0.95; utterance.onend = () => { if (state.paired && !state.busy) setStatus("Paired", "Press the orb for another voice turn.", "paired"); }; utterance.onerror = utterance.onend; window.speechSynthesis.speak(utterance); }
-      function currentTranscript() { return (state.finalTranscript + " " + state.interimTranscript).trim(); }
-      function stopListening(shouldSubmit) { const text = currentTranscript(); state.listening = false; state.finalTranscript = ""; state.interimTranscript = ""; try { state.recognition?.stop(); } catch (_error) {} state.recognition = null; if (shouldSubmit && text) submitTurn(text); else if (state.paired && !state.busy) setStatus("Paired", "Press the orb for another voice turn.", "paired"); }
-      function startVoiceTurn() { if (state.listening) return stopListening(true); if (!SpeechRecognition) { setStatus("Speech unavailable", "Use text input. The relay path is still available.", "blocked"); addTurn("System", "SpeechRecognition is unavailable. Use text input."); return; } const recognition = new SpeechRecognition(); recognition.continuous = true; recognition.interimResults = true; recognition.maxAlternatives = 1; state.recognition = recognition; state.finalTranscript = ""; state.interimTranscript = ""; recognition.onstart = () => { state.listening = true; setStatus("Listening", "Speak one complete turn, then pause or press again to send.", "listening"); }; recognition.onresult = (event) => { let interim = ""; for (let index = event.resultIndex; index < event.results.length; index += 1) { const transcript = event.results[index][0].transcript.trim(); if (!transcript) continue; if (event.results[index].isFinal) state.finalTranscript = (state.finalTranscript + " " + transcript).trim(); else interim = (interim + " " + transcript).trim(); } state.interimTranscript = interim; const heard = currentTranscript(); if (heard) setStatus("Listening", "Heard: " + heard, "listening"); }; recognition.onerror = (event) => { setStatus("Listening failed", "Use text input below. " + (event.error || ""), "blocked"); addTurn("System", "Speech recognition failed. Use text input to keep going."); }; recognition.onend = () => { if (state.listening) stopListening(true); }; recognition.start(); }
-      function connect() { if (!sessionId || !token) { setStatus("Expired", "This link is missing session credentials. Start a new session.", "expired"); return; } state.ws = new WebSocket(wsUrl, ["pipa-relay", "pipa-role.browser", "pipa-session." + sessionId, "pipa-token." + token]); state.ws.onopen = () => setStatus("Waiting for local bridge", "Keep the bridge command running on the machine with OpenCode.", "waiting"); state.ws.onmessage = (event) => { const message = JSON.parse(event.data); if (message.type === "status") { state.paired = message.state === "paired" || message.state === "active_turn"; if (state.paired && !state.busy) { setReady(true); setStatus(message.message || "Paired", "Press the orb, or use text input if speech is unavailable.", "paired"); } else if (message.state === "expired") { setReady(false); setStatus("Expired", "Start a new session.", "expired"); } else if (message.state === "ended") { setReady(false); setStatus("Ended", "This session has ended.", "ended"); } else setStatus(message.message || "Waiting", "Waiting for the other side of the relay.", "waiting"); } if (message.type === "assistant_reply") { state.busy = false; setReady(true); addTurn("OpenCode", message.text); setStatus("Speaking", "Reading the reply aloud now.", "speaking"); speak(message.text); } if (message.type === "error") { state.busy = false; setReady(state.paired); addTurn("System", "Blocked: " + message.message); setStatus("Blocked", message.message, "blocked"); } if (message.type === "end") { setReady(false); setStatus("Ended", message.message || "This session has ended.", "ended"); } }; state.ws.onclose = () => { state.paired = false; setReady(false); setStatus("Reconnecting", "The relay connection closed. Refresh before sending more turns.", "reconnecting"); }; }
-      els.startBtn.addEventListener("click", startVoiceTurn); els.testSpeakerBtn.addEventListener("click", () => speak("Speaker test. If you can hear this, hosted Pipa voice output is working.")); els.clearBtn.addEventListener("click", () => { state.turns = []; render(); }); els.sendBtn.addEventListener("click", () => { submitTurn(els.textInput.value); els.textInput.value = ""; }); connect();
-    </script>
-  </body>
-</html>`;
-}
-
 const server = createServer((req, res) => {
   if (req.method === "GET" && req.url === "/healthz") {
     sendJson(res, 200, { ok: true, disabled, active_sessions: store.sessions.size });
     return;
   }
-  if (req.method === "GET" && (req.url === "/" || req.url === "/session" || req.url === "/index.html" || /^\/s\/[^/]+$/.test(req.url || ""))) {
-    sendHtml(res, hostedHtml());
+  if (req.method === "GET" && (req.url === "/" || req.url === "/session" || req.url === "/index.html")) {
+    sendHtml(res, devIndexHtml());
+    return;
+  }
+  const sessionPage = String(req.url || "").match(/^\/s\/([^/#?]+)/);
+  if (req.method === "GET" && sessionPage) {
+    sendHtml(res, hostedSessionHtml(decodeURIComponent(sessionPage[1])));
     return;
   }
   if (req.method === "POST" && req.url === "/api/sessions") {

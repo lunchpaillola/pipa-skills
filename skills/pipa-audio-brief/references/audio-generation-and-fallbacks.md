@@ -31,7 +31,7 @@ Browser speech quality guidance:
 - Avoid Markdown, bullets, table syntax, raw URLs, code fences, dense labels, and punctuation-heavy phrases in speakable text.
 - Prefer a compact two-minute orientation over long passive narration; browser voices fatigue listeners faster than polished generated audio.
 - Let the page UI create value through responsiveness, sentence highlighting, pause/resume, restart, skip controls, and a Settings popover for speed and voice selection.
-- Prefer Daniel (`en-GB`) when available because it sounds best in current testing. Otherwise prefer English Chrome/Google voices, then natural or enhanced English voices, then the browser default.
+- Do not preselect a named browser voice. Leave SpeechSynthesis on the browser default unless the listener chooses another voice.
 
 ## Optional Preset: Managed Piper
 

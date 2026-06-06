@@ -187,33 +187,27 @@ def browser_speech_script(segments: list[str]) -> str:
     progressFill.style.width = index >= 0 ? `${{Math.min(100, ((index + 1) / segments.length) * 100)}}%` : \"0%\";
   }}
 
-  function voiceScore(voice) {{
-    const name = voice.name.toLowerCase();
-    const lang = (voice.lang || \"\").toLowerCase();
-    let score = lang.startsWith(\"en\") ? 10 : 0;
-    if (name.includes(\"daniel\") && lang === \"en-gb\") score += 30;
-    if (name.includes(\"google\") || name.includes(\"chrome\")) score += 8;
-    if (name.includes(\"natural\") || name.includes(\"enhanced\") || name.includes(\"premium\")) score += 5;
-    if (name.includes(\"samantha\") || name.includes(\"victoria\")) score += 2;
-    if (voice.default) score += 1;
-    return score;
-  }}
-
   function loadVoices() {{
-    voices = window.speechSynthesis.getVoices().sort((a, b) => voiceScore(b) - voiceScore(a));
+    const selectedVoice = voiceSelect.value;
+    voices = window.speechSynthesis.getVoices();
     voiceSelect.innerHTML = \"\";
-    voices.forEach((voice, index) => {{
+    const defaultOption = document.createElement(\"option\");
+    defaultOption.value = \"\";
+    defaultOption.textContent = \"Browser default\";
+    voiceSelect.appendChild(defaultOption);
+    voices.forEach((voice) => {{
       const option = document.createElement(\"option\");
       option.value = voice.name;
       option.textContent = `${{voice.name}} (${{voice.lang || \"unknown\"}})`;
       voiceSelect.appendChild(option);
-      if (index === 0) voiceSelect.value = voice.name;
     }});
+    voiceSelect.value = voices.some((voice) => voice.name === selectedVoice) ? selectedVoice : \"\";
     voiceSelect.disabled = voices.length === 0;
   }}
 
   function selectVoice() {{
-    return voices.find((voice) => voice.name === voiceSelect.value) || voices[0] || null;
+    if (!voiceSelect.value) return null;
+    return voices.find((voice) => voice.name === voiceSelect.value) || null;
   }}
 
   function selectedRate() {{
