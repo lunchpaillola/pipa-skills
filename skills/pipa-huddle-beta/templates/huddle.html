@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Agent Huddle</title>
+    <title>Pipa Huddle</title>
     <style>
       :root {
         color-scheme: light;
@@ -69,20 +69,11 @@
         color: var(--ink);
       }
       .mark {
-        width: 24px;
-        height: 24px;
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 2px;
-        align-items: end;
-        color: var(--accent);
+        width: 28px;
+        height: 28px;
+        display: block;
+        object-fit: contain;
       }
-      .mark span { display: block; width: 3px; border-radius: 999px; background: currentColor; }
-      .mark span:nth-child(1) { height: 9px; opacity: .7; }
-      .mark span:nth-child(2) { height: 16px; }
-      .mark span:nth-child(3) { height: 22px; }
-      .mark span:nth-child(4) { height: 14px; }
-      .mark span:nth-child(5) { height: 10px; opacity: .7; }
 
       .shell {
         width: min(720px, calc(100vw - 32px));
@@ -543,7 +534,7 @@
   <body>
     <div class="app">
       <header class="topbar">
-        <div class="brand"><span class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span> Agent Huddle</div>
+        <div class="brand"><img class="mark" src="/pipa-mark.png" alt="" aria-hidden="true" /> Pipa Huddle</div>
       </header>
 
       <main class="shell">
@@ -765,7 +756,7 @@
         if (!state.bridgeReady && state.ended) {
           setVariant("orb");
           setState("disconnected");
-          setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill", { kind: "interim" });
+          setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill", { kind: "interim" });
           return;
         }
         state.ended = false;
@@ -784,7 +775,7 @@
             state.ended = true;
             setVariant("orb");
             setState("disconnected");
-            setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill", { kind: "interim" });
+            setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill", { kind: "interim" });
           }
         } catch (_error) {
           state.bridgeReady = false;
@@ -841,7 +832,7 @@
           state.busy = false;
           if (state.ended) {
             setState("disconnected");
-            setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill", { kind: "interim" });
+            setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill", { kind: "interim" });
             return;
           }
           setState("ready");
@@ -870,7 +861,7 @@
       function startVoiceTurn(options = {}) {
         if (state.ended) {
           setState("disconnected");
-          setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill", { kind: "interim" });
+          setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill", { kind: "interim" });
           return;
         }
         if (state.muted) {
@@ -1089,7 +1080,7 @@
         document.querySelectorAll("[data-voice]").forEach((voiceBtn) => voiceBtn.classList.remove("is-active"));
         setVariant("orb");
         setState("disconnected");
-        setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill", { kind: "interim" });
+        setLiveTranscript("The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill", { kind: "interim" });
         renderTranscript();
       }));
 

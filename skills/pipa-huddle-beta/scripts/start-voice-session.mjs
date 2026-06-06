@@ -13,9 +13,13 @@ const port = Number(process.env.PIPA_VOICE_SESSION_PORT || 8787);
 const host = process.env.PIPA_VOICE_SESSION_HOST || "127.0.0.1";
 const projectDir = process.env.PIPA_VOICE_SESSION_DIR || process.cwd();
 const opencodeBin = process.env.OPENCODE_BIN || "opencode";
+const opencodeModel = readFlag("--model") || process.env.PIPA_VOICE_SESSION_MODEL || process.env.OPENCODE_MODEL || "";
 const scriptPath = fileURLToPath(import.meta.url);
 const scriptDir = path.dirname(scriptPath);
-let sessionId = process.env.PIPA_VOICE_SESSION_OPENCODE_SESSION || "";
+let sessionId = readFlag("--huddle-session") || readFlag("--opencode-session") || process.env.PIPA_VOICE_SESSION_HUDDLE_SESSION || process.env.PIPA_VOICE_SESSION_OPENCODE_SESSION || "";
+const huddleContextFile = readFlag("--context-file") || process.env.PIPA_VOICE_SESSION_CONTEXT_FILE || "";
+const inlineHuddleContext = process.env.PIPA_VOICE_SESSION_CONTEXT || "";
+const allowLatestSessionFallback = process.argv.includes("--allow-latest-session") || /^(1|true|yes)$/i.test(process.env.PIPA_VOICE_SESSION_ALLOW_LATEST_SESSION || "");
 const publicMode = process.env.PIPA_VOICE_SESSION_PUBLIC || readFlag("--public") || (process.argv.includes("--ngrok") ? "ngrok" : "");
 let relayUrl = process.env.PIPA_VOICE_RELAY_URL || readFlag("--relay-url");
 let relaySessionId = process.env.PIPA_VOICE_RELAY_SESSION_ID || readFlag("--relay-session-id");
@@ -29,6 +33,7 @@ const restrictedArgsRaw = process.env.PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARG
 const hostedRelayMode = hostedRequested || Boolean(relayUrl || relaySessionId || relayBridgeToken);
 const runtimeDir = process.env.PIPA_VOICE_SESSION_RUNTIME_DIR || path.join(projectDir, ".pipa", "voice-session");
 const templatePath = process.env.PIPA_VOICE_SESSION_TEMPLATE || path.join(scriptDir, "..", "templates", "huddle.html");
+const assetDir = path.join(scriptDir, "..", "assets");
 const openCodeTurnTimeoutMs = Number(process.env.PIPA_VOICE_SESSION_TURN_TIMEOUT_SECONDS || 300) * 1000;
 let ngrokProcess = null;
 let localSessionEnded = false;
@@ -44,9 +49,28 @@ function voiceSessionHtml() {
 }
 
 function soundDesignAsset(url) {
-  if (url === "/sound-design-entering-chat.mp3") return path.join(projectDir, "sound-design-entering-chat.mp3");
-  if (url === "/sound-design-thinking.mp3") return path.join(projectDir, "sound-design-thinking.mp3");
+  if (url === "/sound-design-entering-chat.mp3") return path.join(assetDir, "sound-design-entering-chat.mp3");
+  if (url === "/sound-design-thinking.mp3") return path.join(assetDir, "sound-design-thinking.mp3");
   return "";
+}
+
+function imageAsset(url) {
+  if (url === "/pipa-mark.png") return path.join(assetDir, "pipa-mark.png");
+  return "";
+}
+
+function huddleContext() {
+  if (inlineHuddleContext.trim()) return inlineHuddleContext.trim().slice(0, 20_000);
+  if (!huddleContextFile) return "";
+  return readFileSync(path.resolve(projectDir, huddleContextFile), "utf8").trim().slice(0, 20_000);
+}
+
+function normalizeContextFileFlag(args) {
+  const index = args.indexOf("--context-file");
+  if (index === -1 || !args[index + 1]) return args;
+  const normalized = [...args];
+  normalized[index + 1] = path.resolve(projectDir, normalized[index + 1]);
+  return normalized;
 }
 
 function emitJson(event, fields = {}) {
@@ -334,7 +358,7 @@ const html = String.raw`<!doctype html>
           addTurn("System", "Bridge ready. Project: " + body.projectDir + ". Voice output: browser speech synthesis at 1.15x for low-memory sessions.");
         } catch (_error) {
           setStatus("Bridge unavailable", "Start the skill script from the repository root, then refresh this page.", "blocked");
-          addTurn("System", "Bridge unavailable. Start with node skills/pipa-voice-session/scripts/start-voice-session.mjs.");
+          addTurn("System", "Bridge unavailable. Start with node skills/pipa-huddle-beta/scripts/start-voice-session.mjs.");
         }
       }
 
@@ -405,8 +429,11 @@ function captureCommand(command, args, timeoutMs = 15_000) {
   });
 }
 
-async function resolveOpenCodeSessionId() {
+async function resolveDebugOpenCodeSessionId() {
   if (sessionId) return sessionId;
+  if (!allowLatestSessionFallback) {
+    return "";
+  }
   const output = await captureCommand(opencodeBin, ["session", "list", "--format", "json", "--max-count", "1"]);
   const sessions = JSON.parse(output || "[]");
   const latest = Array.isArray(sessions) ? sessions[0] : null;
@@ -416,8 +443,35 @@ async function resolveOpenCodeSessionId() {
   return sessionId;
 }
 
+function parseOpenCodeJsonOutput(stdout) {
+  const text = [];
+  let parsedSessionId = "";
+  let parsedError = "";
+  for (const line of stdout.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    try {
+      const event = JSON.parse(trimmed);
+      if (typeof event.sessionID === "string" && event.sessionID) parsedSessionId ||= event.sessionID;
+      if (typeof event.part?.sessionID === "string" && event.part.sessionID) parsedSessionId ||= event.part.sessionID;
+      if (event.type === "error") parsedError ||= event.error?.data?.message || event.error?.message || event.error?.name || "OpenCode emitted an error";
+      if (event.type === "text" && typeof event.part?.text === "string") text.push(event.part.text);
+      else if (typeof event.text === "string") text.push(event.text);
+    } catch (_error) {
+      // Non-JSON lines are ignored because `opencode run --format json` emits newline-delimited events.
+    }
+  }
+  return { sessionId: parsedSessionId, text: text.join("").trim(), error: parsedError };
+}
+
 function voiceTurnPrompt(message) {
   return `Voice huddle response rules: answer conversationally in 1-2 short sentences. Avoid bullets, numbered lists, headings, markdown, and long explanations unless the user explicitly asks for detail.\n\nUser said: ${message}`;
+}
+
+function firstHuddleTurnPrompt(message) {
+  const context = huddleContext();
+  if (!context) return voiceTurnPrompt(message);
+  return `You are starting a new Pipa Huddle voice session. Use the context below as background from the thread that launched the huddle. Treat it as a handoff, not as new user speech. Keep spoken replies conversational: 1-2 short sentences, no bullets, numbered lists, headings, markdown, or long explanations unless the user explicitly asks for detail.\n\nLaunching thread context:\n${context}\n\nUser said: ${message}`;
 }
 
 function splitArgs(value) {
@@ -454,10 +508,12 @@ function ensureHostedSafetyBoundary() {
 
 function runOpenCodeTurn(message, extraArgs = []) {
   return new Promise((resolve, reject) => {
-    const args = ["run", message, "--dir", projectDir];
+    const startingNewHuddleSession = !sessionId;
+    const args = ["run", message, "--dir", projectDir, "--format", "json"];
+    if (opencodeModel) args.push("--model", opencodeModel);
     args.push(...extraArgs);
     if (sessionId) args.push("--session", sessionId);
-    else args.push("--continue");
+    else args.push("--title", `Pipa Huddle ${new Date().toISOString().slice(0, 16).replace("T", " ")}`);
 
     const child = spawn(opencodeBin, args, { cwd: projectDir, env: process.env, stdio: ["ignore", "pipe", "pipe"] });
     let stdout = "";
@@ -472,14 +528,43 @@ function runOpenCodeTurn(message, extraArgs = []) {
     child.on("error", (error) => { clearTimeout(timeout); reject(error); });
     child.on("close", (code) => {
       clearTimeout(timeout);
-      const text = stripAnsi(stdout);
+      const parsed = parseOpenCodeJsonOutput(stdout);
+      if (code === 0 && parsed.sessionId && !sessionId) {
+        sessionId = parsed.sessionId;
+        process.env.PIPA_VOICE_SESSION_HUDDLE_SESSION = sessionId;
+        process.env.PIPA_VOICE_SESSION_OPENCODE_SESSION = sessionId;
+        emitJson("opencode_huddle_session_created", { ok: true, opencode_session_id: sessionId });
+      }
+      if (parsed.error) {
+        reject(new Error(parsed.error));
+        return;
+      }
+      const text = parsed.text || stripAnsi(stdout);
       if (code === 0 && text) resolve(text);
-      else reject(new Error(stripAnsi(stderr) || text || `OpenCode exited with code ${code}`));
+      else reject(new Error(stripAnsi(stderr) || text || `OpenCode exited with code ${code}${startingNewHuddleSession ? " while creating the huddle session" : ""}`));
     });
   });
 }
 
 async function startNgrokTunnel() {
+  let resolveTunnelUrl;
+  let rejectTunnelUrl;
+  let tunnelUrlSettled = false;
+  const tunnelUrl = new Promise((resolve, reject) => {
+    resolveTunnelUrl = (url) => {
+      if (tunnelUrlSettled) return;
+      tunnelUrlSettled = true;
+      clearTimeout(timeout);
+      resolve(url);
+    };
+    rejectTunnelUrl = (error) => {
+      if (tunnelUrlSettled) return;
+      tunnelUrlSettled = true;
+      reject(error);
+    };
+    const timeout = setTimeout(() => rejectTunnelUrl(new Error("ngrok started, but no HTTPS tunnel URL appeared within 15 seconds")), 15_000);
+  });
+
   ngrokProcess = spawn("ngrok", ["http", String(port), "--log", "stdout"], {
     cwd: projectDir,
     env: process.env,
@@ -488,6 +573,8 @@ async function startNgrokTunnel() {
 
   ngrokProcess.stdout.on("data", (chunk) => {
     const line = chunk.toString().trim();
+    const publicUrl = line.match(/url=(https:\/\/\S+)/)?.[1];
+    if (publicUrl) resolveTunnelUrl(publicUrl);
     if (line) console.log(`[ngrok] ${line}`);
   });
   ngrokProcess.stderr.on("data", (chunk) => {
@@ -502,7 +589,7 @@ async function startNgrokTunnel() {
     if (code !== null && code !== 0) console.error(`ngrok exited with code ${code}`);
   });
 
-  const publicUrl = await waitForNgrokUrl();
+  const publicUrl = await tunnelUrl;
   console.log(`Public voice session: ${publicUrl}`);
   console.log("Open this HTTPS URL on another device for browser mic support.");
 }
@@ -527,7 +614,7 @@ async function createHostedRelaySession() {
 }
 
 function childArgsForDaemon() {
-  const args = process.argv.slice(1).filter((arg) => !["--daemon", "--print-url-json"].includes(arg));
+  const args = normalizeContextFileFlag(process.argv.slice(1).filter((arg) => !["--daemon", "--print-url-json"].includes(arg)));
   if (!args.includes(scriptPath)) args.unshift(scriptPath);
   return args;
 }
@@ -553,7 +640,7 @@ async function startDaemonBridge() {
   const out = openSync(logPath, "a");
   const err = openSync(logPath, "a");
   const childEnv = { ...process.env, PIPA_VOICE_SESSION_DAEMON: "" };
-  if (sessionId) childEnv.PIPA_VOICE_SESSION_OPENCODE_SESSION = sessionId;
+  if (sessionId) childEnv.PIPA_VOICE_SESSION_HUDDLE_SESSION = sessionId;
   let browserUrl = `http://${host}:${port}`;
   let mode = "local";
   let sessionPackage = null;
@@ -587,6 +674,9 @@ async function startDaemonBridge() {
     mode,
     pid: child.pid,
     opencode_session_id: sessionId || null,
+    opencode_model: opencodeModel || null,
+    huddle_session_state: sessionId ? "existing_huddle_session" : "creates_on_first_turn",
+    huddle_context: inlineHuddleContext || huddleContextFile ? "provided" : "none",
     pid_path: path.join(runtimeDir, "bridge.pid"),
     log_path: logPath,
     metadata_path: path.join(runtimeDir, "session.json"),
@@ -617,7 +707,7 @@ async function startHostedRelayBridge() {
     } catch (error) {
       console.error(`Hosted voice session blocked: ${error.message}`);
       console.error(`Relay: ${relayBaseUrl}`);
-      console.error("Local mode still works with: node skills/pipa-voice-session/scripts/start-voice-session.mjs");
+      console.error("Local mode still works with: node skills/pipa-huddle-beta/scripts/start-voice-session.mjs");
       process.exitCode = 1;
       return;
     }
@@ -642,7 +732,7 @@ async function startHostedRelayBridge() {
 
   console.log("Pipa hosted relay bridge");
   console.log(`Project directory: ${projectDir}`);
-  console.log(sessionId ? `OpenCode session pinned: ${sessionId}` : "OpenCode session: --continue fallback");
+  console.log(sessionId ? `OpenCode huddle session: ${sessionId}` : "OpenCode huddle session: creates on first turn");
   console.log(`Hosted relay: ${relayUrl}`);
   console.log(extraArgs.length ? `Hosted OpenCode args: ${extraArgs.join(" ")}` : "Hosted OpenCode args: none");
   if (sessionPackage?.browser_url) console.log(`Browser voice session: ${sessionPackage.browser_url}`);
@@ -653,6 +743,8 @@ async function startHostedRelayBridge() {
     mode: "hosted",
     pid: process.pid,
     opencode_session_id: sessionId || null,
+    opencode_model: opencodeModel || null,
+    huddle_context: inlineHuddleContext || huddleContextFile ? "provided" : "none",
     browser_url: sessionPackage?.browser_url || null,
     relay_ws_url: relayUrl,
     relay_state: "connecting",
@@ -665,14 +757,16 @@ async function startHostedRelayBridge() {
   ws.on("open", () => {
     emitJson("voice_session_bridge_connected", {
       ok: true,
-      mode: "hosted",
-      pid: process.pid,
-      opencode_session_id: sessionId || null,
-      browser_url: sessionPackage?.browser_url || null,
+    mode: "hosted",
+    pid: process.pid,
+    opencode_session_id: sessionId || null,
+    opencode_model: opencodeModel || null,
+    huddle_context: inlineHuddleContext || huddleContextFile ? "provided" : "none",
+    browser_url: sessionPackage?.browser_url || null,
       relay_ws_url: relayUrl,
       relay_state: "bridge_waiting_until_browser_joins"
     });
-    ws.send(JSON.stringify({ type: "status", message: "Local bridge connected. Hosted turns will use normal OpenCode session behavior." }));
+    ws.send(JSON.stringify({ type: "status", message: "Local bridge connected. The first hosted turn will create a dedicated Pipa Huddle session." }));
   });
 
   ws.on("message", async (data, isBinary) => {
@@ -709,7 +803,7 @@ async function startHostedRelayBridge() {
     seenTurns.add(message.turn_id);
     ws.send(JSON.stringify({ type: "status", message: "Running OpenCode turn." }));
     try {
-      const reply = await runOpenCodeTurn(voiceTurnPrompt(message.text), extraArgs);
+      const reply = await runOpenCodeTurn(sessionId ? voiceTurnPrompt(message.text) : firstHuddleTurnPrompt(message.text), extraArgs);
       ws.send(JSON.stringify({ type: "assistant_reply", turn_id: message.turn_id, text: reply }));
     } catch (error) {
       ws.send(JSON.stringify({ type: "error", message: error.message }));
@@ -722,24 +816,6 @@ async function startHostedRelayBridge() {
   ws.on("error", (error) => {
     console.error(`Hosted relay bridge error: ${error.message}`);
   });
-}
-
-async function waitForNgrokUrl() {
-  const startedAt = Date.now();
-  while (Date.now() - startedAt < 15_000) {
-    try {
-      const response = await fetch("http://127.0.0.1:4040/api/tunnels");
-      if (response.ok) {
-        const body = await response.json();
-        const tunnel = body.tunnels?.find((item) => item.public_url?.startsWith("https://"));
-        if (tunnel) return tunnel.public_url;
-      }
-    } catch (_error) {
-      // ngrok's local API is not ready yet.
-    }
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  }
-  throw new Error("ngrok started, but no HTTPS tunnel URL appeared within 15 seconds");
 }
 
 function shutdown() {
@@ -769,9 +845,16 @@ const server = createServer(async (req, res) => {
       return;
     }
 
+    const imagePath = req.method === "GET" ? imageAsset(req.url) : "";
+    if (imagePath) {
+      res.writeHead(200, { "Content-Type": "image/png", "Cache-Control": "no-store" });
+      res.end(readFileSync(imagePath));
+      return;
+    }
+
     if (req.method === "GET" && req.url === "/api/status") {
       if (localSessionEnded) {
-        sendJson(res, 410, { ok: false, state: "ended", error: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill" });
+        sendJson(res, 410, { ok: false, state: "ended", error: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill" });
         return;
       }
       sendJson(res, 200, {
@@ -779,7 +862,10 @@ const server = createServer(async (req, res) => {
         mode: "local-opencode-bridge",
         projectDir,
         opencodeBin,
+        opencodeModel: opencodeModel || null,
         sessionId: sessionId || null,
+        huddleSessionState: sessionId ? "existing_huddle_session" : "creates_on_first_turn",
+        huddleContext: inlineHuddleContext || huddleContextFile ? "provided" : "none",
         tts: { mode: "browser", rate: 1 }
       });
       return;
@@ -787,7 +873,7 @@ const server = createServer(async (req, res) => {
 
     if (req.method === "POST" && req.url === "/api/turn") {
       if (localSessionEnded) {
-        sendJson(res, 410, { ok: false, state: "ended", error: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill" });
+        sendJson(res, 410, { ok: false, state: "ended", error: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill" });
         return;
       }
       const body = JSON.parse((await readBody(req)) || "{}");
@@ -796,14 +882,14 @@ const server = createServer(async (req, res) => {
         sendJson(res, 400, { ok: false, error: "Missing message" });
         return;
       }
-      const reply = await runOpenCodeTurn(voiceTurnPrompt(message));
+      const reply = await runOpenCodeTurn(sessionId ? voiceTurnPrompt(message) : firstHuddleTurnPrompt(message));
       sendJson(res, 200, { ok: true, reply });
       return;
     }
 
     if (req.method === "POST" && req.url === "/api/handoff") {
       if (localSessionEnded) {
-        sendJson(res, 410, { ok: false, state: "ended", error: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill" });
+        sendJson(res, 410, { ok: false, state: "ended", error: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill" });
         return;
       }
       const body = JSON.parse((await readBody(req)) || "{}");
@@ -824,7 +910,7 @@ const server = createServer(async (req, res) => {
 
     if (req.method === "POST" && req.url === "/api/end") {
       localSessionEnded = true;
-      sendJson(res, 200, { ok: true, state: "ended", message: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill" });
+      sendJson(res, 200, { ok: true, state: "ended", message: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill" });
       return;
     }
 
@@ -836,11 +922,14 @@ const server = createServer(async (req, res) => {
 
 async function main() {
   try {
-    const pinnedSessionId = await resolveOpenCodeSessionId();
-    if (pinnedSessionId) emitJson("opencode_session_pinned", { ok: true, opencode_session_id: pinnedSessionId });
+    const debugSessionId = await resolveDebugOpenCodeSessionId();
+    if (debugSessionId) emitJson("opencode_huddle_session_ready", { ok: true, opencode_session_id: debugSessionId, source: allowLatestSessionFallback ? "latest_session_debug_fallback" : "explicit" });
+    else emitJson("opencode_huddle_session_pending", { ok: true, opencode_session_id: null, source: "created_on_first_turn" });
   } catch (error) {
-    console.error(`OpenCode session pinning warning: ${error.message}`);
-    emitJson("opencode_session_pin_failed", { ok: false, error: error.message });
+    console.error(`OpenCode huddle session setup blocked: ${error.message}`);
+    emitJson("opencode_huddle_session_failed", { ok: false, error: error.message });
+    process.exitCode = 1;
+    return;
   }
 
   if (daemonRequested) {
@@ -857,8 +946,8 @@ async function main() {
     const browserUrl = `http://${host}:${port}`;
     console.log(`Pipa voice session: ${browserUrl}`);
     console.log(`Project directory: ${projectDir}`);
-    console.log(sessionId ? `OpenCode session pinned: ${sessionId}` : "OpenCode session: --continue fallback");
-    emitJson("voice_session_ready", { ok: true, mode: "local", pid: process.pid, browser_url: browserUrl, relay_state: "local_ready", opencode_session_id: sessionId || null });
+    console.log(sessionId ? `OpenCode huddle session: ${sessionId}` : "OpenCode huddle session: creates on first turn");
+    emitJson("voice_session_ready", { ok: true, mode: "local", pid: process.pid, browser_url: browserUrl, relay_state: "local_ready", opencode_session_id: sessionId || null, huddle_session_state: sessionId ? "existing_huddle_session" : "creates_on_first_turn" });
     if (publicMode === "ngrok") {
       try {
         await startNgrokTunnel();

@@ -134,6 +134,6 @@ That means the skill should be usable by an agent that already has access to Lin
 
 ## Research Follow-Up
 
-OpenCode-first feasibility research is saved at `docs/plans/2026-06-02-research-pipa-voice-session-opencode-bridge.md`.
+OpenCode-first feasibility research is saved at `docs/plans/2026-06-02-research-pipa-huddle-beta-opencode-bridge.md`.
 
-The key research conclusion: OpenCode already exposes server/session/message/event APIs that make a first `pipa-voice-session` adapter plausible. Proof SDK is the architectural analogy: one shared session surface plus adapter/bridge contracts for agents.
+The key research conclusion: OpenCode already exposes server/session/message/event APIs that make a first `pipa-huddle-beta` adapter plausible. Proof SDK is the architectural analogy: one shared session surface plus adapter/bridge contracts for agents.

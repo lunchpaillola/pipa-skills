@@ -3,20 +3,20 @@ title: "feat: Add Pipa voice session hosted relay"
 type: feat
 status: completed
 date: 2026-06-03
-origin: docs/plans/2026-06-03-001-feat-pipa-voice-session-plan.md
+origin: docs/plans/2026-06-03-001-feat-pipa-huddle-beta-plan.md
 ---
 
 # feat: Add Pipa Voice Session Hosted Relay
 
 ## Summary
 
-Add a hosted relay path for `pipa-voice-session` so users can enter a voice session with an agent from anywhere, including sandboxed development environments where localhost is not the user’s normal workspace. The actual voice loop already works through local and ngrok testing; this plan preserves that logic and puts a stable hosted HTTPS/WSS relay in front of it. Browser voice turns still route to the user's active OpenCode bridge, replies come back to the browser, raw audio/transcript are not retained by the relay, and the voice session remains a conversational planning/work-session layer rather than realtime voice coding or spoken permission approval.
+Add a hosted relay path for `pipa-huddle-beta` so users can enter a voice session with an agent from anywhere, including sandboxed development environments where localhost is not the user’s normal workspace. The actual voice loop already works through local and ngrok testing; this plan preserves that logic and puts a stable hosted HTTPS/WSS relay in front of it. Browser voice turns still route to the user's active OpenCode bridge, replies come back to the browser, raw audio/transcript are not retained by the relay, and the voice session remains a conversational planning/work-session layer rather than realtime voice coding or spoken permission approval.
 
 ---
 
 ## Problem Frame
 
-The current `pipa-voice-session` implementation works: local testing and ngrok testing both prove that the browser voice loop, OpenCode bridge, and spoken replies are the right core shape. The gap is access. The user often works from sandboxed environments rather than a local development machine, so they need an easy hosted link that can enter a voice session with the active agent from anywhere. Browser microphone and speech APIs also require localhost or HTTPS, so plain HTTP sandbox/LAN links can load the page while still blocking voice capture.
+The current `pipa-huddle-beta` implementation works: local testing and ngrok testing both prove that the browser voice loop, OpenCode bridge, and spoken replies are the right core shape. The gap is access. The user often works from sandboxed environments rather than a local development machine, so they need an easy hosted link that can enter a voice session with the active agent from anywhere. Browser microphone and speech APIs also require localhost or HTTPS, so plain HTTP sandbox/LAN links can load the page while still blocking voice capture.
 
 A hosted relay solves the practical access problem: open a stable HTTPS voice page, connect the active bridge outbound, and keep the already-working turn loop intact. It also removes localhost as the trust boundary, so anyone with a valid browser link could send turns toward an agent unless pairing, session lifecycle, message validation, and safety modes are explicit.
 
@@ -45,7 +45,7 @@ This plan adds the hosted relay as a transport layer around the existing local b
 - Hosted relay is not realtime voice coding, live OpenCode event streaming, or spoken permission approval.
 - Hosted relay does not persist raw audio/transcript/message bodies by default.
 - Hosted relay does not add user accounts, billing, dashboards, organization membership, or a full backend product surface in this repo.
-- Hosted relay does not make `pipa-audio-brief` depend on `pipa-voice-session`.
+- Hosted relay does not make `pipa-audio-brief` depend on `pipa-huddle-beta`.
 - Hosted relay does not promise browser STT is on-device; it must disclose browser/vendor speech behavior.
 
 ### Deferred to Follow-Up Work
@@ -62,19 +62,19 @@ This plan adds the hosted relay as a transport layer around the existing local b
 
 ### Relevant Code and Patterns
 
-- `skills/pipa-voice-session/scripts/start-voice-session.mjs` is the current local bridge and UI. It already serves the browser page, captures speech, calls `opencode run`, speaks replies, and supports `--public ngrok`.
-- `skills/pipa-voice-session/references/transport-prototype.md` defines the current V1 transport contract, LAN warning, ngrok mode, and non-goals.
-- `skills/pipa-voice-session/references/privacy-and-retention.md` defines required labels and the transient raw audio/transcript default.
-- `skills/pipa-voice-session/references/session-contract.md` defines the product boundary: voice session as an interaction layer, not a separate agent brain or realtime coding runtime.
+- `skills/pipa-huddle-beta/scripts/start-voice-session.mjs` is the current local bridge and UI. It already serves the browser page, captures speech, calls `opencode run`, speaks replies, and supports `--public ngrok`.
+- `skills/pipa-huddle-beta/references/transport-prototype.md` defines the current V1 transport contract, LAN warning, ngrok mode, and non-goals.
+- `skills/pipa-huddle-beta/references/privacy-and-retention.md` defines required labels and the transient raw audio/transcript default.
+- `skills/pipa-huddle-beta/references/session-contract.md` defines the product boundary: voice session as an interaction layer, not a separate agent brain or realtime coding runtime.
 - `skills/pipa-audio-brief/references/here-now-publishing.md` provides the closest existing pattern for precise hosted/public link wording: return one URL, label visibility/expiry honestly, and avoid calling unlisted public links private.
 - `scripts/validate_skill_evals.rb` validates skill eval fixture structure and should cover any new eval cases added for hosted relay behavior.
 
 ### Institutional Learnings
 
 - There is no `docs/solutions/` directory in this repo.
-- `docs/plans/2026-06-03-001-feat-pipa-voice-session-plan.md` keeps realtime OpenCode tool streaming, permission mapping, and execution narration deferred; this hosted relay plan should preserve that boundary.
-- `docs/plans/2026-06-02-feat-pipa-voice-session-shaping.md` frames the product as a voice work session, not a transport-first video or meeting product.
-- `prototypes/pipa-voice-session/NOTES.md` reinforces the LAN/public exposure guardrail: default to localhost and require tokenized/unguessable access before sharing.
+- `docs/plans/2026-06-03-001-feat-pipa-huddle-beta-plan.md` keeps realtime OpenCode tool streaming, permission mapping, and execution narration deferred; this hosted relay plan should preserve that boundary.
+- `docs/plans/2026-06-02-feat-pipa-huddle-beta-shaping.md` frames the product as a voice work session, not a transport-first video or meeting product.
+- `prototypes/pipa-huddle-beta/NOTES.md` reinforces the LAN/public exposure guardrail: default to localhost and require tokenized/unguessable access before sharing.
 
 ### External References
 
@@ -96,7 +96,7 @@ This plan adds the hosted relay as a transport layer around the existing local b
 - Make hosted sessions planning/safe-mode by default. The local bridge must use a mechanical no-tool/read-only/planning-only OpenCode restriction if available; if not, hosted relay mode must fail closed instead of sending remote browser turns into normal `opencode run`.
 - Keep the relay incapable of command expansion. It routes only known message types and never accepts generic `exec`, RPC, shell, or OpenCode control messages.
 - Log lifecycle/security metadata only. Do not log token values, transcript/message bodies, local paths, or raw audio references.
-- Keep implementation skill-local for the prototype: add small scripts and reference docs under `skills/pipa-voice-session/`. Production hosting can later move to a dedicated service repo if account/storage/ops needs grow.
+- Keep implementation skill-local for the prototype: add small scripts and reference docs under `skills/pipa-huddle-beta/`. Production hosting can later move to a dedicated service repo if account/storage/ops needs grow.
 
 ---
 
@@ -119,7 +119,7 @@ This plan adds the hosted relay as a transport layer around the existing local b
 ## Output Structure
 
 ```text
-skills/pipa-voice-session/
+skills/pipa-huddle-beta/
   scripts/
     relay-protocol.mjs
     relay-protocol.test.mjs
@@ -209,11 +209,11 @@ stateDiagram-v2
 **Dependencies:** None
 
 **Files:**
-- Create: `skills/pipa-voice-session/references/hosted-relay.md`
-- Modify: `skills/pipa-voice-session/references/transport-prototype.md`
-- Modify: `skills/pipa-voice-session/references/privacy-and-retention.md`
-- Modify: `skills/pipa-voice-session/SKILL.md`
-- Test: `skills/pipa-voice-session/evals/evals.json`
+- Create: `skills/pipa-huddle-beta/references/hosted-relay.md`
+- Modify: `skills/pipa-huddle-beta/references/transport-prototype.md`
+- Modify: `skills/pipa-huddle-beta/references/privacy-and-retention.md`
+- Modify: `skills/pipa-huddle-beta/SKILL.md`
+- Test: `skills/pipa-huddle-beta/evals/evals.json`
 
 **Approach:**
 - Define when hosted relay is appropriate: sandboxed development, remote browser access, public HTTPS/browser voice testing, or branded session links.
@@ -223,8 +223,8 @@ stateDiagram-v2
 - Add user-facing blocker wording for missing relay URL, expired link, wrong-role token, unknown privacy posture, and confidential work where local mode is safer.
 
 **Patterns to follow:**
-- `skills/pipa-voice-session/references/transport-prototype.md`
-- `skills/pipa-voice-session/references/privacy-and-retention.md`
+- `skills/pipa-huddle-beta/references/transport-prototype.md`
+- `skills/pipa-huddle-beta/references/privacy-and-retention.md`
 - `skills/pipa-audio-brief/references/here-now-publishing.md`
 
 **Test scenarios:**
@@ -252,10 +252,10 @@ stateDiagram-v2
 - Create: `package.json`
 - Create: `package-lock.json`
 - Modify: `.github/workflows/validate-skill-frontmatter.yml`
-- Create: `skills/pipa-voice-session/scripts/relay-protocol.mjs`
-- Create: `skills/pipa-voice-session/scripts/relay-protocol.test.mjs`
+- Create: `skills/pipa-huddle-beta/scripts/relay-protocol.mjs`
+- Create: `skills/pipa-huddle-beta/scripts/relay-protocol.test.mjs`
 - Test: `package.json`
-- Test: `skills/pipa-voice-session/scripts/relay-protocol.test.mjs`
+- Test: `skills/pipa-huddle-beta/scripts/relay-protocol.test.mjs`
 
 **Approach:**
 - Introduce the minimum Node dependency strategy required for a deployable WSS relay. Use `ws` unless implementation discovers a simpler maintained WebSocket server path.
@@ -270,7 +270,7 @@ stateDiagram-v2
 - Enforce one active connection per role, reconnect only during a short grace window, and revoke tokens on explicit end, expiry, or invalid takeover attempts.
 
 **Patterns to follow:**
-- `skills/pipa-voice-session/scripts/start-voice-session.mjs` for small Node script style.
+- `skills/pipa-huddle-beta/scripts/start-voice-session.mjs` for small Node script style.
 - `scripts/validate_skill_evals.rb` for simple standard-library validation style.
 
 **Test scenarios:**
@@ -301,11 +301,11 @@ stateDiagram-v2
 **Dependencies:** U2
 
 **Files:**
-- Create: `skills/pipa-voice-session/scripts/start-hosted-relay.mjs`
+- Create: `skills/pipa-huddle-beta/scripts/start-hosted-relay.mjs`
 - Modify: `package.json`
-- Modify: `skills/pipa-voice-session/scripts/relay-protocol.test.mjs`
+- Modify: `skills/pipa-huddle-beta/scripts/relay-protocol.test.mjs`
 - Test: `package.json`
-- Test: `skills/pipa-voice-session/scripts/relay-protocol.test.mjs`
+- Test: `skills/pipa-huddle-beta/scripts/relay-protocol.test.mjs`
 
 **Approach:**
 - Serve a health endpoint and a relay voice page that derives `wss://` from the HTTPS page origin in hosted deployment and uses development-safe local URLs only in local test mode.
@@ -319,7 +319,7 @@ stateDiagram-v2
 - Redact tokens and message bodies from all logs.
 
 **Patterns to follow:**
-- `skills/pipa-voice-session/scripts/start-voice-session.mjs` for script ergonomics and quiet UI language.
+- `skills/pipa-huddle-beta/scripts/start-voice-session.mjs` for script ergonomics and quiet UI language.
 - `skills/pipa-audio-brief/references/here-now-publishing.md` for single-link status wording and truthful expiry labels.
 
 **Test scenarios:**
@@ -349,9 +349,9 @@ stateDiagram-v2
 **Dependencies:** U2, U3
 
 **Files:**
-- Modify: `skills/pipa-voice-session/scripts/start-voice-session.mjs`
-- Modify: `skills/pipa-voice-session/scripts/relay-protocol.test.mjs`
-- Test: `skills/pipa-voice-session/scripts/relay-protocol.test.mjs`
+- Modify: `skills/pipa-huddle-beta/scripts/start-voice-session.mjs`
+- Modify: `skills/pipa-huddle-beta/scripts/relay-protocol.test.mjs`
+- Test: `skills/pipa-huddle-beta/scripts/relay-protocol.test.mjs`
 
 **Approach:**
 - Add explicit relay mode configuration, such as hosted relay URL plus bridge token/session code via flags or environment variables.
@@ -360,11 +360,11 @@ stateDiagram-v2
 - Forward only schema-valid `user_turn` messages to OpenCode and return only `assistant_reply`, `status`, or `error` messages.
 - Verify an OpenCode no-tool, read-only, planning-only, or equivalent restricted mode before enabling hosted relay turns. If no mechanical enforcement exists, hosted relay mode must return a blocker rather than calling normal `opencode run`.
 - Use prompt copy only as explanatory defense-in-depth after mechanical restrictions are in place; do not treat prompt instructions as the safety boundary.
-- Preserve local mode behavior for `node skills/pipa-voice-session/scripts/start-voice-session.mjs` without hosted flags.
+- Preserve local mode behavior for `node skills/pipa-huddle-beta/scripts/start-voice-session.mjs` without hosted flags.
 
 **Patterns to follow:**
-- Existing `opencode run` invocation in `skills/pipa-voice-session/scripts/start-voice-session.mjs`.
-- `skills/pipa-voice-session/references/session-contract.md` for short spoken replies and no invented execution progress.
+- Existing `opencode run` invocation in `skills/pipa-huddle-beta/scripts/start-voice-session.mjs`.
+- `skills/pipa-huddle-beta/references/session-contract.md` for short spoken replies and no invented execution progress.
 
 **Test scenarios:**
 - Happy path: relay mode receives a valid `user_turn`, calls OpenCode once, and returns an `assistant_reply` with the same `turn_id`.
@@ -390,9 +390,9 @@ stateDiagram-v2
 **Dependencies:** U3, U4
 
 **Files:**
-- Modify: `skills/pipa-voice-session/scripts/start-voice-session.mjs`
-- Modify: `skills/pipa-voice-session/scripts/start-hosted-relay.mjs`
-- Test: `skills/pipa-voice-session/evals/evals.json`
+- Modify: `skills/pipa-huddle-beta/scripts/start-voice-session.mjs`
+- Modify: `skills/pipa-huddle-beta/scripts/start-hosted-relay.mjs`
+- Test: `skills/pipa-huddle-beta/evals/evals.json`
 
 **Approach:**
 - Reuse the current `Ready`, `Listening`, `Sending to OpenCode`, `Speaking`, and `Blocked` states.
@@ -402,7 +402,7 @@ stateDiagram-v2
 - Ensure browser sends only final transcript turns, not interim speech fragments, across the relay.
 
 **Patterns to follow:**
-- Current UI in `skills/pipa-voice-session/scripts/start-voice-session.mjs`.
+- Current UI in `skills/pipa-huddle-beta/scripts/start-voice-session.mjs`.
 - `DESIGN.md` and `PRODUCT.md` for quiet, document-like, one-primary-action product feel.
 
 **Test scenarios:**
@@ -429,10 +429,10 @@ stateDiagram-v2
 **Dependencies:** U1, U5
 
 **Files:**
-- Modify: `skills/pipa-voice-session/evals/evals.json`
-- Modify: `skills/pipa-voice-session/evals/trigger-eval-set.json`
-- Test: `skills/pipa-voice-session/evals/evals.json`
-- Test: `skills/pipa-voice-session/evals/trigger-eval-set.json`
+- Modify: `skills/pipa-huddle-beta/evals/evals.json`
+- Modify: `skills/pipa-huddle-beta/evals/trigger-eval-set.json`
+- Test: `skills/pipa-huddle-beta/evals/evals.json`
+- Test: `skills/pipa-huddle-beta/evals/trigger-eval-set.json`
 
 **Approach:**
 - Add behavior evals for hosted relay setup blockers, privacy wording, expired session handling, no raw transcript retention, and no spoken approval.
@@ -441,12 +441,12 @@ stateDiagram-v2
 - Do not bump `metadata.version` or `VERSIONS.md` during draft/branch work.
 
 **Patterns to follow:**
-- `skills/pipa-voice-session/evals/evals.json`
+- `skills/pipa-huddle-beta/evals/evals.json`
 - `scripts/validate_skill_evals.rb`
 - `README.md` Breakout Skills table
 
 **Test scenarios:**
-- Happy path: “start a hosted Pipa voice session” triggers `pipa-voice-session`.
+- Happy path: “start a hosted Pipa voice session” triggers `pipa-huddle-beta`.
 - Happy path: hosted setup response includes local bridge, HTTPS relay, expiry, and retention wording.
 - Edge case: “make an audio brief” still belongs to `pipa-audio-brief`.
 - Error path: “approve OpenCode changes by voice through hosted relay” returns a scope blocker.
@@ -454,7 +454,7 @@ stateDiagram-v2
 
 **Verification:**
 - Eval fixtures pass structural validation.
-- Router docs remain concise and authoritative details stay inside `skills/pipa-voice-session/`.
+- Router docs remain concise and authoritative details stay inside `skills/pipa-huddle-beta/`.
 
 ---
 
@@ -467,9 +467,9 @@ stateDiagram-v2
 **Dependencies:** U3
 
 **Files:**
-- Modify: `skills/pipa-voice-session/references/hosted-relay.md`
-- Modify: `skills/pipa-voice-session/references/privacy-and-retention.md`
-- Test: `skills/pipa-voice-session/evals/evals.json`
+- Modify: `skills/pipa-huddle-beta/references/hosted-relay.md`
+- Modify: `skills/pipa-huddle-beta/references/privacy-and-retention.md`
+- Test: `skills/pipa-huddle-beta/evals/evals.json`
 
 **Approach:**
 - Document the minimum deployment checklist: TLS/WSS only, HSTS on branded domains, explicit allowed origins/hosts, secrets from managed env/secret store, no filesystem persistence for session data, and emergency kill switch for session creation.
@@ -479,7 +479,7 @@ stateDiagram-v2
 
 **Patterns to follow:**
 - `skills/pipa-audio-brief/references/here-now-publishing.md` for truthful visibility/expiry wording.
-- `skills/pipa-voice-session/references/privacy-and-retention.md` for component-specific retention labeling.
+- `skills/pipa-huddle-beta/references/privacy-and-retention.md` for component-specific retention labeling.
 
 **Test scenarios:**
 - Happy path: hosted setup docs list required env vars and deployment safety checks before public use.

@@ -94,11 +94,11 @@
       ]
     },
     {
-      "id": "pipa-voice-session-positive-1",
+      "id": "pipa-huddle-beta-positive-1",
       "prompt": "Pipa voice session so I can talk this plan through while walking.",
-      "expected_output": "Routes to pipa-voice-session and preserves live voice-session scope, transport/privacy blockers, and optional handoff behavior.",
+      "expected_output": "Routes to pipa-huddle-beta and preserves live voice-session scope, transport/privacy blockers, and optional handoff behavior.",
       "assertions": [
-        "Does the output route to `pipa-voice-session` because the user explicitly asked for live voice conversation?",
+        "Does the output route to `pipa-huddle-beta` because the user explicitly asked for live voice conversation?",
         "Does it avoid routing to `pipa-audio-brief`?",
         "Does it preserve the standalone workflow's transport, privacy, and optional handoff contract?"
       ],
@@ -107,11 +107,11 @@
       ]
     },
     {
-      "id": "pipa-voice-session-negative-1",
+      "id": "pipa-huddle-beta-negative-1",
       "prompt": "Pipa plan this project in writing with requirements and schedule.",
       "expected_output": "Stays inside Pipa planning because the user did not ask for live voice conversation.",
       "assertions": [
-        "Does the output avoid routing to `pipa-voice-session`?",
+        "Does the output avoid routing to `pipa-huddle-beta`?",
         "Does it select normal Pipa planning behavior?"
       ],
       "files": [

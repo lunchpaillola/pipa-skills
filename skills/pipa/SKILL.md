@@ -40,7 +40,7 @@ If no command is present, route by natural-language PM intent. If the request is
 4. If the request implies event reaction, webhook, watcher, listener, or trigger management, route to `pipa-triggers` through `references/standalone-invocation.md`.
 5. If the request requires an external app action through Composio, route to `composio` through `references/standalone-invocation.md` and never guess tool slugs.
 6. Route to `pipa-audio-brief` only when the user explicitly asks for an audio, listenable, spoken, phone-friendly, or listening-page brief. Generic “brief this,” “write a brief,” “requirements brief,” or “project brief” stays inside Pipa planning or summarization.
-7. Route to `pipa-voice-session` when the user explicitly asks for a live voice session, walking work session, voice talk-through, or planning conversation by voice. Generic text planning stays inside Pipa planning. Audio artifacts from source material stay in `pipa-audio-brief`.
+7. Route to `pipa-huddle-beta` when the user explicitly asks for a live voice session, walking work session, voice talk-through, or planning conversation by voice. Generic text planning stays inside Pipa planning. Audio artifacts from source material stay in `pipa-audio-brief`.
 8. If multiple commands match, choose one primary route and list secondary follow-ups unless the user explicitly asks for a chain.
 9. If unknown, show the help/menu response and ask one clarifying question only when needed.
 
@@ -51,7 +51,7 @@ If no command is present, route by natural-language PM intent. If the request is
 - `budget` means monitor budget health when wording asks “how are we doing,” burn, forecast, variance, margin, or change control. It means initiate budget setup when wording asks to create, initialize, or refresh a tracker. If ambiguous, ask one short question.
 - `plan` means Pipa planning references, not delegation to another top-level PM skill.
 - `brief` alone is not audio. `audio brief`, `listenable brief`, `spoken walkthrough`, and `phone-friendly review` are audio.
-- `voice session`, `talk this through by voice`, and `walking work session` mean `pipa-voice-session` when the user wants live back-and-forth conversation, not a generated audio artifact.
+- `voice session`, `talk this through by voice`, and `walking work session` mean `pipa-huddle-beta` when the user wants live back-and-forth conversation, not a generated audio artifact.
 - Recurring words such as `daily`, `weekly`, `every Monday`, `remind me every`, and `send this every` route to Pipa automation only when the user asks for future scheduled delivery.
 - Event words such as `when`, `webhook`, `trigger`, `listener`, `watch`, and `on Linear issue created` route to Pipa triggers only when the user asks for event-driven behavior.
 
@@ -95,6 +95,6 @@ Use these direct mappings when the command or user wording is specific enough. O
 - Do not route generic non-PM coding, writing, or research work into Pipa.
 - Do not present Pipa as an acronym.
 - Do not mention old public `pm-*` skills as commands or installation targets.
-- Do not edit or copy the internals of `pipa-audio-brief`, `pipa-voice-session`, `composio`, `pipa-triggers`, or `pipa-workflow-automation`; they remain authoritative standalone workflows.
+- Do not edit or copy the internals of `pipa-audio-brief`, `pipa-huddle-beta`, `composio`, `pipa-triggers`, or `pipa-workflow-automation`; they remain authoritative standalone workflows.
 - Do not weaken confirmation gates for recurring automations or triggers.
 - Do not invent owners, due dates, source facts, external-app slugs, or project decisions. Use `TBD` for unknowns.

@@ -64,7 +64,7 @@ Browser bootstrap keeps the browser token in the URL fragment and sends WebSocke
 
 Hosted relay mode can send remote browser text to a local agent, so the local bridge must fail closed unless a mechanical OpenCode restriction is configured. Prompt instructions alone are not a safety boundary.
 
-Hosted mode does not add OpenCode flags by default and does not pass `--dangerously-skip-permissions`. It forwards spoken/text turns to `opencode run`; OpenCode's normal session and permission behavior still applies. The bridge pins the OpenCode session id at startup and then uses `--session <id>` for turns, so the voice session stays on the thread that was active when the bridge started instead of following whatever later becomes the last session. Custom `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS` must use flags supported by the installed OpenCode version; unsupported safety flags such as `--no-tools` are not passed through.
+Hosted mode does not add OpenCode flags by default and does not pass `--dangerously-skip-permissions`. It forwards spoken/text turns to `opencode run`; OpenCode's normal session and permission behavior still applies. The bridge creates a dedicated Pipa Huddle OpenCode session on the first turn and then uses `--session <id>` for later turns, so voice work stays in the huddle side-room instead of following whatever later becomes the last session. Custom `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS` must use flags supported by the installed OpenCode version; unsupported safety flags such as `--no-tools` are not passed through.
 
 Hosted relay mode is not spoken approval. If the user asks to approve file edits, shell commands, or tool calls by voice, return a scope blocker and offer to use voice for planning or clarification before normal agent execution.
 
@@ -91,7 +91,7 @@ Disclose the component boundary clearly:
 For sandboxed or remote-browser voice sessions, use the Pipa hosted relay path:
 
 ```bash
-node skills/pipa-voice-session/scripts/start-voice-session.mjs --hosted
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --hosted --model <current-opencode-model>
 ```
 
 The command should create a relay session, connect the local bridge, and print one browser URL. It should not ask the user to manually assemble relay URLs, session ids, bridge tokens, Wrangler commands, or Cloudflare settings.
@@ -127,7 +127,13 @@ The local bridge hosted mode can accept explicit internals for operator debuggin
 - `PIPA_VOICE_RELAY_URL`: hosted relay WebSocket URL
 - `PIPA_VOICE_RELAY_SESSION_ID`: session id returned by the relay
 - `PIPA_VOICE_RELAY_BRIDGE_TOKEN`: bridge role credential
-- `PIPA_VOICE_SESSION_OPENCODE_SESSION`: optional explicit OpenCode session id to pin; otherwise resolved at bridge startup
+- `PIPA_VOICE_SESSION_HUDDLE_SESSION`: optional existing huddle session id to resume
+- `PIPA_VOICE_SESSION_OPENCODE_SESSION`: backward-compatible alias for `PIPA_VOICE_SESSION_HUDDLE_SESSION`
+- `--context-file <path>`: path to a text/Markdown context summary file, normally `.pipa/voice-session/launch-context.md`, injected into the first huddle turn only
+- `--model <current-opencode-model>`: preferred way to keep the huddle on the same OpenCode model as the launching session
+- `PIPA_VOICE_SESSION_CONTEXT_FILE`: environment equivalent to `--context-file`, for automation only
+- `PIPA_VOICE_SESSION_MODEL`: environment equivalent to `--model`, for automation only
+- `PIPA_VOICE_SESSION_ALLOW_LATEST_SESSION`: manual-debug fallback only; allows pinning the latest session when intentionally debugging without a huddle session id
 - `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS`: optional OpenCode args for hosted mode; unset by default
 
 ## Deployment Checklist

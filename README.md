@@ -29,7 +29,7 @@ These workflows remain separately installable because they are tool-specific, pr
 | Skill | Description |
 |---|---|
 | [`pipa-audio-brief`](skills/pipa-audio-brief/) | Turns agent sessions, PRs, plans, specs, docs, URLs, and pasted markdown into a listenable brief with a shareable listening page. |
-| [`pipa-voice-session`](skills/pipa-voice-session/) | Starts a voice session with Pipa or the active agent for live talk-throughs, optional planning conversation, and concise context handoff. |
+| [`pipa-huddle-beta`](skills/pipa-huddle-beta/) | Starts a Pipa Huddle voice session with Pipa or the active agent for live talk-throughs, optional planning conversation, and concise context handoff. |
 | [`composio`](skills/composio/) | Routes external app work through Composio with setup/auth checks, search/link/execute discipline, and concise provenance. |
 | [`pipa-triggers`](skills/pipa-triggers/) | Creates, inspects, and deletes event-triggered Pipa automations with explicit trigger proposal confirmation. |
 | [`pipa-workflow-automation`](skills/pipa-workflow-automation/) | Creates, inspects, and deletes recurring Slack-driven Pipa automations with schedule, timezone, destination, prompt, and final confirmation gates. |

@@ -1,11 +1,11 @@
 ---
-name: pipa-voice-session
-description: "Use when the user wants to talk through work with Pipa or their current agent in a live voice session: Pipa voice session, talk this through, walking work session, plan this by voice, voice call with my agent, or discuss this out loud. Starts a voice session with agent context and optional handoff. Do not use for audio brief generation, generic TTS, video meetings, Zoom/Meet bots, or realtime voice coding/permission approval."
+name: pipa-huddle-beta
+description: "Use when the user wants to talk through work with Pipa or their current agent in a live voice huddle: Pipa Huddle, Pipa voice session, talk this through, walking work session, plan this by voice, voice call with my agent, or discuss this out loud. Starts a voice huddle with agent context and optional handoff. Do not use for audio brief generation, generic TTS, video meetings, Zoom/Meet bots, or realtime voice coding/permission approval."
 metadata:
   version: 0.1.0
 ---
 
-# Pipa Voice Session
+# Pipa Huddle Beta
 
 Start a voice session with the user's agent so they can talk through work out loud. Planning and handoff are optional modes of use, not a separate workflow this skill imposes.
 
@@ -48,33 +48,39 @@ Do not imply that voice mode is a separate agent brain. The voice session is an 
 
 Follow `references/transport-prototype.md`, `references/hosted-relay.md`, `references/template-contract.md`, and `references/privacy-and-retention.md`.
 
+The bridge creates a dedicated OpenCode session for the huddle on the first spoken/text turn, captures that new session id from `opencode run --format json`, and reuses it for the rest of the huddle with `--session <id>`. This avoids guessing from `opencode session list` and avoids attaching voice turns to an unrelated existing thread.
+
+Before launch, synthesize a compact context handoff from the current thread into `.pipa/voice-session/launch-context.md`, then start the bridge with `--context-file .pipa/voice-session/launch-context.md`. Keep it selective: current goal, relevant files or repo context, decisions/preferences, open questions, and what not to assume. The bridge injects this handoff into the first huddle turn only, so the dedicated huddle session starts informed without continuing the caller's thread.
+
+Pass the current OpenCode model into the bridge with `--model <current-opencode-model>` so the huddle uses the same model as the launching session. Do not rely on OpenCode defaults and do not hardcode a provider-specific model in the skill; use the model id from the active agent session. If the current runtime exposes `OPENCODE_MODEL`, the bridge also honors it, but explicit `--model` is preferred because daemon and hosted launches are easier to inspect.
+
 Use the hosted relay path for sandboxed or remote-browser use. The production relay is `https://voice.usepipa.com`; each launch creates a separate session URL under `/s/<session-id>` and pairs it with a local bridge that connects outbound to `/ws/<session-id>`.
 
-Use the bundled same-computer bridge at `skills/pipa-voice-session/scripts/start-voice-session.mjs` as the local fallback and development path. It serves a localhost browser UI, captures speech with browser APIs, sends each turn to `opencode run`, and speaks the OpenCode response with browser speech synthesis.
+Use the bundled same-computer bridge at `skills/pipa-huddle-beta/scripts/start-voice-session.mjs` as the local fallback and development path. It serves a localhost browser UI, captures speech with browser APIs, sends each turn to `opencode run`, and speaks the OpenCode response with browser speech synthesis.
 
 The local bridge serves the deterministic huddle template defined in `references/template-contract.md`. By default it renders the skill-local file `templates/huddle.html`; set `PIPA_VOICE_SESSION_TEMPLATE=/absolute/path/to/index.html` only for explicit template experiments.
 
 Default hosted launch command from the repository root:
 
 ```bash
-node skills/pipa-voice-session/scripts/start-voice-session.mjs --hosted
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --hosted --context-file .pipa/voice-session/launch-context.md --model <current-opencode-model>
 ```
 
 Local fallback:
 
 ```bash
-node skills/pipa-voice-session/scripts/start-voice-session.mjs
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --context-file .pipa/voice-session/launch-context.md --model <current-opencode-model>
 ```
 
 Quick public HTTPS debug test with ngrok:
 
 ```bash
-node skills/pipa-voice-session/scripts/start-voice-session.mjs --public ngrok
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --public ngrok --context-file .pipa/voice-session/launch-context.md --model <current-opencode-model>
 ```
 
 Hosted mode should create the relay session, connect the local bridge, and print one browser URL. Hosted mode does not add OpenCode flags by default. It forwards the user's spoken/text turn to the local OpenCode bridge; OpenCode's normal session and permission behavior still applies.
 
-At bridge startup, resolve and pin the OpenCode session id. Prefer `PIPA_VOICE_SESSION_OPENCODE_SESSION` when explicitly set; otherwise use the latest `opencode session list --format json --max-count 1` result from the repository. Voice turns should continue that pinned session with `--session <id>` rather than relying on `--continue` after startup, because `--continue` can drift to a different active thread.
+Do not continue the caller's thread by default. The huddle is a side-room: it creates a new OpenCode session on the first turn, then keeps all huddle turns in that session with `--session <id>`. Use `--huddle-session <id>` only to resume an existing huddle session, and use `--allow-latest-session` only for manual debugging.
 
 If the bridge cannot start, block clearly. Do not pretend that browser STT, Daily/WebRTC, or another provider is available without checking.
 

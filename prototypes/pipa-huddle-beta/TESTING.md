@@ -3,7 +3,7 @@
 Open the static prototype directly or run the scratch server from this folder:
 
 ```bash
-node prototypes/pipa-voice-session/server.mjs
+node prototypes/pipa-huddle-beta/server.mjs
 ```
 
 Then open `http://127.0.0.1:8787`.
@@ -11,7 +11,7 @@ Then open `http://127.0.0.1:8787`.
 The operational hosted/local voice session still runs from the repository root:
 
 ```bash
-node skills/pipa-voice-session/scripts/start-voice-session.mjs
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs
 ```
 
 ## Manual Scenarios

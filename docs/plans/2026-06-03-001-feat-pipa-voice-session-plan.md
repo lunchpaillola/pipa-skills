@@ -3,14 +3,14 @@ title: "feat: Add Pipa voice session skill"
 type: feat
 status: active
 date: 2026-06-03
-origin: docs/plans/2026-06-02-feat-pipa-voice-session-shaping.md
+origin: docs/plans/2026-06-02-feat-pipa-huddle-beta-shaping.md
 ---
 
 # feat: Add Pipa Voice Session Skill
 
 ## Summary
 
-Build `pipa-voice-session` as a standalone Pipa breakout skill that starts a voice session with the user's agent. V1 should define the skill contract and prototype the session launch/voice loop; planning or context handoff is a mode of use, not a separate workflow the skill imposes.
+Build `pipa-huddle-beta` as a standalone Pipa breakout skill that starts a voice session with the user's agent. V1 should define the skill contract and prototype the session launch/voice loop; planning or context handoff is a mode of use, not a separate workflow the skill imposes.
 
 ---
 
@@ -22,7 +22,7 @@ The shaping doc defines the product as a voice session with Pipa, not a video me
 
 ## Requirements
 
-- IR1. Add a standalone `pipa-voice-session` skill that can be invoked by phrases like “Pipa voice session,” “talk this through,” “walking work session,” and “plan this by voice” (supports origin R0-R2).
+- IR1. Add a standalone `pipa-huddle-beta` skill that can be invoked by phrases like “Pipa voice session,” “talk this through,” “walking work session,” and “plan this by voice” (supports origin R0-R2).
 - IR2. Keep V1 scoped to starting a voice session with the user's agent; realtime voice coding, spoken permission approval, and video presence are non-goals (supports origin R2-R3 and R9).
 - IR3. Define the session contract loosely: the skill starts a voice session, explains what context will be available, and supports plan-mode conversation without forcing a new planning workflow (supports origin R4-R5).
 - IR4. Define a lightweight context handoff shape for sessions that end with execution intent: what was discussed, decisions, open questions, and an optional prompt to continue in the agent (supports origin R3 and R5).
@@ -41,7 +41,7 @@ The shaping doc defines the product as a voice session with Pipa, not a video me
 - V1 does not require video, avatar generation, Google Meet, Zoom, Teams, or customer-facing meeting bots.
 - V1 does not require durable transcript retention; raw transcript/audio are transient by default unless the user explicitly saves a summary or handoff.
 - V1 does not require mobile/phone joining; same-computer joining is acceptable.
-- V1 should not make `pipa-audio-brief` depend on `pipa-voice-session`; audio brief can become an entry point later.
+- V1 should not make `pipa-audio-brief` depend on `pipa-huddle-beta`; audio brief can become an entry point later.
 
 ### Deferred to Follow-Up Work
 
@@ -81,7 +81,7 @@ The shaping doc defines the product as a voice session with Pipa, not a video me
 
 ## Key Technical Decisions
 
-- Create `pipa-voice-session` as a standalone breakout skill: the shaping doc defines this as a product-specific primitive, and repo conventions reserve standalone skills for high-value/product-specific workflows.
+- Create `pipa-huddle-beta` as a standalone breakout skill: the shaping doc defines this as a product-specific primitive, and repo conventions reserve standalone skills for high-value/product-specific workflows.
 - Keep the entry `SKILL.md` concise and move detailed behavior into references: this follows `pipa-audio-brief` and keeps the trigger contract easy to scan.
 - Treat the first executable artifact as a prototype, not production runtime: this repo is primarily an instruction-pack repo, so `prototypes/` should compare approaches before the skill commits to one transport.
 - Do not design a many-fallback skill up front: prototype browser STT/TTS, Daily/WebRTC, and any available agent/browser-session path, then pick the simplest reliable route.
@@ -111,7 +111,7 @@ The shaping doc defines the product as a voice session with Pipa, not a video me
 ## Output Structure
 
 ```text
-skills/pipa-voice-session/
+skills/pipa-huddle-beta/
   SKILL.md
   references/
     session-contract.md
@@ -122,7 +122,7 @@ skills/pipa-voice-session/
     trigger-eval-set.json
     evals.json
 
-prototypes/pipa-voice-session/
+prototypes/pipa-huddle-beta/
   index.html
   NOTES.md
   TESTING.md
@@ -136,7 +136,7 @@ prototypes/pipa-voice-session/
 
 ```mermaid
 flowchart TD
-  A[User invokes pipa-voice-session] --> B[Skill explains session contract]
+  A[User invokes pipa-huddle-beta] --> B[Skill explains session contract]
   B --> C[Prototype transport choice]
   C --> D[Voice session shell]
   C --> E[Daily/WebRTC room candidate]
@@ -163,9 +163,9 @@ The key separation is that transport gets the user into a voice session, while t
 **Dependencies:** None
 
 **Files:**
-- Create: `skills/pipa-voice-session/SKILL.md`
-- Create: `skills/pipa-voice-session/evals/trigger-eval-set.json`
-- Test: `skills/pipa-voice-session/evals/trigger-eval-set.json`
+- Create: `skills/pipa-huddle-beta/SKILL.md`
+- Create: `skills/pipa-huddle-beta/evals/trigger-eval-set.json`
+- Test: `skills/pipa-huddle-beta/evals/trigger-eval-set.json`
 
 **Approach:**
 - Position the skill as a way to enter a voice session with the user's agent, not generic TTS, audio brief generation, video meetings, or realtime voice coding.
@@ -180,7 +180,7 @@ The key separation is that transport gets the user into a voice session, while t
 **Test scenarios:**
 - Happy path: query “Pipa voice session to talk through this idea” triggers the skill.
 - Happy path: query “plan this by voice” triggers the skill.
-- Edge case: query “make an audio brief from this doc” does not trigger `pipa-voice-session` and remains `pipa-audio-brief` territory.
+- Edge case: query “make an audio brief from this doc” does not trigger `pipa-huddle-beta` and remains `pipa-audio-brief` territory.
 - Edge case: query “join my Zoom video call” does not trigger this skill.
 - Error path: request for “voice code this live and approve changes by voice” returns scope boundary and suggests using voice to clarify direction before normal agent execution.
 
@@ -199,10 +199,10 @@ The key separation is that transport gets the user into a voice session, while t
 **Dependencies:** U1
 
 **Files:**
-- Create: `skills/pipa-voice-session/references/session-contract.md`
-- Create: `skills/pipa-voice-session/references/context-handoff.md`
-- Create: `skills/pipa-voice-session/evals/evals.json`
-- Test: `skills/pipa-voice-session/evals/evals.json`
+- Create: `skills/pipa-huddle-beta/references/session-contract.md`
+- Create: `skills/pipa-huddle-beta/references/context-handoff.md`
+- Create: `skills/pipa-huddle-beta/evals/evals.json`
+- Test: `skills/pipa-huddle-beta/evals/evals.json`
 
 **Approach:**
 - Define the session contract: start the session, identify the connected agent/context, support normal back-and-forth, and avoid pretending voice mode is a separate agent brain.
@@ -236,10 +236,10 @@ The key separation is that transport gets the user into a voice session, while t
 **Dependencies:** U1
 
 **Files:**
-- Create: `skills/pipa-voice-session/references/transport-prototype.md`
-- Create: `skills/pipa-voice-session/references/privacy-and-retention.md`
-- Modify: `skills/pipa-voice-session/evals/evals.json`
-- Test: `skills/pipa-voice-session/evals/evals.json`
+- Create: `skills/pipa-huddle-beta/references/transport-prototype.md`
+- Create: `skills/pipa-huddle-beta/references/privacy-and-retention.md`
+- Modify: `skills/pipa-huddle-beta/evals/evals.json`
+- Test: `skills/pipa-huddle-beta/evals/evals.json`
 
 **Approach:**
 - Define prototype candidates: browser STT/TTS, Daily/WebRTC audio room, and any same-computer/browser-session route that can attach to the user's agent context.
@@ -275,10 +275,10 @@ The key separation is that transport gets the user into a voice session, while t
 **Dependencies:** U2, U3
 
 **Files:**
-- Create: `prototypes/pipa-voice-session/index.html`
-- Create: `prototypes/pipa-voice-session/NOTES.md`
-- Create: `prototypes/pipa-voice-session/TESTING.md`
-- Test: `prototypes/pipa-voice-session/TESTING.md`
+- Create: `prototypes/pipa-huddle-beta/index.html`
+- Create: `prototypes/pipa-huddle-beta/NOTES.md`
+- Create: `prototypes/pipa-huddle-beta/TESTING.md`
+- Test: `prototypes/pipa-huddle-beta/TESTING.md`
 
 **Approach:**
 - Create a self-contained prototype page with mic/listen controls, transcript display, spoken Pipa response, session-state panel, end-session action, and optional handoff preview.
@@ -327,7 +327,7 @@ The key separation is that transport gets the user into a voice session, while t
 - Add `voice session` / `talk this through by voice` routing to the standalone workflow list only after the standalone contract is present.
 - Keep `skills/pipa/SKILL.md` as a router: route to the breakout skill, do not duplicate voice-session internals.
 - Add README breakout entry with a concise description focused on starting a voice session with Pipa.
-- Add/adjust Pipa evals so generic text planning stays in Pipa, audio briefs stay in `pipa-audio-brief`, and explicit voice sessions route to `pipa-voice-session`.
+- Add/adjust Pipa evals so generic text planning stays in Pipa, audio briefs stay in `pipa-audio-brief`, and explicit voice sessions route to `pipa-huddle-beta`.
 
 **Patterns to follow:**
 - `skills/pipa/SKILL.md` connected workflow routing.
@@ -339,7 +339,7 @@ The key separation is that transport gets the user into a voice session, while t
 - Happy path: “Talk this plan through with me by voice” routes to the standalone skill.
 - Edge case: “Pipa plan this project” stays inside Pipa planning and does not force voice.
 - Edge case: “Create an audio brief” continues to route to `pipa-audio-brief`.
-- Integration: README install/discovery list includes `pipa-voice-session` only once.
+- Integration: README install/discovery list includes `pipa-huddle-beta` only once.
 
 **Verification:**
 - Pipa routing docs mention the standalone breakout without copying its workflow.
@@ -384,12 +384,12 @@ The key separation is that transport gets the user into a voice session, while t
 
 ## System-Wide Impact
 
-- **Interaction graph:** New `pipa-voice-session` stands alone, with optional routing from `skills/pipa/` and future optional entry points from `pipa-audio-brief`.
+- **Interaction graph:** New `pipa-huddle-beta` stands alone, with optional routing from `skills/pipa/` and future optional entry points from `pipa-audio-brief`.
 - **Error propagation:** The skill should block clearly on unavailable audio transport, unsupported browser speech, missing fallback configuration, or privacy uncertainty.
 - **State lifecycle risks:** Raw transcript/audio should be transient by default; any handoff summary is optional durable state.
 - **API surface parity:** No production runtime API is required in this repo for V1; the prototype can simulate voice/session behavior. If Daily/WebRTC becomes necessary, runtime code should likely live outside the public skill instruction pack.
 - **Integration coverage:** Eval coverage must prove routing boundaries across Pipa, audio brief, and voice session.
-- **Unchanged invariants:** `pipa-audio-brief` remains async artifact-to-listening-page. `pipa-voice-session` should not take over generic audio brief or generic text-planning requests.
+- **Unchanged invariants:** `pipa-audio-brief` remains async artifact-to-listening-page. `pipa-huddle-beta` should not take over generic audio brief or generic text-planning requests.
 
 ---
 
@@ -402,7 +402,7 @@ The key separation is that transport gets the user into a voice session, while t
 | Scope creeps back into realtime voice coding. | Keep OpenCode realtime bridge in deferred/future sections; V1 handoff happens after session. |
 | Privacy posture is unclear. | Require transport-specific privacy/retention labels before mic or provider use. |
 | LAN prototype exposure leaks transcript/plan state. | Default to localhost; require explicit LAN mode warning and tokenized access for `0.0.0.0` testing. |
-| Core Pipa router becomes bloated. | Route to standalone skill and keep internals in `skills/pipa-voice-session/references/`. |
+| Core Pipa router becomes bloated. | Route to standalone skill and keep internals in `skills/pipa-huddle-beta/references/`. |
 | Prototype implies production readiness. | Label prototype status in `NOTES.md` and keep production transport decisions behind the transport spike. |
 
 ---
@@ -410,7 +410,7 @@ The key separation is that transport gets the user into a voice session, while t
 ## Documentation / Operational Notes
 
 - Do not bump skill versions during draft/branch work; version changes happen when finalizing for merge.
-- Run the existing skill frontmatter validator after adding `skills/pipa-voice-session/SKILL.md`.
+- Run the existing skill frontmatter validator after adding `skills/pipa-huddle-beta/SKILL.md`.
 - If the prototype is run on `0.0.0.0`, label it as explicit testing mode, warn that LAN users may access the page, and use tokenized session URLs or equivalent guarding. Secure-context requirements may still block mic access outside localhost/HTTPS.
 - If Daily/WebRTC is selected, document room expiry, link access, recording/transcription defaults, required environment variables, and provider visibility/retention before making it the default path.
 
@@ -418,7 +418,7 @@ The key separation is that transport gets the user into a voice session, while t
 
 ## Sources & References
 
-- **Origin document:** `docs/plans/2026-06-02-feat-pipa-voice-session-shaping.md`
+- **Origin document:** `docs/plans/2026-06-02-feat-pipa-huddle-beta-shaping.md`
 - Related prototype: `prototypes/agent-session-shapes/`
 - Existing breakout skill pattern: `skills/pipa-audio-brief/SKILL.md`
 - Pipa router: `skills/pipa/SKILL.md`

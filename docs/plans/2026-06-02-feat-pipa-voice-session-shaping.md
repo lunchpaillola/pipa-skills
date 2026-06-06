@@ -5,7 +5,7 @@ type: feat
 status: draft
 date: 2026-06-02
 branch: feat/pipa-video-conversation
-note: "Branch name is historical; product name is pipa-voice-session."
+note: "Branch name is historical; product name is pipa-huddle-beta."
 ---
 
 # feat: Shape Pipa Voice Session Skill
@@ -90,7 +90,7 @@ If browser-only STT/TTS is difficult, V1 may use a Daily room or equivalent audi
 
 | Question | Decision |
 |---|---|
-| Are we building this? | Yes. Build `pipa-voice-session`. |
+| Are we building this? | Yes. Build `pipa-huddle-beta`. |
 | Is this video or voice? | Voice. Video/presence is optional future work. |
 | Does V1 need realtime voice coding? | No. V1 can be a planning/shaping session whose output is loaded into context for execution after the session. |
 | Does the user need to join from a phone? | Not for V1. Same-computer link is acceptable. |
@@ -239,7 +239,7 @@ That interaction is the product. The final plan is the artifact.
 This repo should hold the skill contract and planning-session instructions first:
 
 ```text
-skills/pipa-voice-session/
+skills/pipa-huddle-beta/
   SKILL.md
   references/
     planning-session.md
@@ -253,7 +253,7 @@ skills/pipa-voice-session/
 The executable prototype can start under `prototypes/agent-session-shapes/` or move to a separate runtime once real audio transport exists:
 
 ```text
-pipa-voice-session/
+pipa-huddle-beta/
   app/
     voice-shell/
     transport/
@@ -297,7 +297,7 @@ Goal: define the skill behavior before committing to a transport.
 
 Deliverables:
 
-- Create `skills/pipa-voice-session/SKILL.md`.
+- Create `skills/pipa-huddle-beta/SKILL.md`.
 - Define trigger language: "voice session," "talk this through," "walking work session," "plan this by voice."
 - Define the planning-session conversation rules.
 - Define the plan packet contract.
@@ -414,7 +414,7 @@ Acceptance: the spike is complete when a simulated session produces a plan packe
 
 | Question | Current Lean |
 |---|---|
-| What is the public skill name? | `pipa-voice-session`. |
+| What is the public skill name? | `pipa-huddle-beta`. |
 | Is video part of V1? | No. |
 | Is realtime voice coding part of V1? | No. The session creates a plan/context packet for later execution. |
 | What is the first wedge? | Direct voice planning session; audio brief can become an entry point after the loop works. |
@@ -437,7 +437,7 @@ Acceptance: the spike is complete when a simulated session produces a plan packe
 
 V1 is successful when:
 
-- A user can start a `pipa-voice-session` and join with one link on the same computer.
+- A user can start a `pipa-huddle-beta` and join with one link on the same computer.
 - The user can speak through an idea with Pipa and hear useful clarifying questions/responses.
 - The session maintains visible structured plan state.
 - The final output is an execution-ready plan packet, not just a transcript.

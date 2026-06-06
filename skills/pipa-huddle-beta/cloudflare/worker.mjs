@@ -1,3 +1,5 @@
+import { hostedSessionHtml as hostedSessionPageHtml } from "./hosted-session-template.mjs";
+
 const encoder = new TextEncoder();
 
 export default {
@@ -23,7 +25,7 @@ export default {
       const status = await env.VOICE_SESSION.get(id).fetch("https://voice-session/internal/status");
       const body = await status.json().catch(() => ({}));
       if (!status.ok || body.gone) return html(goneSessionHtml(), status.status === 404 ? 404 : 410);
-      return html(hostedSessionHtml(sessionPage[1]));
+      return html(hostedSessionPageHtml(sessionPage[1]));
     }
 
     const websocket = url.pathname.match(/^\/ws\/([^/]+)$/);
@@ -312,7 +314,7 @@ function sessionRevoked(session, env) {
 }
 
 function goneSessionHtml() {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pipa Voice Session Ended</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:680px;margin:64px auto;padding:0 24px;line-height:1.6;color:#2d2a25;background:#fbfaf7}.muted{color:#706b61}</style></head><body><p class="muted">Hosted relay</p><h1>The session is disconnected.</h1><p>To connect a new session, ask your agent to reconnect using the pipa-voice-session skill</p></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pipa Voice Session Ended</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:680px;margin:64px auto;padding:0 24px;line-height:1.6;color:#2d2a25;background:#fbfaf7}.muted{color:#706b61}</style></head><body><p class="muted">Hosted relay</p><h1>The session is disconnected.</h1><p>To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill</p></body></html>`;
 }
 
 function json(body, status = 200) {
@@ -324,7 +326,57 @@ function html(body, status = 200) {
 }
 
 function indexHtml() {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Pipa Voice Relay</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:720px;margin:64px auto;padding:0 24px;line-height:1.6;color:#2b2926;background:#fbfaf7}code{background:#efede7;padding:2px 5px;border-radius:6px}</style></head><body><h1>Pipa Voice Relay</h1><p>Start a session from your repo:</p><p><code>node skills/pipa-voice-session/scripts/start-voice-session.mjs --hosted</code></p><p>Each session gets its own <code>/s/&lt;session-id&gt;</code> URL.</p></body></html>`;
+  return String.raw`<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pipa Huddle</title>
+    <style>
+      :root { color-scheme: light; --page:#fbfaf7; --ink:#2b2926; --muted:#706b61; --line:#e5dfd2; --soft:#efede7; }
+      * { box-sizing: border-box; }
+      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 760px; margin: 0 auto; padding: clamp(44px, 10vw, 88px) 24px 96px; line-height: 1.6; color: var(--ink); background: var(--page); }
+      h1 { margin: 0 0 18px; font-size: clamp(42px, 12vw, 72px); line-height: 1.02; letter-spacing: -.045em; }
+      h2 { margin: 0 0 10px; font-size: 22px; letter-spacing: -.02em; }
+      p { margin: 0 0 18px; font-size: 18px; color: #514d45; }
+      ol { margin: 12px 0 0; padding-left: 22px; }
+      li { margin: 10px 0; color: #514d45; font-size: 17px; }
+      code { font-family: "SFMono-Regular", Consolas, monospace; }
+      .eyebrow { margin: 0 0 14px; color: var(--muted); font-size: 13px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
+      .lede { max-width: 35rem; }
+      .section { margin-top: 34px; padding-top: 28px; border-top: 1px solid var(--line); }
+      .command { display: block; margin: 14px 0 18px; padding: 14px 16px; border-radius: 16px; background: var(--soft); font-size: 15px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+      .inline-code { display: inline-block; padding: 2px 6px; border-radius: 7px; background: var(--soft); font-size: .9em; }
+      .note { font-size: 15px; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <p class="eyebrow">Hosted voice huddle</p>
+    <h1>Pipa Huddle</h1>
+    <p class="lede">Pipa Huddle lets you talk through work out loud with an agent. Right now it works with Pipa or OpenCode by pairing this hosted browser page with a local OpenCode bridge.</p>
+
+    <div class="section">
+      <h2>If you use Pipa</h2>
+      <p>Ask Pipa to start a huddle. Pipa will route to the <code class="inline-code">pipa-huddle-beta</code> skill, create a short-lived session link, and connect the local bridge for you.</p>
+    </div>
+
+    <div class="section">
+      <h2>If you want to try it with OpenCode</h2>
+      <p>Paste this into your OpenCode agent:</p>
+      <code class="command">Install the Pipa Huddle Beta skill with:
+
+npx skills add lunchpaillola/pipa-skills --skill pipa-huddle-beta
+
+Then follow the instructions in skills/pipa-huddle-beta/SKILL.md to start a hosted huddle.</code>
+      <ol>
+        <li>The agent installs the single skill.</li>
+        <li>The agent starts the local bridge from your repo.</li>
+        <li>This site gives you a private <code class="inline-code">/s/&lt;session-id&gt;</code> link for the browser.</li>
+      </ol>
+      <p class="note">Session links expire when unused or idle. The relay forwards final text turns and replies; it does not keep raw audio by default.</p>
+    </div>
+  </body>
+</html>`;
 }
 
 function sessionHtml(sessionId) {
@@ -339,21 +391,23 @@ function hostedSessionHtml(sessionId) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pipa Voice Session</title>
+    <title>Pipa Huddle</title>
     <style>
       :root {
         color-scheme: light;
-        --page: oklch(0.985 0.006 75);
-        --surface: oklch(0.965 0.008 75);
-        --surface-raised: oklch(0.992 0.004 75);
-        --ink: oklch(0.235 0.012 65);
-        --muted: oklch(0.52 0.012 65);
-        --line: oklch(0.88 0.008 75);
-        --accent: oklch(0.58 0.13 42);
-        --accent-soft: oklch(0.82 0.08 42);
-        --bad: oklch(0.52 0.13 28);
-        --control: oklch(0.28 0.014 65);
-        --control-hover: oklch(0.34 0.014 65);
+        --page: oklch(0.99 0.002 250);
+        --surface: oklch(0.965 0.003 250);
+        --raised: oklch(0.985 0.002 250);
+        --ink: oklch(0.18 0.004 250);
+        --muted: oklch(0.50 0.006 250);
+        --quiet: oklch(0.66 0.005 250);
+        --line: oklch(0.86 0.004 250);
+        --orb-light: oklch(0.78 0.10 272);
+        --orb-mid: oklch(0.64 0.13 282);
+        --orb-deep: oklch(0.47 0.14 274);
+        --orb-warm: oklch(0.78 0.11 24);
+        --orb-peach: oklch(0.86 0.10 58);
+        --danger: #bd4035;
       }
 
       * { box-sizing: border-box; }
@@ -369,51 +423,34 @@ function hostedSessionHtml(sessionId) {
       }
 
       button, textarea, select { font: inherit; }
-      button { cursor: pointer; }
-      button:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--control); outline-offset: 2px; }
-      main { max-width: 720px; margin: 0 auto; padding: 56px 24px 140px; }
-      .top { position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 14px 0; margin-bottom: 36px; border-bottom: 1px solid var(--line); background: var(--page); }
-      .brand, .session-kind { font-size: 13px; color: var(--muted); letter-spacing: .02em; font-weight: 500; }
-      header { margin-bottom: 44px; }
-      .eyebrow { margin: 0 0 10px; color: var(--muted); font-size: 12px; font-weight: 400; letter-spacing: .01em; }
-      h1 { margin: 0 0 14px; max-width: 16ch; font-size: 32px; font-weight: 700; line-height: 1.2; letter-spacing: -.01em; }
-      .lede { margin: 0; max-width: 64ch; color: var(--muted); font-size: 16px; }
-
-      .stage { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 26px; align-items: center; margin: 0 0 42px; padding: 24px 0 30px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-      .orb { width: 128px; aspect-ratio: 1; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); display: grid; place-items: center; position: relative; box-shadow: 0 1px 0 oklch(0.992 0.004 75 / .5) inset; transition: background 180ms cubic-bezier(.22, 1, .36, 1), border-color 180ms cubic-bezier(.22, 1, .36, 1), transform 180ms cubic-bezier(.22, 1, .36, 1); }
-      .orb::before { content: ""; position: absolute; inset: 28px; border-radius: inherit; background: var(--accent-soft); opacity: .38; transform: scale(.92); transition: transform 180ms cubic-bezier(.22, 1, .36, 1), opacity 180ms cubic-bezier(.22, 1, .36, 1); }
-      .orb:not([disabled]):hover { border-color: oklch(0.78 0.014 75); background: var(--surface-raised); transform: translateY(-1px); }
-      .orb[disabled] { opacity: .62; cursor: not-allowed; }
-      .orb.is-live::before { opacity: .88; transform: scale(1.08); }
-      .bars { position: relative; z-index: 1; display: flex; align-items: center; gap: 6px; height: 52px; }
-      .bars span { display: block; width: 10px; height: 24px; border-radius: 999px; background: var(--accent); opacity: .86; transform-origin: center; }
-      .bars span:nth-child(2) { height: 42px; }
-      .bars span:nth-child(3) { height: 22px; }
-      .bars span:nth-child(4) { height: 36px; }
-      .bars span:nth-child(5) { height: 48px; }
-      .orb.is-live .bars span { animation: voiceBars 820ms ease-in-out infinite; }
-      .orb.is-live .bars span:nth-child(2) { animation-delay: 80ms; }
-      .orb.is-live .bars span:nth-child(3) { animation-delay: 160ms; }
-      .orb.is-live .bars span:nth-child(4) { animation-delay: 240ms; }
-      .orb.is-live .bars span:nth-child(5) { animation-delay: 320ms; }
-      @keyframes voiceBars { 0%,100% { transform: scaleY(.55); opacity: .65; } 50% { transform: scaleY(1.18); opacity: 1; } }
-      @media (prefers-reduced-motion: reduce) { .orb.is-live .bars span { animation: none; } }
-
-      .status { max-width: 54ch; }
-      .status strong { display: block; font-size: 22px; line-height: 1.25; letter-spacing: -.01em; }
-      .status p { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
-      .reply-preview { display: none; margin-top: 16px; max-width: 58ch; border-top: 1px solid var(--line); padding-top: 14px; }
+      button { cursor: pointer; border: 0; background: transparent; color: inherit; }
+      main { width: min(720px, calc(100vw - 32px)); margin: 0 auto; padding: 0 0 128px; }
+      .top { position: sticky; top: 0; z-index: 10; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); background: var(--page); }
+      .brand { font-size: 14px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); }
+      .session-kind { font-size: 12px; color: var(--muted); }
+      .stage { min-height: calc(100vh - 52px); display: grid; place-items: center; text-align: center; padding: 26px 0 110px; }
+      .status-label { margin: 0 0 28px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+      .orb { --orb-size: clamp(210px, 58vw, 320px); width: var(--orb-size); aspect-ratio: 1; border-radius: 50%; position: relative; display: grid; place-items: center; margin: 0 auto 38px; background: radial-gradient(circle at 32% 14%, rgba(249,250,255,.34) 0%, transparent 30%), radial-gradient(circle at 72% 76%, rgba(255,177,143,.46) 0%, transparent 34%), radial-gradient(ellipse 120% 78% at 52% 104%, var(--orb-peach) 0%, var(--orb-warm) 28%, transparent 58%), radial-gradient(ellipse 115% 120% at 48% 0%, var(--orb-light) 0%, var(--orb-mid) 48%, var(--orb-deep) 90%); box-shadow: 0 30px 90px rgba(80,78,170,.16); overflow: hidden; }
+      .orb::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background-image: radial-gradient(circle, rgba(255,255,255,.34) 1px, transparent 1.5px); background-size: 10px 10px; opacity: .55; mix-blend-mode: overlay; }
+      .orb::after { content: ""; position: absolute; inset: -14%; border-radius: inherit; border: 1px solid rgba(31,45,230,.12); transform: scale(.95); opacity: 0; transition: opacity 180ms ease, transform 180ms ease; }
+      .orb.is-live::after { opacity: 1; transform: scale(1); animation: pulseOrb 1.8s ease-in-out infinite; }
+      .orb[disabled] { opacity: .72; cursor: not-allowed; }
+      .bars { display: none; }
+      @keyframes pulseOrb { 0%,100% { transform: scale(.98); opacity:.42; } 50% { transform: scale(1.05); opacity:.16; } }
+      .status { max-width: 620px; margin: 0 auto; }
+      .status strong { display: none; }
+      .status p { margin: 0; color: var(--muted); font-size: clamp(20px, 5vw, 32px); font-style: italic; line-height: 1.45; }
+      .reply-preview { display: none; margin: 22px auto 0; max-width: 58ch; }
       .reply-preview.is-visible { display: block; }
       .reply-preview span { display: block; margin-bottom: 5px; color: var(--muted); font-size: 12px; font-weight: 500; letter-spacing: .02em; }
       .reply-preview p { margin: 0; color: var(--ink); font-size: 15px; line-height: 1.55; white-space: pre-wrap; }
-      .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 18px; }
-      .secondary, .quiet, .send, .voice-select { border: 1px solid var(--line); border-radius: 10px; background: transparent; color: var(--ink); min-height: 38px; padding: 8px 12px; font-size: 13px; font-weight: 500; transition: background 160ms cubic-bezier(.22, 1, .36, 1), border-color 160ms cubic-bezier(.22, 1, .36, 1); }
-      .secondary:hover, .quiet:hover, .voice-select:hover { border-color: oklch(0.78 0.014 75); background: var(--surface); }
+      .actions { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 20; display: flex; gap: 14px; align-items: center; justify-content: center; padding: 10px 12px; border-radius: 28px; background: color-mix(in oklch, var(--page) 82%, white); box-shadow: 0 18px 70px rgba(16,24,40,.08); backdrop-filter: blur(14px); }
+      .secondary, .quiet, .send, .voice-select { border: 0; border-radius: 20px; background: var(--raised); color: var(--ink); min-height: 52px; padding: 0 16px; font-size: 13px; font-weight: 600; }
       .quiet { color: var(--muted); }
-      .send { background: var(--control); color: var(--page); border-color: var(--control); border-radius: 999px; padding-inline: 16px; }
-      .send:hover { background: var(--control-hover); border-color: var(--control-hover); }
+      .quiet#end { background: var(--danger); color: white; }
+      .send { background: var(--ink); color: var(--page); border-radius: 999px; padding-inline: 18px; }
       .send:disabled, .secondary:disabled { opacity: .55; cursor: not-allowed; }
-      .voice-control { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-raised); padding: 4px 5px 4px 10px; }
+      .voice-control { display: flex; align-items: center; gap: 8px; border-radius: 18px; background: var(--raised); padding: 4px 5px 4px 10px; }
       .voice-control span { color: var(--muted); font-size: 12px; letter-spacing: .02em; text-transform: none; }
       .voice-select { max-width: min(48vw, 260px); padding-right: 28px; background: var(--surface-raised); }
 
@@ -426,35 +463,28 @@ function hostedSessionHtml(sessionId) {
       .turn p { margin: 0; white-space: pre-wrap; }
       .small { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 1.5; }
       @media (max-width: 640px) {
-        main { padding: 32px 18px 110px; }
-        .top { margin-bottom: 28px; }
-        header { margin-bottom: 34px; }
-        h1 { font-size: 30px; }
-        .stage { grid-template-columns: 1fr; gap: 18px; justify-items: start; padding: 22px 0 28px; }
-        .orb { width: 116px; }
-        .voice-control { width: 100%; }
-        .voice-select { max-width: none; flex: 1; min-width: 0; }
+        main { width: min(100vw - 28px, 720px); }
+        .stage { padding-top: 18px; }
+        .actions { width: min(92vw, 520px); gap: 8px; }
+        .secondary, .quiet, .send, .voice-select { min-height: 48px; padding-inline: 12px; }
+        .voice-control span { display: none; }
+        .voice-select { max-width: 110px; }
       }
     </style>
   </head>
   <body>
     <main>
       <nav class="top" aria-label="Session">
-        <strong class="brand">Pipa Voice Session</strong>
+        <strong class="brand">Pipa Huddle</strong>
         <span class="session-kind">Hosted relay</span>
       </nav>
 
-      <header>
-        <p class="eyebrow">Voice huddle</p>
-        <h1>Start a huddle with your agent.</h1>
-        <p class="lede">Speak one complete turn, then pause. Pipa routes the final text through your local bridge and reads back a short browser-speech reply with low memory overhead.</p>
-      </header>
-
       <section class="stage" aria-live="polite">
-        <button class="orb" id="start" type="button" aria-label="Start listening" disabled>
-          <span class="bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
-        </button>
         <div>
+          <p class="status-label">Ready</p>
+          <button class="orb" id="start" type="button" aria-label="Start listening" disabled>
+            <span class="bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+          </button>
           <div class="status">
             <strong id="status">Connecting to relay...</strong>
             <p id="detail">Waiting for the local bridge to pair.</p>
@@ -463,14 +493,15 @@ function hostedSessionHtml(sessionId) {
             <span>Agent is saying</span>
             <p id="currentReply"></p>
           </div>
-          <div class="actions">
-            <label class="voice-control"><span>Voice</span><select class="voice-select" id="voice"><option value="">System default</option></select></label>
-            <button class="secondary" id="speaker" type="button">Test speaker</button>
-            <button class="quiet" id="clear" type="button">Clear transcript</button>
-            <button class="quiet" id="end" type="button">End session</button>
-          </div>
         </div>
       </section>
+
+      <div class="actions">
+        <label class="voice-control"><span>Voice</span><select class="voice-select" id="voice"><option value="">System default</option></select></label>
+        <button class="secondary" id="speaker" type="button">Test</button>
+        <button class="quiet" id="clear" type="button">Clear</button>
+        <button class="quiet" id="end" type="button">End</button>
+      </div>
 
       <details>
         <summary>Text input if speech is unavailable</summary>
@@ -553,7 +584,7 @@ function hostedSessionHtml(sessionId) {
       }
 
       function listen() {
-        if (state.ended) { setReady(false); setLive(false); setStatus("Disconnected", "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill"); return; }
+        if (state.ended) { setReady(false); setLive(false); setStatus("Disconnected", "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill"); return; }
         if (state.listening) return stopListening(true);
         if (!SpeechRecognition) { setStatus("Speech unavailable", "Use text input. The relay path is still available."); addTurn("System", "SpeechRecognition is unavailable. Use text input."); return; }
         const recognition = new SpeechRecognition();
@@ -582,7 +613,7 @@ function hostedSessionHtml(sessionId) {
       }
 
       function connect() {
-        if (!token) { state.ended = true; setReady(false); setStatus("Disconnected", "This link is missing session credentials. Ask your agent to follow the pipa-voice-session skill for a new URL."); return; }
+        if (!token) { state.ended = true; setReady(false); setStatus("Disconnected", "This link is missing session credentials. Ask your agent to follow the pipa-huddle-beta skill for a new URL."); return; }
         state.ws = new WebSocket(wsUrl, ["pipa-relay", "pipa-role.browser", "pipa-session." + sessionId, "pipa-token." + token]);
         state.ws.onopen = () => setStatus("Waiting for local bridge", "Keep the bridge command running on the machine with OpenCode.");
         state.ws.onmessage = (event) => {
@@ -590,7 +621,7 @@ function hostedSessionHtml(sessionId) {
           if (message.type === "status") {
             state.paired = message.state === "paired" || message.state === "active_turn";
             if (state.paired && !state.busy) { setReady(true); setStatus(message.message || "Paired", "Press the orb to huddle. Browser speech keeps the session light and reliable."); }
-            else if (message.state === "expired" || message.state === "ended") { state.ended = true; setReady(false); setLive(false); setStatus(message.message || "Disconnected", "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill"); }
+            else if (message.state === "expired" || message.state === "ended") { state.ended = true; setReady(false); setLive(false); setStatus(message.message || "Disconnected", "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill"); }
             else setStatus(message.message || "Waiting", "Waiting for the other side of the relay.");
           }
           if (message.type === "assistant_reply") {
@@ -602,9 +633,9 @@ function hostedSessionHtml(sessionId) {
             speak(message.text, () => { if (state.paired && !state.busy && !state.ended) listen(); });
           }
           if (message.type === "error") { state.busy = false; setReady(state.paired); addTurn("System", "Blocked: " + message.message); setStatus("Blocked", message.message); }
-          if (message.type === "end") { state.ended = true; setReady(false); setLive(false); setStatus("Disconnected", message.message || "This session has ended. Tell your agent to follow the pipa-voice-session skill for a new URL."); }
+          if (message.type === "end") { state.ended = true; setReady(false); setLive(false); setStatus("Disconnected", message.message || "This session has ended. Tell your agent to follow the pipa-huddle-beta skill for a new URL."); }
         };
-        state.ws.onclose = () => { state.paired = false; setReady(false); setLive(false); if (!state.ended) setStatus("Disconnected", "The relay or local bridge is no longer available. Tell your agent to follow the pipa-voice-session skill for a new URL."); };
+        state.ws.onclose = () => { state.paired = false; setReady(false); setLive(false); if (!state.ended) setStatus("Disconnected", "The relay or local bridge is no longer available. Tell your agent to follow the pipa-huddle-beta skill for a new URL."); };
       }
 
       function endSession() {
@@ -617,7 +648,7 @@ function hostedSessionHtml(sessionId) {
         try { state.ws?.close(1000, "ended"); } catch (_error) {}
         setReady(false);
         setLive(false);
-        setStatus("Disconnected", "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill");
+        setStatus("Disconnected", "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill");
       }
 
       els.start.addEventListener("click", listen);

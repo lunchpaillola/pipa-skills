@@ -1,10 +1,10 @@
 # PROTOTYPE - Pipa Voice Session
 
-This is a prototype area for the `pipa-voice-session` skill.
+This is a prototype area for the `pipa-huddle-beta` skill.
 
 The current `index.html` is a static UI exploration for the next hosted voice-session design. It focuses on the Quiet Lobby direction: pre-join, speaker activation, hands-free turns, centered orb states, processing audio cues, and live transcript text that appears only when useful.
 
-The older local OpenCode bridge server is still present as scratch infrastructure, but the active production path now lives in `skills/pipa-voice-session/scripts/start-voice-session.mjs` and the hosted relay Worker.
+The older local OpenCode bridge server is still present as scratch infrastructure, but the active production path now lives in `skills/pipa-huddle-beta/scripts/start-voice-session.mjs` and the hosted relay Worker.
 
 ## Prototype Directions
 
@@ -28,13 +28,13 @@ The older local OpenCode bridge server is still present as scratch infrastructur
 The operational bridge now lives inside the skill:
 
 ```bash
-node skills/pipa-voice-session/scripts/start-voice-session.mjs
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs
 ```
 
 For quick remote HTTPS testing:
 
 ```bash
-node skills/pipa-voice-session/scripts/start-voice-session.mjs --public ngrok
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --public ngrok
 ```
 
 Run it from the repository root, then open `http://127.0.0.1:8787`.

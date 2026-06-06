@@ -1,22 +1,28 @@
-# Voice Session Template Contract
+# Pipa Huddle Template Contract
 
 The local voice bridge renders a deterministic browser UI from a single HTML template inside this skill. By default, `start-voice-session.mjs` serves:
 
 ```text
-skills/pipa-voice-session/templates/huddle.html
+skills/pipa-huddle-beta/templates/huddle.html
 ```
 
-This file is part of the skill package so someone can download `skills/pipa-voice-session/` by itself and get the same huddle UI. Prototype folders may mirror or experiment with the template, but they are not the source of truth.
+This file is part of the skill package so someone can download `skills/pipa-huddle-beta/` by itself and get the same huddle UI. Prototype folders may mirror or experiment with the template, but they are not the source of truth.
+
+All template assets must also live inside the skill package. Current assets are stored under:
+
+```text
+skills/pipa-huddle-beta/assets/
+```
 
 Override the template only for explicit experiments:
 
 ```bash
-PIPA_VOICE_SESSION_TEMPLATE=/absolute/path/to/index.html node skills/pipa-voice-session/scripts/start-voice-session.mjs
+PIPA_VOICE_SESSION_TEMPLATE=/absolute/path/to/index.html node skills/pipa-huddle-beta/scripts/start-voice-session.mjs
 ```
 
 ## Required Shape
 
-The template must be a static HTML file with no build step. It must load over localhost, ngrok HTTPS, or the hosted relay page without relying on bundlers, prototype folders, or private assets outside `skills/pipa-voice-session/`.
+The template must be a static HTML file with no build step. It must load over localhost, ngrok HTTPS, or the hosted relay page without relying on bundlers, prototype folders, or private assets outside `skills/pipa-huddle-beta/`.
 
 The current template has two user-facing views:
 
@@ -60,7 +66,7 @@ Keep these hooks stable unless the bridge script and QA checklist are updated to
 The template should preserve the current product register:
 
 - light theme only
-- `Pipa Huddle` brand with only the small audio bars in blue
+- `Pipa Huddle` brand with the skill-local `assets/pipa-mark.png` logo
 - no prototype chrome, route tabs, or relay labels in the main UI
 - centered gradient orb with pixelated halftone texture
 - minimal state labels: `Ready`, `Listening`, `Thinking`, `Speaking`
@@ -68,7 +74,7 @@ The template should preserve the current product register:
 - transcript in a compact borderless modal with internal scrolling
 - voice picker populated from real browser `speechSynthesis.getVoices()` values
 - no borders on buttons or popups
-- entry and thinking sound cues served by the local bridge from `sound-design-entering-chat.mp3` and `sound-design-thinking.mp3`
+- entry and thinking sound cues served by the local bridge from skill-local `assets/sound-design-entering-chat.mp3` and `assets/sound-design-thinking.mp3`
 - animated `Thinking...` state as the reliable fallback when mobile browsers block delayed thinking audio
 
 ## Lifecycle Contract
@@ -87,4 +93,4 @@ Pause keeps the session open but stops automatic listening until the user resume
 
 Mute is microphone mute. It must stop active `SpeechRecognition`, prevent auto-listening while muted, and resume listening after unmute when the session is otherwise active.
 
-When the user ends the session or the bridge/relay becomes unavailable, the UI should stay in the huddle and show this disconnected state copy: `The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-voice-session skill`
+When the user ends the session or the bridge/relay becomes unavailable, the UI should stay in the huddle and show this disconnected state copy: `The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill`

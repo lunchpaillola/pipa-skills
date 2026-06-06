@@ -4,6 +4,8 @@ Use this only when the voice session ends with execution intent, planning intent
 
 Do not save or return raw transcript by default. Synthesize what matters.
 
+For launch context before a huddle starts, use the same selectivity but keep it even shorter. Include only the current goal, relevant repo/files, confirmed decisions or preferences, open questions, and what the huddle should not assume. Write it to `.pipa/voice-session/launch-context.md` and pass it to the bridge with `--context-file .pipa/voice-session/launch-context.md`.
+
 ## Handoff Shape
 
 ```md
