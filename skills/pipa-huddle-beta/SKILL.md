@@ -63,13 +63,13 @@ The local bridge serves the deterministic huddle template defined in `references
 Default hosted launch command from the repository root:
 
 ```bash
-node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --hosted --context-file .pipa/voice-session/launch-context.md --model <current-opencode-model>
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --context-file .pipa/voice-session/launch-context.md --model <current-opencode-model>
 ```
 
 Local fallback:
 
 ```bash
-node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --context-file .pipa/voice-session/launch-context.md --model <current-opencode-model>
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --local --context-file .pipa/voice-session/launch-context.md --model <current-opencode-model>
 ```
 
 Quick public HTTPS debug test with ngrok:

@@ -23,11 +23,12 @@ const operatorToken = process.env.PIPA_VOICE_RELAY_OPERATOR_TOKEN || "";
 const maxMessageBytes = Number(process.env.PIPA_VOICE_RELAY_MAX_MESSAGE_BYTES || 32_000);
 const pairingTtlMs = Number(process.env.PIPA_VOICE_RELAY_PAIRING_TTL_SECONDS || 900) * 1000;
 const idleTimeoutMs = Number(process.env.PIPA_VOICE_RELAY_IDLE_TIMEOUT_SECONDS || 600) * 1000;
+const reconnectGraceMs = Number(process.env.PIPA_VOICE_RELAY_RECONNECT_GRACE_SECONDS || 15) * 1000;
 const maxSessions = Number(process.env.PIPA_VOICE_RELAY_MAX_SESSIONS || 100);
 const maxInvalidFrames = Number(process.env.PIPA_VOICE_RELAY_MAX_INVALID_FRAMES || 3);
 const maxMessagesPerWindow = Number(process.env.PIPA_VOICE_RELAY_MAX_MESSAGES_PER_WINDOW || 30);
 const rateWindowMs = Number(process.env.PIPA_VOICE_RELAY_RATE_WINDOW_SECONDS || 10) * 1000;
-const store = createRelayStore({ maxSessions });
+const store = createRelayStore({ maxSessions, reconnectGraceMs });
 const sockets = new Map();
 const messageWindows = new Map();
 
@@ -57,7 +58,7 @@ function createSession() {
   if (disabled) return { ok: false, code: "relay_disabled", error: "Hosted relay is disabled" };
   const session = store.createSession({ pairingTtlMs, idleTimeoutMs });
   if (session.ok === false) return session;
-  log("session_created", { session_id: session.id, pairing_expires_at: new Date(session.pairingExpiresAt).toISOString(), idle_timeout_seconds: Math.floor(idleTimeoutMs / 1000) });
+  log("session_created", { session_id: session.id, pairing_expires_at: new Date(session.pairingExpiresAt).toISOString(), idle_timeout_seconds: Math.floor(idleTimeoutMs / 1000), reconnect_grace_seconds: Math.floor(reconnectGraceMs / 1000) });
   return { ok: true, session, package: publicSessionPackage(session, publicBaseUrl) };
 }
 

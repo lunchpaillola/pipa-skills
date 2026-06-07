@@ -91,10 +91,10 @@ Disclose the component boundary clearly:
 For sandboxed or remote-browser voice sessions, use the Pipa hosted relay path:
 
 ```bash
-node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --hosted --model <current-opencode-model>
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --model <current-opencode-model>
 ```
 
-The command should create a relay session, connect the local bridge, and print one browser URL. It should not ask the user to manually assemble relay URLs, session ids, bridge tokens, Wrangler commands, or Cloudflare settings.
+The command should create a relay session, connect the local bridge, and print one browser URL by default. It should not ask the user to pass `--hosted`, manually assemble relay URLs, session ids, bridge tokens, Wrangler commands, or Cloudflare settings. Use `--local` only when intentionally falling back to the same-computer local bridge.
 
 The active session stays alive while it is being used. An unused pairing link expires after about 15 minutes. A paired but idle session ends after about 10 minutes without meaningful activity. Manual end revokes immediately.
 
@@ -115,6 +115,8 @@ The local Node relay remains for development/debugging. Its configuration is:
 - `PIPA_VOICE_RELAY_PORT`: HTTP server port, default `8788`
 - `PIPA_VOICE_RELAY_PAIRING_TTL_SECONDS`: time to wait for both roles to join
 - `PIPA_VOICE_RELAY_IDLE_TIMEOUT_SECONDS`: idle close timeout, default 10 minutes
+- `PIPA_VOICE_RELAY_RECONNECT_GRACE_SECONDS`: local dev relay reconnect window after a paired role disconnects, default 15 seconds
+- hosted Worker `RECONNECT_GRACE_SECONDS`: reconnect window after a paired role disconnects, default 15 seconds
 - `PIPA_VOICE_RELAY_MAX_MESSAGE_BYTES`: maximum text frame size
 - `PIPA_VOICE_RELAY_MAX_SESSIONS`: max in-memory concurrent sessions
 - `PIPA_VOICE_RELAY_DISABLED`: kill switch; when truthy, new session creation is blocked
@@ -122,7 +124,7 @@ The local Node relay remains for development/debugging. Its configuration is:
 - `PIPA_VOICE_RELAY_OPERATOR_TOKEN`: optional bearer or `x-pipa-relay-operator-token` credential for `POST /api/sessions`; when unset, session creation is self-serve and protected by capability-token pairing
 - `PIPA_VOICE_RELAY_ALLOW_QUERY_TOKEN`: local/debug-only compatibility switch for query-string WebSocket credentials
 
-The local bridge hosted mode can accept explicit internals for operator debugging, but normal users should use `--hosted` instead:
+The local bridge hosted mode can accept explicit internals for operator debugging, but normal users should rely on the default hosted launch instead:
 
 - `PIPA_VOICE_RELAY_URL`: hosted relay WebSocket URL
 - `PIPA_VOICE_RELAY_SESSION_ID`: session id returned by the relay
@@ -133,6 +135,7 @@ The local bridge hosted mode can accept explicit internals for operator debuggin
 - `--model <current-opencode-model>`: preferred way to keep the huddle on the same OpenCode model as the launching session
 - `PIPA_VOICE_SESSION_CONTEXT_FILE`: environment equivalent to `--context-file`, for automation only
 - `PIPA_VOICE_SESSION_MODEL`: environment equivalent to `--model`, for automation only
+- `--local` or `PIPA_VOICE_SESSION_LOCAL=1`: force the same-computer local bridge instead of the default hosted relay
 - `PIPA_VOICE_SESSION_ALLOW_LATEST_SESSION`: manual-debug fallback only; allows pinning the latest session when intentionally debugging without a huddle session id
 - `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS`: optional OpenCode args for hosted mode; unset by default
 

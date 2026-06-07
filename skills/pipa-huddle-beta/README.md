@@ -7,10 +7,10 @@ Start here if you want to talk to the current agent by voice.
 Run this from the repository root:
 
 ```bash
-node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --hosted --model <current-opencode-model>
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --model <current-opencode-model>
 ```
 
-The command creates a short-lived hosted session at `voice.usepipa.com`, connects the local bridge to your current OpenCode context, and prints one browser link:
+Hosted mode is the default. The command creates a short-lived hosted session at `voice.usepipa.com`, connects the local bridge to your current OpenCode context, and prints one browser link:
 
 ```text
 Browser voice session: https://voice.usepipa.com/s/<session-id>#token=...
@@ -39,7 +39,7 @@ Hosted mode does not add OpenCode flags by default. It forwards your spoken/text
 If hosted relay is unavailable, run the same-machine local bridge:
 
 ```bash
-node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --model <current-opencode-model>
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --local --model <current-opencode-model>
 ```
 
 Then open `http://127.0.0.1:8787` on the same machine.
@@ -53,7 +53,7 @@ node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --public ngrok --mo
 The local bridge serves the skill-local template documented in `references/template-contract.md`. Override it only for explicit experiments:
 
 ```bash
-PIPA_VOICE_SESSION_TEMPLATE=/absolute/path/to/index.html node skills/pipa-huddle-beta/scripts/start-voice-session.mjs
+PIPA_VOICE_SESSION_TEMPLATE=/absolute/path/to/index.html node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --local
 ```
 
 ## Browser Speech
