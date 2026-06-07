@@ -8,7 +8,7 @@
     "check:voice-relay-template": "node skills/pipa-huddle-beta/scripts/sync-hosted-template.mjs --check",
     "deploy:voice-relay": "npm run sync:voice-relay-template && npx wrangler deploy --config skills/pipa-huddle-beta/cloudflare/wrangler.jsonc",
     "dry-run:voice-relay": "npm run sync:voice-relay-template && npx wrangler deploy --dry-run --config skills/pipa-huddle-beta/cloudflare/wrangler.jsonc",
-    "test:relay": "node --test skills/pipa-huddle-beta/scripts/relay-protocol.test.mjs",
+    "test:relay": "node --test skills/pipa-huddle-beta/scripts/relay-protocol.test.mjs skills/pipa-huddle-beta/cloudflare/worker-lifecycle.test.mjs",
     "test": "npm run check:voice-relay-template && npm run test:relay"
   },
   "dependencies": {

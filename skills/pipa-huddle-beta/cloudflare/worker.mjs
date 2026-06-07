@@ -46,23 +46,38 @@ export class VoiceSession {
     this.invalidFrames = new Map();
   }
 
+  reconnectGraceMs() {
+    return Number(this.env.RECONNECT_GRACE_SECONDS || 15) * 1000;
+  }
+
+  log(event, fields = {}) {
+    console.log(JSON.stringify({ event, at: new Date().toISOString(), ...fields }));
+  }
+
   async fetch(request) {
     const url = new URL(request.url);
 
     if (request.method === "POST" && url.pathname === "/internal/init") {
       const session = await request.json();
+      normalizeLifecycle(session);
       await this.ctx.storage.put("session", session);
       await this.ctx.storage.setAlarm(Math.min(session.pairingExpiresAt, session.lastActivityAt + session.idleTimeoutMs));
+      this.log("session_initialized", { session_id: session.id, pairing_expires_at: new Date(session.pairingExpiresAt).toISOString(), idle_timeout_seconds: Math.floor(session.idleTimeoutMs / 1000), reconnect_grace_seconds: Math.floor(this.reconnectGraceMs() / 1000) });
       return json({ ok: true });
     }
 
     if (request.method === "GET" && url.pathname === "/internal/status") {
       const session = await this.ctx.storage.get("session");
       if (!session) return json({ ok: false, gone: true, state: "missing" }, 404);
+      normalizeLifecycle(session);
       if (sessionRevoked(session, this.env)) return json({ ok: false, gone: true, state: "revoked" }, 410);
       if (session.endedAt) return json({ ok: false, gone: true, state: session.state || "ended" }, 410);
-      if (!this.isPaired() && Date.now() > session.pairingExpiresAt) {
+      if (!hasPaired(session) && Date.now() > session.pairingExpiresAt) {
         await this.expire(session, "Expired. Start a new session.");
+        return json({ ok: false, gone: true, state: "expired" }, 410);
+      }
+      if (this.reconnectExpired(session)) {
+        await this.expire(session, "Reconnect grace expired. Start a new session.");
         return json({ ok: false, gone: true, state: "expired" }, 410);
       }
       return json({ ok: true, gone: false, state: this.state(session) });
@@ -75,13 +90,15 @@ export class VoiceSession {
 
     const session = await this.ctx.storage.get("session");
     if (!session || session.id !== match[1]) return json({ ok: false, error: "Unknown session" }, 404);
+    normalizeLifecycle(session);
     if (sessionRevoked(session, this.env)) return json({ ok: false, error: "Session no longer exists" }, 410);
     if (session.endedAt) return json({ ok: false, error: "Session ended" }, 410);
 
     const auth = authFromProtocols(request.headers.get("Sec-WebSocket-Protocol"));
     if (auth.sessionId !== session.id || !["browser", "bridge"].includes(auth.role)) return json({ ok: false, error: "Invalid credentials" }, 401);
     if (await sha256(auth.token || "") !== session[auth.role].tokenHash) return json({ ok: false, error: "Invalid credentials" }, 401);
-    if (!this.isPaired() && Date.now() > session.pairingExpiresAt) return this.expire(session, "Pairing expired");
+    if (!hasPaired(session) && Date.now() > session.pairingExpiresAt) return this.expire(session, "Pairing expired");
+    if (this.roleReconnectExpired(session, auth.role)) return this.expire(session, "Reconnect grace expired. Start a new session.");
     if (!originAllowed(request.headers.get("Origin"), this.env)) return json({ ok: false, error: "Origin not allowed" }, 403);
     if (this.sockets.has(auth.role)) return json({ ok: false, error: `${auth.role} already connected` }, 409);
 
@@ -90,18 +107,22 @@ export class VoiceSession {
     server.accept();
     this.sockets.set(auth.role, server);
     this.invalidFrames.set(auth.role, 0);
+    session.disconnectedAt[auth.role] = null;
+    if (this.isPaired() && !session.pairedAt) session.pairedAt = Date.now();
 
     server.addEventListener("message", (event) => this.handleMessage(auth.role, event.data));
     server.addEventListener("close", () => this.detach(auth.role));
     server.addEventListener("error", () => this.detach(auth.role));
 
     await this.touch(session);
+    this.log("connection_attached", { session_id: session.id, role: auth.role, state: session.state });
     return new Response(null, { status: 101, webSocket: client, headers: { "Sec-WebSocket-Protocol": "pipa-relay" } });
   }
 
   async handleMessage(role, data) {
     const session = await this.ctx.storage.get("session");
     if (!session || session.endedAt) return;
+    normalizeLifecycle(session);
 
     const parsed = parseMessage(data, Number(this.env.MAX_MESSAGE_BYTES || 32_000));
     if (!parsed.ok) return this.invalid(role, parsed.error);
@@ -114,6 +135,7 @@ export class VoiceSession {
       session.endedAt = Date.now();
       session.state = "ended";
       await this.ctx.storage.put("session", session);
+      this.log("session_ended", { session_id: session.id, role });
       this.send("browser", { type: "end", message: "The hosted voice session ended." });
       this.send("bridge", { type: "end", message: "The hosted voice session ended." });
       return this.closeAll(1000, "ended");
@@ -137,14 +159,20 @@ export class VoiceSession {
     this.sockets.delete(role);
     this.invalidFrames.delete(role);
     const session = await this.ctx.storage.get("session");
-    if (session && !session.endedAt) await this.touch(session);
+    if (session && !session.endedAt) {
+      normalizeLifecycle(session);
+      session.disconnectedAt[role] = Date.now();
+      await this.touch(session);
+      this.log("connection_detached", { session_id: session.id, role, state: session.state });
+    }
   }
 
   async alarm() {
     const session = await this.ctx.storage.get("session");
     if (!session || session.endedAt) return;
+    normalizeLifecycle(session);
     const now = Date.now();
-    if ((!this.isPaired() && now >= session.pairingExpiresAt) || now - session.lastActivityAt >= session.idleTimeoutMs) {
+    if ((!hasPaired(session) && now >= session.pairingExpiresAt) || this.reconnectExpired(session, now) || now - session.lastActivityAt >= session.idleTimeoutMs) {
       await this.expire(session, "Expired. Start a new session.");
       return;
     }
@@ -156,15 +184,29 @@ export class VoiceSession {
   }
 
   state(session) {
+    normalizeLifecycle(session);
     if (session.endedAt) return session.state;
-    if (session.activeTurnId) return "active_turn";
+    if (this.sockets.has("browser") && this.sockets.has("bridge") && session.activeTurnId) return "active_turn";
     if (this.sockets.has("browser") && this.sockets.has("bridge")) return "paired";
+    if (hasPaired(session)) return "degraded";
     if (this.sockets.has("browser")) return "browser_waiting";
     if (this.sockets.has("bridge")) return "bridge_waiting";
     return "created";
   }
 
+  reconnectExpired(session, now = Date.now()) {
+    if (!hasPaired(session)) return false;
+    return ["browser", "bridge"].some((role) => !this.sockets.has(role) && this.roleReconnectExpired(session, role, now));
+  }
+
+  roleReconnectExpired(session, role, now = Date.now()) {
+    const disconnectedAt = session.disconnectedAt?.[role];
+    return Boolean(disconnectedAt && now - disconnectedAt >= this.reconnectGraceMs());
+  }
+
   async touch(session) {
+    normalizeLifecycle(session);
+    if (this.isPaired() && !session.pairedAt) session.pairedAt = Date.now();
     session.lastActivityAt = Date.now();
     session.state = this.state(session);
     await this.ctx.storage.put("session", session);
@@ -173,9 +215,11 @@ export class VoiceSession {
   }
 
   async expire(session, message) {
+    normalizeLifecycle(session);
     session.endedAt = Date.now();
     session.state = "expired";
     await this.ctx.storage.put("session", session);
+    this.log("session_expired", { session_id: session.id, reason: message });
     this.broadcast({ type: "status", state: "expired", message });
     this.closeAll(1000, "expired");
     return json({ ok: false, error: message }, 410);
@@ -216,6 +260,8 @@ async function createSession(env, baseUrl) {
     id,
     state: "created",
     createdAt: now,
+    pairedAt: null,
+    disconnectedAt: { browser: null, bridge: null },
     lastActivityAt: now,
     pairingExpiresAt,
     idleTimeoutMs,
@@ -303,9 +349,23 @@ function label(state) {
     bridge_waiting: "Waiting for browser to join",
     paired: "Paired",
     active_turn: "Sending to OpenCode",
+    degraded: "Reconnecting",
     expired: "Expired. Start a new session.",
     ended: "Ended"
   }[state] || state;
+}
+
+function normalizeLifecycle(session) {
+  session.disconnectedAt ||= { browser: null, bridge: null };
+  session.disconnectedAt.browser ||= null;
+  session.disconnectedAt.bridge ||= null;
+  session.pairedAt ||= ["paired", "active_turn", "degraded"].includes(session.state) ? session.lastActivityAt || session.createdAt || Date.now() : null;
+  return session;
+}
+
+function hasPaired(session) {
+  normalizeLifecycle(session);
+  return Boolean(session.pairedAt);
 }
 
 function sessionRevoked(session, env) {

@@ -17,3 +17,4 @@ This repository stores Pipa skills for AI agents. Pipa is the primary PM brain a
 - Reserve standalone skills for high-value, tool/product-specific, safety-sensitive, or independently discoverable workflows.
 - Preserve `pipa-audio-brief`, `composio`, `pipa-triggers`, and `pipa-workflow-automation` as standalone breakouts unless a future plan explicitly changes that architecture.
 - Keep `skills/pipa/SKILL.md` concise and move detailed command instructions into `skills/pipa/references/`.
+- `docs/solutions/` stores documented solutions to past problems (bugs, best practices, workflow patterns), organized by category with YAML frontmatter (`module`, `tags`, `problem_type`); relevant when implementing or debugging in documented areas.
