@@ -1,6 +1,6 @@
 ---
 name: pipa-workflow-automation
-description: Handle Slack-driven recurring automations for Pipa. Use this whenever the user wants something sent on a schedule, asks for a recurring report or reminder, says things like daily, weekly, every Monday, every month, recurring, automate this, remind me every, send me every, or wants to delete/check an existing recurring automation in natural language. This skill should also trigger for list/read/delete requests about existing automations, even if the user does not use the word automation.
+description: Handle Slack-driven recurring automations for Pipa. Use this whenever the user wants something sent on a schedule, asks for a recurring report or reminder, says things like every 15 minutes, hourly, daily, weekly, every Monday, every month, recurring, automate this, remind me every, send me every, or wants to delete/check an existing recurring automation in natural language. This skill should also trigger for list/read/delete requests about existing automations, even if the user does not use the word automation.
 metadata:
   version: 0.1.0
 ---
@@ -30,13 +30,15 @@ Use this skill when the user asks for any of the following:
 
 - a recurring report
 - a recurring summary, digest, or reminder
-- something that should happen every day, every week, every month, or on a weekday/time
+- something that should happen every N minutes, every N hours, every day, every week, every month, or on a weekday/time
 - something to be delivered later on a schedule
 - a request to list, check, inspect, or delete an existing recurring automation
 
 Typical examples:
 
 - "Every Monday at 6 AM send me a budget debrief"
+- "Every 15 minutes send me an incident status check"
+- "Hourly, send me the latest support queue summary"
 - "Give me a daily project summary"
 - "Send this report every Friday morning"
 - "What automations do I have set up?"
@@ -129,6 +131,28 @@ Preserve the user's original wording in `user_request_text`. Put the cleaned-up 
 `schedule_normalized` must be a structured JSON object. Do **not** send cron strings.
 
 Accepted shapes:
+
+- Minutes interval:
+
+```json
+{
+  "frequency": "minutes",
+  "interval": 15
+}
+```
+
+`interval` is the number of minutes between runs. The minimum supported interval is `15`; do not create automations that run more frequently than every 15 minutes.
+
+- Hours interval:
+
+```json
+{
+  "frequency": "hours",
+  "interval": 1
+}
+```
+
+`interval` is the number of hours between runs. Use this shape for hourly or every-N-hours requests.
 
 - Daily:
 
@@ -275,7 +299,8 @@ Ask a follow-up question.
 Examples:
 
 - "What day and time should this run?"
-- "Should this be daily, weekly, or monthly?"
+- "Should this be every 15 minutes, hourly, daily, weekly, or monthly?"
+- "How many minutes or hours should there be between runs? The minimum is every 15 minutes."
 
 ### Missing timezone
 
