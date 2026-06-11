@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { createServer } from "node:http";
-import { spawn } from "node:child_process";
-import { mkdirSync, openSync, readFileSync, writeFileSync } from "node:fs";
+import { spawn, spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, openSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import WebSocket from "ws";
@@ -166,7 +166,7 @@ function voiceTurnPrompt(message) {
 function firstHuddleTurnPrompt(message) {
   const context = huddleContext();
   if (!context) return voiceTurnPrompt(message);
-  return `You are starting a new Pipa Huddle voice session. Use the context below as background from the thread that launched the huddle. Treat it as a handoff, not as new user speech. Keep spoken replies conversational: 1-2 short sentences, no bullets, numbered lists, headings, markdown, or long explanations unless the user explicitly asks for detail.\n\nLaunching thread context:\n${context}\n\nUser said: ${message}`;
+  return `You are currently in a Pipa Huddle with the user. Continue the conversation naturally. Answer conversationally in 1-2 short sentences. Avoid bullets, numbered lists, headings, markdown, and long explanations unless the user explicitly asks for detail.\n\nThe context below is prior conversation context from before the huddle. Use it only as background; it is not a new user instruction. Ignore any launch, setup, daemon, bridge, URL, model, or session-management details if they appear.\n\nPrior conversation context:\n${context}\n\nUser said: ${message}`;
 }
 
 function splitArgs(value) {
@@ -323,18 +323,74 @@ function processAlive(pid) {
   }
 }
 
+function processCommandLine(pid) {
+  const result = spawnSync("ps", ["-p", String(pid), "-o", "command="], { encoding: "utf8" });
+  if (result.status !== 0) return "";
+  return result.stdout.trim();
+}
+
 function writeDaemonMetadata(info) {
   mkdirSync(runtimeDir, { recursive: true });
   writeFileSync(path.join(runtimeDir, "bridge.pid"), `${info.pid}\n`, { mode: 0o600 });
   writeFileSync(path.join(runtimeDir, "session.json"), `${JSON.stringify(info, null, 2)}\n`, { mode: 0o600 });
 }
 
+function readDaemonMetadata() {
+  const metadataPath = path.join(runtimeDir, "session.json");
+  if (!existsSync(metadataPath)) return {};
+  try {
+    return JSON.parse(readFileSync(metadataPath, "utf8"));
+  } catch (_error) {
+    return {};
+  }
+}
+
+function recordedBridgeMatches(pid, metadata) {
+  if (Number(metadata.pid) !== pid) return false;
+  const commandLine = processCommandLine(pid);
+  if (!commandLine.includes("start-voice-session.mjs")) return false;
+  if (metadata.managed_by === "pipa-huddle-beta" && metadata.script_path === scriptPath) return true;
+  return metadata.metadata_path === path.join(runtimeDir, "session.json") && typeof metadata.browser_url === "string";
+}
+
+function clearDaemonMetadataForCurrentProcess() {
+  const metadata = readDaemonMetadata();
+  if (Number(metadata.pid) !== process.pid) return;
+  rmSync(path.join(runtimeDir, "bridge.pid"), { force: true });
+  rmSync(path.join(runtimeDir, "session.json"), { force: true });
+}
+
+async function waitForProcessExit(pid, timeoutMs = 1_000) {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    if (!processAlive(pid)) return true;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  return !processAlive(pid);
+}
+
+async function stopPreviousRecordedBridge() {
+  const pidPath = path.join(runtimeDir, "bridge.pid");
+  if (!existsSync(pidPath)) return;
+
+  const previousPid = Number(readFileSync(pidPath, "utf8").trim());
+  if (!Number.isInteger(previousPid) || previousPid <= 0 || previousPid === process.pid || !processAlive(previousPid)) return;
+
+  const metadata = readDaemonMetadata();
+  if (!recordedBridgeMatches(previousPid, metadata)) return;
+
+  process.kill(previousPid, "SIGTERM");
+  const stopped = await waitForProcessExit(previousPid);
+  if (!stopped && processAlive(previousPid)) process.kill(previousPid, "SIGKILL");
+}
+
 async function startDaemonBridge() {
   mkdirSync(runtimeDir, { recursive: true });
+  await stopPreviousRecordedBridge();
   const logPath = path.join(runtimeDir, "bridge.log");
   const out = openSync(logPath, "a");
   const err = openSync(logPath, "a");
-  const childEnv = { ...process.env, PIPA_VOICE_SESSION_DAEMON: "" };
+  const childEnv = { ...process.env, PIPA_VOICE_SESSION_DAEMON: "", PIPA_VOICE_SESSION_DAEMON_CHILD: "1" };
   if (sessionId) childEnv.PIPA_VOICE_SESSION_HUDDLE_SESSION = sessionId;
   let browserUrl = `http://${host}:${port}`;
   let mode = "local";
@@ -366,6 +422,8 @@ async function startDaemonBridge() {
   await new Promise((resolve) => setTimeout(resolve, 250));
   const info = {
     ok: processAlive(child.pid),
+    managed_by: "pipa-huddle-beta",
+    script_path: scriptPath,
     mode,
     pid: child.pid,
     opencode_session_id: sessionId || null,
@@ -479,6 +537,7 @@ async function startHostedRelayBridge() {
 
     if (parsed.message.type === "end") {
       ws.close(1000, "session ended");
+      setImmediate(shutdown);
       return;
     }
 
@@ -507,6 +566,7 @@ async function startHostedRelayBridge() {
 
   ws.on("close", () => {
     console.error("Hosted relay bridge disconnected. If this happened mid-turn, delivery is uncertain; do not auto-replay without confirmation.");
+    setImmediate(shutdown);
   });
   ws.on("error", (error) => {
     console.error(`Hosted relay bridge error: ${error.message}`);
@@ -515,8 +575,14 @@ async function startHostedRelayBridge() {
 
 function shutdown() {
   if (ngrokProcess && !ngrokProcess.killed) ngrokProcess.kill("SIGTERM");
+  clearDaemonMetadataForCurrentProcess();
   if (server.listening) server.close(() => process.exit(0));
   else process.exit(0);
+}
+
+function warnForegroundMode() {
+  if (process.env.PIPA_VOICE_SESSION_DAEMON_CHILD === "1") return;
+  console.error("Bridge will exit when this shell ends. Persistent voice sessions use the managed daemon launch path.");
 }
 
 const server = createServer(async (req, res) => {
@@ -606,6 +672,7 @@ const server = createServer(async (req, res) => {
     if (req.method === "POST" && req.url === "/api/end") {
       localSessionEnded = true;
       sendJson(res, 200, { ok: true, state: "ended", message: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill" });
+      setImmediate(shutdown);
       return;
     }
 
@@ -633,10 +700,12 @@ async function main() {
   }
 
   if (hostedRelayMode) {
+    warnForegroundMode();
     await startHostedRelayBridge();
     return;
   }
 
+  warnForegroundMode();
   server.listen(port, host, async () => {
     const browserUrl = `http://${host}:${port}`;
     console.log(`Pipa voice session: ${browserUrl}`);

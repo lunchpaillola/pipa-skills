@@ -9,22 +9,10 @@ For sandboxed or remote-browser use, the hosted relay path in `hosted-relay.md` 
 Run from the repository root:
 
 ```bash
-node skills/pipa-huddle-beta/scripts/start-voice-session.mjs
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --daemon --print-url-json --local --model <current-opencode-model>
 ```
 
-Open `http://127.0.0.1:8787`.
-
-For quick remote testing, use ngrok public mode:
-
-```bash
-node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --public ngrok
-```
-
-This starts the local bridge, starts `ngrok http <port>`, polls ngrok's local API for the HTTPS URL, and prints `Public voice session: <url>`. The ngrok tunnel is stopped when the script exits. First-time ngrok use may require:
-
-```bash
-ngrok config add-authtoken <token>
-```
+Open the `browser_url` from the JSON output. Managed launches stop only the previously recorded project-local Pipa Huddle bridge from `.pipa/voice-session/bridge.pid`, write fresh metadata to `.pipa/voice-session/session.json`, and exit when the huddle session ends.
 
 The bridge does this for each user turn:
 
@@ -39,21 +27,19 @@ Environment variables:
 - `PIPA_VOICE_SESSION_DIR`: defaults to the server working directory
 - `PIPA_VOICE_SESSION_HUDDLE_SESSION`: optional existing huddle session id to resume; otherwise the bridge creates a fresh huddle session on the first turn
 - `PIPA_VOICE_SESSION_OPENCODE_SESSION`: backward-compatible alias for `PIPA_VOICE_SESSION_HUDDLE_SESSION`
-- `--context-file <path>`: path to a text/Markdown context summary file, normally `.pipa/voice-session/launch-context.md`; injected into the first huddle turn only
-- `PIPA_VOICE_SESSION_CONTEXT_FILE`: environment equivalent to `--context-file`, for automation only
-- `PIPA_VOICE_SESSION_CONTEXT`: inline context fallback for automation only; prefer `--context-file` so launch context is visible and skill-contained
+- `PIPA_VOICE_SESSION_CONTEXT`: optional inline prior conversation context for this launch only; injected into the first huddle turn only
 - `--model <current-opencode-model>`: preferred way to pass the launching session's OpenCode model into the dedicated huddle session; prevents fallback to a different machine default provider
 - `PIPA_VOICE_SESSION_MODEL`: environment equivalent to `--model <current-opencode-model>` for automation
 - `OPENCODE_MODEL`: fallback model source when set by the runtime; explicit `--model` remains preferred for inspectable launches
 - `PIPA_VOICE_SESSION_ALLOW_LATEST_SESSION`: manual-debug fallback only; set to `1` or pass `--allow-latest-session` to pin the latest `opencode session list --format json --max-count 1` result when intentionally debugging without a huddle session id
-- `PIPA_VOICE_SESSION_PUBLIC`: set to `ngrok` to start an HTTPS ngrok tunnel
+- `--daemon --print-url-json`: standard launch mode for managed bridge lifetime and machine-readable browser URL output
 - `PIPA_VOICE_SESSION_TEMPLATE`: optional absolute HTML template path; defaults to the skill-local `templates/huddle.html`
 - `PIPA_VOICE_SESSION_TURN_TIMEOUT_SECONDS`: OpenCode turn timeout, defaults to `300`
 - `OPENCODE_BIN`: defaults to `opencode`
 
 Hosted relay bridge mode environment variables:
 
-- Normal user path: `node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --hosted --model <current-opencode-model>`
+- Normal user path: `node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --daemon --print-url-json --model <current-opencode-model>`
 - `PIPA_VOICE_RELAY_PUBLIC_BASE_URL`: optional override for session creation; defaults to `https://voice.usepipa.com`
 - `PIPA_VOICE_RELAY_URL`: operator/debug-only hosted relay WebSocket URL
 - `PIPA_VOICE_RELAY_SESSION_ID`: operator/debug-only hosted relay session id
@@ -87,10 +73,10 @@ Each candidate should prove:
 
 Use the same-computer OpenCode bridge as the default V1 path:
 
-- serve the bundled UI through `node skills/pipa-huddle-beta/scripts/start-voice-session.mjs`
+- serve the bundled UI through `node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --daemon --print-url-json`
 - keep the UI deterministic through `references/template-contract.md`
 - call `opencode run --format json --title "Pipa Huddle" --dir <repo>` for the first turn when no huddle session exists, plus `--model <current-opencode-model>` from the launching session
-- include the compact launch context in that first prompt when provided
+- include compact prior conversation context in that first prompt only when provided
 - capture the returned JSON `sessionID`
 - call `opencode run --format json --session <huddle-session-id> --dir <repo>` for all later turns
 
@@ -98,10 +84,9 @@ Use the same-computer OpenCode bridge as the default V1 path:
 
 The huddle is a dedicated OpenCode session, not a continuation of the caller's thread. When no huddle session id is supplied, the first turn creates a new session with `opencode run --format json --title "Pipa Huddle"`. The bridge captures the returned `sessionID` and uses `--session <id>` for every later turn.
 
-If the launching thread has useful context, write a compact summary to `.pipa/voice-session/launch-context.md` and pass it with `--context-file .pipa/voice-session/launch-context.md`. The bridge adds it only to the first huddle prompt as background from the launching thread. Later turns use normal short voice prompts inside the huddle session.
+If the launching thread has useful prior conversation context, pass a compact summary inline with `PIPA_VOICE_SESSION_CONTEXT` for that launch only. Include only what the user was discussing, relevant decisions/preferences, open questions, and files or repo details needed to understand that discussion. Do not include instructions to start the huddle, generic repo context, session scope, launch mechanics, daemon/bridge details, URLs, model/runtime details, or session-management guidance. If the user only asked to start a huddle, omit context. The bridge adds provided context only to the first huddle prompt; later turns use normal short voice prompts inside the huddle session.
 
 Do not use `opencode session list --max-count 1` as the normal detector. It is useful for humans copying ids and for manual debugging, but it can point at an unrelated run.
-- use `--public ngrok` for the quickest remote HTTPS test
 - use browser speech synthesis as the default reply voice for lower memory pressure and faster startup
 - label browser STT/TTS as browser-mediated and not guaranteed on-device
 - shape voice replies for browser speech: short, conversational, and no bullets by default
@@ -118,7 +103,7 @@ Do not use `opencode session list --max-count 1` as the normal detector. It is u
 
 ## Hosted Relay Guardrail
 
-Hosted relay mode routes remote browser text into the local bridge, so it must be explicitly requested with `--hosted`. Hosted mode does not add OpenCode flags by default. If custom `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS` are set, they must be supported by the installed `opencode run` or the bridge blocks instead of invoking OpenCode.
+Hosted relay mode routes remote browser text into the local bridge and is the default managed launch when `--local` is not passed. Hosted mode does not add OpenCode flags by default. If custom `PIPA_VOICE_SESSION_OPENCODE_RESTRICTED_ARGS` are set, they must be supported by the installed `opencode run` or the bridge blocks instead of invoking OpenCode.
 
 The relay route is not a generic pipe. It validates role, session, message type, size, and direction before forwarding. Unknown message types, binary frames, duplicate browser tabs, wrong-role tokens, and command-like payloads are blockers.
 

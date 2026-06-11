@@ -91,10 +91,12 @@ Disclose the component boundary clearly:
 For sandboxed or remote-browser voice sessions, use the Pipa hosted relay path:
 
 ```bash
-node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --model <current-opencode-model>
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --daemon --print-url-json --model <current-opencode-model>
 ```
 
-The command should create a relay session, connect the local bridge, and print one browser URL by default. It should not ask the user to pass `--hosted`, manually assemble relay URLs, session ids, bridge tokens, Wrangler commands, or Cloudflare settings. Use `--local` only when intentionally falling back to the same-computer local bridge.
+The command should create a relay session, start the local bridge as a managed daemon, connect the bridge, and print JSON events that include the browser URL, daemon pid, log path, and stop command. It should not ask the user to pass `--hosted`, manually assemble relay URLs, session ids, bridge tokens, Wrangler commands, or Cloudflare settings. Use `--local` only when intentionally falling back to the same-computer local bridge.
+
+Each managed launch stops only the previously recorded project-local Pipa Huddle bridge from `.pipa/voice-session/bridge.pid`, writes fresh metadata to `.pipa/voice-session/session.json`, and exits when the huddle session ends.
 
 The active session stays alive while it is being used. An unused pairing link expires after about 15 minutes. A paired but idle session ends after about 10 minutes without meaningful activity. Manual end revokes immediately.
 
@@ -131,9 +133,9 @@ The local bridge hosted mode can accept explicit internals for operator debuggin
 - `PIPA_VOICE_RELAY_BRIDGE_TOKEN`: bridge role credential
 - `PIPA_VOICE_SESSION_HUDDLE_SESSION`: optional existing huddle session id to resume
 - `PIPA_VOICE_SESSION_OPENCODE_SESSION`: backward-compatible alias for `PIPA_VOICE_SESSION_HUDDLE_SESSION`
-- `--context-file <path>`: path to a text/Markdown context summary file, normally `.pipa/voice-session/launch-context.md`, injected into the first huddle turn only
+- `PIPA_VOICE_SESSION_CONTEXT`: optional inline prior conversation context for this launch only, injected into the first huddle turn only
 - `--model <current-opencode-model>`: preferred way to keep the huddle on the same OpenCode model as the launching session
-- `PIPA_VOICE_SESSION_CONTEXT_FILE`: environment equivalent to `--context-file`, for automation only
+- `--daemon --print-url-json`: standard launch mode for managed bridge lifetime and machine-readable browser URL output
 - `PIPA_VOICE_SESSION_MODEL`: environment equivalent to `--model`, for automation only
 - `--local` or `PIPA_VOICE_SESSION_LOCAL=1`: force the same-computer local bridge instead of the default hosted relay
 - `PIPA_VOICE_SESSION_ALLOW_LATEST_SESSION`: manual-debug fallback only; allows pinning the latest session when intentionally debugging without a huddle session id

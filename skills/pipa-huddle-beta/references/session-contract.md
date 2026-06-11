@@ -9,7 +9,6 @@ State these points before asking the first question:
 - **Context available:** name the active agent/workspace context you can access, or say what is unknown.
 - **Mode:** browser voice through the local OpenCode bridge, debug text through the same bridge, or a configured provider-backed room.
 - **Useful for:** talking through direction, decisions, blockers, and next actions.
-- **Not for V1:** realtime voice coding, spoken permission approval, video presence, or durable raw transcript retention.
 - **Retention:** raw audio/transcript is transient by default unless the user explicitly asks to save a handoff summary.
 
 ## Conversation Behavior
