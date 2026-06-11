@@ -548,6 +548,20 @@ async function startHostedRelayBridge() {
     reconnectTimer = setTimeout(connectHostedRelay, delayMs);
   }
 
+  function sendHostedRelayMessage(ws, message) {
+    if (ws.readyState !== WebSocket.OPEN) {
+      console.error("Hosted relay message dropped because the bridge socket is no longer open.");
+      return false;
+    }
+    try {
+      ws.send(JSON.stringify(message));
+      return true;
+    } catch (error) {
+      console.error(`Hosted relay send failed: ${error.message}`);
+      return false;
+    }
+  }
+
   function connectHostedRelay() {
     const ws = new WebSocket(url, ["pipa-relay", "pipa-role.bridge", `pipa-session.${relaySessionId}`, `pipa-token.${relayBridgeToken}`], { perMessageDeflate: false });
 
@@ -565,13 +579,13 @@ async function startHostedRelayBridge() {
         relay_ws_url: relayUrl,
         relay_state: "bridge_waiting_until_browser_joins"
       });
-      ws.send(JSON.stringify({ type: "status", message: "Local bridge connected. The first hosted turn will create a dedicated Pipa Huddle session." }));
+      sendHostedRelayMessage(ws, { type: "status", message: "Local bridge connected. The first hosted turn will create a dedicated Pipa Huddle session." });
     });
 
     ws.on("message", async (data, isBinary) => {
       const parsed = parseRelayFrame(isBinary ? Buffer.from(data) : data.toString());
       if (!parsed.ok) {
-        ws.send(JSON.stringify({ type: "error", message: parsed.error }));
+        sendHostedRelayMessage(ws, { type: "error", message: parsed.error });
         return;
       }
 
@@ -590,24 +604,24 @@ async function startHostedRelayBridge() {
 
       const validation = validateRelayMessage("browser", parsed.message, { seenTurnIds: seenTurns });
       if (!validation.ok) {
-        ws.send(JSON.stringify({ type: "error", message: validation.error }));
+        sendHostedRelayMessage(ws, { type: "error", message: validation.error });
         return;
       }
 
       const message = validation.message;
       if (message.type === "interrupt") {
-        ws.send(JSON.stringify({ type: "status", message: "Interrupt received. The bridge will not auto-replay an in-flight hosted turn." }));
+        sendHostedRelayMessage(ws, { type: "status", message: "Interrupt received. The bridge will not auto-replay an in-flight hosted turn." });
         return;
       }
       if (message.type !== "user_turn") return;
 
       seenTurns.add(message.turn_id);
-      ws.send(JSON.stringify({ type: "status", message: "Running OpenCode turn." }));
+      sendHostedRelayMessage(ws, { type: "status", message: "Running OpenCode turn." });
       try {
         const reply = await runOpenCodeTurn(sessionId ? voiceTurnPrompt(message.text) : firstHuddleTurnPrompt(message.text), extraArgs);
-        ws.send(JSON.stringify({ type: "assistant_reply", turn_id: message.turn_id, text: reply }));
+        sendHostedRelayMessage(ws, { type: "assistant_reply", turn_id: message.turn_id, text: reply });
       } catch (error) {
-        ws.send(JSON.stringify({ type: "error", message: error.message }));
+        sendHostedRelayMessage(ws, { type: "error", message: error.message });
       }
     });
 
