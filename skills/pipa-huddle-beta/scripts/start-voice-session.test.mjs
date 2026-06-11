@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { chmodSync, existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -223,12 +224,38 @@ test("managed daemon exits and clears metadata when the browser session ends", a
   }
 });
 
+test("managed daemon launch fails instead of reporting ready when local bridge cannot listen", async () => {
+  const runtimeDir = mkdtempSync(path.join(tmpdir(), "pipa-voice-session-"));
+  const port = 23_000 + Math.floor(Math.random() * 1_000);
+  const blocker = createServer((_req, res) => {
+    res.writeHead(200);
+    res.end("occupied");
+  });
+
+  await new Promise((resolve) => blocker.listen(port, "127.0.0.1", resolve));
+
+  try {
+    const result = await runCli(["--daemon", "--print-url-json", "--local"], {
+      PIPA_VOICE_SESSION_RUNTIME_DIR: runtimeDir,
+      PIPA_VOICE_SESSION_PORT: String(port)
+    });
+
+    assert.equal(result.code, 1);
+    assert.doesNotMatch(result.stdout, /voice_session_daemon_started/);
+    assert.match(result.stdout, /voice_session_failed/);
+    assert.equal(existsSync(path.join(runtimeDir, "session.json")), false);
+  } finally {
+    await new Promise((resolve) => blocker.close(resolve));
+    rmSync(runtimeDir, { recursive: true, force: true });
+  }
+});
+
 test("first huddle prompt treats launch context as prior conversation, not a launch task", async () => {
   const runtimeDir = mkdtempSync(path.join(tmpdir(), "pipa-voice-session-"));
   const port = 22_000 + Math.floor(Math.random() * 1_000);
   const promptPath = path.join(runtimeDir, "prompt.txt");
   const fakeOpenCodePath = path.join(runtimeDir, "opencode-fake.mjs");
-  const contextPath = path.join(runtimeDir, "launch-context.md");
+  const launchContext = "The user was comparing launch-context options and wants the huddle to continue that conversation.";
 
   writeFileSync(fakeOpenCodePath, `#!/usr/bin/env node
 import { writeFileSync } from "node:fs";
@@ -237,14 +264,14 @@ console.log(JSON.stringify({ sessionID: "huddle-test-session" }));
 console.log(JSON.stringify({ type: "text", part: { text: "Ready to continue." } }));
 `);
   chmodSync(fakeOpenCodePath, 0o755);
-  writeFileSync(contextPath, "The user was comparing launch-context options and wants the huddle to continue that conversation.");
 
-  const child = spawn(process.execPath, [scriptPath, "--local", "--context-file", contextPath], {
+  const child = spawn(process.execPath, [scriptPath, "--local"], {
     cwd: path.join(import.meta.dirname, "..", "..", ".."),
     env: {
       ...process.env,
       CAPTURE_PROMPT_PATH: promptPath,
       OPENCODE_BIN: fakeOpenCodePath,
+      PIPA_VOICE_SESSION_CONTEXT: launchContext,
       PIPA_VOICE_SESSION_RUNTIME_DIR: runtimeDir,
       PIPA_VOICE_SESSION_PORT: String(port)
     },
