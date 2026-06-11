@@ -5,6 +5,7 @@
 .opencode/
 .pipa/
 node_modules/
+**/.wrangler/
 dist/
 coverage/
 *.log
