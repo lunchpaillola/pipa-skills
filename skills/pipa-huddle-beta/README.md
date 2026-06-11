@@ -2,12 +2,16 @@
 
 Start here if you want to talk to the current agent by voice.
 
+`README.md` is for humans reading or running this skill directly. `SKILL.md` is the agent-facing instruction file that tells an agent when and how to start a huddle.
+
+See [`CHANGELOG.md`](CHANGELOG.md) for version history and behavior changes.
+
 ## Start A Hosted Voice Session
 
 Run this from the repository root:
 
 ```bash
-node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --model <current-opencode-model>
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --daemon --print-url-json --model <current-opencode-model>
 ```
 
 If you copy or install only the `skills/pipa-huddle-beta` directory, install its local Node dependency first:
@@ -16,17 +20,19 @@ If you copy or install only the `skills/pipa-huddle-beta` directory, install its
 npm install --prefix skills/pipa-huddle-beta
 ```
 
-Hosted mode is the default. The command creates a short-lived hosted session at `voice.usepipa.com`, connects the local bridge to your current OpenCode context, and prints one browser link:
+Hosted mode is the default. The command creates a per-huddle hosted session at `voice.usepipa.com`, starts the local bridge as a managed daemon, connects it to your current OpenCode context, and prints JSON events with the browser link and process metadata:
 
-```text
-Browser voice session: https://voice.usepipa.com/s/<session-id>#token=...
+```json
+{"event":"voice_session_daemon_started","browser_url":"https://voice.usepipa.com/s/<session-id>#token=...","pid":12345,"stop_command":"kill 12345","log_path":".pipa/voice-session/bridge.log"}
 ```
 
 Open that link in any browser with microphone access. Each run gets its own session URL and credentials, so multiple users can use `voice.usepipa.com` at the same time without sharing a room.
 
+The process metadata is for the launching agent or operator. Each managed launch stops only the previously recorded project-local Pipa Huddle bridge from `.pipa/voice-session/bridge.pid`, writes fresh metadata to `.pipa/voice-session/session.json`, and exits when the huddle session ends.
+
 The bridge creates a dedicated OpenCode session for each huddle on the first spoken/text turn, captures that new session id from `opencode run --format json`, and pins later voice turns to it with `--session <id>`. This keeps the huddle from drifting into an older or unrelated thread. Use `--huddle-session <id>` only to resume an existing huddle session; `--allow-latest-session` is available only for manual debugging.
 
-To seed the huddle with context from the launching thread, write a compact summary to `.pipa/voice-session/launch-context.md` and start the bridge with `--context-file .pipa/voice-session/launch-context.md`. The bridge injects that summary into the first huddle turn only.
+To seed the huddle with prior conversation context, pass a compact summary inline with `PIPA_VOICE_SESSION_CONTEXT` for that launch only. The summary should only include what the user was discussing, relevant decisions/preferences, open questions, and files or repo details needed to understand that discussion. If the user only asked to start a huddle, omit context. Do not include launch mechanics, daemon details, URLs, model/runtime details, or instructions to start the huddle; the huddle has already started by the time this context is used.
 
 Pass `--model <current-opencode-model>` from the launching OpenCode session so the huddle does not fall back to a different machine default provider. The bridge also honors `PIPA_VOICE_SESSION_MODEL` and `OPENCODE_MODEL`, but explicit `--model` is the clearest launch path.
 
@@ -45,21 +51,15 @@ Hosted mode does not add OpenCode flags by default. It forwards your spoken/text
 If hosted relay is unavailable, run the same-machine local bridge:
 
 ```bash
-node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --local --model <current-opencode-model>
+node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --daemon --print-url-json --local --model <current-opencode-model>
 ```
 
-Then open `http://127.0.0.1:8787` on the same machine.
-
-For a public HTTPS local test, use ngrok:
-
-```bash
-node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --public ngrok --model <current-opencode-model>
-```
+Then open the `browser_url` from the JSON output on the same machine.
 
 The local bridge serves the skill-local template documented in `references/template-contract.md`. Override it only for explicit experiments:
 
 ```bash
-PIPA_VOICE_SESSION_TEMPLATE=/absolute/path/to/index.html node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --local
+PIPA_VOICE_SESSION_TEMPLATE=/absolute/path/to/index.html node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --daemon --print-url-json --local
 ```
 
 ## Browser Speech

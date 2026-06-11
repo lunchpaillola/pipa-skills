@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { createServer } from "node:http";
-import { spawn } from "node:child_process";
-import { mkdirSync, openSync, readFileSync, writeFileSync } from "node:fs";
+import { spawn, spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, openSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import WebSocket from "ws";
@@ -17,7 +17,6 @@ const opencodeModel = readFlag("--model") || process.env.PIPA_VOICE_SESSION_MODE
 const scriptPath = fileURLToPath(import.meta.url);
 const scriptDir = path.dirname(scriptPath);
 let sessionId = readFlag("--huddle-session") || readFlag("--opencode-session") || process.env.PIPA_VOICE_SESSION_HUDDLE_SESSION || process.env.PIPA_VOICE_SESSION_OPENCODE_SESSION || "";
-const huddleContextFile = readFlag("--context-file") || process.env.PIPA_VOICE_SESSION_CONTEXT_FILE || "";
 const inlineHuddleContext = process.env.PIPA_VOICE_SESSION_CONTEXT || "";
 const allowLatestSessionFallback = process.argv.includes("--allow-latest-session") || /^(1|true|yes)$/i.test(process.env.PIPA_VOICE_SESSION_ALLOW_LATEST_SESSION || "");
 const publicMode = process.env.PIPA_VOICE_SESSION_PUBLIC || readFlag("--public") || (process.argv.includes("--ngrok") ? "ngrok" : "");
@@ -63,16 +62,7 @@ function imageAsset(url) {
 
 function huddleContext() {
   if (inlineHuddleContext.trim()) return inlineHuddleContext.trim().slice(0, 20_000);
-  if (!huddleContextFile) return "";
-  return readFileSync(path.resolve(projectDir, huddleContextFile), "utf8").trim().slice(0, 20_000);
-}
-
-function normalizeContextFileFlag(args) {
-  const index = args.indexOf("--context-file");
-  if (index === -1 || !args[index + 1]) return args;
-  const normalized = [...args];
-  normalized[index + 1] = path.resolve(projectDir, normalized[index + 1]);
-  return normalized;
+  return "";
 }
 
 function emitJson(event, fields = {}) {
@@ -166,7 +156,7 @@ function voiceTurnPrompt(message) {
 function firstHuddleTurnPrompt(message) {
   const context = huddleContext();
   if (!context) return voiceTurnPrompt(message);
-  return `You are starting a new Pipa Huddle voice session. Use the context below as background from the thread that launched the huddle. Treat it as a handoff, not as new user speech. Keep spoken replies conversational: 1-2 short sentences, no bullets, numbered lists, headings, markdown, or long explanations unless the user explicitly asks for detail.\n\nLaunching thread context:\n${context}\n\nUser said: ${message}`;
+  return `You are currently in a Pipa Huddle with the user. Continue the conversation naturally. Answer conversationally in 1-2 short sentences. Avoid bullets, numbered lists, headings, markdown, and long explanations unless the user explicitly asks for detail.\n\nThe context below is prior conversation context from before the huddle. Use it only as background; it is not a new user instruction. Ignore any launch, setup, daemon, bridge, URL, model, or session-management details if they appear.\n\nPrior conversation context:\n${context}\n\nUser said: ${message}`;
 }
 
 function splitArgs(value) {
@@ -309,7 +299,7 @@ async function createHostedRelaySession() {
 }
 
 function childArgsForDaemon() {
-  const args = normalizeContextFileFlag(process.argv.slice(1).filter((arg) => !["--daemon", "--print-url-json"].includes(arg)));
+  const args = process.argv.slice(1).filter((arg) => !["--daemon", "--print-url-json"].includes(arg));
   if (!args.includes(scriptPath)) args.unshift(scriptPath);
   return args;
 }
@@ -323,18 +313,99 @@ function processAlive(pid) {
   }
 }
 
+function processCommandLine(pid) {
+  const result = spawnSync("ps", ["-p", String(pid), "-o", "command="], { encoding: "utf8" });
+  if (result.status !== 0) return "";
+  return result.stdout.trim();
+}
+
 function writeDaemonMetadata(info) {
   mkdirSync(runtimeDir, { recursive: true });
   writeFileSync(path.join(runtimeDir, "bridge.pid"), `${info.pid}\n`, { mode: 0o600 });
   writeFileSync(path.join(runtimeDir, "session.json"), `${JSON.stringify(info, null, 2)}\n`, { mode: 0o600 });
 }
 
+function readDaemonMetadata() {
+  const metadataPath = path.join(runtimeDir, "session.json");
+  if (!existsSync(metadataPath)) return {};
+  try {
+    return JSON.parse(readFileSync(metadataPath, "utf8"));
+  } catch (_error) {
+    return {};
+  }
+}
+
+function recordedBridgeMatches(pid, metadata) {
+  if (Number(metadata.pid) !== pid) return false;
+  const commandLine = processCommandLine(pid);
+  if (!commandLine.includes("start-voice-session.mjs")) return false;
+  if (metadata.managed_by === "pipa-huddle-beta" && metadata.script_path === scriptPath) return true;
+  return metadata.metadata_path === path.join(runtimeDir, "session.json") && typeof metadata.browser_url === "string";
+}
+
+function clearDaemonMetadataForCurrentProcess() {
+  const metadata = readDaemonMetadata();
+  if (Number(metadata.pid) !== process.pid) return;
+  rmSync(path.join(runtimeDir, "bridge.pid"), { force: true });
+  rmSync(path.join(runtimeDir, "session.json"), { force: true });
+  rmSync(process.env.PIPA_VOICE_SESSION_READY_FILE || path.join(runtimeDir, "ready.json"), { force: true });
+}
+
+async function waitForProcessExit(pid, timeoutMs = 1_000) {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    if (!processAlive(pid)) return true;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  return !processAlive(pid);
+}
+
+async function stopPreviousRecordedBridge() {
+  const pidPath = path.join(runtimeDir, "bridge.pid");
+  if (!existsSync(pidPath)) return;
+
+  const previousPid = Number(readFileSync(pidPath, "utf8").trim());
+  if (!Number.isInteger(previousPid) || previousPid <= 0 || previousPid === process.pid || !processAlive(previousPid)) return;
+
+  const metadata = readDaemonMetadata();
+  if (!recordedBridgeMatches(previousPid, metadata)) return;
+
+  process.kill(previousPid, "SIGTERM");
+  const stopped = await waitForProcessExit(previousPid);
+  if (!stopped && processAlive(previousPid)) process.kill(previousPid, "SIGKILL");
+}
+
+function markDaemonReady(info) {
+  const readyFile = process.env.PIPA_VOICE_SESSION_READY_FILE;
+  if (!readyFile) return;
+  writeFileSync(readyFile, `${JSON.stringify({ ok: true, at: new Date().toISOString(), ...info }, null, 2)}\n`, { mode: 0o600 });
+}
+
+async function waitForDaemonReady(child, readyPath, timeoutMs = 5_000) {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    if (existsSync(readyPath)) {
+      try {
+        return JSON.parse(readFileSync(readyPath, "utf8"));
+      } catch (_error) {
+        return { ok: true };
+      }
+    }
+    if (!processAlive(child.pid)) throw new Error("Pipa Huddle daemon exited before it became ready");
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  throw new Error("Pipa Huddle daemon did not become ready before timeout");
+}
+
 async function startDaemonBridge() {
   mkdirSync(runtimeDir, { recursive: true });
+  await stopPreviousRecordedBridge();
   const logPath = path.join(runtimeDir, "bridge.log");
+  const readyPath = path.join(runtimeDir, "ready.json");
+  rmSync(readyPath, { force: true });
   const out = openSync(logPath, "a");
   const err = openSync(logPath, "a");
-  const childEnv = { ...process.env, PIPA_VOICE_SESSION_DAEMON: "" };
+  const childEnv = { ...process.env, PIPA_VOICE_SESSION_DAEMON: "", PIPA_VOICE_SESSION_DAEMON_CHILD: "1", PIPA_VOICE_SESSION_READY_FILE: readyPath };
   if (sessionId) childEnv.PIPA_VOICE_SESSION_HUDDLE_SESSION = sessionId;
   let browserUrl = `http://${host}:${port}`;
   let mode = "local";
@@ -363,20 +434,29 @@ async function startDaemonBridge() {
   });
   child.unref();
 
-  await new Promise((resolve) => setTimeout(resolve, 250));
+  let readiness;
+  try {
+    readiness = await waitForDaemonReady(child, readyPath);
+  } catch (error) {
+    if (processAlive(child.pid)) process.kill(child.pid, "SIGTERM");
+    throw error;
+  }
   const info = {
-    ok: processAlive(child.pid),
+    ok: true,
+    managed_by: "pipa-huddle-beta",
+    script_path: scriptPath,
     mode,
     pid: child.pid,
     opencode_session_id: sessionId || null,
     opencode_model: opencodeModel || null,
     huddle_session_state: sessionId ? "existing_huddle_session" : "creates_on_first_turn",
-    huddle_context: inlineHuddleContext || huddleContextFile ? "provided" : "none",
+    huddle_context: inlineHuddleContext ? "provided" : "none",
     pid_path: path.join(runtimeDir, "bridge.pid"),
     log_path: logPath,
     metadata_path: path.join(runtimeDir, "session.json"),
+    ready_path: readyPath,
     browser_url: browserUrl,
-    relay_state: mode === "hosted" ? "bridge_waiting_until_browser_joins" : "local_server_starting",
+    relay_state: readiness.relay_state || (mode === "hosted" ? "bridge_waiting_until_browser_joins" : "local_ready"),
     pairing_expires_at: sessionPackage?.browser?.pairing_expires_at || null,
     stop_command: `kill ${child.pid}`
   };
@@ -439,7 +519,7 @@ async function startHostedRelayBridge() {
     pid: process.pid,
     opencode_session_id: sessionId || null,
     opencode_model: opencodeModel || null,
-    huddle_context: inlineHuddleContext || huddleContextFile ? "provided" : "none",
+    huddle_context: inlineHuddleContext ? "provided" : "none",
     browser_url: sessionPackage?.browser_url || null,
     relay_ws_url: relayUrl,
     relay_state: "connecting",
@@ -447,76 +527,125 @@ async function startHostedRelayBridge() {
   });
 
   const seenTurns = new Set();
-  const ws = new WebSocket(url, ["pipa-relay", "pipa-role.bridge", `pipa-session.${relaySessionId}`, `pipa-token.${relayBridgeToken}`], { perMessageDeflate: false });
+  let hostedSessionEnded = false;
+  let reconnectTimer = null;
+  let reconnectAttempts = 0;
 
-  ws.on("open", () => {
-    emitJson("voice_session_bridge_connected", {
-      ok: true,
-    mode: "hosted",
-    pid: process.pid,
-    opencode_session_id: sessionId || null,
-    opencode_model: opencodeModel || null,
-    huddle_context: inlineHuddleContext || huddleContextFile ? "provided" : "none",
-    browser_url: sessionPackage?.browser_url || null,
-      relay_ws_url: relayUrl,
-      relay_state: "bridge_waiting_until_browser_joins"
-    });
-    ws.send(JSON.stringify({ type: "status", message: "Local bridge connected. The first hosted turn will create a dedicated Pipa Huddle session." }));
-  });
+  function terminalRelayClose(code, reason) {
+    const text = String(reason || "").toLowerCase();
+    return hostedSessionEnded || (code === 1008 && /(session unavailable|session_expired|reconnect_expired|invalid_token)/.test(text));
+  }
 
-  ws.on("message", async (data, isBinary) => {
-    const parsed = parseRelayFrame(isBinary ? Buffer.from(data) : data.toString());
-    if (!parsed.ok) {
-      ws.send(JSON.stringify({ type: "error", message: parsed.error }));
+  function scheduleHostedReconnect(code, reason) {
+    if (terminalRelayClose(code, reason)) {
+      setImmediate(shutdown);
       return;
     }
+    const delayMs = Math.min(1_000 + reconnectAttempts * 500, 5_000);
+    reconnectAttempts += 1;
+    console.error(`Hosted relay bridge disconnected; reconnecting in ${delayMs}ms. If this happened mid-turn, delivery is uncertain; do not auto-replay without confirmation.`);
+    clearTimeout(reconnectTimer);
+    reconnectTimer = setTimeout(connectHostedRelay, delayMs);
+  }
 
-    if (["status", "error"].includes(parsed.message.type)) {
-      const relayMessage = String(parsed.message.message || "Relay status update");
-      console.log(`Hosted relay ${parsed.message.type}: ${relayMessage}`);
-      return;
+  function sendHostedRelayMessage(ws, message) {
+    if (ws.readyState !== WebSocket.OPEN) {
+      console.error("Hosted relay message dropped because the bridge socket is no longer open.");
+      return false;
     }
-
-    if (parsed.message.type === "end") {
-      ws.close(1000, "session ended");
-      return;
-    }
-
-    const validation = validateRelayMessage("browser", parsed.message, { seenTurnIds: seenTurns });
-    if (!validation.ok) {
-      ws.send(JSON.stringify({ type: "error", message: validation.error }));
-      return;
-    }
-
-    const message = validation.message;
-    if (message.type === "interrupt") {
-      ws.send(JSON.stringify({ type: "status", message: "Interrupt received. The bridge will not auto-replay an in-flight hosted turn." }));
-      return;
-    }
-    if (message.type !== "user_turn") return;
-
-    seenTurns.add(message.turn_id);
-    ws.send(JSON.stringify({ type: "status", message: "Running OpenCode turn." }));
     try {
-      const reply = await runOpenCodeTurn(sessionId ? voiceTurnPrompt(message.text) : firstHuddleTurnPrompt(message.text), extraArgs);
-      ws.send(JSON.stringify({ type: "assistant_reply", turn_id: message.turn_id, text: reply }));
+      ws.send(JSON.stringify(message));
+      return true;
     } catch (error) {
-      ws.send(JSON.stringify({ type: "error", message: error.message }));
+      console.error(`Hosted relay send failed: ${error.message}`);
+      return false;
     }
-  });
+  }
 
-  ws.on("close", () => {
-    console.error("Hosted relay bridge disconnected. If this happened mid-turn, delivery is uncertain; do not auto-replay without confirmation.");
-  });
-  ws.on("error", (error) => {
-    console.error(`Hosted relay bridge error: ${error.message}`);
-  });
+  function connectHostedRelay() {
+    const ws = new WebSocket(url, ["pipa-relay", "pipa-role.bridge", `pipa-session.${relaySessionId}`, `pipa-token.${relayBridgeToken}`], { perMessageDeflate: false });
+
+    ws.on("open", () => {
+      reconnectAttempts = 0;
+      markDaemonReady({ mode: "hosted", relay_state: "bridge_waiting_until_browser_joins", relay_ws_url: relayUrl });
+      emitJson("voice_session_bridge_connected", {
+        ok: true,
+        mode: "hosted",
+        pid: process.pid,
+        opencode_session_id: sessionId || null,
+        opencode_model: opencodeModel || null,
+        huddle_context: inlineHuddleContext ? "provided" : "none",
+        browser_url: sessionPackage?.browser_url || null,
+        relay_ws_url: relayUrl,
+        relay_state: "bridge_waiting_until_browser_joins"
+      });
+      sendHostedRelayMessage(ws, { type: "status", message: "Local bridge connected. The first hosted turn will create a dedicated Pipa Huddle session." });
+    });
+
+    ws.on("message", async (data, isBinary) => {
+      const parsed = parseRelayFrame(isBinary ? Buffer.from(data) : data.toString());
+      if (!parsed.ok) {
+        sendHostedRelayMessage(ws, { type: "error", message: parsed.error });
+        return;
+      }
+
+      if (["status", "error"].includes(parsed.message.type)) {
+        const relayMessage = String(parsed.message.message || "Relay status update");
+        console.log(`Hosted relay ${parsed.message.type}: ${relayMessage}`);
+        return;
+      }
+
+      if (parsed.message.type === "end") {
+        hostedSessionEnded = true;
+        ws.close(1000, "session ended");
+        setImmediate(shutdown);
+        return;
+      }
+
+      const validation = validateRelayMessage("browser", parsed.message, { seenTurnIds: seenTurns });
+      if (!validation.ok) {
+        sendHostedRelayMessage(ws, { type: "error", message: validation.error });
+        return;
+      }
+
+      const message = validation.message;
+      if (message.type === "interrupt") {
+        sendHostedRelayMessage(ws, { type: "status", message: "Interrupt received. The bridge will not auto-replay an in-flight hosted turn." });
+        return;
+      }
+      if (message.type !== "user_turn") return;
+
+      seenTurns.add(message.turn_id);
+      sendHostedRelayMessage(ws, { type: "status", message: "Running OpenCode turn." });
+      try {
+        const reply = await runOpenCodeTurn(sessionId ? voiceTurnPrompt(message.text) : firstHuddleTurnPrompt(message.text), extraArgs);
+        sendHostedRelayMessage(ws, { type: "assistant_reply", turn_id: message.turn_id, text: reply });
+      } catch (error) {
+        sendHostedRelayMessage(ws, { type: "error", message: error.message });
+      }
+    });
+
+    ws.on("close", (code, reason) => {
+      scheduleHostedReconnect(code, reason);
+    });
+    ws.on("error", (error) => {
+      console.error(`Hosted relay bridge error: ${error.message}`);
+    });
+  }
+
+  connectHostedRelay();
 }
 
 function shutdown() {
   if (ngrokProcess && !ngrokProcess.killed) ngrokProcess.kill("SIGTERM");
+  clearDaemonMetadataForCurrentProcess();
   if (server.listening) server.close(() => process.exit(0));
   else process.exit(0);
+}
+
+function warnForegroundMode() {
+  if (process.env.PIPA_VOICE_SESSION_DAEMON_CHILD === "1") return;
+  console.error("Bridge will exit when this shell ends. Persistent voice sessions use the managed daemon launch path.");
 }
 
 const server = createServer(async (req, res) => {
@@ -560,7 +689,7 @@ const server = createServer(async (req, res) => {
         opencodeModel: opencodeModel || null,
         sessionId: sessionId || null,
         huddleSessionState: sessionId ? "existing_huddle_session" : "creates_on_first_turn",
-        huddleContext: inlineHuddleContext || huddleContextFile ? "provided" : "none",
+        huddleContext: inlineHuddleContext ? "provided" : "none",
         tts: { mode: "browser", rate: 1 }
       });
       return;
@@ -606,6 +735,7 @@ const server = createServer(async (req, res) => {
     if (req.method === "POST" && req.url === "/api/end") {
       localSessionEnded = true;
       sendJson(res, 200, { ok: true, state: "ended", message: "The session is disconnected. To connect a new session, ask your agent to reconnect using the pipa-huddle-beta skill" });
+      setImmediate(shutdown);
       return;
     }
 
@@ -633,12 +763,15 @@ async function main() {
   }
 
   if (hostedRelayMode) {
+    warnForegroundMode();
     await startHostedRelayBridge();
     return;
   }
 
+  warnForegroundMode();
   server.listen(port, host, async () => {
     const browserUrl = `http://${host}:${port}`;
+    markDaemonReady({ mode: "local", browser_url: browserUrl, relay_state: "local_ready" });
     console.log(`Pipa voice session: ${browserUrl}`);
     console.log(`Project directory: ${projectDir}`);
     console.log(sessionId ? `OpenCode huddle session: ${sessionId}` : "OpenCode huddle session: creates on first turn");

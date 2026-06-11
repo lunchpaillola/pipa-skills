@@ -17,7 +17,7 @@ skills/pipa-huddle-beta/assets/
 Override the template only for explicit experiments:
 
 ```bash
-PIPA_VOICE_SESSION_TEMPLATE=/absolute/path/to/index.html node skills/pipa-huddle-beta/scripts/start-voice-session.mjs
+PIPA_VOICE_SESSION_TEMPLATE=/absolute/path/to/index.html node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --daemon --print-url-json --local
 ```
 
 ## Required Shape
