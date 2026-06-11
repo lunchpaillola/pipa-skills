@@ -527,73 +527,99 @@ async function startHostedRelayBridge() {
   });
 
   const seenTurns = new Set();
-  const ws = new WebSocket(url, ["pipa-relay", "pipa-role.bridge", `pipa-session.${relaySessionId}`, `pipa-token.${relayBridgeToken}`], { perMessageDeflate: false });
+  let hostedSessionEnded = false;
+  let reconnectTimer = null;
+  let reconnectAttempts = 0;
 
-  ws.on("open", () => {
-    markDaemonReady({ mode: "hosted", relay_state: "bridge_waiting_until_browser_joins", relay_ws_url: relayUrl });
-    emitJson("voice_session_bridge_connected", {
-      ok: true,
-      mode: "hosted",
-      pid: process.pid,
-      opencode_session_id: sessionId || null,
-      opencode_model: opencodeModel || null,
-      huddle_context: inlineHuddleContext ? "provided" : "none",
-      browser_url: sessionPackage?.browser_url || null,
-      relay_ws_url: relayUrl,
-      relay_state: "bridge_waiting_until_browser_joins"
-    });
-    ws.send(JSON.stringify({ type: "status", message: "Local bridge connected. The first hosted turn will create a dedicated Pipa Huddle session." }));
-  });
+  function terminalRelayClose(code, reason) {
+    const text = String(reason || "").toLowerCase();
+    return hostedSessionEnded || (code === 1008 && /(session unavailable|session_expired|reconnect_expired|invalid_token)/.test(text));
+  }
 
-  ws.on("message", async (data, isBinary) => {
-    const parsed = parseRelayFrame(isBinary ? Buffer.from(data) : data.toString());
-    if (!parsed.ok) {
-      ws.send(JSON.stringify({ type: "error", message: parsed.error }));
-      return;
-    }
-
-    if (["status", "error"].includes(parsed.message.type)) {
-      const relayMessage = String(parsed.message.message || "Relay status update");
-      console.log(`Hosted relay ${parsed.message.type}: ${relayMessage}`);
-      return;
-    }
-
-    if (parsed.message.type === "end") {
-      ws.close(1000, "session ended");
+  function scheduleHostedReconnect(code, reason) {
+    if (terminalRelayClose(code, reason)) {
       setImmediate(shutdown);
       return;
     }
+    const delayMs = Math.min(1_000 + reconnectAttempts * 500, 5_000);
+    reconnectAttempts += 1;
+    console.error(`Hosted relay bridge disconnected; reconnecting in ${delayMs}ms. If this happened mid-turn, delivery is uncertain; do not auto-replay without confirmation.`);
+    clearTimeout(reconnectTimer);
+    reconnectTimer = setTimeout(connectHostedRelay, delayMs);
+  }
 
-    const validation = validateRelayMessage("browser", parsed.message, { seenTurnIds: seenTurns });
-    if (!validation.ok) {
-      ws.send(JSON.stringify({ type: "error", message: validation.error }));
-      return;
-    }
+  function connectHostedRelay() {
+    const ws = new WebSocket(url, ["pipa-relay", "pipa-role.bridge", `pipa-session.${relaySessionId}`, `pipa-token.${relayBridgeToken}`], { perMessageDeflate: false });
 
-    const message = validation.message;
-    if (message.type === "interrupt") {
-      ws.send(JSON.stringify({ type: "status", message: "Interrupt received. The bridge will not auto-replay an in-flight hosted turn." }));
-      return;
-    }
-    if (message.type !== "user_turn") return;
+    ws.on("open", () => {
+      reconnectAttempts = 0;
+      markDaemonReady({ mode: "hosted", relay_state: "bridge_waiting_until_browser_joins", relay_ws_url: relayUrl });
+      emitJson("voice_session_bridge_connected", {
+        ok: true,
+        mode: "hosted",
+        pid: process.pid,
+        opencode_session_id: sessionId || null,
+        opencode_model: opencodeModel || null,
+        huddle_context: inlineHuddleContext ? "provided" : "none",
+        browser_url: sessionPackage?.browser_url || null,
+        relay_ws_url: relayUrl,
+        relay_state: "bridge_waiting_until_browser_joins"
+      });
+      ws.send(JSON.stringify({ type: "status", message: "Local bridge connected. The first hosted turn will create a dedicated Pipa Huddle session." }));
+    });
 
-    seenTurns.add(message.turn_id);
-    ws.send(JSON.stringify({ type: "status", message: "Running OpenCode turn." }));
-    try {
-      const reply = await runOpenCodeTurn(sessionId ? voiceTurnPrompt(message.text) : firstHuddleTurnPrompt(message.text), extraArgs);
-      ws.send(JSON.stringify({ type: "assistant_reply", turn_id: message.turn_id, text: reply }));
-    } catch (error) {
-      ws.send(JSON.stringify({ type: "error", message: error.message }));
-    }
-  });
+    ws.on("message", async (data, isBinary) => {
+      const parsed = parseRelayFrame(isBinary ? Buffer.from(data) : data.toString());
+      if (!parsed.ok) {
+        ws.send(JSON.stringify({ type: "error", message: parsed.error }));
+        return;
+      }
 
-  ws.on("close", () => {
-    console.error("Hosted relay bridge disconnected. If this happened mid-turn, delivery is uncertain; do not auto-replay without confirmation.");
-    setImmediate(shutdown);
-  });
-  ws.on("error", (error) => {
-    console.error(`Hosted relay bridge error: ${error.message}`);
-  });
+      if (["status", "error"].includes(parsed.message.type)) {
+        const relayMessage = String(parsed.message.message || "Relay status update");
+        console.log(`Hosted relay ${parsed.message.type}: ${relayMessage}`);
+        return;
+      }
+
+      if (parsed.message.type === "end") {
+        hostedSessionEnded = true;
+        ws.close(1000, "session ended");
+        setImmediate(shutdown);
+        return;
+      }
+
+      const validation = validateRelayMessage("browser", parsed.message, { seenTurnIds: seenTurns });
+      if (!validation.ok) {
+        ws.send(JSON.stringify({ type: "error", message: validation.error }));
+        return;
+      }
+
+      const message = validation.message;
+      if (message.type === "interrupt") {
+        ws.send(JSON.stringify({ type: "status", message: "Interrupt received. The bridge will not auto-replay an in-flight hosted turn." }));
+        return;
+      }
+      if (message.type !== "user_turn") return;
+
+      seenTurns.add(message.turn_id);
+      ws.send(JSON.stringify({ type: "status", message: "Running OpenCode turn." }));
+      try {
+        const reply = await runOpenCodeTurn(sessionId ? voiceTurnPrompt(message.text) : firstHuddleTurnPrompt(message.text), extraArgs);
+        ws.send(JSON.stringify({ type: "assistant_reply", turn_id: message.turn_id, text: reply }));
+      } catch (error) {
+        ws.send(JSON.stringify({ type: "error", message: error.message }));
+      }
+    });
+
+    ws.on("close", (code, reason) => {
+      scheduleHostedReconnect(code, reason);
+    });
+    ws.on("error", (error) => {
+      console.error(`Hosted relay bridge error: ${error.message}`);
+    });
+  }
+
+  connectHostedRelay();
 }
 
 function shutdown() {
