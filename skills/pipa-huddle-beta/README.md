@@ -10,6 +10,12 @@ Run this from the repository root:
 node skills/pipa-huddle-beta/scripts/start-voice-session.mjs --model <current-opencode-model>
 ```
 
+If you copy or install only the `skills/pipa-huddle-beta` directory, install its local Node dependency first:
+
+```bash
+npm install --prefix skills/pipa-huddle-beta
+```
+
 Hosted mode is the default. The command creates a short-lived hosted session at `voice.usepipa.com`, connects the local bridge to your current OpenCode context, and prints one browser link:
 
 ```text
