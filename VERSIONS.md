@@ -1,5 +1,11 @@
 # Versions
 
+## v0.3.1
+
+- Updated `pipa-huddle-beta` to v0.1.1 with managed daemon launches for hosted and local voice sessions
+- Added daemon lifecycle cleanup and safety checks so new launches replace only the previously recorded Pipa Huddle bridge
+- Clarified huddle relay expiry behavior and launch-context guidance for teams using the skill outside this repo
+
 ## v0.3.0
 
 - Added `pipa-audio-brief` for turning agent sessions, PRs, plans, specs, research reports, docs, URLs, and pasted markdown into Kokoro-generated here.now listening pages
