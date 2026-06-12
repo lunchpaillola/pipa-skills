@@ -2,6 +2,8 @@
 name: composio-mcp
 description: Use the Composio MCP with Pipa to discover and operate external app tools safely.
 tags: [composio, mcp, pipa, tools, external-apps, automation, connected-accounts]
+metadata:
+  version: 0.2.0
 ---
 
 ## When to Apply

@@ -1,5 +1,12 @@
 # Versions
 
+## v0.4.2
+
+- Updated `composio-mcp` to v0.2.0 with an MCP-only contract for tool discovery, authorization links, schema-safe execution, and provenance
+- Removed the stale Composio generated rule bundle and `AGENTS.md` to prevent agents from falling back to local setup or non-MCP workflows
+- Updated `pipa` to v0.1.1 so Pipa routes Composio requests to the MCP-focused standalone skill
+- Updated `pipa-workflow-automation` to v0.1.1 with an explicit Slack delivery boundary: scheduled runs generate the response body and the Pipa gateway handles Slack delivery
+
 ## v0.4.1
 
 - Updated `pipa-huddle-beta` to v0.1.1 with managed daemon launches for hosted and local voice sessions

@@ -2,7 +2,7 @@
 name: pipa
 description: "Use when the user wants project-management or delivery help through Pipa: initiate a project, plan scope or requirements, execute delivery work, monitor status/tickets/budget/risk, close a project, triage PM signals, or route natural-language PM requests. Also use for explicit commands like Pipa help, Pipa status, Pipa triage, Pipa budget, Pipa plan, Pipa execute, Pipa close, Pipa audio brief, Pipa voice session, Pipa automate, Pipa trigger, or Pipa composio."
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Pipa

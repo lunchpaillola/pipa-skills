@@ -2,7 +2,7 @@
 name: pipa-workflow-automation
 description: Handle Slack-driven recurring automations for Pipa. Use this whenever the user wants something sent on a schedule, asks for a recurring report or reminder, says things like every 15 minutes, hourly, daily, weekly, every Monday, every month, recurring, automate this, remind me every, send me every, or wants to delete/check an existing recurring automation in natural language. This skill should also trigger for list/read/delete requests about existing automations, even if the user does not use the word automation.
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Pipa Workflow Automation
