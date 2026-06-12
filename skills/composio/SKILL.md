@@ -1,55 +1,82 @@
 ---
-name: composio
-description: Use 1000+ external apps via Composio - either directly through the CLI or by building AI agents and apps with the SDK
-tags: [composio, tool-router, agents, mcp, tools, api, automation, cli]
+name: composio-mcp
+description: Use the Composio MCP with Pipa to discover and operate external app tools safely.
+tags: [composio, mcp, pipa, tools, external-apps, automation, connected-accounts]
 ---
 
 ## When to Apply
 
-- User wants to access or interact with external apps (Gmail, Slack, GitHub, Notion, etc.)
-- User wants to automate a task using an external service (send email, create issue, post message)
-- Building an AI agent or app that integrates with external tools
-- Multi-user apps that need per-user connections to external services
+- User asks Pipa to interact with an external app such as Gmail, Slack, GitHub, Notion, Linear, Google Calendar, or similar.
+- User wants Pipa to send, create, update, fetch, summarize, or monitor records in a connected service.
+- User asks for a connected-app action and Composio MCP tools are available in the current agent runtime.
+- User explicitly mentions Composio, Composio MCP, connected accounts, external app tools, or Pipa connected workflows.
 
-## Setup
+## Core Rule
 
-Check if the CLI is installed; if not, install it:
-```bash
-curl -fsSL https://composio.dev/install | bash
-```
+Use the Composio MCP tools exposed in the current runtime. Do not switch to any non-MCP Composio workflow, install Composio locally, or initialize projects.
 
-After installation, restart your terminal or source your shell config, then authenticate:
-```bash
-composio login       # OAuth; interactive org/project picker (use -y to skip)
-composio whoami      # verify org_id, project_id, user_id
-```
-For agents without direct browser access: `composio login --no-wait | jq` to get URL/key, share URL with user, then `composio login --key <cli_key> --no-wait` once they complete login.
+If Composio MCP tools are not available, stop and ask the user to connect or enable the Composio MCP for this agent environment.
 
----
+## Workflow
 
-### 1. Use Apps via Composio CLI
+1. Clarify the target app, action, and user-visible outcome if the request is ambiguous.
+2. Inspect the available Composio MCP tools before choosing an action.
+3. Prefer the smallest specific MCP tool that can complete the request.
+4. Check whether the required connected account or authorization is available.
+5. If authorization is missing, ask the user to complete the MCP-provided connection flow and wait for confirmation.
+6. Execute the action through the MCP tool with explicit parameters.
+7. Report concise provenance: app, action, tool used, and the relevant record ID, URL, title, or timestamp returned by the tool.
 
-**Use this when:** The user wants to take action on an external app directly — no code writing needed. The agent uses the CLI to search, connect, and execute tools on behalf of the user.
+## MCP Tool Pattern
 
-Key commands (new top-level aliases):
-- `composio search "<query>"` — find tools by use case
-- `composio execute "<TOOL_SLUG>" -d '{...<input params>}'` — execute a tool
-- `composio link [toolkit]` — connect a user account to an app (agents: always use `--no-wait` for non-interactive mode)
-- `composio listen` — listen for real-time trigger events
+The Composio MCP is self-describing. Use its metadata tools instead of relying on local reference files.
 
-Typical workflow: **search → link (if needed) → execute**
+1. Search first with the MCP tool-discovery operation for the user's use case.
+2. Review the returned tool schemas, connection status, recommended plan, and pitfalls.
+3. If a toolkit has no active connection, use the MCP connection-management operation and give the user the returned authorization link.
+4. If a tool result points to a schema reference, fetch the complete schema before execution.
+5. Execute only returned tool slugs with schema-compliant arguments.
+6. For independent actions, use the MCP batch-execution operation when available.
 
-> Full reference: [Composio CLI Guide](rules/composio-cli.md)
+Required capabilities for this skill:
 
----
+- Search for relevant external-app tools from a natural-language task.
+- Detect whether the target app account is already connected.
+- Produce an authorization link when the account is not connected.
+- Execute selected tools after authorization is active.
+- Return concrete provenance from tool results.
 
-### 2. Building Apps and Agents with Composio
+## Safety Rules
 
-**Use this when:** Writing code — an AI agent, app, or backend service that integrates with external tools via the Composio SDK.
+- Never guess tool names, toolkit names, account IDs, issue IDs, email addresses, channel names, or project IDs.
+- Never claim an action completed unless the MCP tool returns a success result.
+- Ask for confirmation before destructive, irreversible, public, or user-notifying actions.
+- For write actions, restate the exact target and payload before executing when the action could notify people, alter project state, or publish content.
+- Keep secrets out of prompts, files, logs, and responses.
+- Prefer read-only inspection before mutation when the current state matters.
 
-Run this first inside the project directory to set up the API key:
-```bash
-composio init
-```
+## Pipa Usage
 
-> Full reference: [Building with Composio](rules/building-with-composio.md)
+When invoked from Pipa, treat Composio MCP as the connected-app execution layer. Pipa should keep ownership of the project-management intent, and Composio MCP should perform the external-app operation.
+
+Good Pipa handoff pattern:
+
+1. Identify the PM intent: status update, ticket creation, stakeholder message, calendar coordination, document lookup, or automation support.
+2. Select the relevant external app MCP tool.
+3. Execute only the connected-app portion through Composio MCP.
+4. Return the result to Pipa with enough provenance for follow-up.
+
+## Response Pattern
+
+After a successful MCP action, respond with:
+
+- What changed or what was retrieved.
+- The external app and MCP tool used.
+- The concrete record reference returned by the tool.
+- Any user action still required.
+
+If blocked, respond with:
+
+- The missing app, account, permission, or MCP tool.
+- The exact user decision or connection step needed.
+- No fallback outside the Composio MCP.

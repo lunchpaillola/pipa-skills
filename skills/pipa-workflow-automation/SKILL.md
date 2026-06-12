@@ -329,6 +329,16 @@ Do not attempt cross-account lookup. Stay within the current request/account con
 - Default to DM when destination is omitted.
 - Support explicit channel delivery.
 - Do not promise group DM support in v1.
+- Do not use Composio for Slack delivery. The Pipa gateway handles scheduled Slack delivery automatically after the run completes.
+- For scheduled runs, the agent only needs to generate the response body. Delivery happens outside the agent's control.
+- Do not initiate a Composio Slack connection when Slack is only the automation delivery destination.
+- Composio Slack may be used only when the automation task itself needs to inspect or act on Slack data, such as summarizing a Slack channel. It should not be used to send the final scheduled message.
+
+Future-run prompt guardrail:
+
+```text
+Do not use Composio for Slack delivery. The Pipa gateway handles that automatically. All you have to do is generate the response, and delivery will be handled automatically outside of your control.
+```
 
 ## Output Style
 
