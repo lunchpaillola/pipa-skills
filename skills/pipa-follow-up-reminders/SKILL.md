@@ -9,7 +9,7 @@ metadata:
 
 Create and cancel simple deterministic one-shot email reminders through Pipa.
 
-This skill owns the conversation when the user wants a specific reminder emailed to themselves later. The gateway stays simple: the agent resolves the user's reminder intent into a concrete future timestamp, gathers missing details, confirms the final reminder, and calls the Follow-Up reminder API.
+This skill owns the conversation when the user wants a specific reminder emailed to themselves later. The gateway stays simple: the agent resolves the user's reminder intent into a concrete future timestamp, gathers missing details only when needed, and calls the Follow-Up reminder API.
 
 ## Product Rules
 
@@ -85,29 +85,18 @@ Follow this sequence:
 1. Detect one-shot email reminder intent.
 2. Reject or reroute recurring automation intent.
 3. Extract recipient email, due time, timezone, subject, and body text from the user request and runtime context.
-4. Ask follow-up questions for missing required inputs.
+4. Ask follow-up questions only for missing or ambiguous required inputs.
 5. Resolve the due time into a future UTC ISO timestamp.
-6. Confirm the final reminder in plain language.
-7. Call `POST /v1/follow-up-reminders`.
-8. Return a concise confirmation with the reminder id, due time, timezone, subject, and credits remaining when present.
+6. Call `POST /v1/follow-up-reminders` without a separate confirmation step.
+7. Return a concise confirmation with the reminder id, due time, timezone, subject, and credits remaining when present.
 
-## Create Confirmation Format
+## Create Confirmation Policy
 
-Before calling create, confirm the final reminder clearly.
+Do not ask for confirmation before creating a reminder when the required inputs can be inferred or defaulted safely. The user's reminder request is sufficient authorization to create the reminder.
 
-Use a format like:
+Ask exactly one direct follow-up question only when a required input is missing or ambiguous, such as the recipient email, timezone, or a vague time like "tomorrow morning." After the user answers, create the reminder without asking an additional "Should I create it?" question.
 
-```text
-I can create this reminder:
-- To: lola@example.com
-- When: Friday, June 19 at 9:00 AM America/New_York
-- Subject: Reminder from Pipa
-- Body: Send the invoice to Acme.
-
-Should I create it?
-```
-
-Do not skip confirmation unless the user's environment has an explicit no-confirmation operating mode.
+After the API call succeeds, confirm what was created.
 
 ## Create Payload Requirements
 
@@ -133,6 +122,18 @@ Example payload:
 }
 ```
 
+## Question Gates
+
+Only ask the user a question in these cases:
+
+- No recipient email is available from `PIPA_FOLLOW_UP_EMAIL`, credentials, or the request.
+- No timezone is available from the request, `PIPA_USER_TIMEZONE`, credentials, or runtime context.
+- The requested time cannot be resolved to a specific future timestamp.
+- The request asks for unsupported behavior and needs rerouting, such as recurring reminders or reminders to someone else.
+- Cancellation is requested without a reminder id.
+
+Do not ask when a safe default or context value exists. Use `Reminder from Pipa` for missing subjects, use the verified recipient email for self-reminders, and use the available timezone context without a confirmation prompt.
+
 ## Time Resolution Rules
 
 - Convert relative requests like "tomorrow at 9" using the user's timezone.
@@ -141,11 +142,10 @@ Example payload:
 - Do not create reminders in the past.
 - Include the user's timezone in the confirmation and API payload.
 
-Good follow-up questions:
+Good follow-up questions when a question gate is hit:
 
 - "What timezone should I use?"
 - "When you say tomorrow morning, what time should I use?"
-- "Should I use `America/New_York` for this reminder?"
 
 ## Cancel Workflow
 
@@ -184,7 +184,7 @@ If no key is available, use the agent-initiated setup path through the Pipa gate
 
 The verification response returns the plaintext API key once and may include `credits_remaining`. Do not print the API key back to the user unless they explicitly ask to see it.
 
-Email-code verification rotates the account's key. It creates a new key for the verified email and revokes prior keys for that account, so older stored keys may stop working. Before starting setup for a user who may already have a key, warn them that this creates a replacement key and they will need to update any agents or environments using the old key.
+Email-code verification rotates the account's key. It creates a new key for the verified email and revokes prior keys for that account, so older stored keys may stop working. Before starting setup for a user who may already have a key, state that this creates a replacement key and they will need to update any agents or environments using the old key. Do not ask for permission to create the replacement key unless the user has expressed uncertainty or the current request is not clearly asking to set up reminders.
 
 Hosted Pipa gateway runs may inject a short-lived runtime credential automatically. If `PIPA_FOLLOW_UP_API_KEY` and `PIPA_FOLLOW_UP_EMAIL` are already present, use them and do not start email-code setup.
 
@@ -268,7 +268,7 @@ Common API failures:
 
 - `recipient_not_verified` means the requested recipient email does not match the verified key owner. Ask whether to use the verified `PIPA_FOLLOW_UP_EMAIL` instead.
 - `due_at_not_future` means the resolved timestamp is in the past or too close to now. Re-resolve the time in the user's timezone and ask for clarification if needed.
-- `invalid_api_key` means the stored key may have been revoked or rotated. Warn that provisioning a replacement rotates the account key, then start the email-code setup flow if the user approves.
+- `invalid_api_key` means the stored key may have been revoked or rotated. State that provisioning a replacement rotates the account key, then start the email-code setup flow. Ask for approval only if the user has not clearly asked to create a reminder or set up reminder access.
 - `insufficient_credits` means the user is out of Pipa credits. Send them to the returned `billing_url`, usually `https://usepipa.com/dashboard?tab=billing`, to get more credits.
 - `active_reminder_limit_reached` means the key already has too many scheduled/sending reminders. Explain that v1 cannot list reminders yet, so the user needs to cancel known reminder ids or wait for existing reminders to send.
 
@@ -286,8 +286,8 @@ Do not invent unsupported endpoints for list, read, update, pause, resume, recur
 ## Output Style
 
 - Be crisp and operational.
-- Ask only for missing information.
-- Confirm the final reminder before create.
+- Ask only for missing or ambiguous required information.
+- Do not ask for pre-create confirmation when the required inputs are known.
 - Confirm cancellation when ambiguous.
 - After create, include the reminder id, due time, and `credits_remaining` when the API returns it.
 - Avoid lengthy explanations of scheduling infrastructure unless the user asks.
@@ -302,23 +302,10 @@ Email me tomorrow at 9 AM to send the invoice.
 
 Skill behavior:
 
-1. Resolve timezone from context or ask for it.
+1. Resolve timezone from context or ask for it if missing.
 2. Resolve tomorrow at 9 AM to UTC.
 3. Default subject to `Reminder from Pipa`.
-4. Confirm the reminder.
-5. Create the reminder.
-
-Example confirmation:
-
-```text
-I can create this reminder:
-- To: lola@example.com
-- When: Tomorrow at 9:00 AM America/New_York
-- Subject: Reminder from Pipa
-- Body: Send the invoice.
-
-Should I create it?
-```
+4. Create the reminder.
 
 Example success:
 
