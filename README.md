@@ -31,6 +31,7 @@ These workflows remain separately installable because they are tool-specific, pr
 | [`pipa-audio-brief`](skills/pipa-audio-brief/) | Turns agent sessions, PRs, plans, specs, docs, URLs, and pasted markdown into a listenable brief with a shareable listening page. |
 | [`pipa-huddle-beta`](skills/pipa-huddle-beta/) | Starts a Pipa Huddle voice session with Pipa or the active agent for live talk-throughs, optional planning conversation, and concise context handoff. |
 | [`composio-mcp`](skills/composio/) | Routes external app work through the Composio MCP with tool discovery, authorization links, schema-safe execution, and concise provenance. |
+| [`pipa-follow-up-reminders`](skills/pipa-follow-up-reminders/) | Creates and cancels deterministic one-shot email follow-up reminders through Pipa only when the user wants a specific future reminder sent to their email. Includes email-code/API-key setup, timezone resolution, and self-reminder guardrails. |
 | [`pipa-triggers`](skills/pipa-triggers/) | Creates, inspects, and deletes event-triggered Pipa automations with explicit trigger proposal confirmation. |
 | [`pipa-workflow-automation`](skills/pipa-workflow-automation/) | Creates, inspects, and deletes recurring Slack-driven Pipa automations with schedule, timezone, destination, prompt, and final confirmation gates. |
 
@@ -40,6 +41,7 @@ These workflows remain separately installable because they are tool-specific, pr
 - "Turn these notes into a client-ready update."
 - "Find the blockers, owners, and next actions from this thread."
 - "Make this a weekly operating brief."
+- "Email me tomorrow at 9 AM to follow up on the proposal."
 - "Prepare the handoff and list what is still unknown."
 - "Create an audio brief from this plan."
 
