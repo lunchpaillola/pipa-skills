@@ -178,9 +178,10 @@ If no key is available, use the agent-initiated setup path through the Pipa gate
 2. Call `POST /v1/key/email-code/start` with product `follow-up`.
 3. Ask the user to paste the one-time code from their email.
 4. Call `POST /v1/key/email-code/verify` with the challenge id, code, and product `follow-up`.
-5. Store the returned credential for future local runs by writing it to repo-local `.pipa/credentials`.
-6. Before writing, make sure `.pipa/` is ignored by git; add it to `.gitignore` if missing.
-7. Tell the user the credential was stored at `.pipa/credentials`, but never print the key.
+5. Store the returned credential for future local runs at the selected credentials path.
+6. Before writing repo-local credentials, make sure `.pipa/` is ignored by git; add it to `.gitignore` if missing.
+7. Before writing global credentials, create `~/.pipa/` with restrictive permissions.
+8. Tell the user the credential was stored at the selected credentials path, but never print the key.
 
 The verification response returns the plaintext API key once and may include `credits_remaining`. Do not print the API key back to the user unless they explicitly ask to see it.
 
@@ -188,9 +189,15 @@ Email-code verification rotates the account's key. It creates a new key for the 
 
 Hosted Pipa gateway runs may inject a short-lived runtime credential automatically. If `PIPA_FOLLOW_UP_API_KEY` and `PIPA_FOLLOW_UP_EMAIL` are already present, use them and do not start email-code setup.
 
-For local persistent agents, persist newly verified credentials to repo-local `.pipa/credentials` so the agent working in this repository can find them next time. Before writing, check whether the current repo has a `.gitignore` entry for `.pipa/`; if not, add one. Then write the credentials with restrictive permissions. Avoid putting the plaintext key directly in chat, markdown, command history, or process arguments. Prefer the host agent's secure file-write primitive when available.
+For local persistent agents, store newly verified credentials according to the skill installation scope:
 
-Do not ask whether to store credentials after a successful email-code verification in a local persistent repo. The expected behavior is to save them automatically for the next run, while clearly stating the path used and keeping the key value out of chat and logs. Only skip local storage if the environment is explicitly ephemeral, the user has opted out, or writing the credentials file fails.
+1. If this skill is installed globally, store credentials at `~/.pipa/credentials`.
+2. If this skill is installed repo-locally, store credentials at repo-local `.pipa/credentials`.
+3. If the installation scope cannot be detected, prefer repo-local `.pipa/credentials` when inside a git repo; otherwise use `~/.pipa/credentials`.
+
+Before writing repo-local credentials, ensure `.pipa/` is ignored by git. Before writing global credentials, create `~/.pipa/` with restrictive permissions. Always write the credentials file with mode `600`. Avoid putting the plaintext key directly in chat, markdown, command history, or process arguments. Prefer the host agent's secure file-write primitive when available.
+
+Do not ask whether to store credentials after a successful email-code verification in a local persistent environment. The expected behavior is to save them automatically for the next run, while clearly stating the path used and keeping the key value out of chat and logs. Only skip local storage if the environment is explicitly ephemeral, the user has opted out, or writing the credentials file fails.
 
 Use this file shape:
 
@@ -201,7 +208,7 @@ PIPA_USER_TIMEZONE=<IANA_TIMEZONE>
 PIPA_API_BASE_URL=https://pailflow-chat-gateway.fly.dev/
 ```
 
-Set the credentials file mode to owner-read/write only, for example `chmod 600 .pipa/credentials`.
+Set the credentials file mode to owner-read/write only, for example `chmod 600 <selected-credentials-path>`.
 
 For sandbox agents, do not assume local storage survives. The reminder itself is durable after creation, but credentials may need to be reissued or re-entered through the email-code flow in a future session. When hosted key management exists, tell the user that Pipa can email a management link such as "We created your key. Visit the Pipa key page to manage, revoke, or save it later." Do not claim that hosted management exists until the gateway/homepage exposes that surface.
 
@@ -261,7 +268,7 @@ Failure rules:
 - Do not ask for an API key if `PIPA_FOLLOW_UP_API_KEY`, `.pipa/credentials`, or `~/.pipa/credentials` is available.
 - If no API key is available, start the email-code provisioning flow instead of asking the user to provide a key manually.
 - Do not print the API key back to the user.
-- After successful email-code verification in a local persistent repo, write credentials to `.pipa/credentials` for future runs.
+- After successful email-code verification in a local persistent environment, write credentials to the path selected by the installation-scope rules for future runs.
 - Do not write credentials to disk without telling the user what path is being used.
 
 Common API failures:
