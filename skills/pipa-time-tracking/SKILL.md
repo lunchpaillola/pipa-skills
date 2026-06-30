@@ -24,7 +24,7 @@ Keep short todo list: mode, creds, missing question, payload validation, API cal
    - Log past time: "log 45 minutes from 9 to 9:45" -> **backfill**.
    - Show entries / summarize time -> **review**.
    - Update/delete/cancel/archive entry -> **update/archive**.
-   - Buy credits/top up, or mutating req fails with `insufficient_credits` -> **top-up**.
+   - Buy credits/top up, check credit balance, or mutating req fails with `insufficient_credits` -> **top-up**.
    - Payroll, invoicing, screenshots, passive reconstruction, external tracker sync, recurring timers, auto idle detection -> explain V1 unsupported, stop.
 
    If conversation already has successful API response and user asks about that result, answer from known response. Do not call unsupported reporting endpoints.
@@ -40,6 +40,7 @@ Keep short todo list: mode, creds, missing question, payload validation, API cal
 
    - `PIPA_FOLLOW_UP_API_KEY` -> `PIPA_API_KEY`
    - `PIPA_FOLLOW_UP_EMAIL` -> `PIPA_EMAIL`
+   - If canonical and alias values both exist in the same source, canonical wins.
 
    Lookup order:
 
@@ -104,7 +105,24 @@ Keep short todo list: mode, creds, missing question, payload validation, API cal
    - `DELETE /v1/agent-utility-records/:id`
    - `POST /v1/key/email-code/start`
    - `POST /v1/key/email-code/verify`
-   - `POST /v1/topups/checkout-sessions`
+    - `POST /v1/topups/checkout-sessions`
+
+    Credit balance:
+
+    - Do not invent a balance endpoint. Current credit balance is only known when an allowed API response includes `credits_remaining`.
+    - If the user asks for balance and the latest allowed response lacks `credits_remaining`, say the skill cannot query current balance directly.
+    - If `insufficient_credits` includes `topup_limits`, use those limits in the next action.
+    - Treat checkout URLs as user-action payment links. Do not persist them or raw-print long checkout URLs unless explicitly asked.
+
+   List query params used by this skill:
+
+   - `utility_type`
+   - `record_type`
+   - `status`
+   - `started_at_gte`
+   - `started_at_lt`
+
+   Do not use other list filters unless the API response or docs expose them. If archived filtering is unavailable, exclude archived records after fetch.
 
    Auth header:
 
@@ -169,7 +187,7 @@ Keep short todo list: mode, creds, missing question, payload validation, API cal
    1. Fetch running timer per step 5.
    2. If none, create new running timer via start mode. Mention no prior timer stopped.
    3. If running, patch to `status=completed`, `ended_at=now`.
-   4. After stop succeeds, create new running timer.
+   4. After stop succeeds, create new running timer with a fresh `Idempotency-Key`.
    5. If stop succeeds but create fails, say exactly that and report no new timer running.
    6. Return stopped duration + new running record id.
 
@@ -223,6 +241,11 @@ Keep short todo list: mode, creds, missing question, payload validation, API cal
 
     Time Tracking costs 10 Pipa credits for 30 days. No auto-renewal; next mutating use after expiry charges another access pass.
 
+    Balance visibility:
+
+    - The skill cannot query current credit balance unless an allowed response includes `credits_remaining`.
+    - If the user asks how many credits they have and no current response includes `credits_remaining`, say so and include the gateway URL being used.
+
     1. Use on `insufficient_credits` or buy/top-up ask.
     2. Choose requested integer credit amount.
     3. No amount -> ask exactly: `How many Pipa credits do you want to buy?` Stop.
@@ -231,6 +254,8 @@ Keep short todo list: mode, creds, missing question, payload validation, API cal
     6. If checkout unavailable and API only includes `billing_url`, share billing fallback.
     7. After payment confirmation, retry original mutating req.
 
+    If `insufficient_credits` or `invalid_topup_credits` returns limits, use them. Example: `10 credits is below the minimum. Smallest top-up is 100 credits for $10. Want me to create that checkout session?`
+
 13. **API failures.** Do smallest next action.
 
     - `running_timer_exists`: Fetch running timer, explain, ask whether to switch.
@@ -238,7 +263,7 @@ Keep short todo list: mode, creds, missing question, payload validation, API cal
     - `invalid_api_key`: Explain replacement key rotates account key, step 3.
     - `started_at_required`, `completed_entry_requires_ended_at`, `running_entry_cannot_have_ended_at`, `ended_at_before_started_at`: Fix payload; ask only if requested time ambiguous.
     - `agent_utility_record_not_found`: Ask for record id, or list recent candidates if user asked about "that entry".
-    - `invalid_topup_credits`: Give smallest valid next action from API response. Do not share `billing_url` unless checkout unavailable.
+    - `invalid_topup_credits`: Give smallest valid next action from API response. Example: `10 credits is below the minimum. Smallest top-up is 100 credits for $10. Want me to create that checkout session?` Do not share `billing_url` unless checkout unavailable.
     - `failed_to_create_agent_utility_record`, `failed_to_patch_agent_utility_record`, `failed_to_archive_agent_utility_record`: State whether anything changed before failure. Do not pretend timer changed.
     - Missing API key: Step 3.
 
