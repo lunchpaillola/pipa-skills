@@ -35,6 +35,7 @@ These workflows remain separately installable because they are tool-specific, pr
 | [`pipa-time-tracking`](skills/pipa-time-tracking/) | Starts, stops, switches, backfills, updates, archives, and summarizes Toggl-style time entries through Pipa generic agent utility records. |
 | [`pipa-triggers`](skills/pipa-triggers/) | Creates, inspects, and deletes event-triggered Pipa automations with explicit trigger proposal confirmation. |
 | [`pipa-workflow-automation`](skills/pipa-workflow-automation/) | Creates, inspects, and deletes recurring Slack-driven Pipa automations with schedule, timezone, destination, prompt, and final confirmation gates. |
+| [`pipa-scope-tracker`](skills/pipa-scope-tracker/) | Tracks project scope changes and generates change orders when clients push beyond the original agreement. Includes scope logging, history review, change order generation, and client notification drafts. |
 
 ## Example Asks
 
@@ -67,7 +68,7 @@ npx skills add lunchpaillola/pipa-skills --list
 npx skills update lunchpaillola/pipa-skills
 ```
 
-### Clone and Copy
+## Clone and Copy
 
 ```bash
 git clone https://github.com/lunchpaillola/pipa-skills.git
