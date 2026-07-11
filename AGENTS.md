@@ -15,6 +15,6 @@ This repository stores Pipa skills for AI agents. Pipa is the primary PM brain a
 - For connected-tool workflows, especially Composio-backed ones, prefer concise provenance in the skill contract: name the tools used and cite the specific record IDs, doc names, links, or references that materially support the answer.
 - New PM and delivery workflows normally become Pipa commands or references under `skills/pipa/`, not new top-level PM skills.
 - Reserve standalone skills for high-value, tool/product-specific, safety-sensitive, or independently discoverable workflows.
-- Preserve `pipa-audio-brief`, `composio`, `pipa-triggers`, and `pipa-workflow-automation` as standalone breakouts unless a future plan explicitly changes that architecture.
+- Preserve `pipa-audio-brief`, `composio`, and `pipa-triggers` as standalone breakouts unless a future plan explicitly changes that architecture.
 - Keep `skills/pipa/SKILL.md` concise and move detailed command instructions into `skills/pipa/references/`.
 - `docs/solutions/` stores documented solutions to past problems (bugs, best practices, workflow patterns), organized by category with YAML frontmatter (`module`, `tags`, `problem_type`); relevant when implementing or debugging in documented areas.
