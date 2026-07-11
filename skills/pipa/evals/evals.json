@@ -119,19 +119,6 @@
       ]
     },
     {
-      "id": "pipa-automation-positive-1",
-      "prompt": "Pipa automate a weekly budget debrief every Monday morning.",
-      "expected_output": "Routes to Pipa recurring automation and requires schedule, timezone, destination, execution prompt, and final confirmation before create.",
-      "assertions": [
-        "Does the output route to `pipa-workflow-automation`?",
-        "Does it require schedule/cadence, timezone, destination, execution prompt, and final confirmation before create?",
-        "Does it avoid creating the automation before confirmation?"
-      ],
-      "files": [
-
-      ]
-    },
-    {
       "id": "pipa-automation-negative-1",
       "prompt": "Give me a weekly status update now.",
       "expected_output": "Produces a one-time status route instead of creating or proposing recurring automation unless future scheduled delivery is requested.",

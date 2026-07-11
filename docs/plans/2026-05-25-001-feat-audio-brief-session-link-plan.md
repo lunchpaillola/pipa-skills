@@ -70,7 +70,7 @@ Long agent-generated docs, plans, documentation, and blog posts are cognitively 
 - `skills/pm-plan/SKILL.md` shows the plan-lane router pattern: objective confirmation, context/source coverage, mode selection, and execution-ready summary.
 - `skills/pm-plan-requirements-brief/SKILL.md` is the closest pattern for turning source material into a concise review artifact with explicit source quality and unknowns.
 - `skills/pm-communication-style/SKILL.md` provides the right audio-brief writing style: BLUF first, short human language, no dense metadata, and decision-ready summaries.
-- `skills/pipa-workflow-automation/SKILL.md` and `skills/pipa-triggers/SKILL.md` show how connected-tool skills should confirm external actions and avoid guessing unavailable integrations.
+- `skills/pipa-triggers/SKILL.md` shows how connected-tool skills should confirm external actions and avoid guessing unavailable integrations.
 - `skills/composio/SKILL.md` shows the connected-tool pattern: discover available tools, link if needed, use the smallest reliable tool path, and cite concise provenance.
 - `scripts/validate_skill_frontmatter.rb` validates skill frontmatter and should continue passing after adding the new skill.
 - Frontend Slides is a strong reference for generated HTML product UX: a skill can create a deterministic single HTML experience with inline CSS/JS, open it in the browser, and optionally deploy it later without becoming a full app framework.
@@ -324,7 +324,6 @@ flowchart TB
 - Include transcript and metadata alongside audio so the review artifact remains useful even if audio playback fails.
 
 **Patterns to follow:**
-- `skills/pipa-workflow-automation/SKILL.md` for explicit blocker reporting when environment/configuration is missing.
 - External Kokoro docs or local Kokoro help output for invocation details.
 
 **Test scenarios:**
@@ -502,7 +501,7 @@ flowchart TB
 
 - Conversation source: user brainstorm in this session on 2026-05-25.
 - Related repository guidance: `AGENTS.md`, `README.md`, `CONTRIBUTING.md`.
-- Related skill patterns: `skills/pm-plan/SKILL.md`, `skills/pm-plan-requirements-brief/SKILL.md`, `skills/pm-communication-style/SKILL.md`, `skills/pipa-workflow-automation/SKILL.md`, `skills/pipa-triggers/SKILL.md`, `skills/composio/SKILL.md`.
+- Related skill patterns: `skills/pm-plan/SKILL.md`, `skills/pm-plan-requirements-brief/SKILL.md`, `skills/pm-communication-style/SKILL.md`, `skills/pipa-triggers/SKILL.md`, `skills/composio/SKILL.md`.
 - Related existing plan: `docs/plans/2026-05-25-feat-agent-session-automatic-marketing-skill-plan.md`.
 - External docs: `https://www.pipecat.ai/`, `https://docs.pipecat.ai/`, `https://here.now/`, `https://www.proofeditor.ai/`.
 - UX analogue: `https://github.com/Lex-Inc/roughdraft`.

@@ -22,7 +22,6 @@ Current standalone breakouts are:
 - `pipa-audio-brief`
 - `composio`
 - `pipa-triggers`
-- `pipa-workflow-automation`
 
 When adding a standalone skill:
 

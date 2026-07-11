@@ -424,7 +424,6 @@ The skill should include:
 **Patterns to follow:**
 
 - `skills/pm-close-lessons-learned/SKILL.md` for evidence-backed lessons and source-quality language.
-- `skills/pipa-workflow-automation/SKILL.md` for explicit confirmation before future or external actions.
 - `AGENTS.md` for repo rule: broadly reusable workflows, no proprietary context.
 
 **Test scenarios:**
@@ -584,7 +583,6 @@ Include guidance for public channels:
 
 **Patterns to follow:**
 
-- `skills/pipa-workflow-automation/SKILL.md` confirmation discipline.
 - `AGENTS.md` rule to keep proprietary orchestration and private integrations out of the repo.
 
 **Test scenarios:**
@@ -730,7 +728,6 @@ Keep this out of the core V1 skill to avoid scope creep. The V1 skill should be 
 
 **Patterns to follow:**
 
-- `skills/pipa-workflow-automation/SKILL.md` for scheduled workflow concepts, but do not reuse Pipa-private APIs.
 - `skills/composio/SKILL.md` for connected-tool workflows when external posting or issue creation is eventually added.
 
 **Test scenarios:**

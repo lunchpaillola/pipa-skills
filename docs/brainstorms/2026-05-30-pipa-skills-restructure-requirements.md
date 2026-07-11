@@ -96,11 +96,11 @@ Impeccable's public docs provide the clearest style and layout reference for Pip
 **Breakout skills**
 - R11. `pipa-audio-brief` must remain a separately discoverable top-level skill.
 - R12. `composio` must remain a separately discoverable top-level skill.
-- R13. `pipa-triggers` and `pipa-workflow-automation` must remain separately discoverable top-level skills.
+- R13. `pipa-triggers` must remain a separately discoverable top-level skill.
 - R14. Breakout skills should be reserved for workflows that are high-value, tool/product-specific, or independently discoverable beyond the core PM brain.
-- R15. Pipa must be able to route into or invoke the audio brief, Composio, Pipa trigger, and Pipa recurring automation workflows from the Pipa entry skill.
+- R15. Pipa must be able to route into or invoke the audio brief, Composio, and Pipa trigger workflows from the Pipa entry skill.
 - R16. When Pipa invokes a standalone workflow, it must preserve that workflow's safety gates, setup checks, required confirmations, and output contracts rather than flattening them into a generic Pipa response.
-- R17. `pipa-audio-brief`, `composio`, `pipa-triggers`, and `pipa-workflow-automation` must be treated as read-only during this restructure. Pipa Audio Brief took significant iteration and should stay exactly as it is; the other named breakout skills should also not be edited.
+- R17. `pipa-audio-brief`, `composio`, and `pipa-triggers` must be treated as read-only during this restructure. Pipa Audio Brief took significant iteration and should stay exactly as it is; the other named breakout skills should also not be edited.
 - R17a. Pipa must route to Pipa Audio Brief only when the user explicitly asks for an audio, listenable, spoken, listening-page, or phone-friendly brief. Generic “brief this,” “write a brief,” “requirements brief,” or “project brief” language must stay in PM/document workflow routing instead.
 
 **Migration and public documentation**
@@ -172,7 +172,7 @@ Impeccable's public docs provide the clearest style and layout reference for Pip
 
 - Maintaining all current PM workflows as independent public top-level skills.
 - Providing compatibility shims for every old `pm-*` skill in the first Pipa release.
-- Editing `pipa-audio-brief`, `composio`, `pipa-triggers`, or `pipa-workflow-automation` as part of this restructure.
+- Editing `pipa-audio-brief`, `composio`, or `pipa-triggers` as part of this restructure.
 - Reframing Pipa as a generic all-purpose agent brain beyond project, delivery, and PM work.
 - Expanding Pipa into a forced acronym.
 - Treating the PM lifecycle lane taxonomy as the main public product story.

@@ -37,13 +37,12 @@ If no command is present, route by natural-language PM intent. If the request is
 1. If the first word after Pipa is a known command or alias, use that route.
 2. If no command is present but the request clearly matches a project, delivery, PM, stakeholder, or operational follow-through job, route by intent.
 3. Route to `pipa-follow-up-reminders` through `references/standalone-invocation.md` only when the user wants a specific one-shot follow-up reminder scheduled to their own email, such as “email me tomorrow at 9” or “remind me by email next Friday.” Do not route generic reminder, follow-up, drafting, or inbox-monitoring work there.
-4. If the request implies recurrence, scheduled future PM delivery, reports, summaries, or existing automation management, route to `pipa-workflow-automation` through `references/standalone-invocation.md`.
-5. If the request implies event reaction, webhook, watcher, listener, or trigger management, route to `pipa-triggers` through `references/standalone-invocation.md`.
-6. If the request requires an external app action through Composio, route to `composio` through `references/standalone-invocation.md` and never guess tool slugs.
-7. Route to `pipa-audio-brief` only when the user explicitly asks for an audio, listenable, spoken, phone-friendly, or listening-page brief. Generic “brief this,” “write a brief,” “requirements brief,” or “project brief” stays inside Pipa planning or summarization.
-8. Route to `pipa-huddle-beta` when the user explicitly asks for a live voice session, walking work session, voice talk-through, or planning conversation by voice. Generic text planning stays inside Pipa planning. Audio artifacts from source material stay in `pipa-audio-brief`.
-9. If multiple commands match, choose one primary route and list secondary follow-ups unless the user explicitly asks for a chain.
-10. If unknown, show the help/menu response and ask one clarifying question only when needed.
+4. If the request implies event reaction, webhook, watcher, listener, or trigger management, route to `pipa-triggers` through `references/standalone-invocation.md`.
+5. If the request requires an external app action through Composio, route to `composio` through `references/standalone-invocation.md` and never guess tool slugs.
+6. Route to `pipa-audio-brief` only when the user explicitly asks for an audio, listenable, spoken, phone-friendly, or listening-page brief. Generic “brief this,” “write a brief,” “requirements brief,” or “project brief” stays inside Pipa planning or summarization.
+7. Route to `pipa-huddle-beta` when the user explicitly asks for a live voice session, walking work session, voice talk-through, or planning conversation by voice. Generic text planning stays inside Pipa planning. Audio artifacts from source material stay in `pipa-audio-brief`.
+8. If multiple commands match, choose one primary route and list secondary follow-ups unless the user explicitly asks for a chain.
+9. If unknown, show the help/menu response and ask one clarifying question only when needed.
 
 ## Tie-Breakers
 
@@ -55,7 +54,6 @@ If no command is present, route by natural-language PM intent. If the request is
 - `voice session`, `talk this through by voice`, and `walking work session` mean `pipa-huddle-beta` when the user wants live back-and-forth conversation, not a generated audio artifact.
 - One-shot email reminder wording such as `email me tomorrow`, `remind me by email`, `follow up with me by email at 9`, and `send me an email reminder next Friday` means `pipa-follow-up-reminders` only when the user wants a specific future reminder delivered to their email.
 - Generic follow-up planning, owner tracking, inbox monitoring, drafting, or “follow up with the client” work stays in Pipa delivery/monitoring or routes to Composio if an external app action is required. Do not use `pipa-follow-up-reminders` unless an email reminder to the user is being scheduled.
-- Recurring words such as `daily`, `weekly`, `every Monday`, `remind me every`, and `send this every` route to Pipa automation only when the user asks for future scheduled delivery.
 - Event words such as `when`, `webhook`, `trigger`, `listener`, `watch`, and `on Linear issue created` route to Pipa triggers only when the user asks for event-driven behavior.
 
 ## Focused Command Routes
@@ -98,6 +96,6 @@ Use these direct mappings when the command or user wording is specific enough. O
 - Do not route generic non-PM coding, writing, or research work into Pipa.
 - Do not present Pipa as an acronym.
 - Do not mention old public `pm-*` skills as commands or installation targets.
-- Do not edit or copy the internals of `pipa-audio-brief`, `pipa-huddle-beta`, `composio`, `pipa-triggers`, or `pipa-workflow-automation`; they remain authoritative standalone workflows.
-- Do not weaken confirmation gates for recurring automations or triggers.
+- Do not edit or copy the internals of `pipa-audio-brief`, `pipa-huddle-beta`, `composio`, or `pipa-triggers`; they remain authoritative standalone workflows.
+- Do not weaken confirmation gates for triggers.
 - Do not invent owners, due dates, source facts, external-app slugs, or project decisions. Use `TBD` for unknowns.
