@@ -1,5 +1,10 @@
 # Versions
 
+## v0.4.4
+
+- Updated `pipa-follow-up-reminders` to v0.1.2 with stricter local time resolution, Eastern timezone handling, near-term validation, and clearer hosted-run credential recovery.
+- Removed skill-specific changelog files so version history lives in this central file.
+
 ## v0.4.3
 
 - Removed `pipa-workflow-automation` from the public skill pack; recurring workflow automation is available only in the hosted Pipa product.

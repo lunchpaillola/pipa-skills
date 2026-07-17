@@ -2,7 +2,7 @@
 name: pipa-follow-up-reminders
 description: Create and cancel simple one-shot email follow-up reminders through Pipa. Use this when the user wants Pipa to email them a specific reminder at a future time, such as “email me tomorrow at 9 to follow up,” “remind me by email next Friday,” or “send me a reminder in two hours.” Also use it to cancel a previously scheduled Pipa Follow-Up reminder. Do not use for generic follow-up work, recurring reminders, Gmail scheduled send, drafting emails, reply detection, inbox monitoring, Slack/SMS reminders, or reminders to other people.
 metadata:
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # Pipa Follow-Up Reminders
