@@ -4,8 +4,6 @@ Start here if you want to talk to the current agent by voice.
 
 `README.md` is for humans reading or running this skill directly. `SKILL.md` is the agent-facing instruction file that tells an agent when and how to start a huddle.
 
-See [`CHANGELOG.md`](CHANGELOG.md) for version history and behavior changes.
-
 ## Start A Hosted Voice Session
 
 Run this from the repository root:

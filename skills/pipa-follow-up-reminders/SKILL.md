@@ -2,7 +2,7 @@
 name: pipa-follow-up-reminders
 description: Create and cancel simple one-shot email follow-up reminders through Pipa. Use this when the user wants Pipa to email them a specific reminder at a future time, such as “email me tomorrow at 9 to follow up,” “remind me by email next Friday,” or “send me a reminder in two hours.” Also use it to cancel a previously scheduled Pipa Follow-Up reminder. Do not use for generic follow-up work, recurring reminders, Gmail scheduled send, drafting emails, reply detection, inbox monitoring, Slack/SMS reminders, or reminders to other people.
 metadata:
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # Pipa Follow-Up Reminders
@@ -28,7 +28,7 @@ Keep a short todo list while executing this skill so context stays clean: mode, 
 
 2. **Load credentials.**
 
-   Load these values before API calls:
+   Load these values before API calls. Distinguish durable user credentials from hosted-run credentials:
 
    - `PIPA_FOLLOW_UP_API_KEY`
    - `PIPA_FOLLOW_UP_EMAIL`
@@ -40,6 +40,14 @@ Keep a short todo list while executing this skill so context stays clean: mode, 
    2. Environment variables.
    3. Repo-local `.pipa/credentials`.
    4. User-global `~/.pipa/credentials`.
+
+   Credential rules:
+
+   - `pipa_agent_v1.*` keys are hosted-run credentials, not durable user keys.
+   - They can expire. If one fails, say the hosted-run credential expired, not the user's reminder credential.
+   - Do not write `pipa_agent_v1.*` keys into user-managed credential files yourself.
+   - If a user-managed credentials file contains an expired `pipa_agent_v1.*` key, ignore/remove that key and continue lookup before starting email-code setup.
+   - Email-code verification returns durable user keys. Those are the keys to store for local/persistent skill use.
 
    Credentials file shape:
 
@@ -66,7 +74,7 @@ Keep a short todo list while executing this skill so context stays clean: mode, 
    2. Call `POST /v1/key/email-code/start` with product `follow-up`.
    3. Ask for the one-time code from email.
    4. Call `POST /v1/key/email-code/verify` with the challenge id, code, and product `follow-up`.
-   5. Store the returned key unless the environment is ephemeral, the user opted out, or the write fails.
+   5. Store the returned durable key unless the environment is ephemeral, the user opted out, or the write fails. Do not write `pipa_agent_v1.*` keys yourself.
    6. Prefer `~/.pipa/credentials` for globally installed skills. Prefer repo-local `.pipa/credentials` for repo-local skills.
    7. Before writing repo-local credentials, ensure `.pipa/` is gitignored. Use file mode `600`.
    8. Tell the user where credentials were stored. Never print the key unless explicitly asked.
@@ -86,11 +94,23 @@ Keep a short todo list while executing this skill so context stays clean: mode, 
 
    1. Set `recipient_email` to `PIPA_FOLLOW_UP_EMAIL`.
    2. If the user requested another recipient, stop and say V1 only supports the verified key owner. Ask whether to use the verified email instead.
-   3. Resolve the user's requested time into `due_at`, a future UTC ISO timestamp, using `PIPA_USER_TIMEZONE` as the interpretation timezone.
-   4. If the time is vague, ask one direct clarification and stop until the user answers.
-   5. Set `timezone` to `PIPA_USER_TIMEZONE`.
-   6. Set `subject` to the user's clear subject when provided; otherwise use `Reminder from Pipa`.
-   7. Set `body_text` to the user's reminder text when provided; otherwise use a concise plain-text reminder body.
+   3. Normalize the interpretation timezone before resolving the time:
+      - If the user says `Eastern`, `ET`, `EST`, or `EDT` and they mean US Eastern time, use `America/New_York`.
+      - Do not map casual `EST` to fixed-offset zones such as `America/Panama`; daylight saving must be handled by the IANA zone.
+      - If the user explicitly asks for a fixed-offset timezone, use the correct fixed-offset IANA zone and say so in the confirmation.
+   4. Resolve the user's requested time into `due_at`, a future UTC ISO timestamp, using the normalized IANA timezone.
+      - For `today`, `tomorrow`, weekdays, and explicit dates, first convert the current instant into the interpretation timezone and anchor the calendar date there. Do not use UTC as the local date.
+      - For explicit date + clock requests, verify the resulting local date/time matches the user's words before calling the API.
+      - If the requested local time has already passed today, ask one clarification instead of silently scheduling tomorrow.
+   5. If the time is vague, ask one direct clarification and stop until the user answers.
+   6. Set `timezone` to the normalized IANA timezone used for interpretation.
+   7. Set `subject` to the user's clear subject when provided; otherwise use `Reminder from Pipa`.
+   8. Set `body_text` to the user's reminder text when provided; otherwise use a concise plain-text reminder body.
+
+   Time examples:
+
+   - Current UTC `2026-07-17T00:57:00Z`, user timezone `America/New_York`, request `tomorrow at 7am` -> local anchor is July 16, so `due_at` is `2026-07-17T11:00:00.000Z`.
+   - Current UTC `2026-07-17T13:01:00Z`, request `July 17 9:10 AM EST` from a US Eastern user -> use `America/New_York`, so `due_at` is `2026-07-17T13:10:00.000Z`, not `14:10Z`.
 
    Skip ahead: If the user says “in 5 minutes,” “in two hours,” or another relative duration and timezone is known, calculate immediately. Do not ask for confirmation.
 
@@ -101,9 +121,11 @@ Keep a short todo list while executing this skill so context stays clean: mode, 
    1. Confirm `recipient_email`, `due_at`, `timezone`, `subject`, and `body_text` are present.
    2. Confirm every required field is a non-empty string.
    3. Confirm `due_at` is in the future.
-   4. If validation fails, fix payload construction before calling the API.
-   5. When building JSON from shell commands, export variables before reading them from child processes, or construct timestamp + JSON inside the same runtime.
-   6. Generate a fresh `Idempotency-Key`.
+   4. Confirm the local rendering of `due_at` in `timezone` matches the requested date and clock time.
+   5. For reminders due within 30 minutes, compare current time to `due_at` after conversion and confirm there is still enough time for API creation + scheduler dispatch. If the time has passed or is within 60 seconds, ask for a new time.
+   6. If validation fails, fix payload construction before calling the API.
+   7. When building JSON from shell commands, export variables before reading them from child processes, or construct timestamp + JSON inside the same runtime.
+   8. Generate a fresh `Idempotency-Key`.
 
    Payload shape:
 
@@ -184,7 +206,8 @@ Keep a short todo list while executing this skill so context stays clean: mode, 
 
    - `recipient_not_verified`: Ask whether to use `PIPA_FOLLOW_UP_EMAIL` instead.
    - `due_at_not_future`: Re-resolve time in the user timezone. Ask only if still ambiguous.
-   - `invalid_api_key`: Explain replacement key rotates the account key, then go to step 3.
+   - `invalid_api_key`: If the key is a stored `pipa_agent_v1.*`, ignore/remove that stored key and continue lookup. If it is a durable email-code key, explain replacement key rotates the account key, then go to step 3.
+   - `pipa_agent_credential_expired`: Say the hosted-run credential expired. Continue lookup for a durable key. Start email-code verification only if no durable key exists.
    - `insufficient_credits`: Go to step 8.
    - `invalid_topup_credits`: Give the smallest valid next action. Example: `10 credits is below the minimum. Smallest top-up is 100 credits for $10. Want me to create that checkout session?` Do not share `billing_url` unless checkout creation is unavailable.
    - `active_reminder_limit_reached`: Say V1 cannot list reminders; the user needs known reminder ids to cancel or must wait for reminders to send.
