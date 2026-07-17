@@ -28,7 +28,7 @@ Keep a short todo list while executing this skill so context stays clean: mode, 
 
 2. **Load credentials.**
 
-   Load these values before API calls. Distinguish durable user credentials from gateway-injected run credentials:
+   Load these values before API calls. Distinguish durable user credentials from hosted-run credentials:
 
    - `PIPA_FOLLOW_UP_API_KEY`
    - `PIPA_FOLLOW_UP_EMAIL`
@@ -43,10 +43,11 @@ Keep a short todo list while executing this skill so context stays clean: mode, 
 
    Credential rules:
 
-   - `pipa_agent_v1.*` keys are short-lived hosted-run credentials. Use them for the current run if injected, but never store them in `.pipa/credentials` or `~/.pipa/credentials`.
-   - Durable email-code keys are the only keys that should be written to disk.
-   - If a credentials file contains an expired `pipa_agent_v1.*` key, ignore that file key and continue lookup before starting email-code setup.
-   - If an injected `pipa_agent_v1.*` key expires during a long-running session, ask the user to retry from Slack/web so the gateway can mint a fresh run credential. Do not tell them their durable reminder credential expired.
+   - `pipa_agent_v1.*` keys are hosted-run credentials, not durable user keys.
+   - They can expire. If one fails, say the hosted-run credential expired, not the user's reminder credential.
+   - Do not write `pipa_agent_v1.*` keys into user-managed credential files yourself.
+   - If a user-managed credentials file contains an expired `pipa_agent_v1.*` key, ignore/remove that key and continue lookup before starting email-code setup.
+   - Email-code verification returns durable user keys. Those are the keys to store for local/persistent skill use.
 
    Credentials file shape:
 
@@ -73,7 +74,7 @@ Keep a short todo list while executing this skill so context stays clean: mode, 
    2. Call `POST /v1/key/email-code/start` with product `follow-up`.
    3. Ask for the one-time code from email.
    4. Call `POST /v1/key/email-code/verify` with the challenge id, code, and product `follow-up`.
-   5. Store the returned durable key unless the environment is ephemeral, the user opted out, or the write fails. Do not store `pipa_agent_v1.*` keys.
+   5. Store the returned durable key unless the environment is ephemeral, the user opted out, or the write fails. Do not write `pipa_agent_v1.*` keys yourself.
    6. Prefer `~/.pipa/credentials` for globally installed skills. Prefer repo-local `.pipa/credentials` for repo-local skills.
    7. Before writing repo-local credentials, ensure `.pipa/` is gitignored. Use file mode `600`.
    8. Tell the user where credentials were stored. Never print the key unless explicitly asked.
@@ -206,7 +207,7 @@ Keep a short todo list while executing this skill so context stays clean: mode, 
    - `recipient_not_verified`: Ask whether to use `PIPA_FOLLOW_UP_EMAIL` instead.
    - `due_at_not_future`: Re-resolve time in the user timezone. Ask only if still ambiguous.
    - `invalid_api_key`: If the key is a stored `pipa_agent_v1.*`, ignore/remove that stored key and continue lookup. If it is a durable email-code key, explain replacement key rotates the account key, then go to step 3.
-   - `pipa_agent_credential_expired`: This is a short-lived hosted-run credential, not the durable reminder credential. Ask the user to retry from Slack/web so the gateway mints a fresh run credential. Do not start email-code verification unless no durable credential exists and the user still wants local setup.
+   - `pipa_agent_credential_expired`: Say the hosted-run credential expired. Continue lookup for a durable key. Start email-code verification only if no durable key exists.
    - `insufficient_credits`: Go to step 8.
    - `invalid_topup_credits`: Give the smallest valid next action. Example: `10 credits is below the minimum. Smallest top-up is 100 credits for $10. Want me to create that checkout session?` Do not share `billing_url` unless checkout creation is unavailable.
    - `active_reminder_limit_reached`: Say V1 cannot list reminders; the user needs known reminder ids to cancel or must wait for reminders to send.
