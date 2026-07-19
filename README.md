@@ -43,6 +43,7 @@ cp -r pipa-skills/skills/* .agents/skills/
 - Audio briefs from sessions, plans, PRs, docs, and links
 - Connected-tool work through Composio-backed workflows
 - Recurring Slack updates and event-triggered automations
+- Progressive Pipa references with gotchas, examples, and connector categories in `.pipa/CONNECTORS.md`
 
 ### Core Skill
 

@@ -29,6 +29,8 @@ Use to close loops, capture lessons, prep handover/archive, update reusable know
 - `composio`: only live source retrieval or external doc updates.
 - `pipa-triggers`: only recurring/event-driven learning capture.
 
+See `.pipa/CONNECTORS.md` for connector categories: docs, cloud storage, code hosting, project tracker, knowledge base, and memory are common sources here.
+
 ## Workflow
 
 1. State source + learning objective.
@@ -51,3 +53,8 @@ Use to close loops, capture lessons, prep handover/archive, update reusable know
 - Do not declare closure without signoff or explicit acceptance evidence.
 - Do not store memory/update docs externally unless user asks and tool/workflow exists.
 - Do not turn lessons into philosophy when concrete ops change is possible.
+
+## Reference
+
+- `gotchas.md`: closure, archive, and memory-write traps.
+- `examples/learning-from-the-work.md`: output examples for lessons, handover, and reuse.

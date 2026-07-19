@@ -11,14 +11,17 @@ Pipa routes the work around the work.
 
 Choose one primary lane, load its reference, return sources, owners, next actions, and `TBD` for unknowns. Do not expose old PM lifecycle routes as public model.
 
-## How Pipa Works
+## Workflow
 
-1. Pick one primary lane.
-2. Load mapped reference or connected capability.
-3. Run it without weakening required inputs, gates, or output contract.
-4. List secondary follow-ups only when useful, unless user asks for chain.
+1. **Classify the request.** Decide whether this is Pipa operating work, a connected capability, explicit help/menu, or not a Pipa task.
+2. **Pick one primary lane.** Use the command matrix, routing rules, and tie-breakers. If no command is present, route by conversation context when safe.
+3. **Load the lane reference.** Start with the mapped lane reference. Add lifecycle references only when the lane needs that structure.
+4. **Check gotchas and examples.** Use `references/gotchas.md` plus the matching file in `references/examples/` before producing output.
+5. **Use connectors only when needed.** For live app reads/writes, consult `.pipa/CONNECTORS.md` and route through the standalone capability that owns the tool gate.
+6. **Run the workflow.** Preserve required inputs, approval gates, provenance, and output contract. Use `TBD` for missing facts.
+7. **Return the smallest useful next step.** Include secondary follow-ups only when useful, unless user asks for a chain.
 
-No command? Route by intent. Not service ops, delivery, stakeholders, money, relationships, learning, or connected Pipa capability? Do not force Pipa.
+No command? Use conversation context to choose the best lane. Show the menu only for explicit `help`/`menu`, sparse context, or unsafe routing. Not service ops, delivery, stakeholders, money, relationships, learning, or connected Pipa capability? Do not force Pipa.
 
 ## Command Matrix
 
@@ -31,21 +34,22 @@ No command? Route by intent. Not service ops, delivery, stakeholders, money, rel
 | Grow relationships | `grow relationships`, `relationship`, `follow up`, `check-in`, `client health`, `stakeholder`, `retention`, `renewal` | `references/growing-relationships.md` |
 | Learn from the work | `learn from the work`, `lessons`, `retrospective`, `close`, `archive`, `handover`, `benefits`, `reuse` | `references/learning-from-the-work.md` |
 | Connected capabilities | `audio brief`, `voice session`, `talk by voice`, `trigger`, `automate`, `follow-up reminder`, `email reminder`, `time tracking`, `time entry`, `composio` | Standalone skills via `references/standalone-invocation.md` |
-| Help | `help`, `menu`, no argument | `references/command-menu.md` |
+| Help | `help`, `menu`, sparse context, unsafe/unknown route | `references/command-menu.md` |
 
 ## Routing Rules
 
 1. Known command/alias after Pipa -> matching route.
-2. No command but clear lane -> route by intent.
-3. Lane intent wins. Connected capability only for exact job.
-4. `pipa-follow-up-reminders` only for one-shot self-email reminders, like `email me tomorrow at 9`. Generic follow-up stays `grow relationships` or `deliver work`.
-5. `pipa-triggers` only for event-driven behavior, watcher/listener/webhook setup, trigger mgmt, or recurring delivery with proposal confirmation.
-6. `composio` only for live external app access or writes. Start with Composio discovery/schema rules. Never guess slugs.
-7. `pipa-audio-brief` only for audio/listenable/spoken/phone-friendly/listening-page briefs. Generic briefs stay lanes.
-8. `pipa-huddle-beta` only for live voice session/talk-through.
-9. `pipa-time-tracking` only for start/stop/switch/backfill/update/archive/summarize/review time records. Money reasoning stays `get paid` unless time records are source/target.
-10. Multiple matches -> one primary lane plus secondary follow-ups, unless user asks for chain.
-11. Unknown -> help/menu plus one clarifying question only if needed.
+2. Exact `help` or `menu` -> show command menu.
+3. No command, missing command, or unknown command with clear context -> route by intent instead of showing menu.
+4. Lane intent wins. Connected capability only for exact job.
+5. `pipa-follow-up-reminders` only for one-shot self-email reminders, like `email me tomorrow at 9`. Generic follow-up stays `grow relationships` or `deliver work`.
+6. `pipa-triggers` only for event-driven behavior, watcher/listener/webhook setup, trigger mgmt, or recurring delivery with proposal confirmation.
+7. `composio` only for live external app access or writes. Start with Composio discovery/schema rules. Never guess slugs.
+8. `pipa-audio-brief` only for audio/listenable/spoken/phone-friendly/listening-page briefs. Generic briefs stay lanes.
+9. `pipa-huddle-beta` only for live voice session/talk-through.
+10. `pipa-time-tracking` only for start/stop/switch/backfill/update/archive/summarize/review time records. Money reasoning stays `get paid` unless time records are source/target.
+11. Multiple matches -> one primary lane plus secondary follow-ups, unless user asks for chain.
+12. Sparse or unsafe route -> help/menu plus one clarifying question only if needed.
 
 ## Compatibility Aliases
 
@@ -84,10 +88,12 @@ Use lifecycle refs internally when lane needs structure:
 
 ## References
 
-- Help: load `references/command-menu.md`; include decision stub: next action, owner, date, evidence; use `TBD` when missing.
+- Help/menu: load `references/command-menu.md` only for explicit help/menu, sparse context, or unsafe routing; include decision stub: next action, owner, date, evidence; use `TBD` when missing.
 - Standalone workflows: load `references/standalone-invocation.md`, then named standalone skill.
 - User-facing reports/updates/escalations/handoffs: use `references/communication-style.md`.
 - Lane workflows: load lane reference first; add lifecycle refs only as needed.
+- Gotchas/examples: load `references/gotchas.md` and the matching `references/examples/<lane>.md` when the lane has ambiguity, external-tool risk, or owner-facing output.
+- Connectors: consult `.pipa/CONNECTORS.md` before any live app read/write or when explaining what tool category a workflow needs.
 
 ## Gotchas
 

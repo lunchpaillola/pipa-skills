@@ -30,6 +30,8 @@ Use when active delivery needs coordination, status, blockers cleared, risk mgmt
 - `pipa-huddle-beta`: only live voice delivery talk-throughs.
 - `composio`: only explicit live app reads/writes.
 
+See `.pipa/CONNECTORS.md` for connector categories: project tracker, chat, code hosting, calendar, docs, and knowledge base are common sources here.
+
 ## Workflow
 
 1. State objective, horizon, sources.
@@ -52,3 +54,8 @@ Use when active delivery needs coordination, status, blockers cleared, risk mgmt
 - Do not imply work is done without acceptance evidence.
 - Do not create automations from recurring wording until trigger workflow confirms proposal.
 - Do not route money health/client relationship risk away unless that intent dominates.
+
+## Reference
+
+- `gotchas.md`: status, automation, and evidence traps.
+- `examples/deliver-work.md`: output examples for status, blockers, and escalations.

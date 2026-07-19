@@ -28,6 +28,8 @@ Use when leads, signals, ideas, referrals, inbound messages, or prospect notes n
 - `pipa-triggers`: only for future lead/signal monitoring.
 - Content/outreach planning stays here. Send/create nothing without explicit approval + right connected workflow.
 
+See `.pipa/CONNECTORS.md` for connector categories: CRM, chat, email, project tracker, web/search, and knowledge base are common sources here.
+
 ## Workflow
 
 1. State objective + source.
@@ -51,3 +53,8 @@ Use when leads, signals, ideas, referrals, inbound messages, or prospect notes n
 - Do not invent lead facts, company context, contacts, or intent.
 - Do not imply live CRM/Gmail/Slack/Reddit/web access unless connected tool ran.
 - Keep speculative opportunities clearly labeled as speculative.
+
+## Reference
+
+- `gotchas.md`: routing, provenance, and approval traps.
+- `examples/find-work.md`: output examples for leads, signals, and outreach prep.

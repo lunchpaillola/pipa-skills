@@ -28,6 +28,8 @@ Use for client/stakeholder relationships, follow-through, check-ins, retention r
 - `composio`: only live email/CRM/calendar access or explicit external send.
 - `pipa-triggers`: only automate future relationship checks.
 
+See `.pipa/CONNECTORS.md` for connector categories: CRM, email, chat, calendar, project tracker, and knowledge base are common sources here.
+
 ## Workflow
 
 1. State objective + source.
@@ -51,3 +53,8 @@ Use for client/stakeholder relationships, follow-through, check-ins, retention r
 - Do not schedule reminders unless self-email reminder wording is explicit.
 - Do not send messages, update CRM, or access inbox without connected-tool approval.
 - Do not fake relationship history; mark unknown context as `TBD`.
+
+## Reference
+
+- `gotchas.md`: sending, reminder, and relationship-memory traps.
+- `examples/growing-relationships.md`: output examples for check-ins, renewal signals, and trust gaps.

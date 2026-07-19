@@ -29,6 +29,8 @@ Use when ambiguous requests, client context, kickoff notes, or planning material
 - `composio`: only for live source retrieval or external record create.
 - Text planning, req briefs, written talk-throughs stay here.
 
+See `.pipa/CONNECTORS.md` for connector categories: chat, email, docs, cloud storage, project tracker, calendar, and knowledge base are common sources here.
+
 ## Workflow
 
 1. State source + objective.
@@ -52,3 +54,8 @@ Use when ambiguous requests, client context, kickoff notes, or planning material
 - Do not turn uncertainty into fake scope.
 - Do not overbuild when one-page brief works.
 - Do not use audio, huddle, or Composio unless explicitly asked.
+
+## Reference
+
+- `gotchas.md`: uncertainty, approval, and connector traps.
+- `examples/define-work.md`: output examples for briefs, scope, and acceptance checks.

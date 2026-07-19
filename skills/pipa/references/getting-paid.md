@@ -28,6 +28,8 @@ Use for invoices, payments, billable time, budget health, margin, payment risk, 
 - `pipa-follow-up-reminders`: only future self-email reminder.
 - `composio`: only live invoice/payment/app records or approved external write.
 
+See `.pipa/CONNECTORS.md` for connector categories: finance, time tracking, email, CRM, calendar, and docs are common sources here.
+
 ## Workflow
 
 1. State source, confidence, whether live financial records were used.
@@ -52,3 +54,8 @@ Use for invoices, payments, billable time, budget health, margin, payment risk, 
 - Do not claim banking/payment processor/invoice/payroll access unless connected tool ran.
 - Do not send follow-ups or create records without explicit approval + correct connected workflow.
 - Do not treat every budget question as invoicing; setup/baseline can route to `define work`.
+
+## Reference
+
+- `gotchas.md`: financial-record, approval, and reminder traps.
+- `examples/getting-paid.md`: output examples for invoice, billable-time, and budget-risk work.

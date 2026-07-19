@@ -1,10 +1,12 @@
 # Pipa Command Menu
 
-Use when user runs Pipa with no arg, asks `Pipa help`, or gives unknown command.
+Use when user asks `Pipa help`/`Pipa menu`, context is too sparse, or routing would be unsafe.
+
+If user says only `Pipa` but the conversation has enough context, do not show this menu. Pick the strongest lane and run it.
 
 ## Help Response Shape
 
-Start with 2-3 likely next commands when context exists. Sparse context -> stable start below.
+Start with 2-3 likely next commands when context exists but the user explicitly asked for help. Sparse context -> stable start below.
 
 ```md
 Pipa helps with the work around the work.

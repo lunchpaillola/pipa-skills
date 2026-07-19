@@ -136,6 +136,17 @@
       "files": []
     },
     {
+      "id": "pipa-no-command-context-1",
+      "prompt": "Pipa. From the conversation above, we have messy client notes, fuzzy scope, and missing acceptance checks for the onboarding work.",
+      "expected_output": "Routes by conversation context into the define-work lane instead of showing the command menu.",
+      "assertions": [
+        "Does the output route to `define work` from conversation context even though no explicit command was supplied?",
+        "Does it avoid showing the generic help/menu as the primary response?",
+        "Does it preserve scope, acceptance checks, open questions, decisions, and source gaps?"
+      ],
+      "files": []
+    },
+    {
       "id": "pipa-audio-positive-1",
       "prompt": "Pipa audio brief this requirements doc so I can listen to it on my phone.",
       "expected_output": "Routes to pipa-audio-brief and preserves source extraction, audio generation, publishing, and blocker behavior.",
@@ -269,10 +280,10 @@
     {
       "id": "pipa-unknown-command-1",
       "prompt": "Pipa frobnicate this delivery plan.",
-      "expected_output": "Returns Pipa help/menu with one clarification path instead of hallucinating a workflow.",
+      "expected_output": "Avoids inventing a frobnicate workflow and routes by the clear delivery-plan context when safe; otherwise shows help with one clarification path.",
       "assertions": [
         "Does the output avoid inventing a `frobnicate` workflow?",
-        "Does it show the six operating lanes or recommended valid routes?",
+        "Does it route by the clear delivery-plan context or show the six operating lanes only if routing is unsafe?",
         "Does it ask at most one clarifying question if needed?"
       ],
       "files": []
