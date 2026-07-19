@@ -13,8 +13,8 @@ This repository stores Pipa skills for AI agents. Pipa is the primary PM brain a
 - When adding or removing skills, update `README.md` to reflect the current repository state.
 - Keep public eval artifacts generic; store client-specific eval prompts/data in `skills/<skill-name>/evals/private/` (gitignored).
 - For connected-tool workflows, especially Composio-backed ones, prefer concise provenance in the skill contract: name the tools used and cite the specific record IDs, doc names, links, or references that materially support the answer.
-- New PM and delivery workflows normally become Pipa commands or references under `skills/pipa/`, not new top-level PM skills.
-- Reserve standalone skills for high-value, tool/product-specific, safety-sensitive, or independently discoverable workflows.
+- Pipa's core router lives in `skills/pipa/`; business lanes and meta surfaces live as standalone `pipa-*` skills when they are independently discoverable operating jobs.
+- Reserve additional standalone skills for high-value, tool/product-specific, safety-sensitive, or independently discoverable workflows.
 - Preserve `pipa-audio-brief`, `composio`, and `pipa-triggers` as standalone breakouts unless a future plan explicitly changes that architecture.
-- Keep `skills/pipa/SKILL.md` concise and move detailed command instructions into `skills/pipa/references/`.
+- Keep `skills/pipa/SKILL.md` concise. Put lane-specific behavior in the standalone lane skill first; use `skills/pipa/references/` for router help, compatibility, and shared legacy method references.
 - `docs/solutions/` stores documented solutions to past problems (bugs, best practices, workflow patterns), organized by category with YAML frontmatter (`module`, `tags`, `problem_type`); relevant when implementing or debugging in documented areas.

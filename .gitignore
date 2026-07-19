@@ -3,7 +3,8 @@
 .env.*
 .dev.vars
 .opencode/
-.pipa/
+.pipa/*
+!.pipa/CONNECTORS.md
 node_modules/
 **/.wrangler/
 dist/
@@ -14,6 +15,8 @@ coverage/
 __pycache__/
 *.py[cod]
 examples/
+!skills/pipa/references/examples/
+!skills/pipa/references/examples/*.md
 skills/*-workspace/
 skills/**/prototypes/
 skills/**/evals/private/

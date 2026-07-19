@@ -2,12 +2,13 @@
 
 require "json"
 
-ROOT = File.expand_path("..", __dir__)
+ROOT = ENV.fetch("EVALS_ROOT", File.expand_path("..", __dir__))
 TRIGGER_GLOB = File.join(ROOT, "skills", "*", "evals", "trigger-eval-set.json")
 EVALS_GLOB = File.join(ROOT, "skills", "*", "evals", "evals.json")
+ROOT_EVALS_GLOB = File.join(ROOT, "evals", "*", "evals.json")
 
 errors = []
-files = (Dir.glob(TRIGGER_GLOB) + Dir.glob(EVALS_GLOB)).sort
+files = (Dir.glob(TRIGGER_GLOB) + Dir.glob(EVALS_GLOB) + Dir.glob(ROOT_EVALS_GLOB)).sort
 
 def load_json(path, errors)
   JSON.parse(File.read(path))
@@ -56,7 +57,10 @@ files.each do |path|
       next
     end
 
-    require_string(data["skill_name"], path, "root", "skill_name", errors)
+    unless (data["skill_name"].is_a?(String) && !data["skill_name"].strip.empty?) ||
+        (data["suite_name"].is_a?(String) && !data["suite_name"].strip.empty?)
+      errors << "#{path}: root missing non-empty string field 'skill_name' or 'suite_name'"
+    end
     evals = data["evals"]
     unless evals.is_a?(Array)
       errors << "#{path}: root field 'evals' must be an array"

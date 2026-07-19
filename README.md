@@ -2,9 +2,9 @@
 
 ## Operational skills for the agent you already use
 
-Your craft comes with work around the work, like planning, coordination, and updates. Teams hire operations managers for it. Pipa installs that know-how and tools into your agent.
+Your craft comes with work around the work, like getting opportunities, defining scope, coordinating delivery, collecting money, keeping clients, and improving operations. Teams hire operators for it. Pipa installs that know-how and tools into your agent.
 
-Pipa skills give agents practical operator workflows for the work around the work: client delivery, project operations, updates, handoffs, blockers, briefs, and automations.
+Pipa skills give agents practical operator workflows for service-business work: lead signals, briefs, delivery updates, blockers, money follow-through, client relationships, closeout, lessons, tools, and automations.
 
 Built and maintained by [Lola](https://www.linkedin.com/in/lolaojabowale) at [Lunch Pail Labs](https://lunchpaillabs.com/).
 
@@ -36,23 +36,43 @@ cp -r pipa-skills/skills/* .agents/skills/
 
 ## What Pipa Adds
 
+- Six business lanes: get work, define work, deliver work, get paid, keep clients, and improve operations
+- Two meta surfaces: Manage Pipa for setup/config/memory/automation, and Pipa Tools for hosted utilities
 - Client delivery planning, coordination, and follow-through
-- Project operations for status, blockers, risks, budgets, and escalations
-- Handoffs, signoffs, closeout, and lessons learned
+- Money, relationship, handoff, closeout, and learning loops around delivery
 - Client-ready updates and internal operating briefs
 - Audio briefs from sessions, plans, PRs, docs, and links
 - Connected-tool work through Composio-backed workflows
 - Recurring Slack updates and event-triggered automations
+- Lane-owned references with gotchas, examples, and connector setup through `pipa-manage`
 
-### Core Skill
+### Core Router
 
 | Skill | Description |
 |---|---|
-| [`pipa`](skills/pipa/) | Routes project and delivery work into the right operating workflow, with clear next actions, owners, dates, evidence, and unknowns. |
+| [`pipa`](skills/pipa/) | Routes business work, Pipa setup, and Pipa utilities into the right skill with clear next actions, owners, dates, evidence, and unknowns. |
+
+### Business Lane Skills
+
+| Skill | Description |
+|---|---|
+| [`pipa-get-work`](skills/pipa-get-work/) | Helps service businesses create and qualify opportunities through content, inbound, referrals, outreach, market signals, and pipeline next actions. |
+| [`pipa-define-work`](skills/pipa-define-work/) | Turns messy demand into defined work: discovery, scope, proposals, acceptance checks, decisions, and client/project onboarding. |
+| [`pipa-deliver-work`](skills/pipa-deliver-work/) | Coordinates active delivery: status, blockers, risks, handoffs, dependencies, QA, weekly updates, and next actions. |
+| [`pipa-get-paid`](skills/pipa-get-paid/) | Tracks money follow-through: invoices, payments, billable time, budgets, margin, and change-control money impact. |
+| [`pipa-keep-clients`](skills/pipa-keep-clients/) | Maintains client trust through follow-ups, check-ins, client health, retention, renewals, referrals, testimonials, and stakeholder care. |
+| [`pipa-improve-operations`](skills/pipa-improve-operations/) | Turns work into better operations through retrospectives, lessons, SOPs, templates, reusable processes, and archive readiness. |
+
+### Meta Skills
+
+| Skill | Description |
+|---|---|
+| [`pipa-manage`](skills/pipa-manage/) | Onboards and manages Pipa itself: business profile, preferences, company brain, memory, connectors, automations, triggers, and loops. |
+| [`pipa-tools`](skills/pipa-tools/) | Routes standalone utilities: audio briefs, voice huddles, follow-up reminders, time tracking, Composio/tool access, and future hosted utilities. |
 
 ### Breakout Skills
 
-These workflows remain separately installable because they are tool-specific, product-specific, or useful outside the main Pipa route.
+These workflows remain separately installable connected capabilities because they are tool-specific, product-specific, or useful outside the main Pipa route. Public UX groups them under Pipa Tools or Manage Pipa.
 
 | Skill | Description |
 |---|---|

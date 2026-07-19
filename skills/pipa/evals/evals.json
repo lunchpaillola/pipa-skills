@@ -1,72 +1,172 @@
 {
   "skill_name": "pipa",
-  "suite_name": "pipa-command-routing",
+  "suite_name": "pipa-operating-lane-routing",
   "artifact_type": "public-generic-eval-suite",
   "evals": [
     {
-      "id": "pipa-explicit-status-1",
-      "prompt": "Pipa status for the steering meeting. I need current state, what changed this week, blockers, and decisions needed.",
-      "expected_output": "Routes to Pipa monitor status reference and returns a leadership-ready status signal without exposing old public PM skill names.",
+      "id": "pipa-get-work-1",
+      "prompt": "Pipa get work from these messy lead notes and tell me what deserves action now.",
+      "expected_output": "Routes to the get-work lane and returns opportunity, why now, fit/urgency/confidence, owner, next action, source, and unknowns.",
       "assertions": [
-        "Does the output select `status` or monitor status as the primary Pipa route?",
-        "Does the output avoid naming deleted top-level PM skills as the user-facing command?",
-        "Does the output include current state, changes, blockers, decisions needed, owner follow-through, and source gaps?",
-        "Are unknown owners, dates, or source details represented as `TBD`?"
+        "Does the output select `get work` as the primary Pipa lane?",
+        "Does it include opportunity, why now, fit or urgency, confidence, owner, next action, and source or `TBD`?",
+        "Does it avoid claiming live CRM, inbox, Slack, Reddit, or web access unless a connected tool was actually used?"
       ],
-      "files": [
-
-      ]
+      "files": []
     },
     {
-      "id": "pipa-explicit-triage-1",
-      "prompt": "Pipa triage these customer tickets and tell me what needs response today.",
-      "expected_output": "Routes to Pipa monitor ticket triage and produces an attention-first triage output.",
+      "id": "pipa-define-work-1",
+      "prompt": "Pipa define work from this client thread. Scope is fuzzy and acceptance checks are missing.",
+      "expected_output": "Routes to the define-work lane and creates a working brief with scope, out-of-scope, acceptance checks, open questions, decisions, and source gaps.",
       "assertions": [
-        "Does the output select ticket/intake triage as the primary route?",
-        "Does it separate response-needed items from lower-priority items?",
-        "Does each action include owner, next action, status, and evidence/source or `TBD`?"
+        "Does the output select `define work` as the primary Pipa lane?",
+        "Does it include working brief, in scope, out of scope, acceptance checks, open questions, decision needed, and source or `TBD`?",
+        "Does it avoid routing to a live voice huddle unless voice wording is explicit?"
       ],
-      "files": [
-
-      ]
+      "files": []
     },
     {
-      "id": "pipa-budget-tiebreak-1",
-      "prompt": "Pipa budget",
-      "expected_output": "Asks one clarifying question or states the budget setup vs budget health tie-breaker instead of guessing silently.",
+      "id": "pipa-deliver-work-1",
+      "prompt": "Pipa deliver work: what is blocked, who owns it, and what needs escalation today?",
+      "expected_output": "Routes to the deliver-work lane and returns current state, blockers, owner gaps, next actions, escalation trigger, sources, and unknowns.",
       "assertions": [
-        "Does the output avoid silently choosing setup or health when the prompt is ambiguous?",
-        "Does the clarification distinguish budget tracker setup from budget health review?"
+        "Does the output select `deliver work` as the primary Pipa lane?",
+        "Does it include current state, blockers or risks, owners, next actions, due or review dates, status, evidence/source, and `TBD` unknowns?",
+        "Does it avoid creating automation from status/update wording unless the user asks for recurring or event-driven behavior?"
       ],
-      "files": [
-
-      ]
+      "files": []
     },
     {
-      "id": "pipa-plan-reference-1",
+      "id": "pipa-get-paid-1",
+      "prompt": "Pipa get paid: which invoices or billable-time items need action before Friday?",
+      "expected_output": "Routes to the get-paid lane and returns money items, amount/account/project if known, status, risk, owner, due/review date, source, and follow-up.",
+      "assertions": [
+        "Does the output select `get paid` as the primary Pipa lane?",
+        "Does it include money item, amount/account/project or `TBD`, status, risk, recommended follow-up, owner, due/review date, and source?",
+        "Does it avoid claiming payment, invoice, banking, payroll, or time-record access unless connected tools were used?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-keep-clients-1",
+      "prompt": "Pipa keep clients: who needs a check-in and what should I say?",
+      "expected_output": "Routes to the keep-clients lane and returns relationship signal, why now, suggested touch, owner, timing, source, and watchlist.",
+      "assertions": [
+        "Does the output select `keep clients` as the primary Pipa lane?",
+        "Does it include relationship needing attention, why now, suggested touch, owner, timing, source, and watchlist?",
+        "Does it avoid scheduling a reminder or sending a message unless the user explicitly asks for that connected capability?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-improve-operations-1",
+      "prompt": "Pipa improve operations from this completed project so we can reuse the lesson next time.",
+      "expected_output": "Routes to the improve-operations lane and returns lessons, evidence, next-time change, owner, reuse location, and follow-ups.",
+      "assertions": [
+        "Does the output select `improve operations` as the primary Pipa lane?",
+        "Does it include lesson, evidence, what changes next time, owner, reuse location or `TBD`, and follow-ups?",
+        "Does it avoid declaring closure without acceptance, handover, or archive evidence?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-plan-compat-1",
       "prompt": "Pipa plan this onboarding work. Requirements are scattered, timeline pressure is high, and ownership is fuzzy.",
-      "expected_output": "Routes to Pipa planning references, selects one primary planning mode, and lists secondary follow-ups.",
+      "expected_output": "Supports the old plan wording by reframing it into the define-work lane.",
       "assertions": [
-        "Does the output use Pipa plan/reference dispatch rather than delegating to a public PM skill?",
-        "Does it select one primary planning mode?",
-        "Does it preserve requirements, baseline, roadmap, RAID/RACI, and decision setup as possible follow-ups?"
+        "Does the output route old `plan` wording into `define work`?",
+        "Does it avoid presenting lifecycle commands as the primary public model?",
+        "Does it preserve requirements, baseline, decisions, owners, and acceptance checks as possible outputs?"
       ],
-      "files": [
-
-      ]
+      "files": []
+    },
+    {
+      "id": "pipa-initiate-compat-1",
+      "prompt": "Pipa initiate this new delivery project so we have reusable context, stakeholders, risks, and a plan-ready handoff.",
+      "expected_output": "Supports old initiate wording by reframing it into the define-work lane.",
+      "assertions": [
+        "Does the output route old `initiate` wording into `define work`?",
+        "Does it preserve project context, stakeholders, risks, and plan-ready handoff checks?",
+        "Does it avoid exposing lifecycle routes as the public command surface?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-execute-compat-1",
+      "prompt": "Pipa execute this delivery week: coordinate active work packages, owners, handoffs, and follow-through.",
+      "expected_output": "Supports old execute wording by reframing it into the deliver-work lane.",
+      "assertions": [
+        "Does the output route old `execute` wording into `deliver work`?",
+        "Does it choose one primary delivery action path rather than exposing lifecycle routes as the public model?",
+        "Does it preserve owners, next actions, due/review dates, status, evidence/source, and `TBD` unknowns?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-monitor-compat-1",
+      "prompt": "Pipa monitor this delivery week and tell me where we're stuck.",
+      "expected_output": "Supports old monitor wording by reframing it into the deliver-work lane unless money or relationship intent dominates.",
+      "assertions": [
+        "Does the output route old `monitor` wording into `deliver work`?",
+        "Does it include current state, blockers, owners, next actions, evidence/source, and unknowns?",
+        "Does it avoid exposing lifecycle routes as the public command surface?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-close-compat-1",
+      "prompt": "Pipa close this out. Signoff happened, but support handoff and archive readiness are unclear.",
+      "expected_output": "Supports old close wording by reframing it into the improve-operations lane.",
+      "assertions": [
+        "Does the output route old `close` wording into `improve operations`?",
+        "Does it evaluate signoff, handover, lessons, archive readiness, and unknowns?",
+        "Does it avoid implying final closure when handoff or archive evidence is missing?"
+      ],
+      "files": []
     },
     {
       "id": "pipa-help-menu-1",
       "prompt": "Pipa help",
-      "expected_output": "Returns recommended next commands plus grouped command menu.",
+      "expected_output": "Returns the six business lanes plus concise Manage Pipa and Pipa Tools notes.",
       "assertions": [
-        "Does the output recommend 2-3 likely next commands or the default starting path?",
-        "Does it group commands by user job or lifecycle category?",
-        "Does it list connected workflows separately from core PM commands?"
+        "Does the output list `get work`, `define work`, `deliver work`, `get paid`, `keep clients`, and `improve operations`?",
+        "Does it keep Manage Pipa and Pipa Tools separate from the six business lanes?",
+        "Does it avoid making lifecycle commands the first screen?"
       ],
-      "files": [
-
-      ]
+      "files": []
+    },
+    {
+      "id": "pipa-manage-connectors-1",
+      "prompt": "Pipa manage: connect Gmail and Linear so Pipa can review leads and delivery status.",
+      "expected_output": "Routes to pipa-manage for connector setup/status and preserves Composio discovery/auth readiness without claiming access before verification.",
+      "assertions": [
+        "Does the output select `pipa-manage` rather than a business lane or one-off tool action?",
+        "Does it identify target apps, needed permission categories, connection status, and setup/auth next action?",
+        "Does it avoid claiming Gmail or Linear access until a connection/status check succeeds?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-tools-composio-utility-1",
+      "prompt": "Pipa tools: use Composio to look up this GitHub issue and summarize the current status.",
+      "expected_output": "Routes to pipa-tools/Composio for a one-off connected-app utility action and preserves discovery/schema/provenance rules.",
+      "assertions": [
+        "Does the output select `pipa-tools`/Composio rather than `pipa-manage`?",
+        "Does it require Composio tool discovery/schema-safe execution before claiming issue status?",
+        "Does it include provenance requirements for the GitHub issue or tool result?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-no-command-context-1",
+      "prompt": "Pipa. From the conversation above, we have messy client notes, fuzzy scope, and missing acceptance checks for the onboarding work.",
+      "expected_output": "Routes by conversation context into the define-work lane instead of showing the command menu.",
+      "assertions": [
+        "Does the output route to `define work` from conversation context even though no explicit command was supplied?",
+        "Does it avoid showing the generic help/menu as the primary response?",
+        "Does it preserve scope, acceptance checks, open questions, decisions, and source gaps?"
+      ],
+      "files": []
     },
     {
       "id": "pipa-audio-positive-1",
@@ -77,9 +177,7 @@
         "Does it preserve source-readability blockers instead of producing a degraded audio brief?",
         "Does it preserve the standalone workflow's generation and publishing contract?"
       ],
-      "files": [
-
-      ]
+      "files": []
     },
     {
       "id": "pipa-audio-negative-1",
@@ -87,11 +185,9 @@
       "expected_output": "Does not route to pipa-audio-brief because the user did not ask for audio/listenable/spoken output.",
       "assertions": [
         "Does the output avoid selecting `pipa-audio-brief`?",
-        "Does it treat `brief` as a generic PM or summary request unless audio/listenable wording is present?"
+        "Does it treat `brief` as a generic define-work or deliver-work request unless audio/listenable wording is present?"
       ],
-      "files": [
-
-      ]
+      "files": []
     },
     {
       "id": "pipa-huddle-beta-positive-1",
@@ -102,146 +198,117 @@
         "Does it avoid routing to `pipa-audio-brief`?",
         "Does it preserve the standalone workflow's transport, privacy, and optional handoff contract?"
       ],
-      "files": [
-
-      ]
+      "files": []
     },
     {
       "id": "pipa-huddle-beta-negative-1",
-      "prompt": "Pipa plan this project in writing with requirements and schedule.",
-      "expected_output": "Stays inside Pipa planning because the user did not ask for live voice conversation.",
+      "prompt": "Pipa talk through this plan in writing and turn it into scope, acceptance checks, and next decisions.",
+      "expected_output": "Stays inside the define-work lane because the user did not ask for a live voice session.",
       "assertions": [
-        "Does the output avoid routing to `pipa-huddle-beta`?",
-        "Does it select normal Pipa planning behavior?"
+        "Does the output avoid selecting `pipa-huddle-beta`?",
+        "Does it route written planning/talk-through wording to `define work`?",
+        "Does it avoid treating `talk through` alone as live voice intent?"
       ],
-      "files": [
-
-      ]
+      "files": []
     },
     {
-      "id": "pipa-automation-negative-1",
-      "prompt": "Give me a weekly status update now.",
-      "expected_output": "Produces a one-time status route instead of creating or proposing recurring automation unless future scheduled delivery is requested.",
+      "id": "pipa-follow-up-negative-1",
+      "prompt": "Pipa follow up with the client about the delayed milestone.",
+      "expected_output": "Routes to keep-clients or deliver-work and does not schedule a self-email reminder because no future email reminder was requested.",
       "assertions": [
-        "Does the output avoid routing to recurring automation?",
-        "Does it select status/monitor as the primary one-time route?"
+        "Does the output avoid selecting `pipa-follow-up-reminders`?",
+        "Does it treat client follow-up as relationship or delivery follow-through?",
+        "Does it avoid claiming a reminder was scheduled?"
       ],
-      "files": [
-
-      ]
+      "files": []
+    },
+    {
+      "id": "pipa-follow-up-reminder-positive-1",
+      "prompt": "Pipa remind me by email next Friday at 9 to chase this invoice.",
+      "expected_output": "Routes to pipa-follow-up-reminders because the user asked for a specific future email reminder to themself.",
+      "assertions": [
+        "Does the output route to `pipa-follow-up-reminders`?",
+        "Does it preserve one-shot reminder scope, timezone resolution, verified self-recipient guardrail, and confirmation before create?",
+        "Does it avoid turning this into recurring automation or inbox monitoring?"
+      ],
+      "files": []
     },
     {
       "id": "pipa-trigger-positive-1",
-      "prompt": "Pipa trigger this when a Linear issue is created.",
-      "expected_output": "Routes to Pipa trigger workflow and requires trigger proposal confirmation before create.",
+      "prompt": "Pipa deliver work every Friday at 9 with a Slack status update.",
+      "expected_output": "Routes to pipa-triggers only after recognizing the recurring delivery request and preserves trigger proposal confirmation before create.",
       "assertions": [
-        "Does the output route to `pipa-triggers`?",
-        "Does it require event/source/resource details and final trigger proposal confirmation before create?"
+        "Does the output route recurring/event-driven delivery to `pipa-triggers` as a connected capability?",
+        "Does it require event/source/delivery details and final trigger proposal confirmation before create?",
+        "Does it keep the lane objective visible instead of flattening the work into generic automation?"
       ],
-      "files": [
-
-      ]
+      "files": []
+    },
+    {
+      "id": "pipa-trigger-negative-1",
+      "prompt": "Pipa deliver work: give me a weekly status update now with blockers and next owner actions.",
+      "expected_output": "Produces a one-time deliver-work status update and does not route to pipa-triggers because future recurring delivery was not requested.",
+      "assertions": [
+        "Does the output avoid selecting `pipa-triggers`?",
+        "Does it treat `weekly` as the reporting horizon when no recurring automation wording is present?",
+        "Does it avoid creating or proposing automation without an explicit recurring/event-driven request?"
+      ],
+      "files": []
     },
     {
       "id": "pipa-composio-positive-1",
-      "prompt": "Pipa use Composio to create a GitHub issue from this bug report.",
-      "expected_output": "Routes to Composio search/link/execute discipline and does not invent a tool slug.",
+      "prompt": "Pipa get work from Gmail and Linear, then create a GitHub issue for the best opportunity.",
+      "expected_output": "Routes through Composio discovery/schema rules for live external app access and does not invent tool slugs or write externally without confirmation.",
       "assertions": [
-        "Does the output route to `composio` for external app action?",
-        "Does it require search or verified tool information before execute?",
-        "Does it avoid inventing a Composio tool slug?"
+        "Does the output route external app access/action through `composio`?",
+        "Does it require tool discovery or verified tool information before execute?",
+        "Does it avoid inventing Composio tool slugs or claiming live records before fetching them?"
       ],
-      "files": [
-
-      ]
+      "files": []
     },
     {
-      "id": "pipa-close-handoff-1",
-      "prompt": "Pipa close this out. Signoff happened, but support handoff and archive readiness are unclear.",
-      "expected_output": "Routes to close references, selects one primary close mode, preserves handover/signoff/archive gates, and marks unknowns as TBD.",
+      "id": "pipa-composio-negative-1",
+      "prompt": "Pipa get work from these pasted lead notes and recommend the next outreach angle.",
+      "expected_output": "Stays in the get-work lane and does not route to Composio because the source material is already supplied and no live external app action was requested.",
       "assertions": [
-        "Does the output select one primary close route?",
-        "Does it preserve acceptance, handover, lessons, benefits/archive gates as relevant checks or follow-ups?",
-        "Are unclear owners, dates, and archive destinations marked as `TBD`?"
+        "Does the output avoid selecting `composio`?",
+        "Does it work from the pasted source material instead of claiming live app access?",
+        "Does it avoid inventing external app records, tool slugs, or fetched sources?"
       ],
-      "files": [
-
-      ]
+      "files": []
     },
     {
-      "id": "pipa-explicit-initiate-1",
-      "prompt": "Pipa initiate this new delivery project so we have reusable context, stakeholders, risks, and a plan-ready handoff.",
-      "expected_output": "Routes to Pipa initiate references and preserves the initiate summary contract without delegating to deleted public PM skills.",
+      "id": "pipa-time-tracking-positive-1",
+      "prompt": "Pipa get paid: review billable time records for this week and summarize what can be invoiced.",
+      "expected_output": "Routes to pipa-time-tracking for explicit time-record review while preserving the get-paid objective and keeping unsupported invoicing/payroll claims out of scope.",
       "assertions": [
-        "Does the output select `initiate` as the primary Pipa route?",
-        "Does it preserve project context, stakeholder, risk, and initiate-to-plan readiness checks?",
-        "Does it avoid naming deleted public PM skills as the route?"
+        "Does the output select `pipa-time-tracking` for explicit time-record review?",
+        "Does it avoid claiming invoice or payroll support from time tracking alone?",
+        "Does it preserve the get-paid money objective?"
       ],
-      "files": [
-
-      ]
+      "files": []
     },
     {
-      "id": "pipa-explicit-execute-1",
-      "prompt": "Pipa execute this delivery week: coordinate active work packages, owners, handoffs, and follow-through.",
-      "expected_output": "Routes to Pipa execute references, selects one primary execution workflow, and returns monitor-ready follow-through.",
+      "id": "pipa-time-tracking-negative-1",
+      "prompt": "Pipa get paid: review invoice risk and margin for this project from the summary below.",
+      "expected_output": "Stays in the get-paid lane and does not route to pipa-time-tracking because no time-entry operation was requested.",
       "assertions": [
-        "Does the output select `execute` as the primary Pipa route?",
-        "Does it choose one primary execution mode or explain why the execute router is needed?",
-        "Does it preserve owners, next actions, due/review dates, status, evidence/source, and `TBD` unknowns?"
+        "Does the output avoid selecting `pipa-time-tracking`?",
+        "Does it treat invoice risk and margin review as `get paid` work?",
+        "Does it avoid claiming time-record access when the prompt only supplied a summary?"
       ],
-      "files": [
-
-      ]
-    },
-    {
-      "id": "pipa-budget-health-1",
-      "prompt": "Pipa budget: how are we budget-wise for Project Delta, and do we need change control?",
-      "expected_output": "Routes to monitor budget health because the user asks about budget status, variance, and change control.",
-      "assertions": [
-        "Does the output select budget health/review rather than budget tracker setup?",
-        "Does it provide or request the commercial baseline and progress sources needed for confidence?"
-      ],
-      "files": [
-
-      ]
-    },
-    {
-      "id": "pipa-budget-setup-1",
-      "prompt": "Pipa budget setup: create a lightweight tracker for this new project budget baseline.",
-      "expected_output": "Routes to initiate budget setup because the user asks to create a tracker/baseline.",
-      "assertions": [
-        "Does the output select budget setup rather than budget health review?",
-        "Does it preserve baseline, spend, forecast, variance, status, owner, notes, and `TBD` unknown handling?"
-      ],
-      "files": [
-
-      ]
-    },
-    {
-      "id": "pipa-risk-explicit-1",
-      "prompt": "Pipa risk: what is stuck, who owns it, and what needs escalation today?",
-      "expected_output": "Routes to monitor risk/escalation reference and returns decision-ready blocker follow-through.",
-      "assertions": [
-        "Does the output select risk/escalation as the primary route?",
-        "Does it include blockers, owner gaps, escalation actions, review checkpoints, and `TBD` unknowns?"
-      ],
-      "files": [
-
-      ]
+      "files": []
     },
     {
       "id": "pipa-unknown-command-1",
       "prompt": "Pipa frobnicate this delivery plan.",
-      "expected_output": "Returns Pipa help/menu with one clarification path instead of hallucinating a workflow.",
+      "expected_output": "Avoids inventing a frobnicate workflow and routes by the clear delivery-plan context when safe; otherwise shows help with one clarification path.",
       "assertions": [
         "Does the output avoid inventing a `frobnicate` workflow?",
-        "Does it show the grouped Pipa command menu or recommended valid routes?",
+        "Does it route by the clear delivery-plan context or show the six business lanes plus Manage Pipa/Pipa Tools only if routing is unsafe?",
         "Does it ask at most one clarifying question if needed?"
       ],
-      "files": [
-
-      ]
+      "files": []
     }
   ]
 }
