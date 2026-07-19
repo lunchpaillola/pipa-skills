@@ -17,7 +17,7 @@ Choose one primary destination, hand off to that skill or reference, return sour
 2. **Pick one primary destination.** Use the command matrix, routing rules, and tie-breakers. If no command is present, route by conversation context when safe.
 3. **Load the destination.** Prefer the standalone skill named in the matrix. Use router references only for help/menu details.
 4. **Check route-specific gotchas.** Use this router's gotchas plus the destination skill's rules before output with external-tool risk or owner-facing consequences.
-5. **Use connectors only when needed.** For live app reads/writes, consult `.pipa/CONNECTORS.md` and route through the standalone capability that owns the tool gate.
+5. **Use connectors only when needed.** For setup/status, route to `pipa-manage`. For live app reads/writes, route to `pipa-tools`/Composio with discovery and schema checks.
 6. **Run the workflow.** Preserve required inputs, approval gates, provenance, and output contract. Use `TBD` for missing facts.
 7. **Return the smallest useful next step.** Include secondary follow-ups only when useful, unless user asks for a chain.
 
@@ -35,6 +35,7 @@ No command? Use conversation context to choose the best destination. Show the me
 | Run your business: Improve operations | `improve operations`, `lessons`, `retrospective`, `close`, `archive`, `handover`, `benefits`, `reuse`, `SOP`, `template` | `pipa-improve-operations` |
 | Manage Pipa | `manage pipa`, `setup`, `onboard pipa`, `business profile`, `preferences`, `company brain`, `memory`, `connect tools`, `connector`, `automation`, `trigger`, `loop`, `recurring workflow` | `pipa-manage` |
 | Pipa Tools | `pipa tools`, `audio brief`, `voice session`, `talk by voice`, `follow-up reminder`, `email reminder`, `time tracking`, `time entry`, `composio`, `hosted utility` | `pipa-tools` |
+| Handoff checks | `get-to-define`, `define-to-deliver`, `deliver-to-get-paid`, `deliver-to-relationships`, `improve-to-keep-clients` | source lane first, then named next lane follow-up |
 | Help | `help`, `menu`, sparse context, unsafe/unknown route | `references/help-menu.md` |
 
 ## Routing Rules
@@ -49,7 +50,8 @@ No command? Use conversation context to choose the best destination. Show the me
 8. One-time status/update work stays `deliver work`. Event-driven or recurring setup goes through `pipa-manage` to `pipa-triggers`.
 9. Live external app access or writes go through `pipa-tools`/Composio discovery/schema rules. Never guess slugs.
 10. Multiple matches -> one primary destination plus secondary follow-ups, unless user asks for chain.
-11. Sparse or unsafe route -> help/menu plus one clarifying question only if needed.
+11. Handoff checks -> return `Objective`, `Source Check` or `Tool Access Check`, `Current Signal`, actions with owner/date/evidence, `TBD` gaps, and next lane follow-ups. Do not execute multiple lanes unless asked.
+12. Sparse or unsafe route -> help/menu plus one clarifying question only if needed.
 
 ## Tie-Breakers
 
@@ -72,7 +74,7 @@ No command? Use conversation context to choose the best destination. Show the me
 - Utility workflows: route through `pipa-tools` or `pipa-manage`, then named standalone skill.
 - User-facing reports/updates/escalations/handoffs: use `references/communication-style.md`.
 - Lane workflows: load the standalone lane skill. The lane skill owns its references and examples.
-- Connectors: consult `.pipa/CONNECTORS.md` before any live app read/write or when explaining what tool category a workflow needs.
+- Connectors: use `pipa-manage` for connection setup/status and `pipa-tools`/Composio for live app reads/writes.
 
 ## Gotchas
 

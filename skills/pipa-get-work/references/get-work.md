@@ -28,7 +28,7 @@ Use when leads, signals, content ideas, referrals, inbound messages, or prospect
 - `pipa-manage`/`pipa-triggers`: only for future lead/signal monitoring.
 - Content/outreach planning stays here. Send/create nothing without explicit approval + right connected workflow.
 
-See connector categories in Pipa setup/connector docs for connector categories: CRM, chat, email, project tracker, web/search, and knowledge base are common sources here.
+Common connector categories: CRM, chat, email, project tracker, web/search, knowledge base.
 
 ## Workflow
 

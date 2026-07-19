@@ -191,12 +191,12 @@ README.md
 
 **Test Scenarios:**
 
-- Find work produces opportunity, why now, fit/urgency/confidence, next action, owner, and source/TBD.
+- Get work produces opportunity, why now, fit/urgency/confidence, next action, owner, and source/TBD.
 - Define work produces working brief, in scope, out of scope, acceptance checks, open questions, decision needed, and source/TBD.
 - Deliver work produces current state, blockers, next action, owner, escalation trigger, and source/TBD.
 - Get paid produces money item, amount/account/project if known, status, recommended follow-up, owner, due/review date, source/TBD, and risk.
-- Grow relationships produces relationship needing attention, why now, suggested touch, owner, timing, source/TBD, and watchlist.
-- Learn from the work produces lesson, evidence, what changes next time, owner, reuse location/TBD, and follow-ups.
+- Keep clients produces relationship needing attention, why now, suggested touch, owner, timing, source/TBD, and watchlist.
+- Improve operations produces lesson, evidence, what changes next time, owner, reuse location/TBD, and follow-ups.
 
 **Verification:**
 

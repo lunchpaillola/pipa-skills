@@ -28,7 +28,7 @@ Use for client/stakeholder relationships, follow-through, check-ins, retention r
 - `composio`: only live email/CRM/calendar access or explicit external send.
 - `pipa-manage`/`pipa-triggers`: only automate future client-health checks.
 
-See connector categories in Pipa setup/connector docs for connector categories: CRM, email, chat, calendar, project tracker, and knowledge base are common sources here.
+Common connector categories: CRM, email, chat, calendar, project tracker, knowledge base.
 
 ## Workflow
 

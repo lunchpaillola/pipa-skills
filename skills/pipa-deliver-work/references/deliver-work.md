@@ -30,7 +30,7 @@ Use when active delivery needs coordination, status, blockers cleared, risk mgmt
 - `pipa-huddle-beta`: only live voice delivery talk-throughs.
 - `composio`: only explicit live app reads/writes.
 
-See connector categories in Pipa setup/connector docs for connector categories: project tracker, chat, code hosting, calendar, docs, and knowledge base are common sources here.
+Common connector categories: project tracker, chat, code hosting, calendar, docs, knowledge base.
 
 ## Workflow
 

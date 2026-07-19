@@ -60,6 +60,10 @@
     "should_trigger": true
   },
   {
+    "query": "Pipa manage: connect Gmail and Linear for lead review and delivery status.",
+    "should_trigger": true
+  },
+  {
     "query": "Build a React component for a pricing card grid.",
     "should_trigger": false
   },

@@ -16,6 +16,10 @@ Set up and maintain Pipa as an operations agent.
 - Connected tool setup, connector status, and Composio connection readiness.
 - Automations, triggers, loops, scheduled workflows, and recurring work setup.
 
+## References
+
+- Load `references/connectors.md` for connected-tool setup, connector status, and Composio connection readiness.
+
 ## Output Contract
 
 - Configuration objective.

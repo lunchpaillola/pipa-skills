@@ -28,7 +28,7 @@ Use for invoices, payments, billable time, budget health, margin, payment risk, 
 - `pipa-follow-up-reminders`: only future self-email reminder.
 - `composio`: only live invoice/payment/app records or approved external write.
 
-See connector categories in Pipa setup/connector docs for connector categories: finance, time tracking, email, CRM, calendar, and docs are common sources here.
+Common connector categories: finance, time tracking, email, CRM, calendar, docs.
 
 ## Workflow
 

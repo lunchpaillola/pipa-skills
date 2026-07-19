@@ -29,7 +29,7 @@ Use when ambiguous requests, client context, kickoff notes, or planning material
 - `composio`: only for live source retrieval or external record create.
 - Text planning, req briefs, written talk-throughs stay here.
 
-See connector categories in Pipa setup/connector docs for connector categories: chat, email, docs, cloud storage, project tracker, calendar, and knowledge base are common sources here.
+Common connector categories: chat, email, docs, cloud storage, project tracker, calendar, knowledge base.
 
 ## Workflow
 

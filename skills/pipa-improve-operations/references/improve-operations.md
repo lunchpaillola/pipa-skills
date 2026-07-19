@@ -29,7 +29,7 @@ Use to close loops, capture lessons, prep handover/archive, update reusable know
 - `composio`: only live source retrieval or external doc updates.
 - `pipa-triggers`: only recurring/event-driven learning capture.
 
-See connector categories in Pipa setup/connector docs for connector categories: docs, cloud storage, code hosting, project tracker, knowledge base, and memory are common sources here.
+Common connector categories: docs, cloud storage, code hosting, project tracker, knowledge base, memory.
 
 ## Workflow
 

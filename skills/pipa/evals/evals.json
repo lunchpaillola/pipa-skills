@@ -136,6 +136,28 @@
       "files": []
     },
     {
+      "id": "pipa-manage-connectors-1",
+      "prompt": "Pipa manage: connect Gmail and Linear so Pipa can review leads and delivery status.",
+      "expected_output": "Routes to pipa-manage for connector setup/status and preserves Composio discovery/auth readiness without claiming access before verification.",
+      "assertions": [
+        "Does the output select `pipa-manage` rather than a business lane or one-off tool action?",
+        "Does it identify target apps, needed permission categories, connection status, and setup/auth next action?",
+        "Does it avoid claiming Gmail or Linear access until a connection/status check succeeds?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-tools-composio-utility-1",
+      "prompt": "Pipa tools: use Composio to look up this GitHub issue and summarize the current status.",
+      "expected_output": "Routes to pipa-tools/Composio for a one-off connected-app utility action and preserves discovery/schema/provenance rules.",
+      "assertions": [
+        "Does the output select `pipa-tools`/Composio rather than `pipa-manage`?",
+        "Does it require Composio tool discovery/schema-safe execution before claiming issue status?",
+        "Does it include provenance requirements for the GitHub issue or tool result?"
+      ],
+      "files": []
+    },
+    {
       "id": "pipa-no-command-context-1",
       "prompt": "Pipa. From the conversation above, we have messy client notes, fuzzy scope, and missing acceptance checks for the onboarding work.",
       "expected_output": "Routes by conversation context into the define-work lane instead of showing the command menu.",
