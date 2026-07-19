@@ -1,47 +1,47 @@
 # Pipa Learn From The Work
 
-Use this lane when the user wants to close loops, capture lessons, prepare handover/archive material, update reusable knowledge, or turn completed work into better future operations.
+Use to close loops, capture lessons, prep handover/archive, update reusable knowledge, or improve future ops.
 
 ## Starter Jobs
 
-- Summarize lessons from a completed project, session, PR, launch, or delivery cycle.
-- Prepare closeout, signoff, handover, archive, or benefits-review material.
-- Identify what should change next time.
-- Reframe old `close`, `lessons`, `archive`, or `handover` requests into the public `learn from the work` lane.
+- Summarize lessons from project/session/PR/launch/delivery cycle.
+- Prep closeout, signoff, handover, archive, benefits review.
+- Identify next-time changes.
+- Reframe old `close`/`lessons`/`archive`/`handover` as public `learn from the work`.
 
 ## Required Inputs
 
-- Source material: completed work notes, acceptance/signoff evidence, session summary, PR, client feedback, or `TBD`.
+- Source: completed notes, acceptance/signoff evidence, session summary, PR, feedback, or `TBD`.
 - Reuse destination: docs, tracker, memory, playbook, next plan, or `TBD`.
-- Owner for follow-up changes, if known.
+- Follow-up owner, if known.
 
 ## Source Methods
 
-- Use `references/close-acceptance-signoff.md` for acceptance and signoff checks.
-- Use `references/close-handover-transition.md` for support ownership and transition.
-- Use `references/close-lessons-learned.md` for retrospectives and learning capture.
-- Use `references/close-benefits-review-and-archive.md` for archive and benefits evidence.
-- Use `references/monitor-status.md` when learning depends on delivery state evidence.
+- `references/close-acceptance-signoff.md`: acceptance + signoff.
+- `references/close-handover-transition.md`: support ownership + transition.
+- `references/close-lessons-learned.md`: retro + learning capture.
+- `references/close-benefits-review-and-archive.md`: archive + benefits evidence.
+- `references/monitor-status.md`: delivery-state evidence.
 
 ## Connected Capabilities
 
-- Use `pipa-audio-brief` only when the user asks for a listenable/audio review of the work.
-- Use `composio` only when live source retrieval or external documentation updates are explicitly required.
-- Use `pipa-triggers` only when the user asks to make learning capture recurring or event-driven.
+- `pipa-audio-brief`: only listenable/audio review.
+- `composio`: only live source retrieval or external doc updates.
+- `pipa-triggers`: only recurring/event-driven learning capture.
 
 ## Workflow
 
-1. State the source and closeout/learning objective.
-2. Verify whether acceptance, handover, lessons, and archive evidence are present.
+1. State source + learning objective.
+2. Check acceptance, handover, lessons, archive evidence.
 3. Extract lessons with evidence, not vibes.
-4. Convert lessons into specific next-time changes.
-5. Identify reuse destination, owner, and follow-up gaps.
+4. Convert lessons to next-time changes.
+5. Name reuse destination, owner, gaps.
 
 ## Output Shape
 
-- `Lesson`: concise learning.
+- `Lesson`: concise.
 - `Evidence`: source fact, quote, artifact, or `TBD`.
-- `What changes next time`: concrete process, artifact, decision, or behavior.
+- `Next-time change`: process, artifact, decision, or behavior.
 - `Owner`: person or `TBD`.
 - `Reuse location`: doc/tracker/memory/playbook or `TBD`.
 - `Follow-ups`: unresolved closeout or learning actions.
@@ -49,5 +49,5 @@ Use this lane when the user wants to close loops, capture lessons, prepare hando
 ## Rules
 
 - Do not declare closure without signoff or explicit acceptance evidence.
-- Do not store memory or update docs externally unless the user asks and the appropriate tool/workflow is available.
-- Do not turn lessons into broad philosophy when a concrete operational change is possible.
+- Do not store memory/update docs externally unless user asks and tool/workflow exists.
+- Do not turn lessons into philosophy when concrete ops change is possible.

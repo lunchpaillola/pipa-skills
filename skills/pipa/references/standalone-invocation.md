@@ -1,6 +1,6 @@
 # Pipa Standalone Invocation
 
-Pipa can route to selected standalone skills, but those skills remain authoritative connected capabilities.
+Pipa can route to standalone skills; standalone skills remain authoritative.
 
 ## Authoritative Standalone Skills
 
@@ -15,19 +15,19 @@ Pipa can route to selected standalone skills, but those skills remain authoritat
 
 ## Invocation Rules
 
-1. Load the standalone skill by name after selecting it as the primary route.
-2. Follow the standalone skill's `SKILL.md`, setup checks, required inputs, blockers, confirmations, and output contract exactly.
-3. Do not copy the standalone workflow into Pipa. Pipa only routes and frames the handoff.
-4. If a required input is missing, ask the standalone skill's minimum required question rather than guessing.
-5. If the standalone skill blocks, return that blocker clearly instead of replacing it with a generic lane answer.
+1. Load standalone skill after selecting it as primary route.
+2. Follow its `SKILL.md`, setup checks, inputs, blockers, confirmations, output contract.
+3. Do not copy workflow into Pipa. Pipa only routes + frames handoff.
+4. Missing input? Ask standalone skill's minimum question. Do not guess.
+5. Skill blocks? Return blocker. Do not replace with generic lane answer.
 
 ## Negative Routing Rules
 
-- `brief this PR`, `summarize this PR`, `write a brief`, `project brief`, and `requirements brief` do not route to `pipa-audio-brief` unless the user explicitly asks for audio/listenable/spoken/phone-friendly output.
-- `plan this project`, `talk through this plan` without voice wording, and generic planning requests do not route to `pipa-huddle-beta`.
-- `create an audio brief`, `make a listening page`, and `generate TTS` do not route to `pipa-huddle-beta` unless the user asks for live back-and-forth voice conversation.
+- `brief this PR`, `summarize this PR`, `write a brief`, `project brief`, `requirements brief` do not route to `pipa-audio-brief` unless audio/listenable/spoken/phone-friendly is explicit.
+- `plan this project`, `talk through this plan` without voice wording, generic planning do not route to `pipa-huddle-beta`.
+- `create an audio brief`, `make a listening page`, `generate TTS` do not route to `pipa-huddle-beta` unless live back-and-forth voice is requested.
 - `join my Zoom`, `join my Meet`, and human video-call bot requests do not route to `pipa-huddle-beta`.
-- `give me a weekly status update now` means produce a one-time `deliver work` status update.
-- `follow up with the client`, `draft a follow-up`, `watch for a reply`, and generic owner-follow-through requests route to `grow relationships` unless the user specifically wants a future reminder sent to their email.
-- `review invoices`, `check margin`, and `what needs payment action` route to `get paid`; they do not route to `pipa-time-tracking` unless time-entry operations are explicit.
-- External app work through Composio MCP must start with MCP tool discovery or verified tool/app information. Never invent a slug because a prompt names an app.
+- `give me a weekly status update now` -> one-time `deliver work` status update.
+- `follow up with client`, `draft follow-up`, `watch for reply`, generic owner follow-through -> `grow relationships` unless future self-email reminder is explicit.
+- `review invoices`, `check margin`, `what needs payment action` -> `get paid`, not `pipa-time-tracking` unless time-entry ops are explicit.
+- Composio MCP work starts with MCP discovery or verified tool/app info. Never invent slug.

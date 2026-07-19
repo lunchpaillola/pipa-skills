@@ -1,41 +1,41 @@
 # Pipa Define Work
 
-Use this lane when the user wants to turn ambiguous requests, client context, kickoff notes, or planning material into a clear work definition.
+Use when ambiguous requests, client context, kickoff notes, or planning material need clear work definition.
 
 ## Starter Jobs
 
-- Create a working brief from scattered source material.
-- Define scope, out-of-scope, acceptance checks, and open questions.
-- Prepare a proposal, project charter, roadmap, or decision-ready plan baseline.
-- Reframe old `initiate` or `plan` requests into the public `define work` lane.
+- Create brief from scattered sources.
+- Define scope, out-of-scope, acceptance checks, open questions.
+- Prep proposal, charter, roadmap, or plan baseline.
+- Reframe old `initiate`/`plan` as public `define work`.
 
 ## Required Inputs
 
-- Source material: brief, notes, transcript, issue, client thread, or `TBD`.
-- Desired outcome and audience, if known.
-- Known constraints: deadline, budget, decision owner, delivery team, or `TBD`.
+- Source: brief, notes, transcript, issue, client thread, or `TBD`.
+- Outcome + audience, if known.
+- Constraints: deadline, budget, decision owner, delivery team, or `TBD`.
 
 ## Source Methods
 
-- Use `references/initiate-project-context.md` for project facts and operating context.
-- Use `references/initiate-charter-and-viability-gate.md` for go/no-go readiness.
-- Use `references/plan-requirements-brief.md` for requirements and acceptance boundaries.
-- Use `references/plan-scope-schedule-baseline.md` for scope, schedule, and baseline.
-- Use `references/plan-raid-raci-decision-setup.md` for risks, owners, decisions, and accountability.
+- `references/initiate-project-context.md`: facts + context.
+- `references/initiate-charter-and-viability-gate.md`: go/no-go readiness.
+- `references/plan-requirements-brief.md`: requirements + acceptance.
+- `references/plan-scope-schedule-baseline.md`: scope/schedule/baseline.
+- `references/plan-raid-raci-decision-setup.md`: risks, owners, decisions, accountability.
 
 ## Connected Capabilities
 
-- Use `pipa-huddle-beta` only when the user asks to define work in a live voice session.
-- Use `composio` only when live source retrieval or external record creation is explicitly required.
-- Stay in this lane for text planning, requirements briefs, and written talk-throughs.
+- `pipa-huddle-beta`: only for live voice define-work session.
+- `composio`: only for live source retrieval or external record create.
+- Text planning, req briefs, written talk-throughs stay here.
 
 ## Workflow
 
-1. State the source and the working objective.
-2. Separate confirmed facts from assumptions and unknowns.
-3. Define the work: outcome, in scope, out of scope, acceptance checks, owners, and decisions.
-4. Name the minimum missing inputs required to proceed.
-5. Recommend the next lane, usually `deliver work` or `get paid`.
+1. State source + objective.
+2. Split facts, assumptions, unknowns.
+3. Define outcome, scope, non-scope, checks, owners, decisions.
+4. Name minimum missing inputs.
+5. Recommend next lane, usually `deliver work` or `get paid`.
 
 ## Output Shape
 
@@ -43,12 +43,12 @@ Use this lane when the user wants to turn ambiguous requests, client context, ki
 - `In scope`: bullets.
 - `Out of scope`: bullets.
 - `Acceptance checks`: testable checks or `TBD`.
-- `Open questions`: only blockers or useful deferred questions.
+- `Open questions`: blockers or useful deferred questions only.
 - `Decision needed`: owner/date/source or `TBD`.
 - `Source`: cited material or `TBD`.
 
 ## Rules
 
 - Do not turn uncertainty into fake scope.
-- Do not overbuild a plan when a one-page brief is enough.
-- Do not use audio, huddle, or Composio workflows unless the user explicitly asks for those capabilities.
+- Do not overbuild when one-page brief works.
+- Do not use audio, huddle, or Composio unless explicitly asked.

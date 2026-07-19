@@ -1,5 +1,11 @@
 # Versions
 
+## v2.0.0
+
+- Updated `pipa` to v2.0.0 with six operating lanes: find work, define work, deliver work, get paid, grow relationships, and learn from the work.
+- Added lane references, refreshed command menu/help routing, and preserved standalone breakout skills as guarded connected capabilities.
+- Expanded public eval fixtures and validator coverage for lane routing, compatibility aliases, breakout-negative cases, and cross-lane handoffs.
+
 ## v0.4.4
 
 - Updated `pipa-follow-up-reminders` to v0.1.2 with stricter local time resolution, Eastern timezone handling, near-term validation, and clearer hosted-run credential recovery.
