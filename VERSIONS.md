@@ -2,7 +2,7 @@
 
 ## v2.0.0
 
-- Updated `pipa` to v2.0.0 with six operating lanes: find work, define work, deliver work, get paid, grow relationships, and learn from the work.
+- Updated `pipa` to v2.0.0 with six business lanes: get work, define work, deliver work, get paid, keep clients, and improve operations.
 - Added lane references, refreshed command menu/help routing, and preserved standalone breakout skills as guarded connected capabilities.
 - Expanded public eval fixtures and validator coverage for lane routing, compatibility aliases, breakout-negative cases, and cross-lane handoffs.
 

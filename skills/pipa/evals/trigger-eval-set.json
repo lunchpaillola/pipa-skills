@@ -1,6 +1,6 @@
 [
   {
-    "query": "Pipa find work from these lead notes and tell me what deserves action now.",
+    "query": "Pipa get work from these lead notes and tell me what deserves action now.",
     "should_trigger": true
   },
   {
@@ -16,11 +16,11 @@
     "should_trigger": true
   },
   {
-    "query": "Pipa grow relationships: who needs a check-in this week?",
+    "query": "Pipa keep clients: who needs a check-in this week?",
     "should_trigger": true
   },
   {
-    "query": "Pipa learn from the work from this completed project.",
+    "query": "Pipa improve operations from this completed project.",
     "should_trigger": true
   },
   {
@@ -44,7 +44,7 @@
     "should_trigger": true
   },
   {
-    "query": "Pipa trigger this when a Linear issue is created.",
+    "query": "Pipa manage this trigger for when a Linear issue is created.",
     "should_trigger": true
   },
   {
@@ -56,7 +56,7 @@
     "should_trigger": true
   },
   {
-    "query": "Pipa use Composio to create a GitHub issue from this bug report.",
+    "query": "Pipa tools: use Composio to create a GitHub issue from this bug report.",
     "should_trigger": true
   },
   {

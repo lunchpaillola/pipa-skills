@@ -4,11 +4,11 @@
   "artifact_type": "public-generic-eval-suite",
   "evals": [
     {
-      "id": "pipa-find-work-1",
-      "prompt": "Pipa find work from these messy lead notes and tell me what deserves action now.",
-      "expected_output": "Routes to the find-work lane and returns opportunity, why now, fit/urgency/confidence, owner, next action, source, and unknowns.",
+      "id": "pipa-get-work-1",
+      "prompt": "Pipa get work from these messy lead notes and tell me what deserves action now.",
+      "expected_output": "Routes to the get-work lane and returns opportunity, why now, fit/urgency/confidence, owner, next action, source, and unknowns.",
       "assertions": [
-        "Does the output select `find work` as the primary Pipa lane?",
+        "Does the output select `get work` as the primary Pipa lane?",
         "Does it include opportunity, why now, fit or urgency, confidence, owner, next action, and source or `TBD`?",
         "Does it avoid claiming live CRM, inbox, Slack, Reddit, or web access unless a connected tool was actually used?"
       ],
@@ -48,22 +48,22 @@
       "files": []
     },
     {
-      "id": "pipa-grow-relationships-1",
-      "prompt": "Pipa grow relationships: who needs a check-in and what should I say?",
-      "expected_output": "Routes to the grow-relationships lane and returns relationship signal, why now, suggested touch, owner, timing, source, and watchlist.",
+      "id": "pipa-keep-clients-1",
+      "prompt": "Pipa keep clients: who needs a check-in and what should I say?",
+      "expected_output": "Routes to the keep-clients lane and returns relationship signal, why now, suggested touch, owner, timing, source, and watchlist.",
       "assertions": [
-        "Does the output select `grow relationships` as the primary Pipa lane?",
+        "Does the output select `keep clients` as the primary Pipa lane?",
         "Does it include relationship needing attention, why now, suggested touch, owner, timing, source, and watchlist?",
         "Does it avoid scheduling a reminder or sending a message unless the user explicitly asks for that connected capability?"
       ],
       "files": []
     },
     {
-      "id": "pipa-learn-from-work-1",
-      "prompt": "Pipa learn from the work from this completed project so we can reuse the lesson next time.",
-      "expected_output": "Routes to the learn-from-the-work lane and returns lessons, evidence, next-time change, owner, reuse location, and follow-ups.",
+      "id": "pipa-improve-operations-1",
+      "prompt": "Pipa improve operations from this completed project so we can reuse the lesson next time.",
+      "expected_output": "Routes to the improve-operations lane and returns lessons, evidence, next-time change, owner, reuse location, and follow-ups.",
       "assertions": [
-        "Does the output select `learn from the work` as the primary Pipa lane?",
+        "Does the output select `improve operations` as the primary Pipa lane?",
         "Does it include lesson, evidence, what changes next time, owner, reuse location or `TBD`, and follow-ups?",
         "Does it avoid declaring closure without acceptance, handover, or archive evidence?"
       ],
@@ -116,9 +116,9 @@
     {
       "id": "pipa-close-compat-1",
       "prompt": "Pipa close this out. Signoff happened, but support handoff and archive readiness are unclear.",
-      "expected_output": "Supports old close wording by reframing it into the learn-from-the-work lane.",
+      "expected_output": "Supports old close wording by reframing it into the improve-operations lane.",
       "assertions": [
-        "Does the output route old `close` wording into `learn from the work`?",
+        "Does the output route old `close` wording into `improve operations`?",
         "Does it evaluate signoff, handover, lessons, archive readiness, and unknowns?",
         "Does it avoid implying final closure when handoff or archive evidence is missing?"
       ],
@@ -127,10 +127,10 @@
     {
       "id": "pipa-help-menu-1",
       "prompt": "Pipa help",
-      "expected_output": "Returns the six operating lanes plus concise connected-capability notes.",
+      "expected_output": "Returns the six business lanes plus concise Manage Pipa and Pipa Tools notes.",
       "assertions": [
-        "Does the output list `find work`, `define work`, `deliver work`, `get paid`, `grow relationships`, and `learn from the work`?",
-        "Does it keep connected capabilities separate from the six core lanes?",
+        "Does the output list `get work`, `define work`, `deliver work`, `get paid`, `keep clients`, and `improve operations`?",
+        "Does it keep Manage Pipa and Pipa Tools separate from the six business lanes?",
         "Does it avoid making lifecycle commands the first screen?"
       ],
       "files": []
@@ -192,7 +192,7 @@
     {
       "id": "pipa-follow-up-negative-1",
       "prompt": "Pipa follow up with the client about the delayed milestone.",
-      "expected_output": "Routes to grow-relationships or deliver-work and does not schedule a self-email reminder because no future email reminder was requested.",
+      "expected_output": "Routes to keep-clients or deliver-work and does not schedule a self-email reminder because no future email reminder was requested.",
       "assertions": [
         "Does the output avoid selecting `pipa-follow-up-reminders`?",
         "Does it treat client follow-up as relationship or delivery follow-through?",
@@ -235,7 +235,7 @@
     },
     {
       "id": "pipa-composio-positive-1",
-      "prompt": "Pipa find work from Gmail and Linear, then create a GitHub issue for the best opportunity.",
+      "prompt": "Pipa get work from Gmail and Linear, then create a GitHub issue for the best opportunity.",
       "expected_output": "Routes through Composio discovery/schema rules for live external app access and does not invent tool slugs or write externally without confirmation.",
       "assertions": [
         "Does the output route external app access/action through `composio`?",
@@ -246,8 +246,8 @@
     },
     {
       "id": "pipa-composio-negative-1",
-      "prompt": "Pipa find work from these pasted lead notes and recommend the next outreach angle.",
-      "expected_output": "Stays in the find-work lane and does not route to Composio because the source material is already supplied and no live external app action was requested.",
+      "prompt": "Pipa get work from these pasted lead notes and recommend the next outreach angle.",
+      "expected_output": "Stays in the get-work lane and does not route to Composio because the source material is already supplied and no live external app action was requested.",
       "assertions": [
         "Does the output avoid selecting `composio`?",
         "Does it work from the pasted source material instead of claiming live app access?",
@@ -283,7 +283,7 @@
       "expected_output": "Avoids inventing a frobnicate workflow and routes by the clear delivery-plan context when safe; otherwise shows help with one clarification path.",
       "assertions": [
         "Does the output avoid inventing a `frobnicate` workflow?",
-        "Does it route by the clear delivery-plan context or show the six operating lanes only if routing is unsafe?",
+        "Does it route by the clear delivery-plan context or show the six business lanes plus Manage Pipa/Pipa Tools only if routing is unsafe?",
         "Does it ask at most one clarifying question if needed?"
       ],
       "files": []

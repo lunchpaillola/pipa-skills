@@ -12,12 +12,12 @@ target_repo: project-management-skills
 
 This plan changes the core `pipa` skill from a PM lifecycle command surface into six public operating-lane commands:
 
-- `Pipa find work`
+- `Pipa get work`
 - `Pipa define work`
 - `Pipa deliver work`
 - `Pipa get paid`
-- `Pipa grow relationships`
-- `Pipa learn from the work`
+- `Pipa keep clients`
+- `Pipa improve operations`
 
 This is a core Pipa curation pass, not a breakout-skill rewrite. The breakout skills stay standalone and authoritative. Core Pipa only references them as connected capabilities when a lane needs audio, voice, triggers, reminders, time records, or live app/tool access.
 
@@ -71,7 +71,7 @@ Primary source context:
 
 ## Key Decisions
 
-1. Public commands use action verbs: `find work`, `define work`, `deliver work`, `get paid`, `grow relationships`, `learn from the work`.
+1. Public commands use action verbs: `get work`, `define work`, `deliver work`, `get paid`, `keep clients`, `improve operations`.
 2. Filenames can stay stable and readable with gerund forms where useful, e.g. `getting-paid.md`, while command aliases include both `get paid` and `getting paid`.
 3. Lane intent wins by default. Breakout skills only win on exact trigger language: audio/listenable, live voice, event trigger, one-shot email reminder to the user, time entry/review, or external app/tool action.
 4. Old lifecycle commands remain supported as compatibility aliases, but they should not be the visible menu.
@@ -86,14 +86,14 @@ Primary source context:
 skills/pipa/
   SKILL.md
   references/
-    command-menu.md
-    standalone-invocation.md
-    find-work.md
+    help-menu.md
+    pipa-tools/SKILL.md
+    get-work.md
     define-work.md
     deliver-work.md
     getting-paid.md
-    growing-relationships.md
-    learning-from-the-work.md
+    keep-clients.md
+    improve-operations.md
     initiate*.md       # internal utilities, unchanged
     plan*.md           # internal utilities, unchanged
     execute*.md        # internal utilities, unchanged
@@ -135,17 +135,17 @@ README.md
 **Patterns To Follow:**
 
 - Current `skills/pipa/SKILL.md` structure: command matrix, routing rules, tie-breakers, references, gotchas.
-- `skills/pipa/references/standalone-invocation.md` negative routing rules.
+- `skills/pipa-tools/SKILL.md` negative routing rules.
 - `tasks/03-27-lessons-from-building-skills.md` progressive-disclosure guidance.
 
 **Test Scenarios:**
 
-- `Pipa find work from these messy lead notes` routes to the find-work lane.
+- `Pipa get work from these messy lead notes` routes to the get-work lane.
 - `Pipa define work from this client Slack thread` routes to define-work, asking for source content or tool access if needed.
 - `Pipa deliver work: what is blocked?` routes to deliver-work.
 - `Pipa get paid: which invoices need action?` routes to get-paid and does not claim payment-system access without a source.
-- `Pipa grow relationships: who needs a check-in?` routes to grow-relationships and does not schedule a reminder by default.
-- `Pipa learn from the work from this completed project` routes to learning-from-the-work.
+- `Pipa keep clients: who needs a check-in?` routes to keep-clients and does not schedule a reminder by default.
+- `Pipa improve operations from this completed project` routes to improve-operations.
 - `Pipa plan this onboarding work` remains supported and reframes as define-work.
 - `Pipa monitor this delivery week` remains supported and reframes as deliver-work unless money or relationship wording dominates.
 - `Pipa brief this PR before standup` does not route to audio brief.
@@ -167,12 +167,12 @@ README.md
 
 **Files:**
 
-- `skills/pipa/references/find-work.md`
-- `skills/pipa/references/define-work.md`
-- `skills/pipa/references/deliver-work.md`
-- `skills/pipa/references/getting-paid.md`
-- `skills/pipa/references/growing-relationships.md`
-- `skills/pipa/references/learning-from-the-work.md`
+- `skills/pipa-get-work/references/get-work.md`
+- `skills/pipa-define-work/references/define-work.md`
+- `skills/pipa-deliver-work/references/deliver-work.md`
+- `skills/pipa-get-paid/references/getting-paid.md`
+- `skills/pipa-keep-clients/references/keep-clients.md`
+- `skills/pipa-improve-operations/references/improve-operations.md`
 - `skills/pipa/evals/evals.json`
 
 **Approach:**
@@ -215,13 +215,13 @@ README.md
 **Files:**
 
 - `skills/pipa/SKILL.md`
-- `skills/pipa/references/standalone-invocation.md`
-- `skills/pipa/references/find-work.md`
-- `skills/pipa/references/define-work.md`
-- `skills/pipa/references/deliver-work.md`
-- `skills/pipa/references/getting-paid.md`
-- `skills/pipa/references/growing-relationships.md`
-- `skills/pipa/references/learning-from-the-work.md`
+- `skills/pipa-tools/SKILL.md`
+- `skills/pipa-get-work/references/get-work.md`
+- `skills/pipa-define-work/references/define-work.md`
+- `skills/pipa-deliver-work/references/deliver-work.md`
+- `skills/pipa-get-paid/references/getting-paid.md`
+- `skills/pipa-keep-clients/references/keep-clients.md`
+- `skills/pipa-improve-operations/references/improve-operations.md`
 - `skills/pipa/evals/evals.json`
 
 **Approach:**
@@ -234,7 +234,7 @@ README.md
 
 **Patterns To Follow:**
 
-- Existing `standalone-invocation.md` routing guardrails.
+- Existing `pipa-tools/SKILL.md` routing guardrails.
 - README breakout list and descriptions.
 - AGENTS.md rule to preserve standalone breakouts.
 
@@ -245,7 +245,7 @@ README.md
 - `Pipa get paid: review billable time` can route to time tracking for time-record review but does not claim invoicing/payroll support.
 - `Pipa define work by voice` routes to huddle only when the user wants live voice.
 - `Pipa learn from this session as an audio brief` routes to audio brief only because audio/listenable intent is explicit.
-- `Pipa find work from Gmail` routes through Composio discovery/schema rules if live Gmail access is required.
+- `Pipa get work from Gmail` routes through Composio discovery/schema rules if live Gmail access is required.
 
 **Verification:**
 
@@ -262,14 +262,14 @@ README.md
 
 **Files:**
 
-- `skills/pipa/references/command-menu.md`
+- `skills/pipa/references/help-menu.md`
 - `README.md`
 - `skills/pipa/evals/evals.json`
 
 **Approach:**
 
-- Update `command-menu.md` to recommend lane commands first.
-- Keep `command-menu.md` tiny if `SKILL.md` contains the main menu.
+- Update `help-menu.md` to recommend lane commands first.
+- Keep `help-menu.md` tiny if `SKILL.md` contains the main menu.
 - Rewrite README first screen around Pipa's six operating lanes.
 - Keep the breakout table, but frame breakouts as separately installable connected capabilities instead of competing core products.
 - Keep proprietary internal context out of public README copy.
@@ -277,7 +277,7 @@ README.md
 **Patterns To Follow:**
 
 - Current README structure: install first, what Pipa adds, core skill, breakout skills.
-- `skills/pipa/references/command-menu.md` concise help response shape.
+- `skills/pipa/references/help-menu.md` concise help response shape.
 
 **Test Scenarios:**
 
@@ -368,7 +368,7 @@ README.md
 
 - `skills/pipa/SKILL.md` exposes the six lane commands as the primary public routes.
 - Public command names use action verbs, with sensible aliases for gerund wording.
-- `command-menu.md` recommends lane commands and common lane paths.
+- `help-menu.md` recommends lane commands and common lane paths.
 - Six lane reference files exist and cite existing lifecycle references as source methods.
 - Existing lifecycle references remain usable and are not deleted or flattened.
 - Breakout skills remain standalone and unedited.

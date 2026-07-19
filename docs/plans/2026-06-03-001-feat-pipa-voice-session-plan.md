@@ -58,7 +58,7 @@ The shaping doc defines the product as a voice session with Pipa, not a video me
 
 - `skills/pipa-audio-brief/SKILL.md` shows the right standalone skill pattern: frontmatter trigger contract, stepwise workflow, explicit blockers, and one primary output.
 - `skills/pipa-audio-brief/references/` shows how detailed workflow contracts stay out of the entry `SKILL.md`.
-- `skills/pipa/SKILL.md` and `skills/pipa/references/standalone-invocation.md` show how standalone breakout workflows are routed without copying their internals into Pipa.
+- `skills/pipa/SKILL.md` and `skills/pipa-tools/SKILL.md` show how standalone breakout workflows are routed without copying their internals into Pipa.
 - `README.md` has a Breakout Skills table that should include new standalone skills when they become public.
 - `skills/pipa-audio-brief/evals/trigger-eval-set.json` and `skills/pipa-audio-brief/evals/evals.json` are the closest eval patterns for triggers and behavior contracts.
 - `prototypes/agent-session-shapes/` is a static prototype area. It currently compares shapes but does not include real STT, TTS, Daily, WebRTC, or backend behavior.
@@ -211,7 +211,7 @@ The key separation is that transport gets the user into a voice session, while t
 - Include behavior for rambly speech: capture useful context and decisions without treating every phrase as a final instruction.
 
 **Patterns to follow:**
-- `skills/pipa/references/plan.md` for optional plan-mode output discipline.
+- `skills/pipa-define-work/references/plan.md` for optional plan-mode output discipline.
 - `skills/pipa-audio-brief/references/audio-brief-script.md` for concise spoken language guidance.
 
 **Test scenarios:**
@@ -318,7 +318,7 @@ The key separation is that transport gets the user into a voice session, while t
 
 **Files:**
 - Modify: `skills/pipa/SKILL.md`
-- Modify: `skills/pipa/references/standalone-invocation.md`
+- Modify: `skills/pipa-tools/SKILL.md`
 - Modify: `README.md`
 - Test: `skills/pipa/evals/trigger-eval-set.json`
 - Test: `skills/pipa/evals/evals.json`
@@ -331,7 +331,7 @@ The key separation is that transport gets the user into a voice session, while t
 
 **Patterns to follow:**
 - `skills/pipa/SKILL.md` connected workflow routing.
-- `skills/pipa/references/standalone-invocation.md` standalone invocation pattern.
+- `skills/pipa-tools/SKILL.md` utility-routing pattern.
 - `README.md` Breakout Skills table.
 
 **Test scenarios:**
@@ -422,7 +422,7 @@ The key separation is that transport gets the user into a voice session, while t
 - Related prototype: `prototypes/agent-session-shapes/`
 - Existing breakout skill pattern: `skills/pipa-audio-brief/SKILL.md`
 - Pipa router: `skills/pipa/SKILL.md`
-- Standalone invocation pattern: `skills/pipa/references/standalone-invocation.md`
+- Utility-routing pattern: `skills/pipa-tools/SKILL.md`
 - Repo validation: `scripts/validate_skill_frontmatter.rb`
 - Browser mic docs: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 - Web Speech API docs: https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API

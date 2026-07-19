@@ -157,8 +157,8 @@ skills/
     SKILL.md
     references/
       communication-style.md
-      command-menu.md
-      standalone-invocation.md
+      help-menu.md
+      pipa-tools/SKILL.md
       initiate.md
       initiate-project-context.md
       initiate-budget.md
@@ -224,7 +224,7 @@ Runtime routing rules should follow this order:
 
 ### U1. Create the Pipa entry skill and command matrix
 
-**Goal:** Add `skills/pipa/SKILL.md` as the concise entry skill with frontmatter, trigger description, command groups, routing rules, standalone invocation rules, and gotchas.
+**Goal:** Add `skills/pipa/SKILL.md` as the concise entry skill with frontmatter, trigger description, command groups, routing rules, utility routing rules, and gotchas.
 
 **Requirements:** R1, R2, R3, R4, R5, R6, R9, R15, R16, R17, R22, R25, R28; F1, F2, F3b, F5; AE1, AE2, AE4, AE5, AE7
 
@@ -232,15 +232,15 @@ Runtime routing rules should follow this order:
 
 **Files:**
 - Create: `skills/pipa/SKILL.md`
-- Create: `skills/pipa/references/command-menu.md`
-- Create: `skills/pipa/references/standalone-invocation.md`
+- Create: `skills/pipa/references/help-menu.md`
+- Create: `skills/pipa-tools/SKILL.md`
 - Test: `skills/pipa/evals/trigger-eval-set.json`
 - Test: `skills/pipa/evals/evals.json`
 
 **Approach:**
 - Write frontmatter `description` as concrete “when to use this” trigger language covering PM/delivery jobs, command invocation, and natural-language PM requests.
 - Keep the entry skill short: product promise, setup expectations, command table, routing rules, gotchas, and reference-loading instructions.
-- Put detailed menu copy and standalone invocation rules into references so `SKILL.md` stays readable.
+- Put detailed menu copy and utility routing rules into references so `SKILL.md` stays readable.
 - Include `help` and no-argument behavior as a built-in Pipa command, not a separate skill.
 - Make help lightly context-aware: recommend 2-3 likely next commands when context is available, then show the stable grouped list.
 - Define tie-breakers for `budget`, `brief`, `triage`, `status`, `plan`, recurring language, and trigger/event language.
@@ -274,7 +274,7 @@ Runtime routing rules should follow this order:
 
 ### U2. Move PM workflow content into Pipa references
 
-**Goal:** Preserve the existing PM workflow value by moving PM router and subskill instructions into `skills/pipa/references/`, then rewriting internal references away from top-level `pm-*` skill names.
+**Goal:** Preserve the existing PM workflow value by moving PM router and subskill instructions into Pipa lane references, then rewriting internal references away from top-level `pm-*` skill names.
 
 **Requirements:** R7, R8, R9, R10, R18, R21, R28; F1, F2, F4; AE1, AE2
 
@@ -282,32 +282,32 @@ Runtime routing rules should follow this order:
 
 **Files:**
 - Create: `skills/pipa/references/communication-style.md`
-- Create: `skills/pipa/references/initiate.md`
-- Create: `skills/pipa/references/initiate-project-context.md`
-- Create: `skills/pipa/references/initiate-budget.md`
-- Create: `skills/pipa/references/initiate-problem-framing.md`
-- Create: `skills/pipa/references/initiate-stakeholder-map.md`
-- Create: `skills/pipa/references/initiate-charter-and-viability-gate.md`
-- Create: `skills/pipa/references/plan.md`
-- Create: `skills/pipa/references/plan-requirements-brief.md`
-- Create: `skills/pipa/references/plan-scope-schedule-baseline.md`
-- Create: `skills/pipa/references/plan-roadmap-and-prioritization.md`
-- Create: `skills/pipa/references/plan-raid-raci-decision-setup.md`
-- Create: `skills/pipa/references/execute.md`
-- Create: `skills/pipa/references/execute-work-package-coordination.md`
-- Create: `skills/pipa/references/execute-iteration-cycle.md`
-- Create: `skills/pipa/references/execute-change-control.md`
-- Create: `skills/pipa/references/execute-dependency-and-handoff.md`
-- Create: `skills/pipa/references/monitor.md`
-- Create: `skills/pipa/references/monitor-ticket-triage.md`
-- Create: `skills/pipa/references/monitor-status.md`
-- Create: `skills/pipa/references/monitor-budget.md`
-- Create: `skills/pipa/references/monitor-risk-escalation.md`
-- Create: `skills/pipa/references/close.md`
-- Create: `skills/pipa/references/close-acceptance-signoff.md`
-- Create: `skills/pipa/references/close-handover-transition.md`
-- Create: `skills/pipa/references/close-lessons-learned.md`
-- Create: `skills/pipa/references/close-benefits-review-and-archive.md`
+- Create: `skills/pipa-define-work/references/initiate.md`
+- Create: `skills/pipa-define-work/references/initiate-project-context.md`
+- Create: `skills/pipa-get-paid/references/initiate-budget.md`
+- Create: `skills/pipa-define-work/references/initiate-problem-framing.md`
+- Create: `skills/pipa-define-work/references/initiate-stakeholder-map.md`
+- Create: `skills/pipa-define-work/references/initiate-charter-and-viability-gate.md`
+- Create: `skills/pipa-define-work/references/plan.md`
+- Create: `skills/pipa-define-work/references/plan-requirements-brief.md`
+- Create: `skills/pipa-define-work/references/plan-scope-schedule-baseline.md`
+- Create: `skills/pipa-define-work/references/plan-roadmap-and-prioritization.md`
+- Create: `skills/pipa-define-work/references/plan-raid-raci-decision-setup.md`
+- Create: `skills/pipa-deliver-work/references/execute.md`
+- Create: `skills/pipa-deliver-work/references/execute-work-package-coordination.md`
+- Create: `skills/pipa-deliver-work/references/execute-iteration-cycle.md`
+- Create: `skills/pipa-get-paid/references/execute-change-control.md`
+- Create: `skills/pipa-deliver-work/references/execute-dependency-and-handoff.md`
+- Create: `skills/pipa-deliver-work/references/monitor.md`
+- Create: `skills/pipa-deliver-work/references/monitor-ticket-triage.md`
+- Create: `skills/pipa-deliver-work/references/monitor-status.md`
+- Create: `skills/pipa-get-paid/references/monitor-budget.md`
+- Create: `skills/pipa-deliver-work/references/monitor-risk-escalation.md`
+- Create: `skills/pipa-improve-operations/references/close.md`
+- Create: `skills/pipa-improve-operations/references/close-acceptance-signoff.md`
+- Create: `skills/pipa-improve-operations/references/close-handover-transition.md`
+- Create: `skills/pipa-improve-operations/references/close-lessons-learned.md`
+- Create: `skills/pipa-improve-operations/references/close-benefits-review-and-archive.md`
 - Test: `skills/pipa/evals/evals.json`
 
 **Approach:**
@@ -346,7 +346,7 @@ Runtime routing rules should follow this order:
 
 **Files:**
 - Modify: `skills/pipa/SKILL.md`
-- Modify: `skills/pipa/references/standalone-invocation.md`
+- Modify: `skills/pipa-tools/SKILL.md`
 - Read-only: `skills/pipa-audio-brief/SKILL.md`
 - Read-only: `skills/composio/SKILL.md`
 - Read-only: `skills/pipa-triggers/SKILL.md`
@@ -472,7 +472,7 @@ Runtime routing rules should follow this order:
 
 ### U6. Delete old PM skill folders and clean stale references
 
-**Goal:** Remove the old public `pm-*` skill surface after Pipa references, standalone invocation, docs, and evals are in place.
+**Goal:** Remove the old public `pm-*` skill surface after Pipa references, utility routing, docs, and evals are in place.
 
 **Requirements:** R5, R7, R8, R10, R17, R20; F4; AE2, AE6
 
@@ -580,7 +580,7 @@ Runtime routing rules should follow this order:
 - **Error propagation:** Breakout blockers must remain owned by their workflows. Pipa should not turn setup/auth/source/confirmation blockers into generic PM responses.
 - **State lifecycle risks:** Pipa recurring automation and trigger workflows create ongoing behavior; confirmation gates and scoped-account behavior must survive Pipa routing.
 - **API surface parity:** Public skill list, README install examples, eval files, and skill frontmatter all change together.
-- **Integration coverage:** Eval coverage should prove both direct Pipa commands and natural-language routing, plus standalone invocation paths.
+- **Integration coverage:** Eval coverage should prove both direct Pipa commands and natural-language routing, plus utility routing paths.
 - **Unchanged invariants:** Standalone breakouts remain installable/discoverable as separate skills. PM outputs still preserve owners, actions, dates, status, evidence, unknowns, and source gaps.
 
 ---
@@ -593,7 +593,7 @@ Runtime routing rules should follow this order:
 | Deleting `pm-*` folders removes useful workflow logic | Move PM content into references before deletion and verify every old skill has a destination. |
 | Deleting `pm-*` folders removes eval coverage | Migrate representative evals into Pipa evals before deletion. |
 | `pm-communication-style` deletion breaks standalone audio brief or PM references | Move style contract into Pipa references and make standalone skills self-contained or point to a safe shared reference. |
-| Pipa weakens Pipa confirmations or Composio verification | Add explicit standalone invocation rule and negative evals for skipped confirmation or guessed slug behavior. |
+| Pipa weakens Pipa confirmations or Composio verification | Add explicit utility routing rule and negative evals for skipped confirmation or guessed slug behavior. |
 | README drifts back into catalog mode | Use Impeccable-inspired structure and docs acceptance checks. |
 | Existing eval assertions are stale | Audit migrated PM assertions during migration; do not edit read-only breakout evals as part of this restructure. |
 | Versioning churn during draft work | Do not bump versions or `VERSIONS.md` until merge-finalization. |

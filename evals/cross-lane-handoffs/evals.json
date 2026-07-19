@@ -12,10 +12,10 @@
   ],
   "evals": [
     {
-      "id": "handoff-find-to-define-1",
-      "transition": "find work -> define work",
-      "prompt": "Pipa find-to-define check: we found a promising lead from notes. Confirm if we have enough to define the work and list the exact missing inputs if not.",
-      "expected_output": "Validates whether opportunity evidence, buyer pain, constraints, and decision context are sufficient to move from find-work into define-work.",
+      "id": "handoff-get-to-define-1",
+      "transition": "get work -> define work",
+      "prompt": "Pipa get-to-define check: we found a promising lead from notes. Confirm if we have enough to define the work and list the exact missing inputs if not.",
+      "expected_output": "Validates whether opportunity evidence, buyer pain, constraints, and decision context are sufficient to move from get-work into define-work.",
       "assertions": [
         "Does the output explicitly evaluate opportunity evidence and why-now signal?",
         "Does it evaluate buyer or stakeholder context?",
@@ -53,8 +53,8 @@
       "files": []
     },
     {
-      "id": "handoff-deliver-to-grow-relationships-1",
-      "transition": "deliver work -> grow relationships",
+      "id": "handoff-deliver-to-keep-clients-1",
+      "transition": "deliver work -> keep clients",
       "prompt": "Pipa deliver-to-relationships check: identify any client or stakeholder relationship risks from this delivery status before we send updates.",
       "expected_output": "Surfaces relationship-sensitive delivery signals and recommends the smallest relationship follow-up without sending anything.",
       "assertions": [
@@ -66,9 +66,9 @@
       "files": []
     },
     {
-      "id": "handoff-learn-to-grow-relationships-1",
-      "transition": "learn from the work -> grow relationships",
-      "prompt": "Pipa learn-to-relationships check: from this closeout, what relationship follow-up should happen next and what evidence supports it?",
+      "id": "handoff-improve-to-keep-clients-1",
+      "transition": "improve operations -> keep clients",
+      "prompt": "Pipa improve-to-keep-clients check: from this closeout, what relationship follow-up should happen next and what evidence supports it?",
       "expected_output": "Turns closeout lessons into a relationship follow-up or watchlist item with owner, timing, and evidence.",
       "assertions": [
         "Does the output extract a lesson or closeout signal with evidence?",
