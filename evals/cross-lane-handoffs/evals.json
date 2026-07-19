@@ -1,86 +1,80 @@
 {
   "suite_name": "pipa-cross-lane-handoffs",
-  "scope": "adjacent-lane-handoff-gates",
+  "scope": "adjacent-operating-lane-handoff-gates",
   "artifact_type": "public-generic-eval-suite",
   "shared_output_contract_assertions": [
     "Does the output include an explicit `Objective` section?",
-    "Does the output include a `Tool Access Check` section with sources used and gaps?",
+    "Does the output include a `Source Check` or `Tool Access Check` section with sources used and gaps?",
     "Does the output include a `Current Signal` section that states what needs attention now?",
-    "Does the output include an `Actions` table with columns Item, Owner, Next action, Due/review date, Status, and Evidence/source?",
-    "Does the output include an `Unknowns` section with unresolved details shown as `TBD`?",
-    "Does the output include a `Follow-ups` section with concrete next requests or checkpoints?"
+    "Does the output include actions with item, owner, next action, due/review date, status, and evidence/source?",
+    "Does the output include unresolved details shown as `TBD`?",
+    "Does the output list next lane follow-ups without executing multiple lanes unless asked?"
   ],
   "evals": [
     {
-      "id": "handoff-initiate-to-plan-1",
-      "transition": "initiate -> plan",
-      "prompt": "Pipa initiate-to-plan check: we finished kickoff notes and rough framing. Can you confirm if we're ready to move into planning and tell me the exact minimum missing inputs if not?",
-      "expected_output": "Validates initiate-to-plan gate readiness against framing, stakeholder map, and charter/viability artifacts; if incomplete, returns blocked state with minimum required inputs.",
+      "id": "handoff-find-to-define-1",
+      "transition": "find work -> define work",
+      "prompt": "Pipa find-to-define check: we found a promising lead from notes. Confirm if we have enough to define the work and list the exact missing inputs if not.",
+      "expected_output": "Validates whether opportunity evidence, buyer pain, constraints, and decision context are sufficient to move from find-work into define-work.",
       "assertions": [
-        "Does the output explicitly evaluate problem framing completeness?",
-        "Does the output explicitly evaluate stakeholder map completeness?",
-        "Does the output explicitly evaluate charter/viability decision completeness?",
-        "If any gate input is missing, does the output mark the handoff as `blocked` and list only the minimum required inputs to continue?",
-        "Does the output preserve unknown owners or dates as `TBD` instead of inventing values?",
-        "Does the output satisfy all shared output contract assertions listed in this suite?"
+        "Does the output explicitly evaluate opportunity evidence and why-now signal?",
+        "Does it evaluate buyer or stakeholder context?",
+        "Does it evaluate known constraints needed for a working brief?",
+        "If evidence is incomplete, does it mark the handoff as blocked or partial with only the minimum required inputs?",
+        "Does it satisfy all shared output contract assertions listed in this suite?"
       ],
       "files": []
     },
     {
-      "id": "handoff-plan-to-execute-1",
-      "transition": "plan -> execute",
-      "prompt": "Pipa plan-to-execute check: before we start delivery this week, validate whether our plan package is execution-ready. If something is missing, keep the ask minimal and specific.",
-      "expected_output": "Checks plan-to-execute gate requirements (requirements brief, baseline, roadmap/prioritization, RAID/RACI/decision setup) and returns go or blocked with minimal remediation inputs.",
+      "id": "handoff-define-to-deliver-1",
+      "transition": "define work -> deliver work",
+      "prompt": "Pipa define-to-deliver check: before we start delivery this week, validate whether the brief is execution-ready. If something is missing, keep the ask minimal and specific.",
+      "expected_output": "Checks define-work readiness: scope, out-of-scope, acceptance checks, owner/action/date/status readiness, and decision gaps.",
       "assertions": [
-        "Does the output explicitly evaluate requirements brief availability?",
-        "Does the output explicitly evaluate scope/schedule baseline availability?",
-        "Does the output explicitly evaluate roadmap/prioritization availability?",
-        "Does the output explicitly evaluate RAID/RACI/decision setup availability?",
-        "If gate evidence is incomplete, does the output mark `blocked` with the smallest next input set needed to unblock?",
-        "Does the output satisfy all shared output contract assertions listed in this suite?"
+        "Does the output explicitly evaluate scope and out-of-scope clarity?",
+        "Does it evaluate acceptance checks?",
+        "Does it evaluate owners, next actions, and timing readiness?",
+        "If gate evidence is incomplete, does it mark blocked or partial with the smallest next input set needed to unblock?",
+        "Does it satisfy all shared output contract assertions listed in this suite?"
       ],
       "files": []
     },
     {
-      "id": "handoff-execute-to-monitor-1",
-      "transition": "execute -> monitor",
-      "prompt": "Pipa execute-to-monitor check: we're mid-delivery and need to switch to monitor rhythm. Confirm if execution artifacts are ready for reliable status/risk monitoring and flag any blocking gaps.",
-      "expected_output": "Validates execute-to-monitor handoff by checking owner/action/date/status evidence completeness for active execution artifacts; returns monitor-ready or blocked.",
+      "id": "handoff-deliver-to-get-paid-1",
+      "transition": "deliver work -> get paid",
+      "prompt": "Pipa deliver-to-get-paid check: we are mid-delivery and need to know whether anything affects invoicing, budget, billable time, or change control.",
+      "expected_output": "Checks whether delivery state contains money-impacting signals and routes only those signals into get-paid follow-up.",
       "assertions": [
-        "Does the output explicitly verify owner/action/date/status fields on active execution artifacts?",
-        "Does the output explicitly check for evidence/source links or references for those artifacts?",
-        "If required execution artifact fields are missing, does the output mark the handoff as `blocked` with minimum required additions?",
-        "Does the output avoid implied closure and instead provide explicit next-state follow-through actions?",
-        "Does the output satisfy all shared output contract assertions listed in this suite?"
+        "Does the output identify delivery items with payment, budget, billable time, margin, or change-control impact?",
+        "Does it distinguish known money facts from `TBD` gaps?",
+        "Does it avoid claiming invoice or payment access without connected tools?",
+        "Does it satisfy all shared output contract assertions listed in this suite?"
       ],
       "files": []
     },
     {
-      "id": "handoff-monitor-to-close-1",
-      "transition": "monitor -> close",
-      "prompt": "Pipa monitor-to-close check: we think this project is near completion. Validate whether we're truly ready to enter close and list any must-fix items first.",
-      "expected_output": "Evaluates monitor-to-close gate criteria: acceptance readiness signal, open risk disposition, and closure recommendation with explicit go/blocked outcome.",
+      "id": "handoff-deliver-to-grow-relationships-1",
+      "transition": "deliver work -> grow relationships",
+      "prompt": "Pipa deliver-to-relationships check: identify any client or stakeholder relationship risks from this delivery status before we send updates.",
+      "expected_output": "Surfaces relationship-sensitive delivery signals and recommends the smallest relationship follow-up without sending anything.",
       "assertions": [
-        "Does the output explicitly evaluate acceptance readiness?",
-        "Does the output explicitly evaluate open risk disposition status?",
-        "Does the output explicitly provide a closure recommendation (go, go-with-conditions, or blocked)?",
-        "If closure is not ready, does the output provide minimum must-fix items rather than broad advisory lists?",
-        "Does the output satisfy all shared output contract assertions listed in this suite?"
+        "Does the output identify relationship risks or check-in opportunities from delivery evidence?",
+        "Does it recommend a suggested touch with owner, timing, and source?",
+        "Does it avoid scheduling reminders or sending messages unless explicitly asked?",
+        "Does it satisfy all shared output contract assertions listed in this suite?"
       ],
       "files": []
     },
     {
-      "id": "handoff-close-to-archive-1",
-      "transition": "close -> archive",
-      "prompt": "Pipa close-to-archive check: we're wrapping this engagement now. Confirm archive readiness and tell me exactly what still blocks final archive if anything.",
-      "expected_output": "Checks close-to-archive gate requirements (signoff, handover, lessons learned, archive/benefits record) and returns archive-ready or blocked with minimal final inputs.",
+      "id": "handoff-learn-to-grow-relationships-1",
+      "transition": "learn from the work -> grow relationships",
+      "prompt": "Pipa learn-to-relationships check: from this closeout, what relationship follow-up should happen next and what evidence supports it?",
+      "expected_output": "Turns closeout lessons into a relationship follow-up or watchlist item with owner, timing, and evidence.",
       "assertions": [
-        "Does the output explicitly evaluate signoff completion?",
-        "Does the output explicitly evaluate handover artifact completion?",
-        "Does the output explicitly evaluate lessons-learned artifact completion?",
-        "Does the output explicitly evaluate archive/benefits record completion?",
-        "If any archive gate requirement is missing, does the output mark `blocked` with minimum final inputs?",
-        "Does the output satisfy all shared output contract assertions listed in this suite?"
+        "Does the output extract a lesson or closeout signal with evidence?",
+        "Does it translate that signal into a relationship next action or watchlist item?",
+        "Does it preserve missing owner, timing, or source details as `TBD`?",
+        "Does it satisfy all shared output contract assertions listed in this suite?"
       ],
       "files": []
     }

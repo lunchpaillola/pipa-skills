@@ -7,34 +7,37 @@ Use this when the user runs Pipa with no argument, asks for `Pipa help`, or give
 Start with 2-3 likely next commands when context is available. If context is sparse, use the stable starting path below.
 
 ```md
-Pipa can take the next PM step from here.
+Pipa helps with the work around the work.
 
 Recommended next commands:
-- `Pipa status` - summarize current state, blockers, decisions, and next milestones.
-- `Pipa plan` - turn scattered requirements into a usable delivery baseline.
-- `Pipa triage` - sort tickets, comments, or intake into what needs action now.
+- `Pipa find work` - turn leads, market signals, content ideas, or outreach notes into the next opportunity action.
+- `Pipa define work` - turn messy context into scope, acceptance checks, decisions, and a plan-ready brief.
+- `Pipa deliver work` - summarize current state, blockers, owners, risks, and next delivery actions.
 
-Command groups:
-- Start: `initiate`, `kickoff`, `context`, `budget setup`, `problem`, `charter`, `stakeholders`
-- Plan: `plan`, `requirements`, `scope`, `schedule`, `roadmap`, `raid`, `raci`
-- Execute: `execute`, `coordinate`, `delivery`, `iteration`, `change`, `dependency`, `handoff`
-- Monitor: `monitor`, `status`, `triage`, `budget`, `risk`, `escalate`, `blockers`
-- Close: `close`, `signoff`, `handover`, `lessons`, `archive`, `benefits`
-- Connected: `audio brief`, `automate`, `trigger`, `composio`
+Operating lanes:
+- `Pipa find work`
+- `Pipa define work`
+- `Pipa deliver work`
+- `Pipa get paid`
+- `Pipa grow relationships`
+- `Pipa learn from the work`
+
+Connected capabilities when explicit:
+- `audio brief`, `voice session`, `trigger`, `follow-up reminder`, `time tracking`, `composio`
 ```
 
-`skills/pipa/SKILL.md` is the authoritative command matrix. This menu mirrors the public command groups and should stay aligned with it when commands change.
+`skills/pipa/SKILL.md` is the authoritative command matrix. This menu mirrors the public lane names and should stay aligned with it when commands change.
 
 ## Common Starting Paths
 
-- New or unclear project: `Pipa initiate` -> `Pipa plan` -> `Pipa execute`
-- Delivery week: `Pipa status` -> `Pipa risk` -> `Pipa execute`
-- Intake cleanup: `Pipa triage` -> `Pipa status`
-- Steering prep: `Pipa status` -> `Pipa budget` -> `Pipa risk`
-- Closeout: `Pipa close` -> `Pipa handover` -> `Pipa lessons` -> `Pipa archive`
-- Recurring PM update: `Pipa status` -> `Pipa automate`
-- Event-driven PM follow-up: `Pipa trigger` -> `Pipa status`
+- New lead or market signal: `Pipa find work` -> `Pipa define work`
+- Messy opportunity or client request: `Pipa define work` -> `Pipa deliver work`
+- Delivery week: `Pipa deliver work` -> `Pipa get paid` or `Pipa grow relationships`
+- Invoice or billable-time review: `Pipa get paid` -> `Pipa grow relationships`
+- Client check-in or retention signal: `Pipa grow relationships` -> `Pipa define work`
+- Closeout: `Pipa learn from the work` -> `Pipa grow relationships`
+- Recurring or event-driven operation: choose the lane first, then route to `trigger` only if the user wants automation.
 
 ## Clarification Rule
 
-Ask one clarifying question only when the command cannot be routed safely. Otherwise choose the strongest primary command and list secondary follow-ups.
+Ask one clarifying question only when the command cannot be routed safely. Otherwise choose the strongest primary lane and list secondary follow-ups.

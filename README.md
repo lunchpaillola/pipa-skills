@@ -2,9 +2,9 @@
 
 ## Operational skills for the agent you already use
 
-Your craft comes with work around the work, like planning, coordination, and updates. Teams hire operations managers for it. Pipa installs that know-how and tools into your agent.
+Your craft comes with work around the work, like finding opportunities, defining scope, coordinating delivery, collecting money, maintaining relationships, and learning from what shipped. Teams hire operators for it. Pipa installs that know-how and tools into your agent.
 
-Pipa skills give agents practical operator workflows for the work around the work: client delivery, project operations, updates, handoffs, blockers, briefs, and automations.
+Pipa skills give agents practical operator workflows for service-business work: lead signals, briefs, delivery updates, blockers, money follow-through, client relationships, closeout, lessons, and automations.
 
 Built and maintained by [Lola](https://www.linkedin.com/in/lolaojabowale) at [Lunch Pail Labs](https://lunchpaillabs.com/).
 
@@ -36,9 +36,9 @@ cp -r pipa-skills/skills/* .agents/skills/
 
 ## What Pipa Adds
 
+- Six operating lanes: find work, define work, deliver work, get paid, grow relationships, and learn from the work
 - Client delivery planning, coordination, and follow-through
-- Project operations for status, blockers, risks, budgets, and escalations
-- Handoffs, signoffs, closeout, and lessons learned
+- Money, relationship, handoff, closeout, and learning loops around delivery
 - Client-ready updates and internal operating briefs
 - Audio briefs from sessions, plans, PRs, docs, and links
 - Connected-tool work through Composio-backed workflows
@@ -48,11 +48,11 @@ cp -r pipa-skills/skills/* .agents/skills/
 
 | Skill | Description |
 |---|---|
-| [`pipa`](skills/pipa/) | Routes project and delivery work into the right operating workflow, with clear next actions, owners, dates, evidence, and unknowns. |
+| [`pipa`](skills/pipa/) | Routes operating work into the right lane: find work, define work, deliver work, get paid, grow relationships, or learn from the work, with clear next actions, owners, dates, evidence, and unknowns. |
 
 ### Breakout Skills
 
-These workflows remain separately installable because they are tool-specific, product-specific, or useful outside the main Pipa route.
+These workflows remain separately installable connected capabilities because they are tool-specific, product-specific, or useful outside the main Pipa route.
 
 | Skill | Description |
 |---|---|

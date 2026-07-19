@@ -1,101 +1,99 @@
 ---
 name: pipa
-description: "Use when the user wants project-management or delivery help through Pipa: initiate a project, plan scope or requirements, execute delivery work, monitor status/tickets/budget/risk, close a project, triage PM signals, or route natural-language PM requests. Also use for explicit commands like Pipa help, Pipa status, Pipa triage, Pipa budget, Pipa plan, Pipa execute, Pipa close, Pipa audio brief, Pipa voice session, Pipa automate, Pipa trigger, Pipa follow-up reminder, or Pipa composio."
+description: "Use when the user wants Pipa to help with operating-lane work around service delivery: find work, define work, deliver work, get paid, grow relationships, learn from the work, route natural-language operational requests, or show Pipa help. Also use for compatibility commands like Pipa initiate, Pipa plan, Pipa execute, Pipa monitor, Pipa status, Pipa triage, Pipa close, and for exact connected-capability requests like audio brief, voice session, trigger, email follow-up reminder, time tracking, or Composio external app work."
 metadata:
   version: 0.1.1
 ---
 
 # Pipa
 
-Pipa is one PM brain with commands underneath.
+Pipa is an operating-lane router for the work around the work.
 
-Use Pipa to route project and delivery work into one primary command, run the matching workflow, and return a decision-ready output. Do not expose the old PM lifecycle skill names to the user.
+Use Pipa to choose one primary lane, load the matching reference, and return a decision-ready output with sources, owners, next actions, and `TBD` for unknowns. Do not expose the old PM lifecycle routes as the public model.
 
 ## How Pipa Works
 
-1. Select one primary route from the command matrix.
-2. Load the mapped reference or standalone skill.
-3. Execute that workflow without weakening its required inputs, safety gates, or output contract.
-4. List secondary follow-ups only when useful, unless the user explicitly asks for a command chain.
+1. Select one primary lane from the command matrix.
+2. Load the mapped reference or connected capability.
+3. Execute that workflow without weakening required inputs, safety gates, or output contracts.
+4. List secondary lane follow-ups only when useful, unless the user explicitly asks for a command chain.
 
-If no command is present, route by natural-language PM intent. If the request is not a PM/delivery job, do not force it into Pipa.
+If no command is present, route by natural-language operating intent. If the request is not about service-business operations, delivery, stakeholders, money, relationships, learning, or connected Pipa capabilities, do not force it into Pipa.
 
 ## Command Matrix
 
-| Group | Commands and aliases | Primary route |
+| Lane | Commands and aliases | Primary route |
 |---|---|---|
-| Start | `initiate`, `kickoff`, `context`, `charter`, `stakeholders` | `references/initiate.md` or a focused initiate reference |
-| Plan | `plan`, `requirements`, `scope`, `schedule`, `roadmap`, `raid`, `raci` | `references/plan.md` or a focused plan reference |
-| Execute | `execute`, `coordinate`, `delivery`, `iteration`, `change`, `handoff`, `dependency` | `references/execute.md` or a focused execute reference |
-| Monitor | `monitor`, `status`, `triage`, `budget`, `risk`, `escalate`, `blockers` | `references/monitor.md` or a focused monitor reference |
-| Close | `close`, `signoff`, `handover`, `lessons`, `archive`, `benefits` | `references/close.md` or a focused close reference |
-| Connected workflows | `audio`, `audio brief`, `voice session`, `talk by voice`, `automate`, `trigger`, `follow-up reminder`, `email reminder`, `email me later`, `composio` | Read-only standalone skills through `references/standalone-invocation.md` |
+| Find work | `find work`, `source work`, `lead`, `opportunity`, `pipeline`, `prospect`, `outreach`, `market signal`, `content idea` | `references/find-work.md` |
+| Define work | `define work`, `scope`, `requirements`, `brief`, `plan`, `charter`, `proposal`, `acceptance`, `decision` | `references/define-work.md` |
+| Deliver work | `deliver work`, `execute`, `coordinate`, `status`, `monitor`, `blocker`, `risk`, `handoff`, `dependency`, `triage` | `references/deliver-work.md` |
+| Get paid | `get paid`, `getting paid`, `invoice`, `payment`, `budget`, `billable`, `time review`, `margin` | `references/getting-paid.md` |
+| Grow relationships | `grow relationships`, `relationship`, `follow up`, `check-in`, `client health`, `stakeholder`, `retention`, `renewal` | `references/growing-relationships.md` |
+| Learn from the work | `learn from the work`, `lessons`, `retrospective`, `close`, `archive`, `handover`, `benefits`, `reuse` | `references/learning-from-the-work.md` |
+| Connected capabilities | `audio brief`, `voice session`, `talk by voice`, `trigger`, `automate`, `follow-up reminder`, `email reminder`, `time tracking`, `time entry`, `composio` | Authoritative standalone skills through `references/standalone-invocation.md` |
 | Help | `help`, `menu`, no argument | `references/command-menu.md` |
 
 ## Routing Rules
 
-1. If the first word after Pipa is a known command or alias, use that route.
-2. If no command is present but the request clearly matches a project, delivery, PM, stakeholder, or operational follow-through job, route by intent.
-3. Route to `pipa-follow-up-reminders` through `references/standalone-invocation.md` only when the user wants a specific one-shot follow-up reminder scheduled to their own email, such as “email me tomorrow at 9” or “remind me by email next Friday.” Do not route generic reminder, follow-up, drafting, or inbox-monitoring work there.
-4. If the request implies event reaction, webhook, watcher, listener, or trigger management, route to `pipa-triggers` through `references/standalone-invocation.md`.
-5. If the request requires an external app action through Composio, route to `composio` through `references/standalone-invocation.md` and never guess tool slugs.
-6. Route to `pipa-audio-brief` only when the user explicitly asks for an audio, listenable, spoken, phone-friendly, or listening-page brief. Generic “brief this,” “write a brief,” “requirements brief,” or “project brief” stays inside Pipa planning or summarization.
-7. Route to `pipa-huddle-beta` when the user explicitly asks for a live voice session, walking work session, voice talk-through, or planning conversation by voice. Generic text planning stays inside Pipa planning. Audio artifacts from source material stay in `pipa-audio-brief`.
-8. If multiple commands match, choose one primary route and list secondary follow-ups unless the user explicitly asks for a chain.
-9. If unknown, show the help/menu response and ask one clarifying question only when needed.
+1. If the first words after Pipa are a known lane command or alias, use that route.
+2. If no command is present but the request clearly matches a lane, route by intent.
+3. Lane intent wins by default. Route into a connected capability only when the user asks for that exact job.
+4. Route to `pipa-follow-up-reminders` through `references/standalone-invocation.md` only when the user wants a specific one-shot follow-up reminder scheduled to their own email, such as `email me tomorrow at 9` or `remind me by email next Friday`. Generic follow-up work stays in `grow relationships` or `deliver work`.
+5. Route to `pipa-triggers` only when the user asks for event-driven behavior, watcher/listener/webhook setup, or trigger management. Recurring delivery also needs the trigger proposal confirmation from that skill.
+6. Route to `composio` when live external app access or an external write is required. Start with Composio discovery/schema rules and never guess tool slugs.
+7. Route to `pipa-audio-brief` only when the user explicitly asks for an audio, listenable, spoken, phone-friendly, or listening-page brief. Generic `brief this`, requirements briefs, and project briefs stay in Pipa lanes.
+8. Route to `pipa-huddle-beta` only when the user explicitly asks for a live voice session or voice talk-through.
+9. Route to `pipa-time-tracking` when the user asks to start, stop, switch, backfill, update, archive, summarize, or review time records. Generic budget/margin/invoice reasoning stays in `get paid` unless time records are the explicit source or target.
+10. If multiple lanes match, choose one primary lane and list secondary follow-ups unless the user explicitly asks for a command chain.
+11. If unknown, show the help/menu response and ask one clarifying question only when needed.
+
+## Compatibility Aliases
+
+| Old wording | New public lane |
+|---|---|
+| `initiate`, `kickoff`, `context`, `charter`, `stakeholders` | `define work` |
+| `plan`, `requirements`, `scope`, `schedule`, `roadmap`, `raid`, `raci` | `define work` |
+| `execute`, `coordinate`, `delivery`, `iteration`, `dependency`, `handoff` | `deliver work` |
+| `monitor`, `status`, `triage`, `risk`, `escalate`, `blockers` | `deliver work` |
+| `budget`, `change control`, `billable time`, `margin` | `get paid` when money/billable intent dominates; otherwise `define work` for setup or `deliver work` for delivery risk |
+| `close`, `signoff`, `handover`, `lessons`, `archive`, `benefits` | `learn from the work` |
 
 ## Tie-Breakers
 
-- `status` means monitor status unless the user asks for setup/status of an automation or tool connection.
-- `triage` means monitor ticket/intake triage unless the user is triaging a Pipa command choice.
-- `budget` means monitor budget health when wording asks “how are we doing,” burn, forecast, variance, margin, or change control. It means initiate budget setup when wording asks to create, initialize, or refresh a tracker. If ambiguous, ask one short question.
-- `plan` means Pipa planning references, not delegation to another top-level PM skill.
-- `brief` alone is not audio. `audio brief`, `listenable brief`, `spoken walkthrough`, and `phone-friendly review` are audio.
-- `voice session`, `talk this through by voice`, and `walking work session` mean `pipa-huddle-beta` when the user wants live back-and-forth conversation, not a generated audio artifact.
-- One-shot email reminder wording such as `email me tomorrow`, `remind me by email`, `follow up with me by email at 9`, and `send me an email reminder next Friday` means `pipa-follow-up-reminders` only when the user wants a specific future reminder delivered to their email.
-- Generic follow-up planning, owner tracking, inbox monitoring, drafting, or “follow up with the client” work stays in Pipa delivery/monitoring or routes to Composio if an external app action is required. Do not use `pipa-follow-up-reminders` unless an email reminder to the user is being scheduled.
-- Event words such as `when`, `webhook`, `trigger`, `listener`, `watch`, and `on Linear issue created` route to Pipa triggers only when the user asks for event-driven behavior.
+- `status` means `deliver work` unless the user asks for setup/status of an automation or tool connection.
+- `triage` means `deliver work` for tickets/intake unless the user is triaging a Pipa route choice.
+- `budget` means `get paid` for burn, forecast, variance, margin, invoice, or change-control health. It means `define work` when wording asks to create or initialize a project budget baseline. If ambiguous, ask one short question.
+- `brief` alone means `define work` for a working brief or `deliver work` for a status brief, not audio.
+- `follow up with the client` means `grow relationships` unless the user asks to schedule an email reminder to themself.
+- `plan` remains supported but reframes as `define work`, not delegation to another top-level PM skill.
+- `monitor` remains supported but reframes as `deliver work`, unless money or relationship wording dominates.
+- `stakeholder map`, stakeholder setup, and stakeholder decision authority mean `define work`; relationship health, check-ins, and retention mean `grow relationships`.
+- `change control` means `get paid` only when money, billable, margin, budget, or invoice impact dominates. Scope or delivery changes stay in `define work` or `deliver work`.
 
-## Focused Command Routes
+## Source Method Map
 
-Use these direct mappings when the command or user wording is specific enough. Otherwise load the lifecycle router reference and let it select one primary focused workflow.
+Use these existing lifecycle references as internal methods when a lane needs more structure:
 
-| Command or intent | Direct reference |
+| Intent | Source references |
 |---|---|
-| `context`, foundational setup | `references/initiate-project-context.md` |
-| `budget` setup, create budget tracker | `references/initiate-budget.md` |
-| problem framing, success criteria | `references/initiate-problem-framing.md` |
-| `stakeholders`, approvals, decision authority | `references/initiate-stakeholder-map.md` |
-| `charter`, viability, go/no-go | `references/initiate-charter-and-viability-gate.md` |
-| `requirements`, acceptance boundaries | `references/plan-requirements-brief.md` |
-| `scope`, `schedule`, baseline | `references/plan-scope-schedule-baseline.md` |
-| `roadmap`, sequencing, prioritization | `references/plan-roadmap-and-prioritization.md` |
-| `raid`, `raci`, decision log | `references/plan-raid-raci-decision-setup.md` |
-| `coordinate`, work packages | `references/execute-work-package-coordination.md` |
-| `iteration`, sprint, cycle | `references/execute-iteration-cycle.md` |
-| `change`, change control | `references/execute-change-control.md` |
-| `dependency`, `handoff` during delivery | `references/execute-dependency-and-handoff.md` |
-| `triage`, intake, ticket response | `references/monitor-ticket-triage.md` |
-| `status`, steering update, progress snapshot | `references/monitor-status.md` |
-| `budget` health, burn, forecast, variance | `references/monitor-budget.md` |
-| `risk`, `escalate`, blockers, owner drift | `references/monitor-risk-escalation.md` |
-| `signoff`, acceptance | `references/close-acceptance-signoff.md` |
-| `handover`, transition, support ownership | `references/close-handover-transition.md` |
-| `lessons`, retrospective learning | `references/close-lessons-learned.md` |
-| `archive`, `benefits`, closure record | `references/close-benefits-review-and-archive.md` |
+| Foundational context, stakeholders, problem framing | `references/initiate.md`, `references/initiate-project-context.md`, `references/initiate-problem-framing.md`, `references/initiate-stakeholder-map.md`, `references/initiate-charter-and-viability-gate.md` |
+| Requirements, scope, baseline, roadmap, decisions | `references/plan.md`, `references/plan-requirements-brief.md`, `references/plan-scope-schedule-baseline.md`, `references/plan-roadmap-and-prioritization.md`, `references/plan-raid-raci-decision-setup.md` |
+| Delivery coordination, changes, dependencies | `references/execute.md`, `references/execute-work-package-coordination.md`, `references/execute-iteration-cycle.md`, `references/execute-change-control.md`, `references/execute-dependency-and-handoff.md` |
+| Status, intake, budget, risk | `references/monitor.md`, `references/monitor-status.md`, `references/monitor-ticket-triage.md`, `references/monitor-budget.md`, `references/monitor-risk-escalation.md` |
+| Closeout, handover, lessons, archive | `references/close.md`, `references/close-acceptance-signoff.md`, `references/close-handover-transition.md`, `references/close-lessons-learned.md`, `references/close-benefits-review-and-archive.md` |
 
 ## References
 
 - For command help, load `references/command-menu.md`.
 - For standalone workflows, load `references/standalone-invocation.md` and then the named standalone skill.
 - For PM communication style, use `references/communication-style.md` when returning user-facing reports, updates, escalations, or handoffs.
-- For lifecycle routes, load the lifecycle router reference first unless the command maps cleanly to a focused reference.
+- For lane workflows, load the lane reference first, then source lifecycle references only as needed.
 
 ## Gotchas
 
-- Do not route generic non-PM coding, writing, or research work into Pipa.
+- Do not route generic non-operational coding, writing, or research work into Pipa.
 - Do not present Pipa as an acronym.
 - Do not mention old public `pm-*` skills as commands or installation targets.
-- Do not edit or copy the internals of `pipa-audio-brief`, `pipa-huddle-beta`, `composio`, or `pipa-triggers`; they remain authoritative standalone workflows.
-- Do not weaken confirmation gates for triggers.
-- Do not invent owners, due dates, source facts, external-app slugs, or project decisions. Use `TBD` for unknowns.
+- Do not edit or copy the internals of `pipa-audio-brief`, `pipa-huddle-beta`, `pipa-follow-up-reminders`, `pipa-time-tracking`, `pipa-triggers`, or `composio`; they remain authoritative standalone workflows.
+- Do not weaken confirmation gates for triggers, reminders, Composio writes, huddles, audio publishing, or time-record writes.
+- Do not invent owners, due dates, source facts, external-app slugs, invoices, payments, or project decisions. Use `TBD` for unknowns.

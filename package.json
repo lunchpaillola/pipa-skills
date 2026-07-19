@@ -9,7 +9,8 @@
     "deploy:voice-relay": "npm run sync:voice-relay-template && npx wrangler deploy --config skills/pipa-huddle-beta/cloudflare/wrangler.jsonc",
     "dry-run:voice-relay": "npm run sync:voice-relay-template && npx wrangler deploy --dry-run --config skills/pipa-huddle-beta/cloudflare/wrangler.jsonc",
     "test:relay": "node --test skills/pipa-huddle-beta/scripts/relay-protocol.test.mjs skills/pipa-huddle-beta/cloudflare/worker-lifecycle.test.mjs",
-    "test": "npm run check:voice-relay-template && npm run test:relay"
+    "test:skill-evals": "ruby scripts/validate_skill_evals_test.rb",
+    "test": "npm run check:voice-relay-template && npm run test:skill-evals && npm run test:relay"
   },
   "dependencies": {
     "ws": "^8.18.3"

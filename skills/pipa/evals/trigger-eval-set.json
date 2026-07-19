@@ -1,10 +1,26 @@
 [
   {
-    "query": "Pipa status for the steering meeting: current state, blockers, and decisions needed.",
+    "query": "Pipa find work from these lead notes and tell me what deserves action now.",
     "should_trigger": true
   },
   {
-    "query": "Pipa triage these customer tickets and tell me what needs response today.",
+    "query": "Pipa define work from this client thread into scope and acceptance checks.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa deliver work: current state, blockers, owners, and next actions.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa get paid: which invoices or billable-time items need action?",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa grow relationships: who needs a check-in this week?",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa learn from the work from this completed project.",
     "should_trigger": true
   },
   {
@@ -12,15 +28,11 @@
     "should_trigger": true
   },
   {
-    "query": "Give me a project status update with the current risks and next owner actions.",
+    "query": "Pipa monitor open work and tell me what needs attention now.",
     "should_trigger": true
   },
   {
-    "query": "Pipa automate a weekly budget debrief every Monday morning.",
-    "should_trigger": true
-  },
-  {
-    "query": "Pipa trigger this when a Linear issue is created.",
+    "query": "Pipa close this project with signoff, handover, lessons, and archive readiness.",
     "should_trigger": true
   },
   {
@@ -29,6 +41,18 @@
   },
   {
     "query": "Pipa voice session so I can talk this plan through while walking.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa trigger this when a Linear issue is created.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa remind me by email next Friday at 9 to chase this invoice.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa track time for this client call.",
     "should_trigger": true
   },
   {
@@ -52,35 +76,15 @@
     "should_trigger": false
   },
   {
-    "query": "Pipa initiate this project and set up plan-ready context.",
-    "should_trigger": true
-  },
-  {
-    "query": "Pipa execute this delivery cycle and coordinate active handoffs.",
-    "should_trigger": true
-  },
-  {
-    "query": "Pipa close this project with signoff, handover, lessons, and archive readiness.",
-    "should_trigger": true
-  },
-  {
-    "query": "Pipa monitor open work and tell me what needs attention now.",
-    "should_trigger": true
-  },
-  {
-    "query": "Pipa budget health check for Project Delta.",
-    "should_trigger": true
-  },
-  {
-    "query": "Pipa risk escalation pass for stuck blockers and owner gaps.",
-    "should_trigger": true
-  },
-  {
-    "query": "Pipa help",
-    "should_trigger": true
+    "query": "Make a generic list of companies in fintech.",
+    "should_trigger": false
   },
   {
     "query": "Start a voice session with my agent to shape this project.",
+    "should_trigger": true
+  },
+  {
+    "query": "Give me a project status update with current risks and next owner actions.",
     "should_trigger": true
   }
 ]
