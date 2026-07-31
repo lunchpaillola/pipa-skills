@@ -149,9 +149,9 @@
     {
       "id": "pipa-composio-utility-1",
       "prompt": "Pipa use Composio to look up this GitHub issue and summarize the current status.",
-      "expected_output": "Routes directly to the standalone Composio skill for the connected-app action and preserves discovery/schema/provenance rules.",
+      "expected_output": "Routes directly to the standalone `composio-mcp` skill for the connected-app action and preserves discovery/schema/provenance rules.",
       "assertions": [
-        "Does the output select `composio` rather than `pipa-tools` or `pipa-manage`?",
+        "Does the output select `composio-mcp` rather than `pipa-tools` or `pipa-manage`?",
         "Does it require Composio tool discovery/schema-safe execution before claiming issue status?",
         "Does it include provenance requirements for the GitHub issue or tool result?"
       ],
@@ -260,7 +260,7 @@
       "prompt": "Pipa get work from Gmail and Linear, then create a GitHub issue for the best opportunity.",
       "expected_output": "Routes through Composio discovery/schema rules for live external app access and does not invent tool slugs or write externally without confirmation.",
       "assertions": [
-        "Does the output route external app access/action through `composio`?",
+        "Does the output route external app access/action through `composio-mcp`?",
         "Does it require tool discovery or verified tool information before execute?",
         "Does it avoid inventing Composio tool slugs or claiming live records before fetching them?"
       ],
@@ -271,7 +271,7 @@
       "prompt": "Pipa get work from these pasted lead notes and recommend the next outreach angle.",
       "expected_output": "Stays in the get-work lane and does not route to Composio because the source material is already supplied and no live external app action was requested.",
       "assertions": [
-        "Does the output avoid selecting `composio`?",
+        "Does the output avoid selecting `composio-mcp`?",
         "Does it work from the pasted source material instead of claiming live app access?",
         "Does it avoid inventing external app records, tool slugs, or fetched sources?"
       ],

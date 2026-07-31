@@ -17,6 +17,8 @@ Do not run connected-tool or memory checks until the user accepts setup.
 
 After the user accepts setup, treat clear answers or explicit skips in the current request as confirmed and save them before asking anything. Then ask only the remaining questions, conversationally and one at a time:
 
+Before the first profile or connector-map write, create `~/.pipa/` if it does not exist.
+
 1. `What do you do?`
 2. `Who do you help or work with?`
 3. `How do you like to work?`
