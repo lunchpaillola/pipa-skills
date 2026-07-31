@@ -35,7 +35,7 @@ When present, read `~/.pipa/profile.md` once for durable business context. If mi
 
 - Do not claim live inbox, CRM, Slack, Reddit, or web access unless a connected tool was actually used.
 - Route setup of connected sources, automations, or recurring monitoring to `pipa-manage`.
-- Route standalone tool use to `pipa-tools`.
+- Route standalone utility requests to `pipa-tools`.
 
 ## Gotchas
 

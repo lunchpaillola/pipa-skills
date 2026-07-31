@@ -8,7 +8,6 @@ Use for first-time setup or review/update of the global Pipa business profile at
 2. If it is missing, offer setup as a soft, non-blocking next step. Do not interrupt concrete work.
 3. If `setup_status: incomplete`, resume at the first unanswered question. If all three are answered or skipped, resume at connector review.
 4. If `setup_status: complete`, show the existing profile and ask what should change. Preserve complete status and unchanged fields; review connectors only when requested.
-5. Never use missing `.agents/project-context.md` as a setup signal.
 
 Do not run connected-tool or memory checks until the user accepts setup.
 

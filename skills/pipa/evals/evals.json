@@ -86,7 +86,7 @@
       "expected_output": "Supports old initiate wording by reframing it into the define-work lane.",
       "assertions": [
         "Does the output route old `initiate` wording into `define work`?",
-        "Does it preserve project context, stakeholders, risks, and plan-ready handoff checks?",
+        "Does it preserve reusable source facts, stakeholders, risks, and plan-ready handoff checks?",
         "Does it avoid exposing lifecycle routes as the public command surface?"
       ],
       "files": []
@@ -147,11 +147,11 @@
       "files": []
     },
     {
-      "id": "pipa-tools-composio-utility-1",
-      "prompt": "Pipa tools: use Composio to look up this GitHub issue and summarize the current status.",
-      "expected_output": "Routes to pipa-tools/Composio for a one-off connected-app utility action and preserves discovery/schema/provenance rules.",
+      "id": "pipa-composio-utility-1",
+      "prompt": "Pipa use Composio to look up this GitHub issue and summarize the current status.",
+      "expected_output": "Routes directly to the standalone Composio skill for the connected-app action and preserves discovery/schema/provenance rules.",
       "assertions": [
-        "Does the output select `pipa-tools`/Composio rather than `pipa-manage`?",
+        "Does the output select `composio` rather than `pipa-tools` or `pipa-manage`?",
         "Does it require Composio tool discovery/schema-safe execution before claiming issue status?",
         "Does it include provenance requirements for the GitHub issue or tool result?"
       ],
@@ -317,7 +317,7 @@
       "assertions": [
         "Does the output select `pipa-manage` as the primary route?",
         "Does it check `~/.pipa/profile.md` before deciding first-time setup versus profile review?",
-        "Does it avoid routing first-time setup into a business lane or project-context intake?"
+        "Does it avoid routing first-time setup into a business lane?"
       ],
       "files": []
     },
@@ -338,29 +338,18 @@
       "expected_output": "Routes to the relevant business-work flow without demanding setup first.",
       "assertions": [
         "Does the concrete delivery request win over missing-profile setup?",
-        "Does it avoid asking project-context or first-time biographical questions before helping?",
+        "Does it avoid asking first-time biographical questions before helping?",
         "Does any setup CTA remain soft and secondary?"
-      ],
-      "files": []
-    },
-    {
-      "id": "pipa-missing-project-context-negative-1",
-      "prompt": "Pipa plan this work. There is no .agents/project-context.md in the repo.",
-      "expected_output": "Routes directly to define work and does not offer or start legacy project-context intake.",
-      "assertions": [
-        "Does the output route `plan` to `define work`?",
-        "Does it avoid treating missing `.agents/project-context.md` as missing Pipa setup?",
-        "Does it avoid offering to create `.agents/project-context.md` or a project pack?"
       ],
       "files": []
     },
     {
       "id": "pipa-initiate-budget-preserved-1",
       "prompt": "Pipa initiate a lightweight budget tracker for this project.",
-      "expected_output": "Routes through define work to the preserved budget setup reference without project-context intake.",
+      "expected_output": "Routes through define work to the preserved budget setup reference.",
       "assertions": [
         "Does it select budget setup and load `skills/pipa-get-paid/references/initiate-budget.md`?",
-        "Does it avoid project-context intake?"
+        "Does it keep the response focused on budget setup?"
       ],
       "files": []
     },
@@ -370,7 +359,7 @@
       "expected_output": "Routes through define work to the preserved problem-framing reference.",
       "assertions": [
         "Does it select problem framing and load `references/initiate-problem-framing.md`?",
-        "Does it avoid project-context intake?"
+        "Does it keep the response focused on problem framing?"
       ],
       "files": []
     },
@@ -380,7 +369,7 @@
       "expected_output": "Routes through define work to the preserved stakeholder-map reference.",
       "assertions": [
         "Does it select stakeholder mapping and load `references/initiate-stakeholder-map.md`?",
-        "Does it avoid project-context intake?"
+        "Does it keep the response focused on stakeholder mapping?"
       ],
       "files": []
     },
@@ -390,7 +379,7 @@
       "expected_output": "Routes through define work to the preserved charter-and-viability reference.",
       "assertions": [
         "Does it select charter and viability and load `references/initiate-charter-and-viability-gate.md`?",
-        "Does it avoid project-context intake?"
+        "Does it keep the response focused on charter readiness and viability?"
       ],
       "files": []
     }

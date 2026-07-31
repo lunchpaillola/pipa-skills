@@ -28,7 +28,7 @@
     "should_trigger": false
   },
   {
-    "query": "Create project context for this repository.",
+    "query": "Draft a client project brief.",
     "should_trigger": false
   }
 ]

@@ -36,7 +36,7 @@ Identify what needs to be framed now:
 
 Prioritize these sources:
 
-1. project context and kickoff notes
+1. briefs and kickoff notes
 2. plans, briefs, and stakeholder notes
 3. tracker data and recurring issue patterns
 4. user/client feedback artifacts

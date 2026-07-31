@@ -6,7 +6,7 @@ Use for Pipa connected-tool setup, status, explanation, or troubleshooting.
 
 - Not a business lane.
 - `pipa-manage` owns setup/status/config.
-- `pipa-tools` owns one-off live app actions.
+- Business lanes own the job; `composio-mcp` performs live app actions.
 - Business lanes own intent and request tool access when needed.
 - `composio-mcp` owns discovery, auth, schemas, and execution.
 - `~/.pipa/CONNECTORS.md` records the user's selected capability-to-tool mappings; Composio remains the source of truth for live connection status.
@@ -95,6 +95,6 @@ Use when Pipa needs a new app or missing account connection.
 - Do not ask users for raw secrets in chat.
 - Do not test connections with writes, sends, publishes, reminders, triggers, or finance changes.
 - If user connects a tool for a lane, keep lane objective visible and route only setup here.
-- If user uses an already-connected app now, route to `pipa-tools`/Composio or lane + Composio execution.
+- If the user wants to use an already-connected app now, keep the business lane objective and use `composio-mcp` for execution.
 - Lane refs name common categories; this file owns setup/status.
 - Update the global map only from verified discovery results or explicit user choices; do not guess mappings.

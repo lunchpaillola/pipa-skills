@@ -33,7 +33,7 @@ Set up and maintain Pipa as an operations agent.
 
 - If the user is doing business work now, route to the relevant business lane.
 - If the user wants a standalone utility output, route to `pipa-tools`.
-- Do not require project context or block concrete work because `~/.pipa/profile.md` is missing.
+- Do not block concrete work because `~/.pipa/profile.md` is missing.
 - First-time setup must not create tasks, reminders, automations, triggers, or recurring workflows.
 - Do not create automations, connect tools, or write memory without explicit confirmation when the action changes external state.
 

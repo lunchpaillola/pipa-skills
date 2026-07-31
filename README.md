@@ -68,7 +68,7 @@ cp -r pipa-skills/skills/* .agents/skills/
 | Skill | Description |
 |---|---|
 | [`pipa-manage`](skills/pipa-manage/) | Onboards and manages Pipa itself: business profile, preferences, company brain, memory, connectors, automations, triggers, and loops. |
-| [`pipa-tools`](skills/pipa-tools/) | Routes standalone utilities: audio briefs, voice huddles, follow-up reminders, time tracking, Composio/tool access, and future hosted utilities. |
+| [`pipa-tools`](skills/pipa-tools/) | Routes standalone utilities: audio briefs, voice huddles, follow-up reminders, time tracking, and future hosted utilities. |
 
 ### Breakout Skills
 

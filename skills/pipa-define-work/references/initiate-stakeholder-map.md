@@ -35,7 +35,7 @@ Identify what is needed now:
 
 Use the strongest available sources:
 
-1. project context and kickoff notes
+1. briefs and kickoff notes
 2. existing org/role notes, meeting records, and plans
 3. tracker ownership signals and escalation history
 

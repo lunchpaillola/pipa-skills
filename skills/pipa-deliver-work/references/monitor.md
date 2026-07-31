@@ -40,7 +40,7 @@ Before running a mode, identify what the workflow can use now:
 - communication tools (for example Slack/Email)
 - docs/context sources (for example Notion/Confluence/files)
 
-If project context already lists tools, use that. If not, infer from artifacts and state assumptions.
+Infer available tools from the request, connected-tool discovery, and visible artifacts; state assumptions.
 
 If required data is unavailable:
 

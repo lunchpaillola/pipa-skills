@@ -56,7 +56,7 @@
     "should_trigger": true
   },
   {
-    "query": "Pipa tools: use Composio to create a GitHub issue from this bug report.",
+    "query": "Pipa use Composio to create a GitHub issue from this bug report.",
     "should_trigger": true
   },
   {
@@ -97,10 +97,6 @@
   },
   {
     "query": "Update my Pipa business profile.",
-    "should_trigger": true
-  },
-  {
-    "query": "Pipa plan this work even though the repository has no project-context file.",
     "should_trigger": true
   }
 ]
