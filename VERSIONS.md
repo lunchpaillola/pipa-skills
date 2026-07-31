@@ -2,7 +2,7 @@
 
 ## v2.0.1
 
-- Added first-time Pipa setup and resumable global business profiles through `pipa-manage` v0.2.0.
+- Added first-time Pipa setup, resumable global business profiles, and a Composio-backed `~/.pipa/CONNECTORS.md` map through `pipa-manage` v0.2.0.
 - Updated `pipa` to v2.0.1 and the six business lanes to v0.1.1 so global profile context is optional and never blocks concrete work.
 - Removed the legacy project-context intake and added setup, routing, connector-safety, and regression eval coverage.
 

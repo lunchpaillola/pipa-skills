@@ -56,7 +56,7 @@ If the user provides a company URL and wants drafting help, read the public webs
 
 ### Step 3: Review relevant connections
 
-Load `references/connectors.md` and review only connections relevant to what the user wants Pipa to help with. A declined, unavailable, or failed connection does not block setup completion or erase profile facts.
+Load `references/connectors.md`. Use `composio-mcp` discovery to inspect existing active connections, map relevant capabilities, and create or refresh `~/.pipa/CONNECTORS.md` before offering new connections. A declined, unavailable, or failed connection does not block setup completion or erase profile facts.
 
 ### Step 4: Complete setup
 
@@ -65,7 +65,8 @@ After connector review, update the profile metadata to `setup_status: complete` 
 Return:
 
 - the captured profile, including skipped or unknown fields
-- connection state: connected, declined, unavailable, failed, or not reviewed
+- the connector map path and mapped capabilities
+- connection state: `connected`, `needs-auth`, `declined`, `unavailable`, `failed`, `not-reviewed`, or `TBD`
 - one optional next step
 
 ## Completed Profile Updates

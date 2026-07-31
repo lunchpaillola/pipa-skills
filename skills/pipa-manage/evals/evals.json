@@ -6,11 +6,22 @@
     {
       "id": "pipa-setup-first-time-1",
       "prompt": "Set up Pipa for my business. I do brand strategy for early-stage founders and prefer concise async updates.",
-      "expected_output": "Checks the global profile, gets setup acceptance, asks only missing core questions one at a time, and saves incremental profile state before connector review and completion.",
+      "expected_output": "Checks the global profile, gets setup acceptance, asks only missing core questions one at a time, saves incremental profile state, and refreshes the global connector map before completion.",
       "assertions": [
         "Does it use `~/.pipa/profile.md` as the setup state and business-context source of truth?",
         "Does it ask only what the user does, who they help or work with, and how they like to work, one at a time and without repeating supplied answers?",
-        "Does it save answered or skipped fields incrementally with `setup_status: incomplete`, then mark the profile complete after connector review?"
+        "Does it save profile fields incrementally, refresh `~/.pipa/CONNECTORS.md` from Composio discovery, then mark the profile complete after connector review?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-existing-connections-1",
+      "prompt": "Set up Pipa. Composio already has active connections for Linear, Slack, and Notion.",
+      "expected_output": "Discovers existing active connections, maps relevant capability categories, and creates or refreshes the global connector map without restarting authorization.",
+      "assertions": [
+        "Does it use Composio discovery as the source of truth for active status?",
+        "Does it update only relevant mappings in `~/.pipa/CONNECTORS.md` and preserve unrelated mappings?",
+        "Does it avoid requesting authorization again, storing credentials, or guessing ambiguous category mappings?"
       ],
       "files": []
     },
@@ -54,7 +65,7 @@
       "assertions": [
         "Does it recommend only connections relevant to the requested help?",
         "Does it discover connection support and current status before availability claims?",
-        "Does it ask before OAuth and verify successful connections with a read-only check rather than a write?"
+        "Does it ask before OAuth, verify with a read-only check, and update `~/.pipa/CONNECTORS.md` without storing credentials?"
       ],
       "files": []
     },

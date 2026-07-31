@@ -13,7 +13,7 @@ Set up and maintain Pipa as an operations agent.
 
 - First-time Pipa setup and global business-profile review or updates.
 - Business profile, company brain, memory, permissions, and access review.
-- Connected tool setup, connector status, and Composio connection readiness.
+- Connected tool setup, global connector-map maintenance, and Composio connection readiness.
 - Automations, triggers, loops, scheduled workflows, and recurring work setup.
 
 ## References
