@@ -1,8 +1,8 @@
 ---
 name: pipa
-description: "Use when the user invokes Pipa and needs routing across service-business operations, Pipa setup/management, or Pipa tools. Routes to business lanes: get work, define work, deliver work, get paid, keep clients, improve operations; to Manage Pipa for setup, tools, automations, memory, and preferences; or to Pipa Tools for audio briefs, huddles, reminders, time tracking, and Composio-backed utilities."
+description: "Use when the user invokes Pipa and needs routing across service-business operations, Pipa setup/management, or Pipa tools. Routes to business lanes: get work, define work, deliver work, get paid, keep clients, improve operations; to Manage Pipa for setup, tools, automations, memory, and preferences; or to Pipa Tools for audio briefs, huddles, reminders, and time tracking."
 metadata:
-  version: 2.0.0
+  version: 2.0.1
 ---
 
 # Pipa
@@ -17,7 +17,7 @@ Choose one primary destination, hand off to that skill or reference, return sour
 2. **Pick one primary destination.** Use the command matrix, routing rules, and tie-breakers. If no command is present, route by conversation context when safe.
 3. **Load the destination.** Prefer the standalone skill named in the matrix. Use router references only for help/menu details.
 4. **Check route-specific gotchas.** Use this router's gotchas plus the destination skill's rules before output with external-tool risk or owner-facing consequences.
-5. **Use connectors only when needed.** For setup/status, route to `pipa-manage`. For live app reads/writes, route to `pipa-tools`/Composio with discovery and schema checks.
+5. **Use connectors only when needed.** For setup/status, route to `pipa-manage`. For live app reads/writes, keep the business lane objective, use `~/.pipa/CONNECTORS.md` when present to resolve the preferred toolkit, then use `composio-mcp` to verify access and execute with discovery and schema checks.
 6. **Run the workflow.** Preserve required inputs, approval gates, provenance, and output contract. Use `TBD` for missing facts.
 7. **Return the smallest useful next step.** Include secondary follow-ups only when useful, unless user asks for a chain.
 
@@ -34,7 +34,7 @@ No command? Use conversation context to choose the best destination. Show the me
 | Run your business: Keep clients | `keep clients`, `relationship`, `follow up`, `check-in`, `client health`, `stakeholder`, `retention`, `renewal`, `testimonial`, `referral` | `pipa-keep-clients` |
 | Run your business: Improve operations | `improve operations`, `lessons`, `retrospective`, `close`, `archive`, `handover`, `benefits`, `reuse`, `SOP`, `template` | `pipa-improve-operations` |
 | Manage Pipa | `manage pipa`, `setup`, `onboard pipa`, `business profile`, `preferences`, `company brain`, `memory`, `connect tools`, `connector`, `automation`, `trigger`, `loop`, `recurring workflow` | `pipa-manage` |
-| Pipa Tools | `pipa tools`, `audio brief`, `voice session`, `talk by voice`, `follow-up reminder`, `email reminder`, `time tracking`, `time entry`, `composio`, `hosted utility` | `pipa-tools` |
+| Pipa Tools | `pipa tools`, `audio brief`, `voice session`, `talk by voice`, `follow-up reminder`, `email reminder`, `time tracking`, `time entry`, `hosted utility` | `pipa-tools` |
 | Handoff checks | `get-to-define`, `define-to-deliver`, `deliver-to-get-paid`, `deliver-to-relationships`, `improve-to-keep-clients` | source lane first, then named next lane follow-up |
 | Help | `help`, `menu`, sparse context, unsafe/unknown route | `references/help-menu.md` |
 
@@ -45,13 +45,14 @@ No command? Use conversation context to choose the best destination. Show the me
 3. No command, missing command, or unknown command with clear context -> route by intent instead of showing menu.
 4. Business lane intent wins for business work. Tool/setup intent wins only when the user asks to operate Pipa or use a standalone utility.
 5. `pipa-manage` owns Pipa onboarding, business profile, preferences, company brain, connected tools, automations, triggers, and recurring loops.
-6. `pipa-tools` owns standalone hosted utilities and exact utility jobs: audio briefs, voice huddles, follow-up reminders, time tracking, and Composio-backed tool access.
-7. Generic client follow-up stays `keep clients` or `deliver work`. One-shot self-email reminders go through `pipa-tools` to `pipa-follow-up-reminders`.
-8. One-time status/update work stays `deliver work`. Event-driven or recurring setup goes through `pipa-manage` to `pipa-triggers`.
-9. Live external app access or writes go through `pipa-tools`/Composio discovery/schema rules. Never guess slugs.
-10. Multiple matches -> one primary destination plus secondary follow-ups, unless user asks for chain.
-11. Handoff checks -> return `Objective`, `Source Check` or `Tool Access Check`, `Current Signal`, actions with owner/date/evidence, `TBD` gaps, and next lane follow-ups. Do not execute multiple lanes unless asked.
-12. Sparse or unsafe route -> help/menu plus one clarifying question only if needed.
+6. A missing `~/.pipa/profile.md` never overrides a concrete business-work route. Setup may be offered softly after the requested work.
+7. `pipa-tools` owns standalone hosted utilities and exact utility jobs: audio briefs, voice huddles, follow-up reminders, and time tracking.
+8. Generic client follow-up stays `keep clients` or `deliver work`. One-shot self-email reminders go through `pipa-tools` to `pipa-follow-up-reminders`.
+9. One-time status/update work stays `deliver work`. Event-driven or recurring setup goes through `pipa-manage` to `pipa-triggers`.
+10. Live external app access or writes use the standalone `composio-mcp` skill while the selected business lane keeps ownership of the job. A connector-map entry selects a preferred toolkit but never proves live access. Never guess slugs.
+11. Multiple matches -> one primary destination plus secondary follow-ups, unless user asks for chain.
+12. Handoff checks -> return `Objective`, `Source Check` or `Tool Access Check`, `Current Signal`, actions with owner/date/evidence, `TBD` gaps, and next lane follow-ups. Do not execute multiple lanes unless asked.
+13. Sparse or unsafe route -> help/menu plus one clarifying question only if needed.
 
 ## Tie-Breakers
 
@@ -71,16 +72,16 @@ No command? Use conversation context to choose the best destination. Show the me
 ## References
 
 - Help/menu: load `references/help-menu.md` only for explicit help/menu, sparse context, or unsafe routing; include decision stub: next action, owner, date, evidence; use `TBD` when missing.
-- Utility workflows: route through `pipa-tools` or `pipa-manage`, then named standalone skill.
+- Utility workflows route through `pipa-tools`; Pipa configuration routes through `pipa-manage`.
 - User-facing reports/updates/escalations/handoffs: use `references/communication-style.md`.
 - Lane workflows: load the standalone lane skill. The lane skill owns its references and examples.
-- Connectors: use `pipa-manage` for connection setup/status and `pipa-tools`/Composio for live app reads/writes.
+- Connectors: use `pipa-manage` for connection setup/status and `composio-mcp` for live app reads/writes within the selected business lane.
 
 ## Gotchas
 
 - Do not route generic coding, writing, or research into Pipa.
 - Do not present Pipa as an acronym.
 - Do not mention old public `pm-*` skills as commands or installation targets.
-- Do not edit/copy internals of `pipa-audio-brief`, `pipa-huddle-beta`, `pipa-follow-up-reminders`, `pipa-time-tracking`, `pipa-triggers`, or `composio`; standalone skills own them.
+- Do not edit/copy internals of `pipa-audio-brief`, `pipa-huddle-beta`, `pipa-follow-up-reminders`, `pipa-time-tracking`, `pipa-triggers`, or `composio-mcp`; standalone skills own them.
 - Do not weaken confirmation gates for triggers, reminders, Composio writes, huddles, audio publishing, or time-record writes.
 - Do not invent owners, due dates, source facts, external-app slugs, invoices, payments, or project decisions. Use `TBD` for unknowns.

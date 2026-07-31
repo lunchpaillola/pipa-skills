@@ -1,8 +1,8 @@
 ---
 name: pipa-tools
-description: "Use when the user wants a standalone Pipa utility or hosted capability: audio briefs, voice huddles, follow-up reminders, time tracking, Composio/tool access, or future small Pipa utilities."
+description: "Use when the user wants a standalone Pipa utility or hosted capability: audio briefs, voice huddles, follow-up reminders, time tracking, or future small Pipa utilities."
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Pipa Tools
@@ -15,14 +15,13 @@ Route standalone utilities without turning them into business lanes.
 - Live voice conversation or huddle -> `pipa-huddle-beta`.
 - One-shot self-email reminder -> `pipa-follow-up-reminders`.
 - Start/stop/switch/backfill/update/archive/summarize time records -> `pipa-time-tracking`.
-- Live external app access or writes -> `composio` with discovery/schema-safe execution.
 
 ## Output Contract
 
 - Selected tool.
 - Why this is a utility instead of a business lane.
 - Required inputs and blockers.
-- Confirmation gate before external writes, publishing, reminders, huddles, or time-record changes.
+- Confirmation gate before publishing, reminders, huddles, or time-record changes.
 - Source/provenance when connected tools are used.
 
 ## Boundaries

@@ -31,8 +31,6 @@ Identify what transition outcome is needed:
 - support readiness confirmation
 - conditional handover with remaining actions
 
-If `.agents/project-context.md` exists, read it first.
-
 ## Step 2: Check tools and source quality
 
 Use strongest available sources:

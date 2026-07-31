@@ -31,8 +31,6 @@ Confirm what needs to be operationalized now:
 - ownership clarity
 - decision traceability and review rhythm
 
-If `.agents/project-context.md` exists, read it first.
-
 ## Step 2: Check tools and source quality
 
 Use strongest available sources:

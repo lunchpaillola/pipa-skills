@@ -2,12 +2,14 @@
 name: pipa-keep-clients
 description: "Use when the user wants Pipa to maintain client trust: follow-ups, check-ins, client health, retention, renewals, referrals, testimonials, stakeholder care, and relationship-sensitive next actions."
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Pipa Keep Clients
 
 Protect trust after and around delivery.
+
+When present, read `~/.pipa/profile.md` once for durable business context. If missing, continue without blocking and do not start setup unless the user asks or a soft setup offer is useful.
 
 ## Use For
 

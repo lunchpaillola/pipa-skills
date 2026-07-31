@@ -31,8 +31,6 @@ Confirm whether user needs:
 - viability decision
 - explicit start conditions and owner follow-through
 
-If `.agents/project-context.md` exists, read it first.
-
 ## Step 2: Check tools and source quality
 
 Use strongest available sources:

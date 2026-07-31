@@ -1,0 +1,34 @@
+[
+  {
+    "query": "Set up Pipa for my business.",
+    "should_trigger": true
+  },
+  {
+    "query": "Onboard Pipa and help me connect the tools that matter.",
+    "should_trigger": true
+  },
+  {
+    "query": "Update my Pipa business profile and working preferences.",
+    "should_trigger": true
+  },
+  {
+    "query": "Resume my incomplete Pipa setup.",
+    "should_trigger": true
+  },
+  {
+    "query": "Check which tools Pipa can access.",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me plan this urgent client delivery.",
+    "should_trigger": false
+  },
+  {
+    "query": "Summarize this Linear issue without changing anything.",
+    "should_trigger": false
+  },
+  {
+    "query": "Draft a client project brief.",
+    "should_trigger": false
+  }
+]

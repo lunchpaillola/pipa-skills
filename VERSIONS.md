@@ -1,5 +1,12 @@
 # Versions
 
+## v2.0.1
+
+- Added first-time Pipa setup, resumable global business profiles, and a Composio-backed `~/.pipa/CONNECTORS.md` map through `pipa-manage` v0.2.0.
+- Updated `pipa` to v2.0.1 and the six business lanes to v0.1.1 so global profile context is optional and never blocks concrete work.
+- Simplified define-work intake and added setup, routing, connector-safety, and regression eval coverage.
+- Updated `pipa-tools` to v0.1.1 so it owns utilities only; business lanes now invoke the standalone Composio skill directly for live app work.
+
 ## v2.0.0
 
 - Updated `pipa` to v2.0.0 with six business lanes: get work, define work, deliver work, get paid, keep clients, and improve operations.

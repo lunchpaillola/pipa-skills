@@ -2,12 +2,14 @@
 name: pipa-get-work
 description: "Use when the user wants Pipa to help a small service business get work: content, inbound, leads, pipeline, opportunities, referrals, outreach, market signals, and next opportunity actions."
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Pipa Get Work
 
 Help service businesses create and qualify opportunities.
+
+When present, read `~/.pipa/profile.md` once for durable business context. If missing, continue without blocking and do not start setup unless the user asks or a soft setup offer is useful.
 
 ## Use For
 
@@ -33,7 +35,7 @@ Help service businesses create and qualify opportunities.
 
 - Do not claim live inbox, CRM, Slack, Reddit, or web access unless a connected tool was actually used.
 - Route setup of connected sources, automations, or recurring monitoring to `pipa-manage`.
-- Route standalone tool use to `pipa-tools`.
+- Route standalone utility requests to `pipa-tools`.
 
 ## Gotchas
 

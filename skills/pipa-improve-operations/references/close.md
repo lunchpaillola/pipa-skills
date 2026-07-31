@@ -31,8 +31,6 @@ Identify what closure outcome the user needs now:
 - lessons learned capture for reuse
 - benefits review and archive readiness
 
-If `.agents/project-context.md` exists, read it first.
-
 ### Step 2: Check context, tools, and source coverage
 
 Identify available closure sources now:

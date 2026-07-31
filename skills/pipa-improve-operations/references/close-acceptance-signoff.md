@@ -31,8 +31,6 @@ Identify what closure decision is needed now:
 - conditional signoff with follow-up actions
 - no-signoff with explicit blockers
 
-If `.agents/project-context.md` exists, read it first.
-
 ## Step 2: Check tools and source quality
 
 Use strongest available sources:

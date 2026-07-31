@@ -86,7 +86,7 @@
       "expected_output": "Supports old initiate wording by reframing it into the define-work lane.",
       "assertions": [
         "Does the output route old `initiate` wording into `define work`?",
-        "Does it preserve project context, stakeholders, risks, and plan-ready handoff checks?",
+        "Does it preserve reusable source facts, stakeholders, risks, and plan-ready handoff checks?",
         "Does it avoid exposing lifecycle routes as the public command surface?"
       ],
       "files": []
@@ -147,11 +147,11 @@
       "files": []
     },
     {
-      "id": "pipa-tools-composio-utility-1",
-      "prompt": "Pipa tools: use Composio to look up this GitHub issue and summarize the current status.",
-      "expected_output": "Routes to pipa-tools/Composio for a one-off connected-app utility action and preserves discovery/schema/provenance rules.",
+      "id": "pipa-composio-utility-1",
+      "prompt": "Pipa use Composio to look up this GitHub issue and summarize the current status.",
+      "expected_output": "Routes directly to the standalone `composio-mcp` skill for the connected-app action and preserves discovery/schema/provenance rules.",
       "assertions": [
-        "Does the output select `pipa-tools`/Composio rather than `pipa-manage`?",
+        "Does the output select `composio-mcp` rather than `pipa-tools` or `pipa-manage`?",
         "Does it require Composio tool discovery/schema-safe execution before claiming issue status?",
         "Does it include provenance requirements for the GitHub issue or tool result?"
       ],
@@ -260,7 +260,7 @@
       "prompt": "Pipa get work from Gmail and Linear, then create a GitHub issue for the best opportunity.",
       "expected_output": "Routes through Composio discovery/schema rules for live external app access and does not invent tool slugs or write externally without confirmation.",
       "assertions": [
-        "Does the output route external app access/action through `composio`?",
+        "Does the output route external app access/action through `composio-mcp`?",
         "Does it require tool discovery or verified tool information before execute?",
         "Does it avoid inventing Composio tool slugs or claiming live records before fetching them?"
       ],
@@ -271,7 +271,7 @@
       "prompt": "Pipa get work from these pasted lead notes and recommend the next outreach angle.",
       "expected_output": "Stays in the get-work lane and does not route to Composio because the source material is already supplied and no live external app action was requested.",
       "assertions": [
-        "Does the output avoid selecting `composio`?",
+        "Does the output avoid selecting `composio-mcp`?",
         "Does it work from the pasted source material instead of claiming live app access?",
         "Does it avoid inventing external app records, tool slugs, or fetched sources?"
       ],
@@ -307,6 +307,79 @@
         "Does the output avoid inventing a `frobnicate` workflow?",
         "Does it route by the clear delivery-plan context or show the six business lanes plus Manage Pipa/Pipa Tools only if routing is unsafe?",
         "Does it ask at most one clarifying question if needed?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-route-1",
+      "prompt": "Pipa set yourself up for my consulting business.",
+      "expected_output": "Routes first-time setup to pipa-manage and its focused setup workflow.",
+      "assertions": [
+        "Does the output select `pipa-manage` as the primary route?",
+        "Does it check `~/.pipa/profile.md` before deciding first-time setup versus profile review?",
+        "Does it avoid routing first-time setup into a business lane?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-profile-update-route-1",
+      "prompt": "Pipa update my business profile and how I like to work.",
+      "expected_output": "Routes to pipa-manage profile review/update rather than restarting first-time setup.",
+      "assertions": [
+        "Does the output select `pipa-manage`?",
+        "Does it review or update the existing global profile rather than assume first-time setup?",
+        "Does it avoid writing external memory or tools without explicit user intent?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-nonblocking-work-1",
+      "prompt": "Pipa help me with this Linear delivery ticket. I do not have a Pipa profile yet.",
+      "expected_output": "Routes to the relevant business-work flow without demanding setup first.",
+      "assertions": [
+        "Does the concrete delivery request win over missing-profile setup?",
+        "Does it avoid asking first-time biographical questions before helping?",
+        "Does any setup CTA remain soft and secondary?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-initiate-budget-preserved-1",
+      "prompt": "Pipa initiate a lightweight budget tracker for this project.",
+      "expected_output": "Routes through define work to the preserved budget setup reference.",
+      "assertions": [
+        "Does it select budget setup and load `skills/pipa-get-paid/references/initiate-budget.md`?",
+        "Does it keep the response focused on budget setup?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-initiate-problem-preserved-1",
+      "prompt": "Pipa initiate by framing the delivery problem, intended outcome, and constraints.",
+      "expected_output": "Routes through define work to the preserved problem-framing reference.",
+      "assertions": [
+        "Does it select problem framing and load `references/initiate-problem-framing.md`?",
+        "Does it keep the response focused on problem framing?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-initiate-stakeholders-preserved-1",
+      "prompt": "Pipa initiate a stakeholder map so we know who decides and approves.",
+      "expected_output": "Routes through define work to the preserved stakeholder-map reference.",
+      "assertions": [
+        "Does it select stakeholder mapping and load `references/initiate-stakeholder-map.md`?",
+        "Does it keep the response focused on stakeholder mapping?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-initiate-charter-preserved-1",
+      "prompt": "Pipa initiate a charter readiness and go/no-go viability check.",
+      "expected_output": "Routes through define work to the preserved charter-and-viability reference.",
+      "assertions": [
+        "Does it select charter and viability and load `references/initiate-charter-and-viability-gate.md`?",
+        "Does it keep the response focused on charter readiness and viability?"
       ],
       "files": []
     }

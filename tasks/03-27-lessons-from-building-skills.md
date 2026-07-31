@@ -39,4 +39,4 @@ Notes captured from Anthropic's public write-up on lessons learned from running 
 - Use focused PM sub-skills under stage entry points (for example intake triage under monitor).
 - Add/maintain gotchas after each live run to improve reliability over time.
 - Keep workflow outputs explicit and operational (owners, next actions, closure states).
-- Keep tool/MCP setup explicit in project context so downstream skills can run predictably.
+- Keep tool/MCP setup explicit in connector configuration so downstream skills can run predictably.

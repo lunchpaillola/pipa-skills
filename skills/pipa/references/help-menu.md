@@ -28,7 +28,10 @@ Manage Pipa:
 - `setup`, `connect tools`, `company brain`, `automation`, `trigger`, `loop`
 
 Pipa Tools:
-- `audio brief`, `voice session`, `follow-up reminder`, `time tracking`, `composio`
+- `audio brief`, `voice session`, `follow-up reminder`, `time tracking`
+
+Connected app work:
+- choose the business lane first; Pipa uses Composio for the live app operation
 
 Decision stub: next action, owner, date, evidence. Use `TBD` when missing.
 ```

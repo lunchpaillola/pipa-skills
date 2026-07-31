@@ -2,12 +2,14 @@
 name: pipa-define-work
 description: "Use when the user wants Pipa to turn messy service-business demand into defined work: discovery, scope, requirements, proposals, acceptance checks, decisions, client/project onboarding, and setup for delivery."
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Pipa Define Work
 
 Turn fuzzy demand into work that can be delivered.
+
+When present, read `~/.pipa/profile.md` once for durable business context. If missing, continue without blocking and do not start setup unless the user asks or a soft setup offer is useful.
 
 ## Use For
 
@@ -19,7 +21,7 @@ Turn fuzzy demand into work that can be delivered.
 ## References
 
 - Load `references/define-work.md` first.
-- Use `references/initiate*.md` for context, stakeholders, problem framing, and viability.
+- Use `references/initiate*.md` for stakeholders, problem framing, and viability.
 - Use `references/plan*.md` for requirements, scope, roadmap, RAID/RACI, and decisions.
 - Load `references/examples/define-work.md` when an example shape helps.
 

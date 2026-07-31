@@ -31,8 +31,6 @@ Identify what escalation question needs answering now:
 - what is likely to breach tolerance
 - who must decide next and by when
 
-If `.agents/project-context.md` exists, read it first.
-
 ## Step 2: Check tools and source quality
 
 Use strongest available sources:
