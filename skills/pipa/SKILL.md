@@ -2,7 +2,7 @@
 name: pipa
 description: "Use when the user invokes Pipa and needs routing across service-business operations, Pipa setup/management, or Pipa tools. Routes to business lanes: get work, define work, deliver work, get paid, keep clients, improve operations; to Manage Pipa for setup, tools, automations, memory, and preferences; or to Pipa Tools for audio briefs, huddles, reminders, time tracking, and Composio-backed utilities."
 metadata:
-  version: 2.0.0
+  version: 2.0.1
 ---
 
 # Pipa
@@ -45,13 +45,14 @@ No command? Use conversation context to choose the best destination. Show the me
 3. No command, missing command, or unknown command with clear context -> route by intent instead of showing menu.
 4. Business lane intent wins for business work. Tool/setup intent wins only when the user asks to operate Pipa or use a standalone utility.
 5. `pipa-manage` owns Pipa onboarding, business profile, preferences, company brain, connected tools, automations, triggers, and recurring loops.
-6. `pipa-tools` owns standalone hosted utilities and exact utility jobs: audio briefs, voice huddles, follow-up reminders, time tracking, and Composio-backed tool access.
-7. Generic client follow-up stays `keep clients` or `deliver work`. One-shot self-email reminders go through `pipa-tools` to `pipa-follow-up-reminders`.
-8. One-time status/update work stays `deliver work`. Event-driven or recurring setup goes through `pipa-manage` to `pipa-triggers`.
-9. Live external app access or writes go through `pipa-tools`/Composio discovery/schema rules. Never guess slugs.
-10. Multiple matches -> one primary destination plus secondary follow-ups, unless user asks for chain.
-11. Handoff checks -> return `Objective`, `Source Check` or `Tool Access Check`, `Current Signal`, actions with owner/date/evidence, `TBD` gaps, and next lane follow-ups. Do not execute multiple lanes unless asked.
-12. Sparse or unsafe route -> help/menu plus one clarifying question only if needed.
+6. A missing `~/.pipa/profile.md` never overrides a concrete business-work route. Setup may be offered softly after the requested work.
+7. `pipa-tools` owns standalone hosted utilities and exact utility jobs: audio briefs, voice huddles, follow-up reminders, time tracking, and Composio-backed tool access.
+8. Generic client follow-up stays `keep clients` or `deliver work`. One-shot self-email reminders go through `pipa-tools` to `pipa-follow-up-reminders`.
+9. One-time status/update work stays `deliver work`. Event-driven or recurring setup goes through `pipa-manage` to `pipa-triggers`.
+10. Live external app access or writes go through `pipa-tools`/Composio discovery/schema rules. Never guess slugs.
+11. Multiple matches -> one primary destination plus secondary follow-ups, unless user asks for chain.
+12. Handoff checks -> return `Objective`, `Source Check` or `Tool Access Check`, `Current Signal`, actions with owner/date/evidence, `TBD` gaps, and next lane follow-ups. Do not execute multiple lanes unless asked.
+13. Sparse or unsafe route -> help/menu plus one clarifying question only if needed.
 
 ## Tie-Breakers
 

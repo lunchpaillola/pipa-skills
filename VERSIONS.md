@@ -1,5 +1,11 @@
 # Versions
 
+## v2.0.1
+
+- Added first-time Pipa setup and resumable global business profiles through `pipa-manage` v0.2.0.
+- Updated `pipa` to v2.0.1 and the six business lanes to v0.1.1 so global profile context is optional and never blocks concrete work.
+- Removed the legacy project-context intake and added setup, routing, connector-safety, and regression eval coverage.
+
 ## v2.0.0
 
 - Updated `pipa` to v2.0.0 with six business lanes: get work, define work, deliver work, get paid, keep clients, and improve operations.

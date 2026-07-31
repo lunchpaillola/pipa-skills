@@ -90,5 +90,17 @@
   {
     "query": "Give me a project status update with current risks and next owner actions.",
     "should_trigger": true
+  },
+  {
+    "query": "Set up Pipa for my agency.",
+    "should_trigger": true
+  },
+  {
+    "query": "Update my Pipa business profile.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa plan this work even though the repository has no project-context file.",
+    "should_trigger": true
   }
 ]

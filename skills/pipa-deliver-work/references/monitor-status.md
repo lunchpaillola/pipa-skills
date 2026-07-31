@@ -42,8 +42,6 @@ Identify what the user needs now:
 - project health snapshot before a meeting
 - cross-functional follow-through check
 
-If `.agents/project-context.md` exists, read it first.
-
 Set audience tone and detail level:
 
 - team-level: specific tasks and owner actions

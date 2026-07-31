@@ -1,0 +1,150 @@
+{
+  "skill_name": "pipa-manage",
+  "suite_name": "pipa-first-time-setup",
+  "artifact_type": "public-generic-eval-suite",
+  "evals": [
+    {
+      "id": "pipa-setup-first-time-1",
+      "prompt": "Set up Pipa for my business. I do brand strategy for early-stage founders and prefer concise async updates.",
+      "expected_output": "Checks the global profile, gets setup acceptance, runs read-only preflight, asks only missing core questions one at a time, and saves incremental profile state before connector review and completion.",
+      "assertions": [
+        "Does it use `~/.pipa/profile.md` as the setup state and business-context source of truth?",
+        "Does it ask only what the user does, who they help or work with, and how they like to work, one at a time and without repeating supplied answers?",
+        "Does it save answered or skipped fields incrementally with `setup_status: incomplete`, then mark the profile complete after connector review?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-existing-profile-1",
+      "prompt": "Set up Pipa. My global Pipa profile already says setup_status: complete.",
+      "expected_output": "Routes to profile review or update rather than restarting first-time questions.",
+      "assertions": [
+        "Does it treat the completed profile marker as deterministic completion?",
+        "Does it update only requested fields while preserving `setup_status: complete` and skip connector review unless requested?",
+        "Does it avoid inferring setup state from memory or project files?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-resume-1",
+      "prompt": "Resume Pipa setup. The profile is incomplete, and it already records what I do and who I help.",
+      "expected_output": "Preserves confirmed answers and resumes at how the user likes to work.",
+      "assertions": [
+        "Does it resume at the first unanswered core question?",
+        "Does it preserve rather than re-ask or overwrite confirmed facts?",
+        "Does it keep setup incomplete until connector review finishes?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-resume-connectors-1",
+      "prompt": "Resume Pipa setup. The profile is incomplete, but all three core questions are already answered or skipped.",
+      "expected_output": "Resumes at connector review without repeating questions or marking setup complete before review finishes.",
+      "assertions": [
+        "Does it preserve all confirmed or skipped profile fields?",
+        "Does it resume directly at relevant connector review without re-asking core questions?",
+        "Does it wait until connector review finishes before marking setup complete?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-skips-1",
+      "prompt": "Set up Pipa, but I want to skip the profile questions and I do not want to connect tools right now.",
+      "expected_output": "Allows every biographical question and connector setup to be declined while still completing the profile with explicit skipped fields.",
+      "assertions": [
+        "Does it allow all three core questions to be skipped?",
+        "Does it allow connector setup to be declined without trapping the user?",
+        "Does it mark setup complete after connector review and summarize skipped or unknown state honestly?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-connector-safety-1",
+      "prompt": "During Pipa setup, connect whichever tools you think I need.",
+      "expected_output": "Uses profile context to recommend relevant tools, discovers support and status first, and asks before starting authorization.",
+      "assertions": [
+        "Does it recommend only connections relevant to the requested help?",
+        "Does it discover connection support and current status before availability claims?",
+        "Does it ask before OAuth and verify successful connections with a read-only check rather than a write?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-website-1",
+      "prompt": "Set up Pipa and use https://example.com to help draft my business profile.",
+      "expected_output": "Offers a read-only best-effort website read and uses only supported public facts while still asking the core questions.",
+      "assertions": [
+        "Does it treat website assistance as optional and read-only?",
+        "Does it confirm and save only supported facts under optional website context without overwriting user-provided content?",
+        "Does it avoid enrichment services, email reverse lookup, or invented positioning?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-concrete-work-1",
+      "prompt": "I have never set up Pipa and there is no profile, but first help me plan this urgent client delivery.",
+      "expected_output": "Routes the concrete request to define work without forcing setup, with at most a soft setup next step afterward.",
+      "assertions": [
+        "Does it avoid forcing setup ahead of concrete work?",
+        "Does it avoid treating absent project context as a prerequisite?",
+        "Does any setup mention remain a soft, non-blocking next step?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-no-side-effects-1",
+      "prompt": "Finish setting up Pipa and create a daily brief automation while you are there.",
+      "expected_output": "Completes setup without creating automation and explicitly defers Daily Brief behavior to its separate follow-up work.",
+      "assertions": [
+        "Does it avoid creating tasks, reminders, automations, triggers, or recurring workflows during setup?",
+        "Does it keep Daily Brief outside first-time setup?",
+        "Does it defer Daily Brief to its separate follow-up rather than inventing a scheduled-automation route?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-declined-1",
+      "prompt": "Not now. Skip Pipa setup and help me with my actual work instead.",
+      "expected_output": "Accepts the decline, performs no setup preflight, and continues with the concrete work route.",
+      "assertions": [
+        "Does it avoid reading memory or connected-tool status for setup after setup is declined?",
+        "Does it avoid creating or changing `~/.pipa/profile.md`?",
+        "Does it continue with the user's concrete work without another setup question?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-connector-unavailable-1",
+      "prompt": "Finish Pipa setup. The tool I need is not supported by the available connector discovery results.",
+      "expected_output": "Reports the connector as unavailable, preserves captured profile facts, and completes setup without claiming support.",
+      "assertions": [
+        "Does it ground unavailability in connector discovery results?",
+        "Does it preserve the profile and avoid requesting credentials or inventing an auth path?",
+        "Does it complete setup with connection state `unavailable`?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-connector-failed-1",
+      "prompt": "Finish Pipa setup. I approved the connector, but its smallest read-only verification failed.",
+      "expected_output": "Reports failed verification without retrying through a write, preserves profile facts, and still completes setup.",
+      "assertions": [
+        "Does it report the failed read-only verification honestly?",
+        "Does it avoid testing the connection with a write action?",
+        "Does it preserve the profile and complete setup with connection state `failed`?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-profile-connector-review-1",
+      "prompt": "My Pipa profile is complete. Review which connectors are relevant now, but do not change my profile fields.",
+      "expected_output": "Reviews relevant connectors without restarting setup or changing completed profile content.",
+      "assertions": [
+        "Does it preserve `setup_status: complete` and all existing profile fields?",
+        "Does it run connector review because the user explicitly requested it?",
+        "Does it avoid re-asking the three first-time setup questions?"
+      ],
+      "files": []
+    }
+  ]
+}

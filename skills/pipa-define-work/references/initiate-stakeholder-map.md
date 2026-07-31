@@ -31,8 +31,6 @@ Identify what is needed now:
 - who must be consulted/informed
 - which approvals or dependencies may delay progress
 
-If `.agents/project-context.md` exists, read it first.
-
 ## Step 2: Check tools and source quality
 
 Use the strongest available sources:

@@ -31,8 +31,6 @@ Identify what close-out outcome is needed:
 - complete archive package
 - post-close review checkpoints
 
-If `.agents/project-context.md` exists, read it first.
-
 ## Step 2: Check tools and source quality
 
 Use strongest available sources:

@@ -31,8 +31,6 @@ Identify what change decision is needed now:
 - determine impact and tolerance breach risk
 - route approval/escalation
 
-If `.agents/project-context.md` exists, read it first.
-
 ## Step 2: Check tools and source quality
 
 Use strongest available sources:

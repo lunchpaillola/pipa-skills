@@ -41,12 +41,6 @@ Do not skip steps.
    - urgent bug sweep
    - client feedback cleanup
    - backlog hygiene pass
-3. If `.agents/project-context.md` exists, read it first to align with:
-   - stakeholder expectations
-   - delivery phase
-   - risk tolerances
-   - communication style
-
 If no source items are provided, return `blocked` with the minimum input needed.
 
 ### Step 2: Confirm available tools and sources

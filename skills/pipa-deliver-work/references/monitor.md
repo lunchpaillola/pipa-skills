@@ -32,8 +32,6 @@ Identify what the user is trying to monitor right now:
 - risks/blockers and follow-through
 - ownership drift (items with no owner or stale updates)
 
-If `.agents/project-context.md` exists, read it first.
-
 ### Step 2: Check context, tools, and source coverage
 
 Before running a mode, identify what the workflow can use now:

@@ -26,13 +26,10 @@ Pipa Initiate Progress
 
 Identify the primary initiate outcome the user needs now:
 
-- establish project context for downstream skills
 - initialize a lightweight project budget tracker
 - frame the delivery problem and success lens
 - map stakeholders and decision authority
 - confirm charter readiness and viability gate decision
-
-If `.agents/project-context.md` exists, read it first.
 
 ### Step 2: Check context, tools, and source coverage
 
@@ -52,23 +49,19 @@ If required data is incomplete:
 
 Route to one primary mode:
 
-1. **Project context mode**
-   - Use when the user asks to create or refresh reusable project context.
-   - Load `references/initiate-project-context.md`.
-
-2. **Budget setup mode**
+1. **Budget setup mode**
    - Use when the user asks to create, initialize, or refresh a simple project budget tracker.
    - Load `skills/pipa-get-paid/references/initiate-budget.md`.
 
-3. **Problem framing mode**
+2. **Problem framing mode**
    - Use when the user asks what problem is being solved, who it serves, success criteria, or constraints.
    - Load `references/initiate-problem-framing.md`.
 
-4. **Stakeholder map mode**
+3. **Stakeholder map mode**
    - Use when the user asks who is involved, who decides, who approves, or who must be informed.
    - Load `references/initiate-stakeholder-map.md`.
 
-5. **Charter and viability gate mode**
+4. **Charter and viability gate mode**
    - Use when the user asks whether to proceed, what must be true to start, or how to capture go/no-go readiness.
    - Load `references/initiate-charter-and-viability-gate.md`.
 
@@ -76,7 +69,6 @@ If multiple intents are present, select one primary mode and list secondary mode
 
 Routing tie-breakers:
 
-- If the user asks for foundational project setup or repeatable team context, default to **Project context mode**.
 - If the user asks for a simple project-budget table or baseline budget tracker, default to **Budget setup mode**.
 - If the user asks "what problem are we solving" or "what outcome matters," default to **Problem framing mode**.
 - If ownership/authority is unclear, default to **Stakeholder map mode**.

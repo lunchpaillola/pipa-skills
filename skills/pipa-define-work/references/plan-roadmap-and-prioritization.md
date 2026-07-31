@@ -31,8 +31,6 @@ Identify what decision is needed:
 - what to pause or remove
 - what tradeoff is required
 
-If `.agents/project-context.md` exists, read it first.
-
 ## Step 2: Check tools and source quality
 
 Use strongest available sources:

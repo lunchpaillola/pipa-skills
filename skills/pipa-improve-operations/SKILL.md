@@ -2,12 +2,14 @@
 name: pipa-improve-operations
 description: "Use when the user wants Pipa to improve how the service business runs: retrospectives, lessons, SOPs, templates, reusable processes, archive readiness, closeout learning, and operational improvements."
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Pipa Improve Operations
 
 Turn work into a better operating system.
+
+When present, read `~/.pipa/profile.md` once for durable business context. If missing, continue without blocking and do not start setup unless the user asks or a soft setup offer is useful.
 
 ## Use For
 

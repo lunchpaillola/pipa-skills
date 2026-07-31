@@ -32,8 +32,6 @@ Identify what needs to be framed now:
 - why now
 - what success looks like
 
-If `.agents/project-context.md` exists, read it first.
-
 ## Step 2: Check tools and source quality
 
 Prioritize these sources:

@@ -31,8 +31,6 @@ Identify what planning outcome the user needs now:
 - roadmap and prioritization decisions
 - RAID/RACI/decision-log controls for governance
 
-If `.agents/project-context.md` exists, read it first.
-
 ### Step 2: Check context, tools, and source coverage
 
 Identify available planning sources now:

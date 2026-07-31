@@ -17,7 +17,6 @@ Use when ambiguous requests, client context, kickoff notes, or planning material
 
 ## Source Methods
 
-- `references/initiate-project-context.md`: facts + context.
 - `references/initiate-charter-and-viability-gate.md`: go/no-go readiness.
 - `references/plan-requirements-brief.md`: requirements + acceptance.
 - `references/plan-scope-schedule-baseline.md`: scope/schedule/baseline.

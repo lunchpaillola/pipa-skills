@@ -31,8 +31,6 @@ Identify what execution outcome is needed now:
 - assess and route change-control decisions
 - manage dependency and cross-team handoff risk
 
-If `.agents/project-context.md` exists, read it first.
-
 ### Step 2: Check context, tools, and source coverage
 
 Identify available execution sources now:
