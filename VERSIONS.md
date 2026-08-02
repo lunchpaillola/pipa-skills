@@ -1,5 +1,11 @@
 # Versions
 
+## v2.0.2
+
+- Hardened Daily Planning and Daily Shutdown with formal-intent routing, degraded source handling, capacity definitions, baseline revisions, and separate-write-approval contracts.
+- Updated `pipa` to v2.0.2, `pipa-define-work` and `pipa-improve-operations` to v0.1.2, and `pipa-manage` and `composio-mcp` to v0.2.1.
+- Clarified formal-work precedence, untrusted connected-record handling, degraded source behavior, and that self-installed Pipa does not schedule recurring rituals.
+
 ## v2.0.1
 
 - Added first-time Pipa setup, resumable global business profiles, and a Composio-backed `~/.pipa/CONNECTORS.md` map through `pipa-manage` v0.2.0.

@@ -1,8 +1,8 @@
 ---
 name: pipa-improve-operations
-description: "Use when the user wants Pipa to improve how the service business runs: retrospectives, lessons, SOPs, templates, reusable processes, archive readiness, closeout learning, and operational improvements."
+description: "Use when the user wants Pipa to shut down a service-business workday, prepare tomorrow, or improve operations through retrospectives, lessons, SOPs, templates, reusable processes, archive readiness, and closeout learning."
 metadata:
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # Pipa Improve Operations
@@ -34,7 +34,7 @@ When present, read `~/.pipa/profile.md` once for durable business context. If mi
 ## Boundaries
 
 - Company brain setup, memory permissions, or tool access goes to `pipa-manage`.
-- Do not declare closure without signoff, handover, archive, or acceptance evidence.
+- Do not declare formal/project closure without signoff, handover, archive, or acceptance evidence.
 - Daily Shutdown may declare the ritual complete without declaring all work or the project complete.
 
 ## Gotchas

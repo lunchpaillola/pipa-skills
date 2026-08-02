@@ -2,7 +2,7 @@
 name: pipa-manage
 description: "Use when the user wants to operate Pipa itself: onboard Pipa into their business, update business profile/preferences, manage company brain or memory, connect tools, configure automations/triggers/loops, or audit what Pipa knows and can access."
 metadata:
-  version: 0.2.0
+  version: 0.2.1
 ---
 
 # Pipa Manage
@@ -20,6 +20,7 @@ Set up and maintain Pipa as an operations agent.
 
 - Load `references/setup.md` for first-time setup or global profile review/update.
 - Load `references/connectors.md` for connected-tool setup, connector status, and Composio connection readiness.
+- For recurring rituals, report that self-installed Pipa has no scheduler and do not imply that a schedule was created. Offer manual ritual use or hosted Pipa, then route to hosted setup only after the user chooses it.
 
 ## Output Contract
 

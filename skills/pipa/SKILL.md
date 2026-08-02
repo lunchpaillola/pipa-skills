@@ -1,8 +1,8 @@
 ---
 name: pipa
-description: "Use when the user invokes Pipa and needs routing across service-business operations, Pipa setup/management, or Pipa tools. Routes to business lanes: get work, define work, deliver work, get paid, keep clients, improve operations; to Manage Pipa for setup, tools, automations, memory, and preferences; or to Pipa Tools for audio briefs, huddles, reminders, and time tracking."
+description: "Use when the user invokes Pipa or asks to plan a service-business workday, shut down work for the day, or prepare tomorrow. Routes business operations to get work, define work, deliver work, get paid, keep clients, improve operations, Manage Pipa, or Pipa Tools."
 metadata:
-  version: 2.0.1
+  version: 2.0.2
 ---
 
 # Pipa
@@ -64,6 +64,7 @@ No command? Use conversation context to choose the best destination. Show the me
 - `plan` -> `define work`, not another PM skill.
 - `daily planning`, `plan my day`, or choosing today's priorities -> `define work`; recurring or scheduled daily planning -> `pipa-manage`.
 - `daily shutdown`, `close my day`, or shutting down today's work -> `improve operations`; recurring or scheduled daily shutdown -> `pipa-manage`.
+- Explicit requirements, scope, schedule baseline, signoff, handover, or archive intent overrides incidental `today` wording; Daily Planning requires workday priority/capacity intent and Daily Shutdown requires workday wrap-up/tomorrow intent.
 - Daily Shutdown completion closes the ritual, not the project; formal project closure still requires the existing evidence gates.
 - `monitor` -> `deliver work`, unless money/relationship wording dominates.
 - `stakeholder map/setup/decision authority` -> `define work`; relationship health/check-ins/retention -> `keep clients`.

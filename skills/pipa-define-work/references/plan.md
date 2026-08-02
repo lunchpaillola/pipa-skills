@@ -76,6 +76,7 @@ Routing tie-breakers:
 
 - If the ask is about priorities and capacity for one specific day, select **Daily Planning mode**.
 - If the ask schedules or repeats Daily Planning, route to `pipa-manage` instead.
+- Requirements, scope, schedule-baseline, or formal milestone intent overrides incidental `today` wording.
 - If the ask is broad planning with unclear artifacts, default to **Requirements brief mode** first.
 - If timing/commitments are central, default to **Scope and schedule baseline mode**.
 - If teams ask "what first/what later," default to **Roadmap and prioritization mode**.

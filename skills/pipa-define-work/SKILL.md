@@ -1,8 +1,8 @@
 ---
 name: pipa-define-work
-description: "Use when the user wants Pipa to turn messy service-business demand into defined work: discovery, scope, requirements, proposals, acceptance checks, decisions, client/project onboarding, and setup for delivery."
+description: "Use when the user wants Pipa to plan a service-business workday or turn messy demand into defined work: discovery, scope, requirements, proposals, acceptance checks, decisions, client/project onboarding, and setup for delivery."
 metadata:
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # Pipa Define Work

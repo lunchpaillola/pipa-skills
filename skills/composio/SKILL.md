@@ -3,7 +3,7 @@ name: composio-mcp
 description: Use the Composio MCP with Pipa to discover and operate external app tools safely.
 tags: [composio, mcp, pipa, tools, external-apps, automation, connected-accounts]
 metadata:
-  version: 0.2.0
+  version: 0.2.1
 ---
 
 ## When to Apply
@@ -18,6 +18,8 @@ metadata:
 Use the Composio MCP tools exposed in the current runtime. Do not switch to any non-MCP Composio workflow, install Composio locally, or initialize projects.
 
 If Composio MCP tools are not available, stop and ask the user to connect or enable the Composio MCP for this agent environment.
+
+Exception: when a Pipa read-only assessment has other usable evidence, record unavailable MCP or account access as a source gap and continue. Do not initiate authorization unless the user asks to connect it.
 
 ## Workflow
 
