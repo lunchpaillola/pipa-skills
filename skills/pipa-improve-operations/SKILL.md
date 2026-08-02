@@ -13,14 +13,14 @@ When present, read `~/.pipa/profile.md` once for durable business context. If mi
 
 ## Use For
 
-- Retrospectives, lessons learned, closeout learning, reusable templates, SOPs, and process improvements.
+- Daily Shutdown, retrospectives, lessons learned, closeout learning, reusable templates, SOPs, and process improvements.
 - Archive readiness, handover patterns, benefits review, and next-time changes.
 - Ongoing company brain content when the intent is process learning, not Pipa configuration.
 
 ## References
 
 - Load `references/improve-operations.md` first.
-- Use `references/close*.md` for signoff, handover, lessons, benefits, and archive readiness.
+- Use `references/close.md` to route closure requests, including a one-time Daily Shutdown.
 - Load `references/examples/improve-operations.md` when an example shape helps.
 
 ## Output Contract
@@ -35,9 +35,12 @@ When present, read `~/.pipa/profile.md` once for durable business context. If mi
 
 - Company brain setup, memory permissions, or tool access goes to `pipa-manage`.
 - Do not declare closure without signoff, handover, archive, or acceptance evidence.
+- Daily Shutdown may declare the ritual complete without declaring all work or the project complete.
 
 ## Gotchas
 
 - Do not store memory or update docs externally unless the user asks and the tool/workflow exists.
 - Lessons should become a concrete process, artifact, decision, or behavior change.
 - Archive and closure claims need evidence or explicit acceptance of gaps.
+- Recurring or scheduled Daily Shutdown setup goes to `pipa-manage`.
+- Daily Shutdown uses its focused output contract instead of this skill's generic output contract.

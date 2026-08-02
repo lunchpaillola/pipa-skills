@@ -13,7 +13,7 @@ When present, read `~/.pipa/profile.md` once for durable business context. If mi
 
 ## Use For
 
-- Scope, requirements, proposals, briefs, plans, charters, and decision records.
+- Daily Planning, scope, requirements, proposals, briefs, plans, charters, and decision records.
 - Client/project onboarding after work is won.
 - Client portal setup when it defines how an engagement will run.
 - Acceptance checks, out-of-scope boundaries, owners, dates, and source gaps.
@@ -22,7 +22,7 @@ When present, read `~/.pipa/profile.md` once for durable business context. If mi
 
 - Load `references/define-work.md` first.
 - Use `references/initiate*.md` for stakeholders, problem framing, and viability.
-- Use `references/plan*.md` for requirements, scope, roadmap, RAID/RACI, and decisions.
+- Use `references/plan.md` to route planning requests, including a capacity-aware one-time Daily Planning ritual.
 - Load `references/examples/define-work.md` when an example shape helps.
 
 ## Output Contract
@@ -44,3 +44,5 @@ When present, read `~/.pipa/profile.md` once for durable business context. If mi
 - Use `TBD` for missing owners, dates, source facts, acceptance checks, or decisions.
 - Do not turn fuzzy context into committed scope without identifying assumptions.
 - External docs, project records, or client-facing artifacts require approval before writes.
+- Recurring or scheduled Daily Planning setup goes to `pipa-manage`.
+- Daily Planning uses its focused output contract instead of this skill's generic output contract.

@@ -4,6 +4,7 @@ Use to close loops, capture lessons, prep handover/archive, update reusable know
 
 ## Starter Jobs
 
+- Shut down a workday, compare plan to actual, and prepare tomorrow.
 - Summarize lessons from project/session/PR/launch/delivery cycle.
 - Prep closeout, signoff, handover, archive, benefits review.
 - Identify next-time changes.
@@ -17,6 +18,8 @@ Use to close loops, capture lessons, prep handover/archive, update reusable know
 
 ## Source Methods
 
+- `references/close.md`: select Daily Shutdown or another close mode.
+- `references/close-daily-shutdown.md`: one-time workday shutdown and tomorrow seed.
 - `references/close-acceptance-signoff.md`: acceptance + signoff.
 - `references/close-handover-transition.md`: support ownership + transition.
 - `references/close-lessons-learned.md`: retro + learning capture.
@@ -29,7 +32,7 @@ Use to close loops, capture lessons, prep handover/archive, update reusable know
 - `composio`: only live source retrieval or external doc updates.
 - `pipa-triggers`: only recurring/event-driven learning capture.
 
-Common connector categories: docs, cloud storage, code hosting, project tracker, knowledge base, memory.
+Common connector categories: docs, cloud storage, code hosting, project tracker, calendar, chat, email, knowledge base, memory.
 
 ## Workflow
 
