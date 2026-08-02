@@ -28,11 +28,11 @@ No command? Use conversation context to choose the best destination. Show the me
 | Group | Commands and aliases | Primary route |
 |---|---|---|
 | Run your business: Get work | `get work`, `source work`, `lead`, `opportunity`, `pipeline`, `prospect`, `outreach`, `market signal`, `content idea`, `YouTube`, `content` | `pipa-get-work` |
-| Run your business: Define work | `define work`, `scope`, `requirements`, `brief`, `plan`, `charter`, `proposal`, `acceptance`, `decision`, `client portal setup`, `onboard client` | `pipa-define-work` |
+| Run your business: Define work | `define work`, `scope`, `requirements`, `brief`, `plan`, `daily planning`, `plan my day`, `charter`, `proposal`, `acceptance`, `decision`, `client portal setup`, `onboard client` | `pipa-define-work` |
 | Run your business: Deliver work | `deliver work`, `execute`, `coordinate`, `status`, `monitor`, `blocker`, `risk`, `handoff`, `dependency`, `triage`, `weekly client update` | `pipa-deliver-work` |
 | Run your business: Get paid | `get paid`, `getting paid`, `invoice`, `payment`, `budget`, `billable`, `time review`, `margin` | `pipa-get-paid` |
 | Run your business: Keep clients | `keep clients`, `relationship`, `follow up`, `check-in`, `client health`, `stakeholder`, `retention`, `renewal`, `testimonial`, `referral` | `pipa-keep-clients` |
-| Run your business: Improve operations | `improve operations`, `lessons`, `retrospective`, `close`, `archive`, `handover`, `benefits`, `reuse`, `SOP`, `template` | `pipa-improve-operations` |
+| Run your business: Improve operations | `improve operations`, `lessons`, `retrospective`, `close`, `daily shutdown`, `close my day`, `archive`, `handover`, `benefits`, `reuse`, `SOP`, `template` | `pipa-improve-operations` |
 | Manage Pipa | `manage pipa`, `setup`, `onboard pipa`, `business profile`, `preferences`, `company brain`, `memory`, `connect tools`, `connector`, `automation`, `trigger`, `loop`, `recurring workflow` | `pipa-manage` |
 | Pipa Tools | `pipa tools`, `audio brief`, `voice session`, `talk by voice`, `follow-up reminder`, `email reminder`, `time tracking`, `time entry`, `hosted utility` | `pipa-tools` |
 | Handoff checks | `get-to-define`, `define-to-deliver`, `deliver-to-get-paid`, `deliver-to-relationships`, `improve-to-keep-clients` | source lane first, then named next lane follow-up |
@@ -62,6 +62,9 @@ No command? Use conversation context to choose the best destination. Show the me
 - `brief` alone -> `define work` for working brief or `deliver work` for status brief, not audio.
 - `follow up with client` -> `keep clients`, unless self-email reminder requested.
 - `plan` -> `define work`, not another PM skill.
+- `daily planning`, `plan my day`, or choosing today's priorities -> `define work`; recurring or scheduled daily planning -> `pipa-manage`.
+- `daily shutdown`, `close my day`, or shutting down today's work -> `improve operations`; recurring or scheduled daily shutdown -> `pipa-manage`.
+- Daily Shutdown completion closes the ritual, not the project; formal project closure still requires the existing evidence gates.
 - `monitor` -> `deliver work`, unless money/relationship wording dominates.
 - `stakeholder map/setup/decision authority` -> `define work`; relationship health/check-ins/retention -> `keep clients`.
 - `company brain` -> `pipa-manage` for setup/config/access; `improve operations` for ongoing process learning.

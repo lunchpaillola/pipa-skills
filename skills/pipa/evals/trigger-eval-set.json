@@ -24,6 +24,30 @@
     "should_trigger": true
   },
   {
+    "query": "Pipa help me plan today around my active work and calendar capacity.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa help me shut down for today and prepare tomorrow.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa schedule daily planning every weekday morning.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa set up a daily shutdown every weekday.",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me plan my workday around today's priorities and capacity.",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me close out work and prepare tomorrow.",
+    "should_trigger": true
+  },
+  {
     "query": "Pipa plan this scattered onboarding work into requirements and a baseline.",
     "should_trigger": true
   },
@@ -81,6 +105,14 @@
   },
   {
     "query": "Make a generic list of companies in fintech.",
+    "should_trigger": false
+  },
+  {
+    "query": "Help me plan weekday dinners and a grocery list.",
+    "should_trigger": false
+  },
+  {
+    "query": "Shut down my laptop after the download finishes.",
     "should_trigger": false
   },
   {

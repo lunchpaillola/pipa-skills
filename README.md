@@ -57,11 +57,11 @@ cp -r pipa-skills/skills/* .agents/skills/
 | Skill | Description |
 |---|---|
 | [`pipa-get-work`](skills/pipa-get-work/) | Helps service businesses create and qualify opportunities through content, inbound, referrals, outreach, market signals, and pipeline next actions. |
-| [`pipa-define-work`](skills/pipa-define-work/) | Turns messy demand into defined work: discovery, scope, proposals, acceptance checks, decisions, and client/project onboarding. |
+| [`pipa-define-work`](skills/pipa-define-work/) | Turns messy demand into defined work: Daily Planning, discovery, scope, proposals, acceptance checks, decisions, and client/project onboarding. |
 | [`pipa-deliver-work`](skills/pipa-deliver-work/) | Coordinates active delivery: status, blockers, risks, handoffs, dependencies, QA, weekly updates, and next actions. |
 | [`pipa-get-paid`](skills/pipa-get-paid/) | Tracks money follow-through: invoices, payments, billable time, budgets, margin, and change-control money impact. |
 | [`pipa-keep-clients`](skills/pipa-keep-clients/) | Maintains client trust through follow-ups, check-ins, client health, retention, renewals, referrals, testimonials, and stakeholder care. |
-| [`pipa-improve-operations`](skills/pipa-improve-operations/) | Turns work into better operations through retrospectives, lessons, SOPs, templates, reusable processes, and archive readiness. |
+| [`pipa-improve-operations`](skills/pipa-improve-operations/) | Turns work into better operations through Daily Shutdown, retrospectives, lessons, SOPs, templates, reusable processes, and archive readiness. |
 
 ### Meta Skills
 

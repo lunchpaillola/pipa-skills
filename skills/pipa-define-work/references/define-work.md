@@ -4,6 +4,7 @@ Use when ambiguous requests, client context, kickoff notes, or planning material
 
 ## Starter Jobs
 
+- Plan a workday against priorities, estimates, and calendar-adjusted capacity.
 - Create brief from scattered sources.
 - Define scope, out-of-scope, acceptance checks, open questions.
 - Prep proposal, charter, roadmap, or plan baseline.
@@ -17,6 +18,8 @@ Use when ambiguous requests, client context, kickoff notes, or planning material
 
 ## Source Methods
 
+- `references/plan.md`: select Daily Planning or another planning mode.
+- `references/plan-daily-planning.md`: one-time, capacity-aware Daily Planning.
 - `references/initiate-charter-and-viability-gate.md`: go/no-go readiness.
 - `references/plan-requirements-brief.md`: requirements + acceptance.
 - `references/plan-scope-schedule-baseline.md`: scope/schedule/baseline.
@@ -28,7 +31,7 @@ Use when ambiguous requests, client context, kickoff notes, or planning material
 - `composio`: only for live source retrieval or external record create.
 - Text planning, req briefs, written talk-throughs stay here.
 
-Common connector categories: chat, email, docs, cloud storage, project tracker, calendar, knowledge base.
+Common connector categories: chat, email, docs, cloud storage, project tracker, code hosting, calendar, knowledge base.
 
 ## Workflow
 
@@ -52,7 +55,7 @@ Common connector categories: chat, email, docs, cloud storage, project tracker, 
 
 - Do not turn uncertainty into fake scope.
 - Do not overbuild when one-page brief works.
-- Do not use audio, huddle, or Composio unless explicitly asked.
+- Do not use audio or huddle unless explicitly asked. Use Composio when live retrieval is requested or a selected workflow, such as Daily Planning, requires verified connected sources.
 
 ## Reference
 
