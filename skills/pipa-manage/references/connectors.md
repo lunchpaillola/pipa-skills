@@ -24,11 +24,11 @@ The `~~` prefix marks a capability placeholder resolved through the global map; 
 | Pipa lane | Common connector categories |
 |---|---|
 | Get work | `~~CRM`, `~~email`, `~~chat`, `~~project tracker`, `~~content platform`, `~~knowledge base` |
-| Define work | `~~email`, `~~chat`, `~~knowledge base`, `~~cloud storage`, `~~project tracker`, `~~calendar` |
+| Define work | `~~email`, `~~chat`, `~~knowledge base`, `~~cloud storage`, `~~project tracker`, `~~code hosting`, `~~calendar` |
 | Deliver work | `~~project tracker`, `~~chat`, `~~code hosting`, `~~calendar`, `~~knowledge base` |
 | Get paid | `~~payments`, `~~time tracking`, `~~email`, `~~CRM`, `~~calendar` |
 | Keep clients | `~~CRM`, `~~email`, `~~chat`, `~~calendar`, `~~project tracker`, `~~support platform` |
-| Improve operations | `~~knowledge base`, `~~cloud storage`, `~~code hosting`, `~~project tracker` |
+| Improve operations | `~~knowledge base`, `~~cloud storage`, `~~code hosting`, `~~project tracker`, `~~calendar`, `~~chat`, `~~email` |
 
 ## Global Connector Map
 
@@ -55,6 +55,8 @@ updated_at: <ISO-8601 timestamp>
 ```
 
 The map is a durable tool-selection index, not proof of live access.
+
+Business-lane source checks must use Composio discovery to verify live access and report unavailable, stale, or failed sources explicitly. Optional communications checks should be narrow and tied to a known gap, not broad inbox or channel scans.
 
 ## Add A Connector
 

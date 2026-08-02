@@ -5,7 +5,7 @@
 
 You are the close-stage workflow entry point.
 
-Your job is to route closure work to the right close workflow, run it, and return a formal closure signal.
+Your job is to route closure work to the right close workflow, run it, and return either a ritual-completion or formal-closure signal.
 
 Communication style contract: when returning user-facing updates, briefs, or summaries, apply `skills/pipa/references/communication-style.md`.
 
@@ -26,6 +26,7 @@ Pipa Close Progress
 
 Identify what closure outcome the user needs now:
 
+- a one-time Daily Shutdown and tomorrow seed
 - acceptance and signoff confirmation
 - handover and transition completeness
 - lessons learned capture for reuse
@@ -50,19 +51,23 @@ If required data is incomplete:
 
 Route to one primary mode:
 
-1. **Acceptance and signoff mode**
+1. **Daily Shutdown mode**
+   - Use when the user asks to shut down, close, or wrap up a specific workday.
+   - Load `references/close-daily-shutdown.md`.
+
+2. **Acceptance and signoff mode**
    - Use when user asks whether delivery is accepted, complete, and ready for closure decision.
    - Load `references/close-acceptance-signoff.md`.
 
-2. **Handover and transition mode**
+3. **Handover and transition mode**
    - Use when user asks about operational handoff, ownership transfer, or support transition readiness.
    - Load `references/close-handover-transition.md`.
 
-3. **Lessons learned mode**
+4. **Lessons learned mode**
    - Use when user asks to capture what worked, what failed, and what should change next cycle.
    - Load `references/close-lessons-learned.md`.
 
-4. **Benefits review and archive mode**
+5. **Benefits review and archive mode**
    - Use when user asks to package closure artifacts, archive records, or review expected outcomes vs realized value.
    - Load `references/close-benefits-review-and-archive.md`.
 
@@ -70,6 +75,9 @@ If multiple intents are present, select one primary mode and list secondary mode
 
 Routing tie-breakers:
 
+- If the ask closes one workday and prepares tomorrow, select **Daily Shutdown mode**.
+- If the ask schedules or repeats Daily Shutdown, route to `pipa-manage` instead.
+- Explicit signoff, handover, archive, benefits-review, or project-closeout intent overrides incidental `today` wording.
 - If closure decision itself is unclear, default to **Acceptance and signoff mode**.
 - If operational continuity is the main risk, default to **Handover and transition mode**.
 - If the ask emphasizes learning/reuse, default to **Lessons learned mode**.
@@ -82,10 +90,14 @@ Execution rules:
 - preserve source facts, approvals, and evidence links
 - do not invent signoffs, owners, or closure dates
 - mark unknowns as `TBD`
+- require separate explicit approval before any external write, message, task, event, or document change
 - load the selected Pipa reference when a focused reference matches
 - if a referenced focused reference is unavailable, run the equivalent workflow inline and preserve the same output contract
+- when Daily Shutdown is selected, use its focused output contract instead of the generic Close Summary
 
 If running acceptance and signoff mode, run the full `references/close-acceptance-signoff.md` workflow.
+
+If running Daily Shutdown mode, run the full `references/close-daily-shutdown.md` workflow.
 
 If running handover and transition mode, run the full `references/close-handover-transition.md` workflow.
 
@@ -95,7 +107,7 @@ If running benefits review and archive mode, run the full `references/close-bene
 
 ### Step 5: Return close summary
 
-Always return this structure:
+For non-daily modes, return this structure. Daily Shutdown returns only the focused contract in `references/close-daily-shutdown.md`.
 
 ```md
 # Close Summary - <YYYY-MM-DD>

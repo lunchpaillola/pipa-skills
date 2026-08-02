@@ -26,6 +26,7 @@ Pipa Plan Progress
 
 Identify what planning outcome the user needs now:
 
+- a capacity-aware Daily Plan for a specific day
 - requirements brief and acceptance framing
 - scope/schedule baseline with explicit assumptions
 - roadmap and prioritization decisions
@@ -49,19 +50,23 @@ If required data is incomplete:
 
 Route to one primary mode:
 
-1. **Requirements brief mode**
+1. **Daily Planning mode**
+   - Use when the user asks to plan today, plan their day, choose today's priorities, or run a one-time daily planning ritual.
+   - Load `references/plan-daily-planning.md`.
+
+2. **Requirements brief mode**
    - Use when the user asks for requirements clarity, acceptance boundaries, or delivery intent.
    - Load `references/plan-requirements-brief.md`.
 
-2. **Scope and schedule baseline mode**
+3. **Scope and schedule baseline mode**
    - Use when the user asks to baseline what will be delivered, by when, and with what constraints.
    - Load `references/plan-scope-schedule-baseline.md`.
 
-3. **Roadmap and prioritization mode**
+4. **Roadmap and prioritization mode**
    - Use when sequencing, phasing, or tradeoff decisions are the main ask.
    - Load `references/plan-roadmap-and-prioritization.md`.
 
-4. **RAID/RACI/decision setup mode**
+5. **RAID/RACI/decision setup mode**
    - Use when governance, ownership clarity, risk logging, and decision traceability are the main ask.
    - Load `references/plan-raid-raci-decision-setup.md`.
 
@@ -69,6 +74,9 @@ If multiple intents are present, pick one primary mode and list secondary modes 
 
 Routing tie-breakers:
 
+- If the ask is about priorities and capacity for one specific day, select **Daily Planning mode**.
+- If the ask schedules or repeats Daily Planning, route to `pipa-manage` instead.
+- Requirements, scope, schedule-baseline, or formal milestone intent overrides incidental `today` wording.
 - If the ask is broad planning with unclear artifacts, default to **Requirements brief mode** first.
 - If timing/commitments are central, default to **Scope and schedule baseline mode**.
 - If teams ask "what first/what later," default to **Roadmap and prioritization mode**.
@@ -83,10 +91,11 @@ Execution rules:
 - mark unknowns as `TBD`
 - load the selected Pipa reference when a focused reference matches
 - if a referenced focused reference is unavailable, run the equivalent workflow inline and preserve the same output contract
+- when Daily Planning is selected, use its focused output contract instead of the generic Plan Summary
 
 ### Step 5: Return plan summary
 
-Always return this structure:
+For non-daily modes, return this structure. Daily Planning returns only the focused contract in `references/plan-daily-planning.md`.
 
 ```md
 # Plan Summary - <YYYY-MM-DD>
