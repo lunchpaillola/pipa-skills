@@ -1,6 +1,7 @@
 [
-  {"query":"Rebalance these active work packages and make every owner and checkpoint explicit.","should_trigger":true},
-  {"query":"Who owns what this week, and which item should move first?","should_trigger":true},
+  {"query":"Run pipa-work-coordination to rebalance these active work packages and make every owner and checkpoint explicit.","should_trigger":true},
+  {"query":"Pipa Deliver Work delegates this to pipa-work-coordination: who owns what this week, and which item should move first?","should_trigger":true},
+  {"query":"Rebalance these active work packages and make every owner and checkpoint explicit.","should_trigger":false,"routing_contract":"generic-lane-owned"},
   {"query":"Write a leadership status update from these project notes.","should_trigger":false},
   {"query":"Triage these new support tickets by priority.","should_trigger":false},
   {"query":"Escalate this blocker that is about to breach tolerance.","should_trigger":false}

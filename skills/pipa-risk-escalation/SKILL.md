@@ -1,6 +1,6 @@
 ---
 name: pipa-risk-escalation
-description: "Use when the user needs blockers, tolerance breaches, owner silence, or decision authority turned into an escalation path. Do not use for routine status reporting or intake triage."
+description: "Use only when `pipa-risk-escalation` is explicitly invoked or `pipa-deliver-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

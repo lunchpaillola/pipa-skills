@@ -1,6 +1,6 @@
 ---
 name: pipa-budget-review
-description: "Use when the user needs an existing budget assessed for burn, variance, forecast at completion, capacity, or margin. Do not use to create a baseline or approve a change request."
+description: "Use only when `pipa-budget-review` is explicitly invoked or `pipa-get-paid` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

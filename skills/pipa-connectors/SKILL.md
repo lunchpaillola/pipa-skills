@@ -1,6 +1,6 @@
 ---
 name: pipa-connectors
-description: "Use when the user wants to connect an app to Pipa, inspect or troubleshoot Pipa connection status, or manage the capability-to-tool map. Do not use for profile setup alone, business work in an already-connected app, or generic automation."
+description: "Use only when `pipa-connectors` is explicitly invoked or `pipa-manage` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

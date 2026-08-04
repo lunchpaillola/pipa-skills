@@ -1,6 +1,6 @@
 ---
 name: pipa-stakeholder-map
-description: "Use when the user explicitly wants to identify stakeholders, map RACI roles or decision authority, clarify approvals, or define communication and escalation paths."
+description: "Use only when `pipa-stakeholder-map` is explicitly invoked or `pipa-define-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

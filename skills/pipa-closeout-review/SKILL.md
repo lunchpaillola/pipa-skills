@@ -1,6 +1,6 @@
 ---
 name: pipa-closeout-review
-description: "Use when the user needs to compare expected and observed benefits, validate a project's closure records, or determine whether its archive package is complete and retrievable."
+description: "Use only when `pipa-closeout-review` is explicitly invoked or `pipa-improve-operations` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

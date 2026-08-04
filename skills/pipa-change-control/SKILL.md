@@ -1,6 +1,6 @@
 ---
 name: pipa-change-control
-description: "Use when an in-flight scope or timeline change has explicit fee, cost, budget, or margin impact and needs a traceable approval decision. Do not use for non-financial delivery changes."
+description: "Use only when `pipa-change-control` is explicitly invoked or `pipa-get-paid` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

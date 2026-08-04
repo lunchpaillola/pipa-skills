@@ -1,6 +1,6 @@
 ---
 name: pipa-daily-plan
-description: "Use when the user explicitly wants a one-time plan for a specific workday by choosing priorities, estimating work, confronting calendar-adjusted capacity, and deciding what to defer."
+description: "Use only when `pipa-daily-plan` is explicitly invoked or `pipa-define-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

@@ -1,6 +1,6 @@
 ---
 name: pipa-iteration-cycle
-description: "Use when the user needs sprint or cycle commitments, work-in-progress, carryover pressure, or cycle checkpoints managed. Do not use for general work assignment or status reporting."
+description: "Use only when `pipa-iteration-cycle` is explicitly invoked or `pipa-deliver-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

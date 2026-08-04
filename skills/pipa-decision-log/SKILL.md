@@ -1,6 +1,6 @@
 ---
 name: pipa-decision-log
-description: "Use when the user explicitly wants RAID controls, a decision log, decision traceability, or a governance review cadence before execution. Do not use for a standalone stakeholder or RACI map."
+description: "Use only when `pipa-decision-log` is explicitly invoked or `pipa-define-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "pathname"
+require "json"
 require "psych"
 require "set"
 require "uri"
@@ -128,6 +129,31 @@ PROMOTIONS.each do |operation, (owner, stale_path)|
 
   operation_content = operation_path.read
   owner_content = owner_path.read
+  operation_data = frontmatter(operation_path)
+  expected_description = "Use only when `#{operation}` is explicitly invoked or `#{owner}` delegates to it. Do not trigger from generic language."
+  actual_description = operation_data.is_a?(Hash) ? operation_data["description"].to_s : ""
+  if actual_description != expected_description
+    errors << "#{operation_path.relative_path_from(ROOT)}: operation description must require explicit invocation or #{owner} delegation"
+  end
+
+  trigger_path = operation_path.dirname.join("evals/trigger-eval-set.json")
+  unless trigger_path.exist?
+    errors << "#{trigger_path.relative_path_from(ROOT)}: operation trigger eval is missing"
+  else
+    trigger_tests = JSON.parse(trigger_path.read)
+    trigger_tests.select { |test| test["should_trigger"] }.each do |test|
+      query = test["query"].to_s
+      explicit_invocation = query.match?(/\A(?:run|invoke) #{Regexp.escape(operation)}\b/i)
+      owner_delegation = query.match?(/\bdelegates this to #{Regexp.escape(operation)}\b/i)
+      unless explicit_invocation || owner_delegation
+        errors << "#{trigger_path.relative_path_from(ROOT)}: positive trigger must invoke #{operation} or delegate from #{owner}"
+      end
+    end
+    unless trigger_tests.any? { |test| !test["should_trigger"] && test["routing_contract"] == "generic-lane-owned" && !test["query"].to_s.include?(operation) }
+      errors << "#{trigger_path.relative_path_from(ROOT)}: operation needs a generic lane-owned negative trigger"
+    end
+  end
+
   operation_title = operation_content[/^#\s+(.+)$/, 1]
   if operation_title && owner_content.match?(/^\#{2,6}\s+#{Regexp.escape(operation_title)}\s*$/)
     errors << "#{owner_path.relative_path_from(ROOT)}: inline fallback heading copies #{operation}"

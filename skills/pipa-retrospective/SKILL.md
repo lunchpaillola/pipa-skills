@@ -1,6 +1,6 @@
 ---
 name: pipa-retrospective
-description: "Use when the user wants evidence-backed lessons from completed work and concrete changes to a future process, SOP, template, decision, or team behavior."
+description: "Use only when `pipa-retrospective` is explicitly invoked or `pipa-improve-operations` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

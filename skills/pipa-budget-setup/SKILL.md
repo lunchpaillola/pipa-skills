@@ -1,6 +1,6 @@
 ---
 name: pipa-budget-setup
-description: "Use when the user needs a new project budget baseline or budget tracker created or explicitly updated. Do not use to assess burn, variance, forecast, or margin."
+description: "Use only when `pipa-budget-setup` is explicitly invoked or `pipa-get-paid` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

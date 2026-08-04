@@ -1,6 +1,6 @@
 ---
 name: pipa-scope-baseline
-description: "Use when the user explicitly wants to baseline project scope and schedule: deliverables, exclusions, milestones, assumptions, tolerances, or change triggers."
+description: "Use only when `pipa-scope-baseline` is explicitly invoked or `pipa-define-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

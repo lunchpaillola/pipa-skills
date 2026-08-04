@@ -1,6 +1,6 @@
 ---
 name: pipa-work-coordination
-description: "Use when the user needs active work packages assigned, sequenced, rebalanced, or checkpointed. Do not use for status reporting, ticket intake, or risk escalation."
+description: "Use only when `pipa-work-coordination` is explicitly invoked or `pipa-deliver-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

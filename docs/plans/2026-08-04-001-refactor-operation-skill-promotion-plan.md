@@ -16,7 +16,7 @@ Keep the six business lanes as broad automatic entry surfaces. Promote the 24 su
 
 - A **lane** is one of six broad business entry surfaces. A **meta surface** routes Pipa configuration or utilities. An **operation skill** owns one substantial workflow. A **specialized capability** is a tool/product-specific standalone skill. A **reference** is a non-routing implementation asset.
 - Generic natural language enters a lane. Explicit operation invocation wins; otherwise the lane selects one operation and preserves the business objective.
-- Operation descriptions use the exact job and avoid broad lane synonyms. Each operation owns its workflow, output contract, safety rules, positive/negative trigger cases, and behavior evals.
+- Operation descriptions permit only explicit invocation or delegation from the owning lane/meta surface. Generic job language remains lane-owned. Each operation owns its workflow, output contract, safety rules, positive/negative trigger cases, and behavior evals.
 - Promoted workflow references are deleted, not kept as compatibility shims. Missing operations fail clearly instead of running an inline copy.
 - References remain only for templates, schemas, examples, source-handling rules, and shared presentation assets such as `skills/pipa/references/communication-style.md`.
 - Daily Plan and Daily Shutdown keep their same-conversation contract: only the latest explicitly accepted Daily Plan with matching date and canonical IANA timezone is a valid shutdown baseline.

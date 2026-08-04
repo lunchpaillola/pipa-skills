@@ -1,6 +1,6 @@
 ---
 name: pipa-status-update
-description: "Use when the user needs a current project health snapshot, RAG/RAID rollup, standup update, or stakeholder status report. Do not use to prioritize intake or run a dedicated escalation."
+description: "Use only when `pipa-status-update` is explicitly invoked or `pipa-deliver-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

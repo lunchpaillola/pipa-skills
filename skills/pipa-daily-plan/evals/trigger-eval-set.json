@@ -1,7 +1,8 @@
 [
-  {"query":"Plan my workday today around my calendar and six available focus hours.","should_trigger":true},
-  {"query":"Help me choose tomorrow's priorities, estimate them, and decide what will not fit.","should_trigger":true},
-  {"query":"Run a one-time Daily Plan for 2026-08-05 in America/New_York.","should_trigger":true},
+  {"query":"Run pipa-daily-plan for today around my calendar and six available focus hours.","should_trigger":true},
+  {"query":"Invoke pipa-daily-plan to choose tomorrow's priorities, estimate them, and decide what will not fit.","should_trigger":true},
+  {"query":"Pipa Define Work delegates this to pipa-daily-plan: run a one-time Daily Plan for 2026-08-05 in America/New_York.","should_trigger":true},
+  {"query":"Plan my workday today around my calendar and six available focus hours.","should_trigger":false,"routing_contract":"generic-lane-owned"},
   {"query":"Plan this project and turn the kickoff notes into requirements.","should_trigger":false},
   {"query":"Set up a Daily Plan for me every weekday at 8 AM.","should_trigger":false},
   {"query":"Create a roadmap for the next two quarters.","should_trigger":false}

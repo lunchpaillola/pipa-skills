@@ -1,6 +1,6 @@
 ---
 name: pipa-problem-framing
-description: "Use when the user explicitly wants to frame a problem by clarifying who is affected, why it matters now, desired outcomes, success criteria, constraints, boundaries, or non-goals."
+description: "Use only when `pipa-problem-framing` is explicitly invoked or `pipa-define-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

@@ -1,6 +1,6 @@
 [
   {
-    "query": "Prepare the operational handover and confirm who owns support after launch.",
+    "query": "Run pipa-handover to prepare the operational handover and confirm who owns support after launch.",
     "should_trigger": true
   },
   {
@@ -8,12 +8,17 @@
     "should_trigger": false
   },
   {
-    "query": "Are the runbook, access, escalation path, and transition checkpoints ready for ownership transfer?",
+    "query": "Invoke pipa-handover: are the runbook, access, escalation path, and transition checkpoints ready for ownership transfer?",
     "should_trigger": true
   },
   {
-    "query": "Create a conditional handover plan for the remaining support-readiness gaps.",
+    "query": "Pipa Improve Operations delegates this to pipa-handover: create a conditional handover plan for the remaining support-readiness gaps.",
     "should_trigger": true
+  },
+  {
+    "query": "Prepare the operational handover and confirm who owns support after launch.",
+    "should_trigger": false,
+    "routing_contract": "generic-lane-owned"
   },
   {
     "query": "Decide whether stakeholders formally accept the delivered scope.",

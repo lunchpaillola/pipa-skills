@@ -1,6 +1,6 @@
 ---
 name: pipa-daily-shutdown
-description: "Use for a one-time request to close a specific workday, compare an accepted Daily Plan with actual outcomes, resolve open loops, and prepare the next workday."
+description: "Use only when `pipa-daily-shutdown` is explicitly invoked or `pipa-improve-operations` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

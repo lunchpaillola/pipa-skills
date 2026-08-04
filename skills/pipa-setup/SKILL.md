@@ -1,6 +1,6 @@
 ---
 name: pipa-setup
-description: "Use when the user wants to set up Pipa for the first time, resume incomplete Pipa setup, or review or update the global Pipa profile. Do not use for connector setup by itself, business work, memory management, or automations."
+description: "Use only when `pipa-setup` is explicitly invoked or `pipa-manage` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

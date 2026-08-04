@@ -1,6 +1,6 @@
 ---
 name: pipa-dependency-handoff
-description: "Use for an in-flight delivery dependency, artifact, approval, or team-to-team handoff readiness check. Do not use for broad status, general risk review, or post-delivery operational ownership transfer."
+description: "Use only when `pipa-dependency-handoff` is explicitly invoked or `pipa-deliver-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

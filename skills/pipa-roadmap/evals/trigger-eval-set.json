@@ -1,7 +1,8 @@
 [
-  {"query":"Prioritize these initiatives into now, next, and later with rationale.","should_trigger":true},
-  {"query":"Build a roadmap and tell me what to pause or remove.","should_trigger":true},
-  {"query":"Sequence this backlog using MoSCoW and show the tradeoffs.","should_trigger":true},
+  {"query":"Run pipa-roadmap to prioritize these initiatives into now, next, and later with rationale.","should_trigger":true},
+  {"query":"Invoke pipa-roadmap to build a roadmap and tell me what to pause or remove.","should_trigger":true},
+  {"query":"Pipa Define Work delegates this to pipa-roadmap: sequence this backlog using MoSCoW and show the tradeoffs.","should_trigger":true},
+  {"query":"Build a roadmap and tell me what to pause or remove.","should_trigger":false,"routing_contract":"generic-lane-owned"},
   {"query":"Create the requirements and acceptance boundaries first.","should_trigger":false},
   {"query":"Map the accountable and consulted stakeholders.","should_trigger":false},
   {"query":"Choose today's priorities against five focus hours.","should_trigger":false}

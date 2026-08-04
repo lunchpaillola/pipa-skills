@@ -1,15 +1,20 @@
 [
   {
+    "query": "Run pipa-retrospective on this launch and turn the lessons into changes for next time.",
+    "should_trigger": true
+  },
+  {
+    "query": "Invoke pipa-retrospective: what should we keep, start, and stop doing based on this completed project?",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa Improve Operations delegates this to pipa-retrospective: use these incidents and decisions to improve our SOP and reusable template.",
+    "should_trigger": true
+  },
+  {
     "query": "Run a retrospective on this launch and turn the lessons into changes for next time.",
-    "should_trigger": true
-  },
-  {
-    "query": "What should we keep, start, and stop doing based on this completed project?",
-    "should_trigger": true
-  },
-  {
-    "query": "Use these incidents and decisions to improve our SOP and reusable template.",
-    "should_trigger": true
+    "should_trigger": false,
+    "routing_contract": "generic-lane-owned"
   },
   {
     "query": "Confirm formal acceptance and collect stakeholder signoff.",

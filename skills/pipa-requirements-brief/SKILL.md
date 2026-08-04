@@ -1,6 +1,6 @@
 ---
 name: pipa-requirements-brief
-description: "Use when the user explicitly wants a requirements brief, acceptance criteria or boundaries, delivery intent, or unresolved requirement decisions extracted from project material."
+description: "Use only when `pipa-requirements-brief` is explicitly invoked or `pipa-define-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

@@ -20,9 +20,9 @@ Create an operation skill when a workflow is substantial and has a distinct trig
 1. Create `skills/<operation-name>/SKILL.md` first.
 2. Use lowercase kebab-case for the directory name.
 3. Keep the `name` frontmatter field identical to the directory name.
-4. Use a narrow description naming the exact job and adjacent jobs that must not trigger it.
+4. Keep the description routing-only: `Use only when <operation> is explicitly invoked or <owner> delegates to it. Do not trigger from generic language.`
 5. Put the workflow, output contract, and safety rules in the operation skill.
-6. Add local positive and adjacent-negative trigger cases plus behavior evals.
+6. Add local positive cases that explicitly name the operation, adjacent generic-language negatives, and behavior evals.
 7. Route the owning lane or meta surface to the operation by name.
 8. Delete the migrated workflow reference. Do not retain an inline fallback or compatibility copy.
 

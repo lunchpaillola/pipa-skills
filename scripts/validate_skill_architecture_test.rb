@@ -1,19 +1,20 @@
 #!/usr/bin/env ruby
 
 require "fileutils"
+require "json"
 require "open3"
 require "tmpdir"
 
 SCRIPT = File.expand_path("validate_skill_architecture.rb", __dir__)
 ROOT = File.expand_path("..", __dir__)
 
-def skill(root, directory, name: directory, body: "")
+def skill(root, directory, name: directory, description: "Test skill.", body: "")
   path = File.join(root, "skills", directory, "SKILL.md")
   FileUtils.mkdir_p(File.dirname(path))
   File.write(path, <<~MARKDOWN)
     ---
     name: #{name}
-    description: Test skill.
+    description: #{description}
     ---
 
     # #{directory.split("-").map(&:capitalize).join(" ")}
@@ -26,11 +27,23 @@ def validate(root)
   Open3.capture3({ "ARCHITECTURE_ROOT" => root }, "ruby", SCRIPT)
 end
 
+def trigger(root, operation, owner)
+  path = File.join(root, "skills", operation, "evals", "trigger-eval-set.json")
+  FileUtils.mkdir_p(File.dirname(path))
+  File.write(path, JSON.generate([
+    { "query" => "Run #{operation} for this task.", "should_trigger" => true },
+    { "query" => "#{owner} delegates this to #{operation}: handle this task.", "should_trigger" => true },
+    { "query" => "Handle this generic task.", "should_trigger" => false, "routing_contract" => "generic-lane-owned" }
+  ]))
+end
+
 def fixture
   Dir.mktmpdir do |root|
     skill(root, "pipa-manage", body: "Routes setup to `pipa-setup` and connectors to `pipa-connectors`.")
-    skill(root, "pipa-setup")
-    skill(root, "pipa-connectors")
+    skill(root, "pipa-setup", description: "Use only when `pipa-setup` is explicitly invoked or `pipa-manage` delegates to it. Do not trigger from generic language.")
+    skill(root, "pipa-connectors", description: "Use only when `pipa-connectors` is explicitly invoked or `pipa-manage` delegates to it. Do not trigger from generic language.")
+    trigger(root, "pipa-setup", "pipa-manage")
+    trigger(root, "pipa-connectors", "pipa-manage")
     yield root
   end
 end
@@ -40,6 +53,30 @@ system({ "ARCHITECTURE_ROOT" => ROOT }, "ruby", SCRIPT) || abort("expected repo 
 fixture do |root|
   _out, err, status = validate(root)
   abort "expected valid architecture: #{err}" unless status.success?
+end
+
+fixture do |root|
+  skill(root, "pipa-setup", description: "Use for any setup request.")
+  out, = validate(root)
+  abort "expected broad operation description failure" unless out.include?("operation description must require explicit invocation")
+end
+
+fixture do |root|
+  trigger = File.join(root, "skills/pipa-setup/evals/trigger-eval-set.json")
+  FileUtils.mkdir_p(File.dirname(trigger))
+  File.write(trigger, JSON.generate([
+    { "query" => "Explain pipa-setup.", "should_trigger" => true },
+    { "query" => "Set up Pipa.", "should_trigger" => false, "routing_contract" => "generic-lane-owned" }
+  ]))
+  out, = validate(root)
+  abort "expected mention-only positive trigger failure" unless out.include?("positive trigger must invoke pipa-setup")
+end
+
+Dir.mktmpdir do |root|
+  skill(root, "pipa-manage")
+  skill(root, "pipa-setup", description: "Use only when `pipa-setup` is explicitly invoked or `pipa-manage` delegates to it. Do not trigger from generic language.")
+  out, = validate(root)
+  abort "expected missing trigger eval failure" unless out.include?("operation trigger eval is missing")
 end
 
 fixture do |root|

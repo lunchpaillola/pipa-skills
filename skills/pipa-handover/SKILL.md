@@ -1,6 +1,6 @@
 ---
 name: pipa-handover
-description: "Use when the user needs to assess or complete an operational ownership transfer, including runbooks, access, support responsibilities, escalation paths, and transition checkpoints."
+description: "Use only when `pipa-handover` is explicitly invoked or `pipa-improve-operations` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

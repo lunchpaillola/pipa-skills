@@ -1,6 +1,7 @@
 [
-  {"query":"Give me a RAG status update for the steering meeting.","should_trigger":true},
-  {"query":"Where does Project Acme stand right now and what changed this week?","should_trigger":true},
+  {"query":"Run pipa-status-update for a RAG update for the steering meeting.","should_trigger":true},
+  {"query":"Pipa Deliver Work delegates this to pipa-status-update: where does Project Acme stand right now and what changed this week?","should_trigger":true},
+  {"query":"Give me a RAG status update for the steering meeting.","should_trigger":false,"routing_contract":"generic-lane-owned"},
   {"query":"Sort these incoming tickets into ready, needs-info, defer, and escalate.","should_trigger":false},
   {"query":"This blocker has gone quiet for ten days; decide who must escalate it.","should_trigger":false},
   {"query":"Review project burn and forecast at completion.","should_trigger":false}

@@ -1,6 +1,6 @@
 ---
 name: pipa-roadmap
-description: "Use when the user explicitly wants to prioritize or sequence project work, decide what is now/next/later, choose what to pause, or make roadmap tradeoffs."
+description: "Use only when `pipa-roadmap` is explicitly invoked or `pipa-define-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

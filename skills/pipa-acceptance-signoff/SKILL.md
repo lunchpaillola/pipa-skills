@@ -1,6 +1,6 @@
 ---
 name: pipa-acceptance-signoff
-description: "Use when the user needs an auditable acceptance decision for delivered work, including criteria evidence, residual obligations, and signed-off, conditional, or not-signed-off status."
+description: "Use only when `pipa-acceptance-signoff` is explicitly invoked or `pipa-improve-operations` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

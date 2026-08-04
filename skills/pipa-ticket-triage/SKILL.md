@@ -1,6 +1,6 @@
 ---
 name: pipa-ticket-triage
-description: "Use when the user needs incoming tickets, comments, feedback, or backlog items classified, prioritized, routed, and made response-ready. Do not use for project status or risk escalation."
+description: "Use only when `pipa-ticket-triage` is explicitly invoked or `pipa-deliver-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---

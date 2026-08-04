@@ -14,7 +14,7 @@ This repository stores Pipa skills for AI agents. Pipa is the primary PM brain a
 - Keep public eval artifacts generic; store client-specific eval prompts/data in `skills/<skill-name>/evals/private/` (gitignored).
 - For connected-tool workflows, especially Composio-backed ones, prefer concise provenance in the skill contract: name the tools used and cite the specific record IDs, doc names, links, or references that materially support the answer.
 - Pipa's core router lives in `skills/pipa/`. The six business lanes are broad entry surfaces; meta surfaces route Pipa configuration and utilities.
-- A substantial, independently invokable workflow belongs in a narrowly described operation skill. Its skill owns the workflow, output contract, safety rules, and local positive/negative evals.
+- A substantial workflow belongs in an operation skill whose description permits only explicit invocation or delegation from its owning lane/meta surface. Its skill owns the workflow, output contract, safety rules, and local positive/negative evals.
 - Generic business language enters a lane. Explicit operation invocation wins; otherwise the lane selects one operation and preserves the user's business objective.
 - References are non-routing assets such as templates, schemas, examples, source-handling rules, and shared presentation guidance. Do not keep promoted workflow bodies or fallback copies in lanes or references.
 - Preserve `pipa-audio-brief`, `composio-mcp`, and `pipa-triggers` as standalone breakouts unless a future plan explicitly changes that architecture.

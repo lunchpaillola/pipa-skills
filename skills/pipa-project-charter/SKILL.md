@@ -1,6 +1,6 @@
 ---
 name: pipa-project-charter
-description: "Use when the user explicitly wants a project charter readiness check, viability gate, go/no-go decision, start conditions, or a clear account of what must be true before work begins."
+description: "Use only when `pipa-project-charter` is explicitly invoked or `pipa-define-work` delegates to it. Do not trigger from generic language."
 metadata:
   version: 0.1.0
 ---
