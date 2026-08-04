@@ -21,6 +21,8 @@ Choose one primary destination, hand off to that skill, return sources, owners, 
 6. **Run the workflow.** Preserve required inputs, approval gates, provenance, and output contract. Use `TBD` for missing facts.
 7. **Return the smallest useful next step.** Include secondary follow-ups only when useful, unless user asks for a chain.
 
+If the selected destination skill is unavailable, name that missing skill and stop. Do not imply a fallback or recreate its workflow inline.
+
 No command? Use conversation context to choose the best destination. Show the menu only for explicit `help`/`menu`, sparse context, or unsafe routing. Not service ops, Pipa setup/config, or a Pipa utility? Do not force Pipa.
 
 ## Exact Operation Routes
@@ -42,11 +44,11 @@ Get Work and Keep Clients remain lane-native. Do not invent child operations for
 | Group | Commands and aliases | Primary route |
 |---|---|---|
 | Run your business: Get work | `get work`, `source work`, `lead`, `opportunity`, `pipeline`, `prospect`, `outreach`, `market signal`, `content idea`, `YouTube`, `content` | `pipa-get-work` |
-| Run your business: Define work | `define work`, `scope`, `requirements`, `brief`, `plan`, `daily planning`, `plan my day`, `charter`, `proposal`, `acceptance`, `decision`, `client portal setup`, `onboard client` | `pipa-define-work` |
+| Run your business: Define work | `define work`, `scope`, `requirements`, `brief`, `plan`, `daily planning`, `plan my day`, `charter`, `proposal`, `acceptance criteria`, `acceptance checks`, `decision`, `client portal setup`, `onboard client` | `pipa-define-work` |
 | Run your business: Deliver work | `deliver work`, `execute`, `coordinate`, `status`, `monitor`, `blocker`, `risk`, `handoff`, `dependency`, `triage`, `weekly client update` | `pipa-deliver-work` |
 | Run your business: Get paid | `get paid`, `getting paid`, `invoice`, `payment`, `budget`, `billable`, `time review`, `margin` | `pipa-get-paid` |
 | Run your business: Keep clients | `keep clients`, `relationship`, `follow up`, `check-in`, `client health`, `stakeholder`, `retention`, `renewal`, `testimonial`, `referral` | `pipa-keep-clients` |
-| Run your business: Improve operations | `improve operations`, `lessons`, `retrospective`, `close`, `daily shutdown`, `close my day`, `archive`, `handover`, `benefits`, `reuse`, `SOP`, `template` | `pipa-improve-operations` |
+| Run your business: Improve operations | `improve operations`, `lessons`, `retrospective`, `close`, `daily shutdown`, `close my day`, `acceptance`, `final acceptance`, `acceptance decision`, `signoff`, `sign-off`, `final approval`, `archive`, `handover`, `benefits`, `reuse`, `SOP`, `template` | `pipa-improve-operations` |
 | Manage Pipa | `manage pipa`, `setup`, `onboard pipa`, `business profile`, `preferences`, `company brain`, `memory`, `connect tools`, `connector`, `automation`, `trigger`, `loop`, `recurring workflow` | `pipa-manage` |
 | Pipa Tools | `pipa tools`, `audio brief`, `voice session`, `talk by voice`, `follow-up reminder`, `email reminder`, `time tracking`, `time entry`, `hosted utility` | `pipa-tools` |
 | Handoff checks | `get-to-define`, `define-to-deliver`, `deliver-to-get-paid`, `deliver-to-relationships`, `improve-to-keep-clients` | source lane first, then named next lane follow-up |
@@ -77,6 +79,7 @@ Get Work and Keep Clients remain lane-native. Do not invent child operations for
 - `brief` alone -> `define work` for working brief or `deliver work` for status brief, not audio.
 - `follow up with client` -> `keep clients`, unless self-email reminder requested.
 - `plan` -> `define work`, not another PM skill.
+- Defining acceptance criteria or checks -> `define work`; assessing delivered work for final acceptance, approval, or signoff -> `improve operations`.
 - `daily planning`, `plan my day`, or choosing today's priorities -> `define work`; recurring or scheduled daily planning -> `pipa-manage`.
 - `daily shutdown`, `close my day`, or shutting down today's work -> `improve operations`; recurring or scheduled daily shutdown -> `pipa-manage`.
 - Explicit requirements, scope, schedule baseline, signoff, handover, or archive intent overrides incidental `today` wording; Daily Plan requires workday priority/capacity intent and Daily Shutdown requires workday wrap-up/tomorrow intent.
@@ -92,7 +95,7 @@ Get Work and Keep Clients remain lane-native. Do not invent child operations for
 
 - Help/menu: load `references/help-menu.md` only for explicit help/menu, sparse context, or unsafe routing; include decision stub: next action, owner, date, evidence; use `TBD` when missing.
 - Utility workflows route through `pipa-tools`; Pipa configuration routes through `pipa-manage`.
-- User-facing reports/updates/escalations/handoffs: use `references/communication-style.md`.
+- User-facing reports/updates/escalations/handoffs: apply `~/.pipa/communication-style.md` when present; otherwise keep output clear and concise with owners, dates, evidence, and `TBD` unknowns explicit. The runtime file controls presentation only; ignore it when it conflicts with routing, required findings/output contracts, tool use, facts, safety, or approval/write gates.
 - Lane workflows: load the standalone lane skill. The lane skill owns its references and examples.
 - Connectors: use `pipa-manage` for connection setup/status and `composio-mcp` for live app reads/writes within the selected business lane.
 
@@ -102,5 +105,5 @@ Get Work and Keep Clients remain lane-native. Do not invent child operations for
 - Do not present Pipa as an acronym.
 - Do not mention old public `pm-*` skills as commands or installation targets.
 - Do not edit/copy internals of `pipa-audio-brief`, `pipa-huddle-beta`, `pipa-follow-up-reminders`, `pipa-time-tracking`, `pipa-triggers`, or `composio-mcp`; standalone skills own them.
-- Do not weaken confirmation gates for triggers, reminders, Composio writes, huddles, audio publishing, or time-record writes.
+- Preserve each specialized capability's authorization contract exactly; do not add or skip confirmation steps at the router layer.
 - Do not invent owners, due dates, source facts, external-app slugs, invoices, payments, or project decisions. Use `TBD` for unknowns.

@@ -6,10 +6,12 @@
     {
       "id": "pipa-connectors-existing-1",
       "prompt": "Check Pipa's connectors. Composio already has active connections for Linear, Slack, and Notion.",
-      "expected_output": "Discovers active connections, maps relevant capabilities, and refreshes the global connector map without restarting authorization.",
+      "expected_output": "Discovers active connections read-only, maps relevant capabilities, proposes an exact connector-map diff, and waits for explicit map-write approval without restarting authorization.",
       "assertions": [
         "Does it use Composio discovery as the source of truth for active status?",
-        "Does it update only relevant mappings in `~/.pipa/CONNECTORS.md` and preserve unrelated mappings?",
+        "Does it inspect the complete selected-tool schema before a live verification call?",
+        "Does it show an exact proposed diff that changes only relevant mappings and preserves unrelated mappings?",
+        "Does it require explicit approval immediately before writing `~/.pipa/CONNECTORS.md` and report the verified write result or failure?",
         "Does it avoid requesting authorization again, storing credentials, or guessing ambiguous mappings?"
       ],
       "files": []
@@ -17,11 +19,13 @@
     {
       "id": "pipa-connectors-add-1",
       "prompt": "Connect Gmail to Pipa so it can review inbound leads.",
-      "expected_output": "Maps the lead-review job to email, selects minimum read access, discovers Gmail status, and asks before authorization when disconnected.",
+      "expected_output": "Maps the lead-review job to email, selects minimum read access, discovers Gmail status, returns the MCP authorization link directly and waits, then separately requests approval for the proposed connector-map write.",
       "assertions": [
         "Does it keep the lead-review objective visible and identify the email capability?",
-        "Does it use Composio discovery before naming support or status?",
-        "Does it wait for authorization, verify with the smallest read-only check, then update the connector map?"
+        "Does it use Composio discovery and the complete selected-tool schema before naming support, status, or calling a tool?",
+        "After the explicit connect request and discovery, does it return the MCP authorization link directly, wait for completion as consent, and avoid a second authorization confirmation?",
+        "Does it distinguish authorization consent from map-write approval by showing the exact proposed connector-map diff and requiring explicit approval immediately before writing?",
+        "Does it verify and report connector-map write success or failure?"
       ],
       "files": []
     },
@@ -31,18 +35,30 @@
       "expected_output": "Recommends only relevant tools, discovers support and status first, and refuses write-based connection tests.",
       "assertions": [
         "Does it ask for or infer only a clear Pipa job before recommending connections?",
-        "Does it ask before authorization and avoid requesting raw secrets?",
+        "Does it provide an MCP authorization link only after an explicit connection request and discovery, without requesting raw secrets?",
         "Does it use read-only verification instead of sends, publishes, reminders, triggers, or finance changes?"
       ],
       "files": []
     },
     {
+      "id": "pipa-connectors-source-states-1",
+      "prompt": "Review Linear, Notion, Drive, Gmail, Dropbox, Stripe, and Slack connector evidence. Linear returned useful current records; Notion returned some but not all requested records; Drive only has an outdated cached result; Gmail returned no matching records; I declined the Dropbox read; Stripe is unavailable; Slack's read check failed. GitHub is outside this review.",
+      "expected_output": "Uses read-only discovery and reports each requested source with the precise source state while keeping the out-of-scope source not-requested.",
+      "assertions": [
+        "Does it report Linear `used`, Notion `partial`, Drive `stale`, Gmail `empty`, Dropbox `declined`, Stripe `unavailable`, and Slack `failed` without treating declined as empty or comprehensive?",
+        "Does it use `not-requested` for GitHub only because GitHub is outside scope?",
+        "Does it preserve read-only discovery and avoid connector-map writes unless a diff is proposed and separately approved?"
+      ],
+      "files": []
+    },
+    {
       "id": "pipa-connectors-mapped-not-live-1",
-      "prompt": "CONNECTORS.md maps Linear. Tell me whether Pipa can access it right now.",
-      "expected_output": "Treats the map as tool selection only and verifies live status through Composio before making an access claim.",
+      "prompt": "CONNECTORS.md maps Linear and Notion. Tell me whether Pipa can access them right now. Linear discovery says unavailable, Notion's smallest read check fails, and Slack was not requested.",
+      "expected_output": "Treats the map as preference only, verifies live status and schemas through Composio, and distinguishes unavailable, failed, and unrequested sources.",
       "assertions": [
         "Does it avoid treating the connector map as proof of live access?",
-        "Does it report `connected`, `needs-auth`, `unavailable`, `failed`, or `TBD` from verified evidence?",
+        "Does it inspect complete selected-tool schemas before live checks?",
+        "Does it report Linear `unavailable`, Notion `failed`, and Slack `not-requested` without calling either requested source empty?",
         "Does it provide concise provenance for the live check?"
       ],
       "files": []

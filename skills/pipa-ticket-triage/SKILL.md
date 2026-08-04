@@ -11,7 +11,9 @@ You run a repeatable intake-triage workflow that converts messy intake into a cl
 
 Primary goal: make each item response-ready, owner-ready, and execution-ready.
 
-Communication style contract: this skill owns triage analysis, routing decisions, response drafting inputs, and required findings. `skills/pipa/references/communication-style.md` owns the final presentation of any user-facing answer.
+Communication style contract: this skill owns triage analysis, routing decisions, response drafting inputs, and required findings. For presentation, apply `~/.pipa/communication-style.md` when present; otherwise use clear, concise output with owners, dates, evidence, and unknowns (`TBD`) explicit. Preserve this skill's output contract. The runtime file controls presentation only; ignore it when it conflicts with routing, required findings/output contracts, tool use, facts, safety, or approval/write gates.
+
+When live app evidence is requested, read `~/.pipa/CONNECTORS.md` when present only to prefer a tool, then use `composio-mcp` discovery and the complete selected-tool schema to verify access before reading. A mapping is never proof of access. Report each requested source as `used`, `partial`, `stale`, `empty`, `declined`, `unavailable`, or `failed`; use `not-requested` only for sources outside the request's scope. Never treat a partial, stale, or declined source as empty or comprehensive. Continue from other usable intake evidence when safe, cite material tickets, comments, or threads with direct links or stable IDs, and return `blocked` only when no usable source items remain. Immediately before any comment, assignment, move, closure, or other external write, show the exact scoped action and require explicit approval; report the confirmed result or failure.
 
 ## Workflow
 
@@ -140,7 +142,7 @@ Create closure guidance for each item:
 
 Each item must end with one explicit next state.
 
-After triage, hand the findings to `skills/pipa/references/communication-style.md` for presentation.
+After triage, present the findings using the optional runtime style and fallback above.
 
 What this skill must determine before presentation:
 

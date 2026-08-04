@@ -49,10 +49,11 @@
     },
     {
       "id": "pipa-setup-website-1",
-      "prompt": "Set up Pipa and use https://example.com to help draft my business profile.",
-      "expected_output": "Offers a read-only best-effort website read and uses only confirmed supported public facts while still asking the core questions.",
+      "prompt": "Set up Pipa and use https://example.com, https://example.com/about, https://example.com/services, and https://example.com/archive to help draft my business profile. The home page returns no business facts, the about-page read fails, services returns only part of the requested content, the archive is outdated, and do not read https://example.com/blog.",
+      "expected_output": "Reports the empty, failed, partial, stale, and unrequested website reads separately, continues setup, and saves no unsupported website facts while still asking the core questions.",
       "assertions": [
         "Does it treat website assistance as optional and read-only?",
+        "Does it report the home page `empty`, about page `failed`, services page `partial`, archive page `stale`, and blog page `not-requested`, without treating partial or stale pages as empty or comprehensive?",
         "Does it confirm supported facts before saving optional website context without overwriting user content?",
         "Does it avoid enrichment services, email reverse lookup, or invented positioning?"
       ],
@@ -77,6 +78,28 @@
         "Does it avoid connector or memory actions after setup is declined?",
         "Does it avoid creating or changing `~/.pipa/profile.md`?",
         "Does it continue with concrete work without another setup question?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-communication-style-create-1",
+      "prompt": "Run pipa-setup. My profile is complete, but ~/.pipa/communication-style.md does not exist.",
+      "expected_output": "Offers the packaged default without creating the runtime file until the user separately approves the exact write.",
+      "assertions": [
+        "Does it identify `skills/pipa-setup/references/communication-style.md` as the packaged default and `~/.pipa/communication-style.md` as the runtime path?",
+        "Does it require separate explicit approval before creating the runtime file?",
+        "Does it leave setup and other Pipa skills usable if the user declines?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-communication-style-update-1",
+      "prompt": "Run pipa-setup and update my existing communication style to the packaged default.",
+      "expected_output": "Shows the proposed replacement and waits for separate explicit approval before overwriting the customized runtime file.",
+      "assertions": [
+        "Does it preserve the existing runtime file by default?",
+        "Does it show the proposed change or replacement before requesting approval?",
+        "Does it avoid treating the request to review or update as approval to write?"
       ],
       "files": []
     }

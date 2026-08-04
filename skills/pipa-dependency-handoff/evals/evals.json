@@ -12,6 +12,13 @@
         "Does it avoid marking the handoff complete without approval evidence?"
       ],
       "files":[]
+    },
+    {
+      "id":"dependency-handoff-live-sources",
+      "prompt":"Assess the handoff from this pasted release checklist. Linear blocker retrieval failed, Drive returned no approval artifact, Notion returned only part of the runbook, Jira's dependency snapshot is outdated, and Slack was not requested.",
+      "expected_output":"Continues from the checklist while distinguishing failed, empty, partial, stale, and unrequested sources and withholding readiness without approval evidence.",
+      "assertions":["Does it use composio-mcp discovery and complete selected-tool schemas before live reads?","Does it report Linear `failed`, Drive `empty`, Notion `partial`, Jira `stale`, and Slack `not-requested` distinctly, without treating partial or stale results as empty or comprehensive?","Does it cite the checklist and avoid marking the handoff complete without the missing approval?"],
+      "files":[]
     }
   ]
 }

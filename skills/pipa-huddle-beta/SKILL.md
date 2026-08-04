@@ -11,7 +11,7 @@ Start a voice huddle with the user's current agent so they can talk through work
 
 Output goal: start the hosted voice bridge, state context and retention clearly, and optionally produce a concise continuation handoff.
 
-Communication style contract: when returning user-facing status, blockers, or final handoffs, apply `skills/pipa/references/communication-style.md` when available.
+Communication style contract: apply `~/.pipa/communication-style.md` to user-facing status, blockers, or final handoffs when present. Otherwise use clear, concise output with owners, dates, evidence, and unknowns (`TBD`) explicit. Preserve this skill's output contract. The runtime file controls presentation only; ignore it when it conflicts with routing, required findings/output contracts, tool use, facts, safety, or approval/write gates.
 
 ## Workflow
 

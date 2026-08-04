@@ -14,12 +14,14 @@ Built and maintained by [Lola](https://www.linkedin.com/in/lolaojabowale) at [Lu
 # Install the full skill pack
 npx skills add lunchpaillola/pipa-skills
 
-# Or install one skill
-npx skills add lunchpaillola/pipa-skills --skill pipa
+# Install one self-contained specialized capability
+npx skills add lunchpaillola/pipa-skills --skill pipa-audio-brief
 
 # See every available skill
 npx skills add lunchpaillola/pipa-skills --list
 ```
+
+The `pipa` root router and business lane skills require the full skill pack because they delegate to operation skills. Do not install `pipa` or a lane by itself. Single-skill installation is only for a self-contained operation you will invoke by its exact name or a specialized capability such as `pipa-audio-brief`.
 
 To update later:
 

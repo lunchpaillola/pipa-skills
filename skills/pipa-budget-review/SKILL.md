@@ -17,8 +17,8 @@ Prioritize financial truth over delivery proxies. Use the core model:
 - **Baseline**: approved budget/fee
 - **Actuals**: spent to date
 - **Commitments**: work in motion, contracts signed
-- **EAC** (Estimate at Completion): forecast total spend
-- **Variance**: EAC vs baseline
+- **EAC** (Estimate at Completion): actuals + commitments + estimate to complete, with no double counting
+- **Variance**: EAC - baseline; positive is over budget and negative is under budget
 - **Action**: what happens now
 
 ## Response Constraints
@@ -53,7 +53,7 @@ Signal reliability whenever confidence is decision-relevant or non-obvious:
 | **Medium** | Baseline + strong progress signals, limited actuals | "Medium confidence — forecast based on delivery signals" |
 | **Low** | Baseline only or weak signals | "Low confidence — directional only; connect [Pipa or finance source] to firm this up" |
 
-Communication style contract: this skill owns budget analysis, source evaluation, thresholds, and required findings. `skills/pipa/references/communication-style.md` owns the final presentation of any user-facing answer.
+Communication style contract: this skill owns budget analysis, source evaluation, thresholds, and required findings. For presentation, apply `~/.pipa/communication-style.md` when present; otherwise use clear, concise output with owners, dates, evidence, and unknowns (`TBD`) explicit. Preserve this skill's output contract. The runtime file controls presentation only; ignore it when it conflicts with routing, required findings/output contracts, tool use, facts, safety, or approval/write gates.
 
 ## Workflow (Internal)
 
@@ -62,8 +62,8 @@ Use this lightweight 6-step model (don't expose step-by-step in output):
 1. **Baseline**: approved fee/budget
 2. **Actuals + Commitments**: spent + in-motion work
 3. **Pipa Signals**: schedule slip, scope churn, blockers, dependency risk
-4. **EAC**: baseline - (actuals + commitments) = remaining, or forecast method adjusted by Pipa signals
-5. **Variance**: EAC vs baseline
+4. **EAC**: actuals + commitments + estimate to complete. Keep commitments and estimate to complete mutually exclusive; if the source overlaps them, report EAC as `TBD` until reconciled rather than double counting.
+5. **Variance**: EAC - baseline. Report positive values as over budget and negative values as under budget; variance % is `(EAC - baseline) / baseline * 100`.
 6. **Decision + Action**: what to do, who owns it, by when
 
 ## Required Findings
@@ -82,7 +82,7 @@ For `watch`, `red`, or `blocked`, keep both the decision and the accountable nex
 
 For clear `green` cases, keep the message lean and avoid over-explaining the healthy state.
 
-Do not hardcode the final answer format here. Pass these findings to `skills/pipa/references/communication-style.md`.
+Do not hardcode the final answer format here. Present these findings using the optional runtime style and fallback above.
 
 ## Reference Content Shapes
 
@@ -248,5 +248,6 @@ Every action must include: **what**, **who**, **by when**.
 - 4-6 lines max, one decision, one accountable step
 - One biggest driver only — no laundry lists
 - Add confidence when reliability is not obvious or the answer is materially inferred
-- Same decision logic and thresholds, always; let `skills/pipa/references/communication-style.md` control the final formatting
+- Same decision logic and thresholds, always; let the optional runtime style and fallback above control final formatting
 - In `watch`, `red`, and `blocked` cases, keep the driver, decision, and next step distinct.
+- Read-only source checks, calculations, scenarios, and budget analysis do not require approval and must not be blocked on write permission; immediately before every external or file write, request separate explicit approval scoped to that exact action, destination, and proposed content, never treating the original request or approval for another write as approval; after each approved write, report success or failure and include the resulting path, link, or stable ID when available.

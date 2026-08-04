@@ -35,6 +35,17 @@
         "Does it require success or failure confirmation and resulting record links or stable IDs?"
       ],
       "files": []
+    },
+    {
+      "id": "handover-live-sources-1",
+      "prompt": "Assess handover from this pasted current runbook. Drive access is unavailable, Linear open-issue retrieval failed, Slack returned no escalation records, Notion returned only part of the requested support documentation, Jira's ownership snapshot is outdated, and email was not requested.",
+      "expected_output": "Continues from the runbook while distinguishing all source states and retaining evidence gaps in readiness.",
+      "assertions": [
+        "Does it verify apps through composio-mcp discovery and complete selected-tool schemas rather than trust mappings?",
+        "Does it report Drive `unavailable`, Linear `failed`, Slack `empty`, Notion `partial`, Jira `stale`, and email `not-requested` distinctly without treating partial or stale results as empty or comprehensive?",
+        "Does it cite the runbook and continue without inventing access, open-issue, or escalation evidence?"
+      ],
+      "files": []
     }
   ]
 }

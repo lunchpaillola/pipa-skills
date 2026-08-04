@@ -26,6 +26,39 @@
       "files": []
     },
     {
+      "id": "pipa-acceptance-criteria-definition-1",
+      "prompt": "Pipa define the acceptance criteria and testable acceptance checks for this proposed deliverable.",
+      "expected_output": "Routes acceptance-criteria definition to Define Work and selects pipa-requirements-brief rather than treating the request as final signoff.",
+      "assertions": [
+        "Does the output select `define work` and `pipa-requirements-brief` as the primary route?",
+        "Does it treat acceptance criteria and checks as requirements to define?",
+        "Does it avoid selecting `pipa-acceptance-signoff` before delivered work is being assessed?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-final-acceptance-signoff-1",
+      "prompt": "Pipa review the delivered work for final acceptance and signoff.",
+      "expected_output": "Routes generic final acceptance and signoff to Improve Operations and selects pipa-acceptance-signoff.",
+      "assertions": [
+        "Does the output select `improve operations` and `pipa-acceptance-signoff` as the primary route?",
+        "Does it treat the request as an acceptance decision on delivered work rather than acceptance-criteria definition?",
+        "Does it avoid routing final signoff to `pipa-define-work` or `pipa-deliver-work`?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-missing-operation-1",
+      "prompt": "Pipa review the delivered work for final acceptance and signoff, but pipa-acceptance-signoff is not installed.",
+      "expected_output": "Names pipa-acceptance-signoff as the missing operation and stops without implying or reproducing a fallback workflow.",
+      "assertions": [
+        "Does the output explicitly name `pipa-acceptance-signoff` as unavailable?",
+        "Does it stop instead of performing an inline acceptance-signoff workflow?",
+        "Does it avoid implying that another lane or generic fallback can replace the missing operation?"
+      ],
+      "files": []
+    },
+    {
       "id": "pipa-daily-plan-1",
       "prompt": "Pipa plan my day. It is August 3 in America/New_York. Read my active tracker work, open pull requests, and calendar, then help me commit to a realistic plan.",
       "expected_output": "Routes to pipa-daily-plan through Define Work, runs the seven-step ritual, verifies live sources, confronts estimates against capacity, and returns a proposed Daily Plan for explicit acceptance.",
@@ -349,7 +382,7 @@
       "expected_output": "Routes to pipa-follow-up-reminders because the user asked for a specific future email reminder to themself.",
       "assertions": [
         "Does the output route to `pipa-follow-up-reminders`?",
-        "Does it preserve one-shot reminder scope, timezone resolution, verified self-recipient guardrail, and confirmation before create?",
+        "Does it preserve one-shot reminder scope, timezone resolution, and the verified self-recipient guardrail, then create without an extra confirmation when validation passes?",
         "Does it avoid turning this into recurring automation or inbox monitoring?"
       ],
       "files": []

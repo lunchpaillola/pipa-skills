@@ -71,16 +71,17 @@ def local_link_targets(content)
 end
 
 def substantial_windows(content)
-  content.downcase.scan(/[[:alnum:]]+/).each_cons(16).map { |words| words.join(" ") }.to_set
+  workflow_content = content.lines.reject { |line| line.include?("~/.pipa/communication-style.md") }.join
+  workflow_content.downcase.scan(/[[:alnum:]]+/).each_cons(16).map { |words| words.join(" ") }.to_set
 end
 
 errors = []
 skill_files = Dir.glob(ROOT.join("skills/*/SKILL.md").to_s).map { |path| Pathname(path) }.sort
-active_files = Dir.glob(ROOT.join("skills/**/*.{md,json}").to_s) +
-  Dir.glob(ROOT.join("evals/**/*.json").to_s) + [ROOT.join("README.md").to_s]
-markdown_files = Dir.glob(ROOT.join("{AGENTS.md,CONTRIBUTING.md,README.md,docs/**/*.md,skills/**/*.md}").to_s).reject do |filename|
+governed_files = (Dir.glob(ROOT.join("{AGENTS.md,CONTRIBUTING.md,README.md,docs/**/*.md,skills/**/*.md,skills/**/evals/**/*.json,evals/**/*.json}").to_s).reject do |filename|
   Pathname(filename).relative_path_from(ROOT).to_s.start_with?("docs/plans/")
-end.sort
+end).map { |filename| Pathname(filename) }.uniq.sort
+markdown_files = governed_files.select { |path| path.extname == ".md" }
+router_files = ([ROOT.join("skills/pipa/SKILL.md")] + PROMOTIONS.values.map { |owner, _| ROOT.join("skills", owner, "SKILL.md") }).uniq
 
 skill_files.each do |path|
   directory = path.dirname.basename.to_s
@@ -88,6 +89,12 @@ skill_files.each do |path|
   data = frontmatter(path)
   actual = data.is_a?(Hash) ? data["name"].to_s : ""
   errors << "#{path.relative_path_from(ROOT)}: frontmatter name '#{actual}' must match directory '#{directory}'" if actual != expected
+end
+
+setup_path = ROOT.join("skills/pipa-setup")
+communication_style_path = setup_path.join("references/communication-style.md")
+if setup_path.exist? && !communication_style_path.exist?
+  errors << "skills/pipa-setup/references/communication-style.md: required pipa-setup communication style reference is missing"
 end
 
 markdown_files.each do |filename|
@@ -116,8 +123,7 @@ PROMOTIONS.each do |operation, (owner, stale_path)|
   errors << "#{stale_path}: promoted workflow source still exists" if ROOT.join(stale_path).exist?
 
   short_path = stale_path.sub(%r{\Askills/#{Regexp.escape(owner)}/}, "")
-  active_files.sort.each do |filename|
-    path = Pathname(filename)
+  governed_files.each do |path|
     next unless path.exist?
     next if path == operation_path
 
@@ -129,6 +135,10 @@ PROMOTIONS.each do |operation, (owner, stale_path)|
 
   operation_content = operation_path.read
   owner_content = owner_path.read
+  unless owner_content.include?(operation)
+    errors << "#{owner_path.relative_path_from(ROOT)}: owner lane must name #{operation}"
+  end
+
   operation_data = frontmatter(operation_path)
   expected_description = "Use only when `#{operation}` is explicitly invoked or `#{owner}` delegates to it. Do not trigger from generic language."
   actual_description = operation_data.is_a?(Hash) ? operation_data["description"].to_s : ""
@@ -141,26 +151,39 @@ PROMOTIONS.each do |operation, (owner, stale_path)|
     errors << "#{trigger_path.relative_path_from(ROOT)}: operation trigger eval is missing"
   else
     trigger_tests = JSON.parse(trigger_path.read)
-    trigger_tests.select { |test| test["should_trigger"] }.each do |test|
+    positive_tests = trigger_tests.select { |test| test["should_trigger"] }
+    explicit_positive = false
+    delegation_positive = false
+    owner_pattern = Regexp.escape(owner).gsub("\\-", "[- ]")
+    positive_tests.each do |test|
       query = test["query"].to_s
-      explicit_invocation = query.match?(/\A(?:run|invoke) #{Regexp.escape(operation)}\b/i)
-      owner_delegation = query.match?(/\bdelegates this to #{Regexp.escape(operation)}\b/i)
+      explicit_invocation = query.match?(/\A\s*(?:run|invoke) #{Regexp.escape(operation)}\b/i)
+      owner_delegation = query.match?(/\b#{owner_pattern}\b.*\bdelegates this to #{Regexp.escape(operation)}\b/i)
+      explicit_positive ||= explicit_invocation
+      delegation_positive ||= owner_delegation
       unless explicit_invocation || owner_delegation
         errors << "#{trigger_path.relative_path_from(ROOT)}: positive trigger must invoke #{operation} or delegate from #{owner}"
       end
     end
+    errors << "#{trigger_path.relative_path_from(ROOT)}: operation needs an explicit run/invoke positive trigger" unless explicit_positive
+    errors << "#{trigger_path.relative_path_from(ROOT)}: operation needs a delegation positive trigger from #{owner}" unless delegation_positive
     unless trigger_tests.any? { |test| !test["should_trigger"] && test["routing_contract"] == "generic-lane-owned" && !test["query"].to_s.include?(operation) }
       errors << "#{trigger_path.relative_path_from(ROOT)}: operation needs a generic lane-owned negative trigger"
     end
   end
 
   operation_title = operation_content[/^#\s+(.+)$/, 1]
-  if operation_title && owner_content.match?(/^\#{2,6}\s+#{Regexp.escape(operation_title)}\s*$/)
-    errors << "#{owner_path.relative_path_from(ROOT)}: inline fallback heading copies #{operation}"
-  end
+  router_files.each do |router_path|
+    next unless router_path.exist?
 
-  duplicate = substantial_windows(operation_content) & substantial_windows(owner_content)
-  errors << "#{owner_path.relative_path_from(ROOT)}: inline fallback content copies #{operation}" if duplicate.any?
+    router_content = router_path.read
+    if operation_title && router_content.match?(/^\#{2,6}\s+#{Regexp.escape(operation_title)}\s*$/)
+      errors << "#{router_path.relative_path_from(ROOT)}: inline fallback heading copies #{operation}"
+    end
+
+    duplicate = substantial_windows(operation_content) & substantial_windows(router_content)
+    errors << "#{router_path.relative_path_from(ROOT)}: inline fallback content copies #{operation}" if duplicate.any?
+  end
 end
 
 
@@ -168,8 +191,7 @@ REMOVED_ROUTER_PATHS.each do |stale_path|
   errors << "#{stale_path}: removed router source still exists" if ROOT.join(stale_path).exist?
 
   short_path = stale_path.sub(%r{\Askills/[^/]+/}, "")
-  active_files.sort.each do |filename|
-    path = Pathname(filename)
+  governed_files.each do |path|
     next unless path.exist?
 
     content = path.read

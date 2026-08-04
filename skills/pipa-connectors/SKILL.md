@@ -37,10 +37,12 @@ Set up, inspect, explain, or troubleshoot Pipa connected tools.
 ## Review The Global Connector Map
 
 1. Read `~/.pipa/CONNECTORS.md` when present.
-2. Use `composio-mcp` discovery to inspect supported toolkits and active connection status.
+2. Use `composio-mcp` discovery to inspect supported toolkits and active connection status; inspect the complete selected-tool schema before any live check.
 3. Map active connections to relevant capability categories. Ask only when multiple tools could fill the same category or the mapping is unclear.
-4. Create or update the map from verified active connections or explicit user choices. Preserve unrelated mappings.
-5. Never store credentials, authorization links, secrets, or connection status. Check Composio before claiming a mapped tool is active.
+4. Show the exact proposed connector-map diff based on verified active connections or explicit user choices. Preserve unrelated mappings.
+5. Immediately before creating or updating `~/.pipa/CONNECTORS.md`, require explicit approval for that exact diff. Connector-map write approval is separate from authorization-link completion; never infer one from the other.
+6. Apply only the approved diff, verify the file write, and report success or failure. If the write fails, do not claim the map was updated.
+7. Never store credentials, authorization links, secrets, or connection status. Check Composio before claiming a mapped tool is active.
 
 Use this shape and include only relevant categories:
 
@@ -56,17 +58,18 @@ updated_at: <ISO-8601 timestamp>
 | `~~project tracker` | Linear | linear |
 ```
 
-The map is a durable tool-selection index, not proof of live access. Business-lane source checks must use Composio discovery to verify live access and report unavailable, stale, or failed sources explicitly. Optional communication checks must be narrow and tied to a known gap, not broad inbox or channel scans.
+The map is a durable tool-selection preference, not proof of live access. Discovery and verification must remain read-only. Live checks must use `composio-mcp` discovery and the complete selected-tool schema, and report every requested source as `used`, `partial`, `stale`, `empty`, `declined`, `unavailable`, or `failed`. Use `not-requested` only for sources outside the request's scope. Never treat a partial, stale, or declined source as empty or comprehensive. Continue from other usable evidence when safe and cite material checks with direct links or stable IDs. Optional communication checks must be narrow and tied to a known gap, not broad inbox or channel scans.
 
 ## Add A Connector
 
 1. Name the Pipa job the connector should support.
 2. Map the job to a connector category and target app.
 3. Pick the minimum permission: read, write, publish, notify, schedule, or manage.
-4. Use `composio-mcp` discovery to find the toolkit and connection status.
-5. If disconnected, give the MCP-provided authorization link and wait.
+4. Use `composio-mcp` discovery to find the toolkit and connection status, then inspect the complete selected-tool schema before execution.
+5. If the user explicitly requested the connection and discovery reports it disconnected, return the MCP-provided authorization link directly and wait. Completing the link is consent to authorize; do not ask for another authorization confirmation before or after it.
 6. After authorization, run the smallest safe read-only check.
-7. Update `~/.pipa/CONNECTORS.md`, then summarize what connected, what Pipa can do, and remaining gaps.
+7. Show the exact proposed connector-map diff and ask for separate explicit approval immediately before writing it. Do not treat authorization-link completion as map-write approval.
+8. Apply only the approved diff, verify and report write success or failure, then summarize what connected, what Pipa can do, and remaining gaps.
 
 ## Output Contract
 
@@ -78,6 +81,8 @@ The map is a durable tool-selection index, not proof of live access. Business-la
 - Setup action or authorization step.
 - Safety note for writes, publishing, or notifications.
 - Provenance for any live check.
+- Source state for every requested source: `used`, `partial`, `stale`, `empty`, `declined`, `unavailable`, or `failed`; use `not-requested` only outside scope.
+- Exact proposed connector-map diff, approval status, and confirmed write result or failure.
 
 ## Safety Rules
 
@@ -88,3 +93,5 @@ The map is a durable tool-selection index, not proof of live access. Business-la
 - If the user wants to use an already-connected app now, preserve the business objective and use `composio-mcp` for execution.
 - Update the global map only from verified discovery results or explicit user choices; do not guess mappings.
 - Never store credentials, authorization links, secrets, or live status in the connector map.
+- For an explicit connection request, discovery may return an MCP authorization link directly. Wait for the user to complete it; link completion is authorization consent, so do not add a second authorization confirmation.
+- Connector-map writes remain a separate external state change. Show the exact proposed diff and require explicit approval immediately before writing; never treat authorization-link completion as map-write approval.

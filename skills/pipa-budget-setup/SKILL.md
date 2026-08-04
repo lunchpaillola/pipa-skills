@@ -11,7 +11,7 @@ You set up a lightweight, reusable project budget table where each row represent
 
 Primary goal: initialize a simple budget tracker that is fast to maintain and easy to scan.
 
-Communication style contract: when returning user-facing updates, briefs, or summaries, apply `skills/pipa/references/communication-style.md`.
+Communication style contract: apply `~/.pipa/communication-style.md` when present. Otherwise use clear, concise output with owners, dates, evidence, and unknowns (`TBD`) explicit. Preserve this skill's output contract. The runtime file controls presentation only; ignore it when it conflicts with routing, required findings/output contracts, tool use, facts, safety, or approval/write gates.
 
 ## Workflow
 
@@ -37,12 +37,12 @@ Modes:
 1. `create` - create a new tracker with starter rows or placeholders
 2. `update` - update an existing tracker while preserving untouched rows
 
-If the user names a different path, use that path. Prepare the proposed tracker content first, then require separate explicit approval before creating or updating the file.
+If the user names a different path, use that path. Prepare the proposed tracker content first. Immediately before creating or updating it, request explicit approval scoped to the exact action, path, and proposed content; the request to set up a budget is not write approval.
 
 ## Step 2: Check for an existing tracker
 
 - If the target file exists, read it first and preserve existing rows unless the user asks to replace them.
-- If it does not exist, create it using the template in Step 4.
+- If it does not exist, prepare it using the template in Step 4 and wait for the scoped write approval.
 
 Update safety rules:
 
@@ -75,7 +75,7 @@ Column contract:
 - If the user does not ask for custom columns, keep the default names exactly as listed.
 - If the user asks for custom columns, keep defaults unless replacement is explicitly requested.
 
-## Step 4: Create or update the tracker
+## Step 4: Prepare, then create or update the tracker
 
 Use this structure:
 
@@ -101,7 +101,7 @@ Row rules:
 
 Return:
 
-- file created/updated path
+- proposed path before approval, then created/updated path or failure after an approved write
 - columns used
 - number of project rows currently in the table
 - any assumptions or `TBD` fields still needed
@@ -126,7 +126,7 @@ Recommended response shape:
 - Do not invent budget numbers; use `TBD` when unknown.
 - Preserve existing project names and values exactly unless the user requests edits.
 - Keep date format as `YYYY-MM-DD`.
-- Treat file creation and updates as external writes: require separate explicit approval, then report the resulting path or failure. Do not infer approval from a request to prepare or set up a budget.
+- Read-only file checks and tracker preparation do not require approval and must not be blocked on write permission; immediately before every file or external write, request separate explicit approval scoped to that exact action, destination, and proposed content, without inferring it from a request to prepare or set up a budget or reusing approval for another write; after each approved write, report success or failure and include the resulting path, link, or stable ID when available.
 
 ## Quick examples
 

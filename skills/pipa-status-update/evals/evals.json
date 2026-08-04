@@ -23,6 +23,13 @@
         "Does it preserve triage and escalation as secondary recommendations only?"
       ],
       "files":[]
+    },
+    {
+      "id":"status-live-sources",
+      "prompt":"Prepare status from this pasted milestone note. CONNECTORS.md maps Linear, Slack, Notion, and Jira, but Linear is unavailable, Slack search failed, Notion returned only some requested status notes, Jira's milestone snapshot is outdated, and email was not requested.",
+      "expected_output":"Does not trust connector mappings, continues from the milestone note, and distinguishes unavailable, failed, partial, stale, and unrequested sources with provenance.",
+      "assertions":["Does it use composio-mcp discovery and complete selected-tool schemas rather than treat CONNECTORS.md as access proof?","Does it report Linear `unavailable`, Slack `failed`, Notion `partial`, Jira `stale`, and email `not-requested` without treating partial or stale results as empty or comprehensive?","Does it cite the milestone note and return qualified status rather than block while usable evidence remains?"],
+      "files":[]
     }
   ]
 }

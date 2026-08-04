@@ -23,6 +23,13 @@
         "Does it recommend `pipa-status-update` only as the next operation rather than running it?"
       ],
       "files":[]
+    },
+    {
+      "id":"work-coordination-live-sources",
+      "prompt":"Coordinate from these pasted package notes plus mapped Linear, Slack, Notion, and GitHub. Linear failed, Slack returned no relevant updates, Notion returned only some requested comments, GitHub's latest result is outdated, and email was not requested.",
+      "expected_output":"Continues from package notes while distinguishing failed, empty, partial, stale, and unrequested live sources and preserving package provenance.",
+      "assertions":["Does it use composio-mcp discovery and complete selected-tool schemas rather than trust mappings?","Does it report Linear `failed`, Slack `empty`, Notion `partial`, GitHub `stale`, and email `not-requested` distinctly, without treating partial or stale results as empty or comprehensive?","Does it cite the pasted package notes and continue with qualified coordination instead of blocking solely on live-source failures?"],
+      "files":[]
     }
   ]
 }

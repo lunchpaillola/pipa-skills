@@ -20,7 +20,7 @@ Route Pipa configuration and maintenance to one focused operation.
 - Connected-tool setup, connector status/troubleshooting, or global connector-map maintenance -> `pipa-connectors`.
 - Company brain, memory, permissions, access audits, automations, triggers, loops, and recurring work remain in `pipa-manage` unless a specialized capability applies.
 - For recurring rituals, report that self-installed Pipa has no scheduler and do not imply that a schedule was created. Offer manual ritual use or hosted Pipa, then route to hosted setup only after the user chooses it.
-- If a named operation is unavailable, report the missing operation. Do not run an inline copy.
+- If the selected operation is unavailable, name that missing skill and stop. Do not imply a fallback or run an inline copy.
 
 ## Output Contract
 

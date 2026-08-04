@@ -31,7 +31,10 @@ Explicit operation invocation wins. Otherwise select exactly one primary operati
 - Recurring or scheduled Daily Plan setup goes to `pipa-manage`.
 - Start-readiness or go/no-go intent selects `pipa-project-charter`; problem clarity selects `pipa-problem-framing`.
 - Ownership of the engagement selects `pipa-stakeholder-map`; governance controls across workstreams select `pipa-decision-log`.
-- If multiple operations apply, run the one needed first and name the others only as follow-ups. Do not run an inline fallback if an operation is missing.
+- Defining acceptance criteria, checks, or boundaries selects `pipa-requirements-brief`; assessing delivered work for final acceptance, approval, or signoff goes to `pipa-improve-operations`.
+- If multiple operations apply, run the one needed first and name the others only as follow-ups.
+
+If the selected operation is unavailable, name that missing skill and stop. Do not imply a fallback or recreate its workflow inline.
 
 Load `references/examples/define-work.md` only when an example shape helps.
 

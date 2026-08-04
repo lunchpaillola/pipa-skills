@@ -39,6 +39,8 @@ Tie-breakers:
 - Choose risk escalation only when the primary ask is what is stuck, nearing breach, or needs a higher-authority decision.
 - Route a scope change to `pipa-change-control` only when fee, cost, budget, or margin impact is explicit; otherwise keep it in Deliver Work.
 
+If the selected operation is unavailable, name that missing skill and stop. Do not imply a fallback or recreate its workflow inline.
+
 ## Output Contract
 
 - Current state.

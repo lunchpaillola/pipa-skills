@@ -38,6 +38,8 @@ Routing gates:
 
 For lane-native work: state source confidence and live-record access, identify one money item, separate analysis/drafting from external action, and recommend one owner/date follow-up.
 
+If the selected operation or specialized capability is unavailable, name that missing skill and stop. Do not imply a fallback or recreate its workflow inline.
+
 ## Output Contract
 
 - Money item.

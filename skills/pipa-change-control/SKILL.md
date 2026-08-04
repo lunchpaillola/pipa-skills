@@ -11,7 +11,7 @@ You run an execute-stage change-control workflow.
 
 Primary goal: turn in-flight change requests into explicit decisions with traceable impact and ownership.
 
-Communication style contract: when returning user-facing updates, briefs, or summaries, apply `skills/pipa/references/communication-style.md`.
+Communication style contract: apply `~/.pipa/communication-style.md` when present. Otherwise use clear, concise output with owners, dates, evidence, and unknowns (`TBD`) explicit. Preserve this skill's output contract. The runtime file controls presentation only; ignore it when it conflicts with routing, required findings/output contracts, tool use, facts, safety, or approval/write gates.
 
 ## Workflow
 
@@ -117,3 +117,4 @@ Always return this structure:
 - Run only when the requested change has explicit fee, cost, budget, or margin impact; route non-financial delivery changes to `pipa-deliver-work`.
 - Do not approve changes implicitly.
 - Keep unknowns explicit as `TBD`.
+- Read-only source checks, impact analysis, and recommendations do not require approval and must not be blocked on write permission; immediately before every external or file write, request separate explicit approval scoped to that exact action, destination, and proposed content, never treating the original request or approval for another write as approval; after each approved write, report success or failure and include the resulting path, link, or stable ID when available.

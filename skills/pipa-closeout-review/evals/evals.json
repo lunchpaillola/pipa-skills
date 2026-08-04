@@ -35,6 +35,17 @@
         "Does it require success or failure confirmation and resulting links or stable IDs for approved writes?"
       ],
       "files": []
+    },
+    {
+      "id": "closeout-live-sources-1",
+      "prompt": "Review closeout from the pasted signoff. Drive archive search returned no records, Notion handover access failed, Linear is unavailable, Slack returned only some requested closure comments, Jira's risk disposition is outdated, and email was not requested.",
+      "expected_output": "Continues from signoff evidence while distinguishing empty, failed, unavailable, partial, stale, and unrequested sources and withholding archive-complete claims.",
+      "assertions": [
+        "Does it use composio-mcp discovery and complete selected-tool schemas before live reads rather than trust mappings?",
+        "Does it report Drive `empty`, Notion `failed`, Linear `unavailable`, Slack `partial`, Jira `stale`, and email `not-requested` distinctly without treating partial or stale results as empty or comprehensive?",
+        "Does it cite the signoff and avoid treating inaccessible sources as an empty or complete archive?"
+      ],
+      "files": []
     }
   ]
 }

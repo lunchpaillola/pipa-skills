@@ -25,12 +25,12 @@ Routing tie-breakers:
 
 - Closing one workday and preparing tomorrow selects `pipa-daily-shutdown`; recurring or scheduled shutdown setup goes to `pipa-manage`.
 - Explicit project signoff, handover, archive, benefits review, or formal closeout overrides incidental words such as `today` or `close my day`.
-- A closure decision with unclear readiness selects `pipa-acceptance-signoff`.
+- Final acceptance, approval, signoff, or a closure decision with unclear readiness selects `pipa-acceptance-signoff`. Defining acceptance criteria or checks goes to `pipa-define-work`.
 - Operational continuity or ownership transfer selects `pipa-handover`.
 - Learning, reuse, process improvement, SOP, or template intent selects `pipa-retrospective`.
 - Benefits evidence, archive readiness, or post-close review selects `pipa-closeout-review`.
 
-Run the selected operation skill. If it is unavailable, name the missing operation and stop instead of recreating its workflow inline.
+Run the selected operation skill. If it is unavailable, name that missing skill and stop. Do not imply a fallback or recreate its workflow inline.
 
 ## Boundaries
 

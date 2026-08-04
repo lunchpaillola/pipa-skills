@@ -23,6 +23,13 @@
         "Does it recommend escalation only for an item whose triage state warrants it?"
       ],
       "files":[]
+    },
+    {
+      "id":"ticket-triage-live-sources",
+      "prompt":"Triage the two pasted support requests. Linear creation is unavailable, Slack context search returned no messages, Notion returned only some requested customer context, Zendesk's ticket snapshot is outdated, and email was not requested. Then assign only the P1 item.",
+      "expected_output":"Triages from pasted requests, distinguishes source states, and holds the exact assignment for immediate scoped approval rather than implying it succeeded.",
+      "assertions":["Does it use composio-mcp discovery and complete schemas for live checks rather than trust mappings?","Does it report Linear `unavailable`, Slack `empty`, Notion `partial`, Zendesk `stale`, and email `not-requested` distinctly without treating partial or stale results as empty or comprehensive, while citing the pasted requests?","Does it show the exact P1 assignment and require explicit approval immediately before the write, then require a confirmed result or failure?"],
+      "files":[]
     }
   ]
 }

@@ -19,7 +19,9 @@ RAG/RAID operating rule:
 - maintain a concise RAID view (`risks`, `assumptions`, `issues`, `dependencies`)
 - map each red/yellow signal to an owner, next action, and escalation trigger
 
-Communication style contract: this skill owns status analysis, RAID reasoning, and required ownership signals. `skills/pipa/references/communication-style.md` owns the final presentation of any user-facing answer.
+Communication style contract: this skill owns status analysis, RAID reasoning, and required ownership signals. For presentation, apply `~/.pipa/communication-style.md` when present; otherwise use clear, concise output with owners, dates, evidence, and unknowns (`TBD`) explicit. Preserve this skill's output contract. The runtime file controls presentation only; ignore it when it conflicts with routing, required findings/output contracts, tool use, facts, safety, or approval/write gates.
+
+When live app evidence is requested, read `~/.pipa/CONNECTORS.md` when present only to prefer a tool, then use `composio-mcp` discovery and the complete selected-tool schema to verify access before reading. A mapping is never proof of access. Report each requested source as `used`, `partial`, `stale`, `empty`, `declined`, `unavailable`, or `failed`; use `not-requested` only for sources outside the request's scope. Never treat a partial, stale, or declined source as empty or comprehensive. Continue from other usable status evidence when safe, cite material records with human-readable labels plus direct links or stable IDs, and block only when no usable project-status signal remains. Immediately before any external update or send, show the exact scoped action and require explicit approval; report the confirmed result or failure.
 
 ## Workflow
 
@@ -51,7 +53,7 @@ Set audience tone and detail level:
 - team-level: specific tasks and owner actions
 - leadership-level: concise signal, major risks, and decision asks
 
-Do not decide final wording or opener shape here. Hand the findings to `skills/pipa/references/communication-style.md`.
+Do not decide final wording or opener shape here. Present the findings using the optional runtime style and fallback above.
 
 ## Step 2: Confirm sources and signal quality
 
@@ -138,7 +140,7 @@ If a decision owner is unclear, mark `TBD` and suggest the responsible role.
 
 ## Step 6: Return the status findings
 
-After analysis, hand the findings to `skills/pipa/references/communication-style.md` for final presentation.
+After analysis, present the findings using the optional runtime style and fallback above.
 
 What this skill must determine before presentation:
 

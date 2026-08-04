@@ -3,10 +3,13 @@ name: Validate Skills
 on:
   pull_request:
     paths:
-      - "skills/**/SKILL.md"
-      - "skills/**/evals/*.json"
+      - "AGENTS.md"
+      - "CONTRIBUTING.md"
+      - "skills/**/*.md"
+      - "skills/**/evals/**/*.json"
       - "evals/**/*.json"
       - "README.md"
+      - "docs/**/*.md"
       - "scripts/validate_skill_frontmatter.rb"
       - "scripts/validate_skill_evals.rb"
       - "scripts/validate_skill_evals_test.rb"
@@ -17,10 +20,13 @@ on:
     branches:
       - main
     paths:
-      - "skills/**/SKILL.md"
-      - "skills/**/evals/*.json"
+      - "AGENTS.md"
+      - "CONTRIBUTING.md"
+      - "skills/**/*.md"
+      - "skills/**/evals/**/*.json"
       - "evals/**/*.json"
       - "README.md"
+      - "docs/**/*.md"
       - "scripts/validate_skill_frontmatter.rb"
       - "scripts/validate_skill_evals.rb"
       - "scripts/validate_skill_evals_test.rb"

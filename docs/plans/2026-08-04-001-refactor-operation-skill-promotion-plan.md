@@ -18,7 +18,7 @@ Keep the six business lanes as broad automatic entry surfaces. Promote the 24 su
 - Generic natural language enters a lane. Explicit operation invocation wins; otherwise the lane selects one operation and preserves the business objective.
 - Operation descriptions permit only explicit invocation or delegation from the owning lane/meta surface. Generic job language remains lane-owned. Each operation owns its workflow, output contract, safety rules, positive/negative trigger cases, and behavior evals.
 - Promoted workflow references are deleted, not kept as compatibility shims. Missing operations fail clearly instead of running an inline copy.
-- References remain only for templates, schemas, examples, source-handling rules, and shared presentation assets such as `skills/pipa/references/communication-style.md`.
+- References remain only for templates, schemas, examples, and source-handling rules. Shared presentation preferences live at optional runtime path `~/.pipa/communication-style.md`; `pipa-setup` owns its packaged default and approved writes.
 - Daily Plan and Daily Shutdown keep their same-conversation contract: only the latest explicitly accepted Daily Plan with matching date and canonical IANA timezone is a valid shutdown baseline.
 - Get Work and Keep Clients remain lane-native in this pass because neither currently contains a substantial child workflow with a distinct trigger boundary.
 - Existing specialized capabilities remain unchanged: `pipa-audio-brief`, `pipa-huddle-beta`, `pipa-follow-up-reminders`, `pipa-time-tracking`, `pipa-triggers`, and `composio-mcp`.

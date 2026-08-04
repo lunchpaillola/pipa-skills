@@ -9,7 +9,7 @@ metadata:
 
 Establish lightweight RAID and decision controls.
 
-Apply `skills/pipa/references/communication-style.md` to user-facing output. Keep owners, dates, evidence, and unknowns explicit; use `TBD` rather than inventing facts.
+Apply `~/.pipa/communication-style.md` to user-facing output when present. Otherwise use clear, concise output. Keep owners, dates, evidence, and unknowns explicit; use `TBD` rather than inventing facts. Preserve this skill's output contract. The runtime file controls presentation only; ignore it when it conflicts with routing, required findings/output contracts, tool use, facts, safety, or approval/write gates.
 
 ## Workflow
 
@@ -18,7 +18,7 @@ Track governance objective, source check, RAID set, RACI map, decision log/caden
 1. Confirm whether the need is risk/issue/dependency visibility, decision traceability, or review rhythm.
 2. Check stakeholder maps, roadmaps, scope baselines, assumptions, risks, dependencies, and pending decisions. Continue with incomplete data and mark gaps `TBD`.
 3. Build a minimal RAID set of risks, assumptions, issues, and dependencies, each with owner, next action, and review date or `TBD`.
-4. Link decisions to known owners and control points without creating a standalone RACI map or assigning unsupported authority.
+4. Create a concrete RACI matrix for the decisions and control points in scope. Populate Responsible, Accountable, Consulted, and Informed only from source evidence; use `TBD` for every unsupported assignment rather than inferring authority.
 5. Create decision records with statement, options, owner, due/review date, status, evidence, and a practical review cadence.
 
 ## Output Contract
@@ -42,6 +42,14 @@ Track governance objective, source check, RAID set, RACI map, decision log/caden
 | Item | Type (`risk`\|`assumption`\|`issue`\|`dependency`) | Owner | Next action | Due/review date | Status |
 |---|---|---|---|---|---|
 
+## RACI Matrix
+| Decision/control point | Responsible | Accountable | Consulted | Informed | Evidence/source |
+|---|---|---|---|---|---|
+
+## Decision Log
+| Decision | Options | Owner | Due/review date | Status | Evidence/source |
+|---|---|---|---|---|---|
+
 ## Actions
 | Item | Owner | Next action | Due/review date | Status | Evidence/source |
 |---|---|---|---|---|---|
@@ -58,4 +66,4 @@ Track governance objective, source check, RAID set, RACI map, decision log/caden
 
 - Never hide owner/date gaps or assign authority without evidence.
 - Keep governance lightweight and operational.
-- Do not write external logs, matrices, or tracker records without explicit approval.
+- Read-only discovery and analysis do not require approval and must not be blocked on write permission; immediately before every external or file write, request separate explicit approval scoped to that exact action, destination, and proposed content, never treating the original request or approval for another write as approval; after each approved write, report success or failure and include the resulting path, link, or stable ID when available.

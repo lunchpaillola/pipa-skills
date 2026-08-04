@@ -3,10 +3,12 @@
   "evals":[
     {
       "id":"budget-review-1",
-      "prompt":"Baseline is $120K, actuals are $80K, commitments are $54K, and integration rework is the main driver. Review budget health.",
-      "expected_output":"Returns an outcome-first budget judgment, EAC and variance, confidence, one driver, one decision, and one accountable next step.",
+      "prompt":"Baseline is $120K, actuals are $80K, non-overlapping commitments are $20K, estimate to complete is $34K, and integration rework is the main driver. Review budget health.",
+      "expected_output":"Returns an outcome-first budget judgment with EAC $134K and variance +$14K (+11.7%, over budget), confidence, one driver, one decision, and one accountable next step.",
       "assertions":[
-        "Does it assess baseline, actuals, commitments, EAC, and variance using consistent thresholds?",
+        "Does it calculate EAC as actuals + commitments + estimate to complete ($80K + $20K + $34K = $134K)?",
+        "Does it calculate variance as EAC - baseline and define positive as over budget and negative as under budget?",
+        "Does it report +$14K and approximately +11.7% as over budget using consistent thresholds?",
         "Does it name only the single biggest budget driver?",
         "Does it provide one decision and one next step with owner and due date or `TBD`?",
         "Does it cite no more than two readable sources and avoid claiming live financial access without tool evidence?"
@@ -22,6 +24,18 @@
         "Does it name the exact source needed and why it matters?",
         "Does it recommend `pipa-budget-setup` without creating a tracker or baseline?",
         "Does it avoid inventing variance, margin, or confidence?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"budget-review-write-1",
+      "prompt":"Review the budget now, then update the finance tracker and save the review to a file.",
+      "expected_output":"Completes read-only budget analysis, then requests separate scoped approval immediately before each external or file write and reports each result.",
+      "assertions":[
+        "Does it perform available read-only source checks, calculations, and analysis without waiting for write approval?",
+        "Does it request separate explicit approval immediately before each write, scoped to the exact action, destination, and proposed content?",
+        "Does it avoid treating the original request or one write approval as approval for both writes?",
+        "Does it report success or failure for each approved write with a path, link, or stable ID when available?"
       ],
       "files":[]
     }

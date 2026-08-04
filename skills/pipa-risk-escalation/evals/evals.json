@@ -23,6 +23,13 @@
         "Does it avoid intake classification and response drafting?"
       ],
       "files":[]
+    },
+    {
+      "id":"risk-live-sources",
+      "prompt":"Assess escalation from this pasted blocker record. The mapped Linear RAID query failed, Slack approval search returned no messages, Notion returned only some requested decision records, Jira's risk snapshot is outdated, and email was not requested.",
+      "expected_output":"Continues from the blocker record while distinguishing failed, empty, partial, stale, and unrequested sources and citing the escalation evidence.",
+      "assertions":["Does it verify mapped apps through composio-mcp discovery and complete selected-tool schemas?","Does it report Linear `failed`, Slack `empty`, Notion `partial`, Jira `stale`, and email `not-requested` without treating partial or stale results as empty or comprehensive?","Does it cite the blocker record and continue with qualified escalation analysis rather than blocking solely on tool failure?"],
+      "files":[]
     }
   ]
 }

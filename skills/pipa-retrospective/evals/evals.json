@@ -36,6 +36,17 @@
         "Does it require separate explicit approval and a confirmed write result with link or stable ID when available?"
       ],
       "files": []
+    },
+    {
+      "id": "retrospective-live-sources-1",
+      "prompt": "Run the retrospective from pasted incident notes. Linear status history failed, Notion decision search returned no records, Slack is unavailable, Jira returned only some requested incidents, Drive's feedback is outdated, and email was not requested.",
+      "expected_output": "Continues from incident notes while distinguishing live-source states, citing evidence, and refusing to invent causes.",
+      "assertions": [
+        "Does it use composio-mcp discovery and complete selected-tool schemas before live reads?",
+        "Does it report Linear `failed`, Notion `empty`, Slack `unavailable`, Jira `partial`, Drive `stale`, and email `not-requested` without treating partial or stale results as empty or comprehensive?",
+        "Does it cite the incident notes and avoid inventing status, decision, feedback, or causal evidence?"
+      ],
+      "files": []
     }
   ]
 }
