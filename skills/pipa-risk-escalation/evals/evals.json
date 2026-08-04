@@ -1,0 +1,28 @@
+{
+  "skill_name":"pipa-risk-escalation",
+  "evals":[
+    {
+      "id":"risk-escalation-1",
+      "prompt":"A required approval missed its review point, threatens Friday's milestone, and needs a director decision. The escalation owner is unknown.",
+      "expected_output":"Separates the active issue from forward risk, assesses tolerance pressure, and returns a decision-ready escalation with mitigation, deadline, and fallback.",
+      "assertions":[
+        "Does it separate active issues, forward risks, and dependency or ownership fragility?",
+        "Does it classify tolerance pressure and identify the escalation target and decision needed?",
+        "Does each escalated item include mitigation, escalation action, review checkpoint, and fallback?",
+        "Does it mark the unknown owner `TBD` rather than inventing one?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"risk-not-status-or-triage-1",
+      "prompt":"What is stuck, what is likely to breach, and who needs to make the decision now?",
+      "expected_output":"Runs dedicated escalation analysis rather than returning a routine status rollup or intake queue.",
+      "assertions":[
+        "Does it make escalation decisions the primary result?",
+        "Does it avoid a broad status-report wrapper?",
+        "Does it avoid intake classification and response drafting?"
+      ],
+      "files":[]
+    }
+  ]
+}

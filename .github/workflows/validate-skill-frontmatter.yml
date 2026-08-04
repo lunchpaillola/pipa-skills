@@ -5,8 +5,12 @@ on:
     paths:
       - "skills/**/SKILL.md"
       - "skills/**/evals/*.json"
+      - "evals/**/*.json"
+      - "README.md"
       - "scripts/validate_skill_frontmatter.rb"
       - "scripts/validate_skill_evals.rb"
+      - "scripts/validate_skill_architecture.rb"
+      - "scripts/validate_skill_architecture_test.rb"
       - ".github/workflows/validate-skill-frontmatter.yml"
   push:
     branches:
@@ -14,8 +18,12 @@ on:
     paths:
       - "skills/**/SKILL.md"
       - "skills/**/evals/*.json"
+      - "evals/**/*.json"
+      - "README.md"
       - "scripts/validate_skill_frontmatter.rb"
       - "scripts/validate_skill_evals.rb"
+      - "scripts/validate_skill_architecture.rb"
+      - "scripts/validate_skill_architecture_test.rb"
       - ".github/workflows/validate-skill-frontmatter.yml"
 
 jobs:
@@ -45,6 +53,9 @@ jobs:
 
       - name: Validate skill eval fixtures
         run: ruby scripts/validate_skill_evals.rb
+
+      - name: Validate skill architecture
+        run: ruby scripts/validate_skill_architecture_test.rb
 
       - name: Run relay protocol tests
         run: npm run test:relay

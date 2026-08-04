@@ -1,0 +1,7 @@
+{
+  "skill_name":"pipa-requirements-brief",
+  "evals":[
+    {"id":"requirements-incomplete","prompt":"Create a requirements brief from these notes. Login and export are requested, but acceptance checks and compliance constraints are unknown.","expected_output":"Groups the supplied requirements, preserves missing criteria as TBD, and identifies decisions needed before execution.","assertions":["Does it classify requirements without changing their source meaning?","Does it include acceptance and out-of-scope boundaries or TBD?","Does it avoid inventing compliance constraints or acceptance criteria?"],"files":[]},
+    {"id":"requirements-broad-plan","prompt":"Plan this client portal project. Here are kickoff notes, but no requirements artifact exists yet.","expected_output":"Creates the requirements brief rather than a Daily Plan because no workday priority or capacity intent is present.","assertions":["Does it use the Requirements Brief output contract?","Does it avoid selecting or producing a Daily Plan?","Does it recommend pipa-scope-baseline as the next operation?"],"files":[]}
+  ]
+}

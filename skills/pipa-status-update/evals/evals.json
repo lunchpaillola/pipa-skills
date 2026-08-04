@@ -1,0 +1,28 @@
+{
+  "skill_name":"pipa-status-update",
+  "evals":[
+    {
+      "id":"status-update-1",
+      "prompt":"Prepare a leadership status update. The milestone slipped, one dependency is late, and the approval owner is unknown.",
+      "expected_output":"Leads with an evidence-based RAG state and ask, separates RAID types, and makes owner-action-escalation follow-through explicit.",
+      "assertions":[
+        "Does it lead with green, yellow, red, or blocked plus a one-line reason and explicit ask?",
+        "Does it keep risks, assumptions, issues, and dependencies distinct?",
+        "Does a yellow/red/blocked result include an owner-action-escalation package and trigger?",
+        "Does it preserve the missing owner as `TBD` and distinguish source facts from inference?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"status-not-triage-or-risk-1",
+      "prompt":"Where does the project stand? Three new bugs arrived and one old blocker may need escalation.",
+      "expected_output":"Keeps project status as the primary operation and lists triage or escalation only as follow-ups.",
+      "assertions":[
+        "Does it answer overall project state rather than classify every new bug?",
+        "Does it avoid replacing the status report with a dedicated escalation analysis?",
+        "Does it preserve triage and escalation as secondary recommendations only?"
+      ],
+      "files":[]
+    }
+  ]
+}

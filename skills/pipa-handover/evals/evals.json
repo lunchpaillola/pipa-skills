@@ -1,0 +1,40 @@
+{
+  "skill_name": "pipa-handover",
+  "suite_name": "handover-behavior",
+  "artifact_type": "public-generic-eval-suite",
+  "evals": [
+    {
+      "id": "handover-conditional-1",
+      "prompt": "Assess handover readiness. The runbook and support owner are known, but access transfer is incomplete and the escalation path is untested.",
+      "expected_output": "Returns ready-with-conditions or not-ready, identifies continuity risks, and assigns evidence-backed gap-closing actions and a checkpoint.",
+      "assertions": [
+        "Does it assess runbooks, ownership, access, support, escalation, and checkpoints from available evidence?",
+        "Does it avoid marking transition complete while access and escalation evidence are incomplete?",
+        "Does it define immediate actions, owners, dates, and a first post-handover checkpoint using `TBD` where unknown?"
+      ],
+      "files": []
+    },
+    {
+      "id": "handover-partial-source-1",
+      "prompt": "The only usable handover source is a current runbook. Continue and tell me what else is needed.",
+      "expected_output": "Continues from the usable runbook, reports low source quality and readiness gaps, and asks for minimum missing ownership and transition inputs without inventing them.",
+      "assertions": [
+        "Does it continue rather than return blocked while one usable source exists?",
+        "Does it classify source quality and preserve runbook provenance?",
+        "Does it list minimum missing inputs and avoid inventing contacts, access, owners, or dates?"
+      ],
+      "files": []
+    },
+    {
+      "id": "handover-write-1",
+      "prompt": "Assess handover and assign all remaining transition tasks in the tracker.",
+      "expected_output": "Completes the read-only readiness assessment first and separates tracker assignments as approved writes with result confirmation.",
+      "assertions": [
+        "Does it assess readiness before changing tracker records?",
+        "Does it require separate explicit approval before task assignment writes?",
+        "Does it require success or failure confirmation and resulting record links or stable IDs?"
+      ],
+      "files": []
+    }
+  ]
+}

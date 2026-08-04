@@ -9,7 +9,7 @@ metadata:
 
 Pipa routes the work around the work.
 
-Choose one primary destination, hand off to that skill or reference, return sources, owners, next actions, and `TBD` for unknowns.
+Choose one primary destination, hand off to that skill, return sources, owners, next actions, and `TBD` for unknowns.
 
 ## Workflow
 
@@ -22,6 +22,20 @@ Choose one primary destination, hand off to that skill or reference, return sour
 7. **Return the smallest useful next step.** Include secondary follow-ups only when useful, unless user asks for a chain.
 
 No command? Use conversation context to choose the best destination. Show the menu only for explicit `help`/`menu`, sparse context, or unsafe routing. Not service ops, Pipa setup/config, or a Pipa utility? Do not force Pipa.
+
+## Exact Operation Routes
+
+Explicit invocation of one of these names wins over lane aliases and adjacent operation wording:
+
+| Entry surface | Exact operation names |
+|---|---|
+| Manage Pipa | `pipa-setup`, `pipa-connectors` |
+| Define Work | `pipa-project-charter`, `pipa-problem-framing`, `pipa-stakeholder-map`, `pipa-daily-plan`, `pipa-decision-log`, `pipa-requirements-brief`, `pipa-roadmap`, `pipa-scope-baseline` |
+| Deliver Work | `pipa-work-coordination`, `pipa-iteration-cycle`, `pipa-dependency-handoff`, `pipa-risk-escalation`, `pipa-status-update`, `pipa-ticket-triage` |
+| Get Paid | `pipa-change-control`, `pipa-budget-setup`, `pipa-budget-review` |
+| Improve Operations | `pipa-acceptance-signoff`, `pipa-closeout-review`, `pipa-daily-shutdown`, `pipa-handover`, `pipa-retrospective` |
+
+Get Work and Keep Clients remain lane-native. Do not invent child operations for them.
 
 ## Command Matrix
 
@@ -40,31 +54,32 @@ No command? Use conversation context to choose the best destination. Show the me
 
 ## Routing Rules
 
-1. Known command/alias after Pipa -> matching route.
+1. Exact operation name -> that operation, even when the request also contains lane or adjacent-operation wording.
 2. Exact `help` or `menu` -> show command menu.
-3. No command, missing command, or unknown command with clear context -> route by intent instead of showing menu.
-4. Business lane intent wins for business work. Tool/setup intent wins only when the user asks to operate Pipa or use a standalone utility.
-5. `pipa-manage` owns Pipa onboarding, business profile, preferences, company brain, connected tools, automations, triggers, and recurring loops.
-6. A missing `~/.pipa/profile.md` never overrides a concrete business-work route. Setup may be offered softly after the requested work.
-7. `pipa-tools` owns standalone hosted utilities and exact utility jobs: audio briefs, voice huddles, follow-up reminders, and time tracking.
-8. Generic client follow-up stays `keep clients` or `deliver work`. One-shot self-email reminders go through `pipa-tools` to `pipa-follow-up-reminders`.
-9. One-time status/update work stays `deliver work`. Event-driven or recurring setup goes through `pipa-manage` to `pipa-triggers`.
-10. Live external app access or writes use the standalone `composio-mcp` skill while the selected business lane keeps ownership of the job. A connector-map entry selects a preferred toolkit but never proves live access. Never guess slugs.
-11. Multiple matches -> one primary destination plus secondary follow-ups, unless user asks for chain.
-12. Handoff checks -> return `Objective`, `Source Check` or `Tool Access Check`, `Current Signal`, actions with owner/date/evidence, `TBD` gaps, and next lane follow-ups. Do not execute multiple lanes unless asked.
-13. Sparse or unsafe route -> help/menu plus one clarifying question only if needed.
+3. Known lane command/alias after Pipa -> matching lane; the lane selects one operation when applicable.
+4. No command, missing command, or unknown command with clear context -> route by intent into one business lane instead of showing menu.
+5. Generic business work enters one of the six business lanes. Manage Pipa and Pipa Tools apply only to configuration or an explicit specialized utility.
+6. `pipa-manage` owns Pipa onboarding, business profile, preferences, company brain, connected tools, automations, triggers, and recurring loops.
+7. A missing `~/.pipa/profile.md` never overrides a concrete business-work route. Setup may be offered softly after the requested work.
+8. `pipa-tools` owns standalone hosted utilities and exact utility jobs: audio briefs, voice huddles, follow-up reminders, and time tracking.
+9. Generic client follow-up stays `keep clients` or `deliver work`. One-shot self-email reminders go through `pipa-tools` to `pipa-follow-up-reminders`.
+10. One-time status/update work stays `deliver work`. Event-driven or recurring setup goes through `pipa-manage` to `pipa-triggers`.
+11. Live external app access or writes use the standalone `composio-mcp` skill while the selected business lane keeps ownership of the job. A connector-map entry selects a preferred toolkit but never proves live access. Never guess slugs.
+12. Multiple matches -> one primary destination plus secondary follow-ups, unless user asks for chain.
+13. Handoff checks -> return `Objective`, `Source Check` or `Tool Access Check`, `Current Signal`, actions with owner/date/evidence, `TBD` gaps, and next lane follow-ups. Do not execute multiple lanes unless asked.
+14. Sparse or unsafe route -> help/menu plus one clarifying question only if needed.
 
 ## Tie-Breakers
 
 - `status` -> `deliver work`, unless automation/tool connection setup/status.
 - `triage` -> `deliver work` for tickets/intake, unless triaging route choice.
-- `budget` -> `get paid` for burn, forecast, variance, margin, invoice, change-control health. `define work` for new baseline. Ambiguous? Ask one short question.
+- `budget` -> `get paid`: new baseline selects `pipa-budget-setup`; burn, forecast, variance, or margin selects `pipa-budget-review`. Ambiguous? Ask one short question.
 - `brief` alone -> `define work` for working brief or `deliver work` for status brief, not audio.
 - `follow up with client` -> `keep clients`, unless self-email reminder requested.
 - `plan` -> `define work`, not another PM skill.
 - `daily planning`, `plan my day`, or choosing today's priorities -> `define work`; recurring or scheduled daily planning -> `pipa-manage`.
 - `daily shutdown`, `close my day`, or shutting down today's work -> `improve operations`; recurring or scheduled daily shutdown -> `pipa-manage`.
-- Explicit requirements, scope, schedule baseline, signoff, handover, or archive intent overrides incidental `today` wording; Daily Planning requires workday priority/capacity intent and Daily Shutdown requires workday wrap-up/tomorrow intent.
+- Explicit requirements, scope, schedule baseline, signoff, handover, or archive intent overrides incidental `today` wording; Daily Plan requires workday priority/capacity intent and Daily Shutdown requires workday wrap-up/tomorrow intent.
 - Daily Shutdown completion closes the ritual, not the project; formal project closure still requires the existing evidence gates.
 - `monitor` -> `deliver work`, unless money/relationship wording dominates.
 - `stakeholder map/setup/decision authority` -> `define work`; relationship health/check-ins/retention -> `keep clients`.

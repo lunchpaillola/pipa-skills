@@ -1,0 +1,7 @@
+{
+  "skill_name":"pipa-decision-log",
+  "evals":[
+    {"id":"decision-controls","prompt":"Set up governance from these notes. Risks and decisions are listed, but most owners and review dates are missing.","expected_output":"Creates minimal RAID and decision controls while preserving unsupported ownership and dates as TBD.","assertions":["Does it include all four RAID types?","Does it create decision records with options, owner, date, status, and evidence or TBD?","Does it avoid assigning unsupported authority or creating a standalone RACI map?"],"files":[]},
+    {"id":"decision-external","prompt":"Create the decision log and write it into our project tracker.","expected_output":"Produces the governance setup and asks for explicit approval before writing tracker records.","assertions":["Does it keep governance lightweight and operational?","Does it define a practical review cadence?","Does it require approval before external writes?"],"files":[]}
+  ]
+}

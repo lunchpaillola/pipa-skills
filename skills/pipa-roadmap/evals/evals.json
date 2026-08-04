@@ -1,0 +1,7 @@
+{
+  "skill_name":"pipa-roadmap",
+  "evals":[
+    {"id":"roadmap-default","prompt":"Prioritize these six workstreams. I have not chosen a scoring framework, and effort data is qualitative.","expected_output":"Uses Now/Next/Later with transparent rationale and labels assumptions instead of fabricating scores.","assertions":["Does it default to Now/Next/Later?","Does it capture value, effort signal, dependency risk, urgency, and tradeoffs?","Does it avoid invented point estimates or dates?"],"files":[]},
+    {"id":"roadmap-user-method","prompt":"Use MoSCoW to prioritize these requirements and call out what gets dropped.","expected_output":"Uses the requested method, explains deprioritization, and identifies decisions that could force resequencing.","assertions":["Does it honor the requested MoSCoW method?","Does it separate source facts from ranking assumptions?","Does it avoid updating external roadmap records without approval?"],"files":[]}
+  ]
+}

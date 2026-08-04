@@ -2,35 +2,31 @@
 
 Thanks for your interest in contributing to Pipa Skills.
 
-## PM Workflow Changes
+## Pipa Architecture
 
-New project-management or delivery workflows normally belong inside `skills/pipa/`:
+Pipa uses four skill roles:
 
-1. Add or update the relevant Pipa command route in `skills/pipa/SKILL.md` when the public command surface changes.
-2. Put detailed workflow instructions in `skills/pipa/references/` so the entry skill stays concise.
-3. Add or update lightweight evals under `skills/pipa/evals/` for command routing, natural-language routing, and safety gates.
-4. Update `README.md` when the public command surface changes.
+- The root router selects a business lane, meta surface, operation, or specialized capability.
+- The six business lanes are broad automatic entry surfaces for generic business language.
+- Meta surfaces route configuration and utility work.
+- Narrow operation skills own substantial workflows. Specialized capabilities own tool/product-specific or safety-sensitive jobs.
 
-Do not add a new public top-level PM skill for routine lifecycle work. Pipa is the PM entry point.
+Explicit operation invocation wins. Otherwise a lane selects one operation while preserving the business objective.
 
-## Standalone Skills
+## Operation Skills
 
-Create or preserve a standalone skill only when the workflow is high-value, tool/product-specific, safety-sensitive, or independently discoverable.
+Create an operation skill when a workflow is substantial and has a distinct trigger boundary:
 
-Current standalone breakouts are:
-
-- `pipa-audio-brief`
-- `composio`
-- `pipa-triggers`
-
-When adding a standalone skill:
-
-1. Create `skills/<skill-name>/SKILL.md` first.
+1. Create `skills/<operation-name>/SKILL.md` first.
 2. Use lowercase kebab-case for the directory name.
 3. Keep the `name` frontmatter field identical to the directory name.
-4. Write a concrete trigger description that says when the skill should be used.
-5. Add `references/`, `scripts/`, `assets/`, or `evals/` only when useful.
-6. Update `README.md`.
+4. Use a narrow description naming the exact job and adjacent jobs that must not trigger it.
+5. Put the workflow, output contract, and safety rules in the operation skill.
+6. Add local positive and adjacent-negative trigger cases plus behavior evals.
+7. Route the owning lane or meta surface to the operation by name.
+8. Delete the migrated workflow reference. Do not retain an inline fallback or compatibility copy.
+
+Use references only for non-routing assets such as templates, schemas, examples, source-handling rules, and shared presentation guidance. Update public inventory docs in the planned public-cutover slice rather than exposing a partial migration.
 
 ## Skill Structure
 
@@ -45,13 +41,13 @@ skills/your-skill-name/
 
 ## Guidelines
 
-- Keep Pipa concise; move detailed instructions into references.
-- Keep standalone workflows narrow, reusable, and outcome-oriented.
+- Keep routers and lanes concise; operation skills own detailed workflow behavior.
+- Keep operation and specialized-capability workflows narrow, reusable, and outcome-oriented.
 - Prefer practical workflows over theory-heavy notes.
 - Avoid sensitive data, proprietary customer context, or private credentials.
 - Keep public evals generic; put client-specific evals under `skills/<skill-name>/evals/private/`.
-- Preserve safety gates, setup checks, confirmations, blockers, and output contracts when Pipa routes into standalone skills.
-- If a change overlaps heavily with an existing Pipa route, improve that route instead of adding a duplicate.
+- Preserve safety gates, setup checks, confirmations, blockers, and output contracts when promoting a workflow.
+- Fail clearly when an operation is unavailable; never execute a copied fallback workflow from a router or lane.
 - Do not bump `metadata.version` or `VERSIONS.md` during draft or branch work; version bumps happen when finalizing for merge to `main`.
 
 ## Pull Requests

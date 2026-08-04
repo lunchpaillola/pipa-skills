@@ -1,0 +1,49 @@
+{
+  "skill_name":"pipa-get-paid",
+  "evals":[
+    {
+      "id":"get-paid-budget-setup-gate-1",
+      "prompt":"Create our first project budget baseline and tracker, then we can monitor it later.",
+      "expected_output":"Selects pipa-budget-setup because the immediate objective is a new baseline, without also running review.",
+      "assertions":[
+        "Does it select `pipa-budget-setup` as the one operation?",
+        "Does future monitoring language remain a follow-up rather than changing the primary route?",
+        "Does it avoid running `pipa-budget-review` before a baseline exists?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"get-paid-budget-review-gate-1",
+      "prompt":"We have an approved baseline. Review burn, variance, capacity use, and margin.",
+      "expected_output":"Selects pipa-budget-review and does not edit the baseline or open change control automatically.",
+      "assertions":[
+        "Does it select `pipa-budget-review` as the one operation?",
+        "Does it avoid selecting Budget Setup for an existing-baseline health check?",
+        "Does it avoid selecting Change Control unless a money-impacting scope change is requested?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"get-paid-change-control-gate-1",
+      "prompt":"The client wants extra scope that adds $5,000 in cost and reduces margin. Prepare the approval decision.",
+      "expected_output":"Selects pipa-change-control because explicit money impact and approval intent are present.",
+      "assertions":[
+        "Does it select `pipa-change-control` as the one operation?",
+        "Does it preserve fee/cost/margin impact as the routing reason?",
+        "Does it avoid approving the change implicitly?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"get-paid-non-money-change-negative-1",
+      "prompt":"Move the internal review by one day. This does not affect fee, cost, budget, or margin.",
+      "expected_output":"Routes to pipa-deliver-work and does not select change control.",
+      "assertions":[
+        "Does it avoid `pipa-change-control` because money impact is absent?",
+        "Does it recommend `pipa-deliver-work`?",
+        "Does it avoid inventing financial impact?"
+      ],
+      "files":[]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+[
+  {"query":"Evaluate this scope change: it adds $8,000 to the fee and needs client approval.","should_trigger":true},
+  {"query":"The requested extra sprint will reduce margin. Prepare a change-control decision.","should_trigger":true},
+  {"query":"Resequence this scope change without changing fee, cost, budget, or margin.","should_trigger":false},
+  {"query":"Review current burn and forecast against the approved baseline.","should_trigger":false},
+  {"query":"Create the initial budget tracker for this project.","should_trigger":false}
+]

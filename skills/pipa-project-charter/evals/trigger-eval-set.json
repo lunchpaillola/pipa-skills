@@ -1,0 +1,8 @@
+[
+  {"query":"Run a go/no-go viability gate on this project charter.","should_trigger":true},
+  {"query":"What must be true before we start this engagement?", "should_trigger":true},
+  {"query":"Check whether the charter is ready and give me a go-with-conditions decision if needed.","should_trigger":true},
+  {"query":"What problem are we solving and who is affected?", "should_trigger":false},
+  {"query":"Baseline the project deliverables and milestone dates.","should_trigger":false},
+  {"query":"Plan my workday against my calendar.","should_trigger":false}
+]

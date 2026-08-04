@@ -1,0 +1,17 @@
+{
+  "skill_name":"pipa-dependency-handoff",
+  "evals":[
+    {
+      "id":"dependency-handoff-1",
+      "prompt":"Engineering must hand the release to operations after security approval. The artifact is ready, but the approver and target date are unknown.",
+      "expected_output":"Maps upstream and downstream ownership, required approval, readiness gaps, unblock actions, acceptance checks, and a time-critical escalation trigger.",
+      "assertions":[
+        "Does it map the dependency or handoff, owners, required artifact/approval, target checkpoint, and current state?",
+        "Does it link readiness gaps to supplied evidence?",
+        "Does it mark the unknown approver and date as `TBD`?",
+        "Does it avoid marking the handoff complete without approval evidence?"
+      ],
+      "files":[]
+    }
+  ]
+}

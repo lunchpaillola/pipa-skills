@@ -1,0 +1,26 @@
+[
+  {
+    "query": "Set up Pipa for my business.",
+    "should_trigger": true
+  },
+  {
+    "query": "Resume my incomplete Pipa setup.",
+    "should_trigger": true
+  },
+  {
+    "query": "Update my global Pipa business profile and working preferences.",
+    "should_trigger": true
+  },
+  {
+    "query": "Connect Gmail and Linear to Pipa.",
+    "should_trigger": false
+  },
+  {
+    "query": "Audit what Pipa remembers about my company.",
+    "should_trigger": false
+  },
+  {
+    "query": "Help me plan this urgent client delivery.",
+    "should_trigger": false
+  }
+]

@@ -1,0 +1,8 @@
+[
+  {"query":"Baseline what we will deliver, what is excluded, and the milestone schedule.","should_trigger":true},
+  {"query":"Define scope and schedule assumptions plus change and escalation triggers.","should_trigger":true},
+  {"query":"Lock the project deliverables, dependencies, target checkpoints, and tolerances.","should_trigger":true},
+  {"query":"Extract requirements and acceptance criteria from these notes.","should_trigger":false},
+  {"query":"Rank these workstreams into now, next, and later.","should_trigger":false},
+  {"query":"Review current burn and budget variance.","should_trigger":false}
+]

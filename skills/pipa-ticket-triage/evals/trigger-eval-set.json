@@ -1,0 +1,7 @@
+[
+  {"query":"Triage these new client tickets and draft the next response for each.","should_trigger":true},
+  {"query":"What needs a response first in this incoming feedback queue?","should_trigger":true},
+  {"query":"Write an executive project health update.","should_trigger":false},
+  {"query":"Escalate the blocked approval that has missed its review point.","should_trigger":false},
+  {"query":"Coordinate owners for the active implementation packages.","should_trigger":false}
+]

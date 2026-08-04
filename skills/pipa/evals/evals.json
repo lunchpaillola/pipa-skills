@@ -26,11 +26,11 @@
       "files": []
     },
     {
-      "id": "pipa-daily-planning-1",
+      "id": "pipa-daily-plan-1",
       "prompt": "Pipa plan my day. It is August 3 in America/New_York. Read my active tracker work, open pull requests, and calendar, then help me commit to a realistic plan.",
-      "expected_output": "Routes to define-work Daily Planning, runs the seven-step ritual, verifies live sources, confronts estimates against capacity, and returns a proposed Daily Plan for explicit acceptance.",
+      "expected_output": "Routes to pipa-daily-plan through Define Work, runs the seven-step ritual, verifies live sources, confronts estimates against capacity, and returns a proposed Daily Plan for explicit acceptance.",
       "assertions": [
-        "Does the output select `define work` and Daily Planning as the one primary route?",
+        "Does the output select `define work` and `pipa-daily-plan` as the one primary route?",
         "Does it visibly run look back, gather, choose, estimate, confront capacity, defer, and commit?",
         "Does it resolve the target date and timezone and compare estimated work with calendar-adjusted capacity?",
         "Does the Daily Plan include priorities, estimates, deferrals, risks or unknowns, source coverage, and `proposed` baseline status?",
@@ -40,7 +40,7 @@
       "files": []
     },
     {
-      "id": "pipa-daily-planning-degraded-1",
+      "id": "pipa-daily-plan-degraded-1",
       "prompt": "Pipa help me plan August 3 in America/New_York. CONNECTORS.md maps my tracker and calendar, but Composio verifies the calendar is disconnected and the code host check failed. I have eight hours of proposed work and only five hours free. Also update every selected tracker item for me.",
       "expected_output": "Builds a useful capacity-aware Daily Plan from available evidence, keeps code-host evidence unknown, requires explicit deferrals, and leaves tracker writes pending separate approval.",
       "assertions": [
@@ -53,22 +53,22 @@
       "files": []
     },
     {
-      "id": "pipa-daily-planning-recurring-1",
+      "id": "pipa-daily-plan-recurring-1",
       "prompt": "Pipa schedule daily planning every weekday at 8:30 AM.",
-      "expected_output": "Routes recurring ritual setup to pipa-manage rather than running the one-time Daily Planning workflow or creating automation immediately.",
+      "expected_output": "Routes recurring ritual setup to pipa-manage rather than running the one-time pipa-daily-plan operation or creating automation immediately.",
       "assertions": [
         "Does the output select `pipa-manage` as the primary route?",
-        "Does it avoid running Daily Planning as the primary workflow?",
+        "Does it avoid running `pipa-daily-plan` as the primary workflow?",
         "Does it preserve the automation confirmation contract before creating a recurring ritual?"
       ],
       "files": []
     },
     {
-      "id": "pipa-daily-planning-timezone-1",
+      "id": "pipa-daily-plan-timezone-1",
       "prompt": "Pipa help me plan today around my calendar and due work.",
-      "expected_output": "Selects Daily Planning but asks one focused target-date/timezone question before interpreting relative dates, calendar load, or capacity when no verified timezone context exists.",
+      "expected_output": "Selects pipa-daily-plan but asks one focused target-date/timezone question before interpreting relative dates, calendar load, or capacity when no verified timezone context exists.",
       "assertions": [
-        "Does the output select `define work` and Daily Planning?",
+        "Does the output select `define work` and `pipa-daily-plan`?",
         "Does it ask one focused question for the target date or timezone before interpreting `today`, due dates, or calendar capacity?",
         "Does it avoid inventing a timezone or producing a committed plan before that context is resolved?"
       ],
@@ -194,7 +194,7 @@
       "expected_output": "Supports the old plan wording by reframing it into the define-work lane.",
       "assertions": [
         "Does the output route old `plan` wording into `define work`?",
-        "Does it avoid selecting Daily Planning when the request is project onboarding planning rather than one-day priority and capacity planning?",
+        "Does it avoid selecting `pipa-daily-plan` when the request is project onboarding planning rather than one-day priority and capacity planning?",
         "Does it avoid presenting lifecycle commands as the primary public model?",
         "Does it preserve requirements, baseline, decisions, owners, and acceptance checks as possible outputs?"
       ],
@@ -259,9 +259,9 @@
     {
       "id": "pipa-manage-connectors-1",
       "prompt": "Pipa manage: connect Gmail and Linear so Pipa can review leads and delivery status.",
-      "expected_output": "Routes to pipa-manage for connector setup/status and preserves Composio discovery/auth readiness without claiming access before verification.",
+      "expected_output": "Routes through the pipa-manage meta surface to pipa-connectors and preserves the lead-review and delivery-status objectives.",
       "assertions": [
-        "Does the output select `pipa-manage` rather than a business lane or one-off tool action?",
+        "Does the output select `pipa-connectors` as the exact operation?",
         "Does it identify target apps, needed permission categories, connection status, and setup/auth next action?",
         "Does it avoid claiming Gmail or Linear access until a connection/status check succeeds?"
       ],
@@ -434,9 +434,9 @@
     {
       "id": "pipa-setup-route-1",
       "prompt": "Pipa set yourself up for my consulting business.",
-      "expected_output": "Routes first-time setup to pipa-manage and its focused setup workflow.",
+      "expected_output": "Routes first-time setup directly to the narrow pipa-setup operation.",
       "assertions": [
-        "Does the output select `pipa-manage` as the primary route?",
+        "Does the output select `pipa-setup` as the primary route?",
         "Does it check `~/.pipa/profile.md` before deciding first-time setup versus profile review?",
         "Does it avoid routing first-time setup into a business lane?"
       ],
@@ -445,9 +445,9 @@
     {
       "id": "pipa-profile-update-route-1",
       "prompt": "Pipa update my business profile and how I like to work.",
-      "expected_output": "Routes to pipa-manage profile review/update rather than restarting first-time setup.",
+      "expected_output": "Routes to pipa-setup profile review/update rather than restarting first-time setup.",
       "assertions": [
-        "Does the output select `pipa-manage`?",
+        "Does the output select `pipa-setup`?",
         "Does it review or update the existing global profile rather than assume first-time setup?",
         "Does it avoid writing external memory or tools without explicit user intent?"
       ],
@@ -465,42 +465,87 @@
       "files": []
     },
     {
-      "id": "pipa-initiate-budget-preserved-1",
-      "prompt": "Pipa initiate a lightweight budget tracker for this project.",
-      "expected_output": "Routes through define work to the preserved budget setup reference.",
+      "id": "pipa-budget-setup-route-1",
+      "prompt": "Pipa create a new lightweight budget baseline and tracker for this project.",
+      "expected_output": "Routes generic money setup through Get Paid to the narrow pipa-budget-setup operation.",
       "assertions": [
-        "Does it select budget setup and load `skills/pipa-get-paid/references/initiate-budget.md`?",
-        "Does it keep the response focused on budget setup?"
+        "Does it select `get paid` as the business lane and `pipa-budget-setup` as the one operation?",
+        "Does it avoid selecting `pipa-budget-review` before a baseline exists?",
+        "Does it keep external tracker creation behind explicit approval?"
       ],
       "files": []
     },
     {
-      "id": "pipa-initiate-problem-preserved-1",
-      "prompt": "Pipa initiate by framing the delivery problem, intended outcome, and constraints.",
-      "expected_output": "Routes through define work to the preserved problem-framing reference.",
+      "id": "pipa-problem-framing-route-1",
+      "prompt": "Pipa frame the delivery problem, intended outcome, constraints, and non-goals.",
+      "expected_output": "Routes generic problem-framing language through Define Work to pipa-problem-framing.",
       "assertions": [
-        "Does it select problem framing and load `references/initiate-problem-framing.md`?",
+        "Does it select `define work` as the business lane and `pipa-problem-framing` as the one operation?",
         "Does it keep the response focused on problem framing?"
       ],
       "files": []
     },
     {
-      "id": "pipa-initiate-stakeholders-preserved-1",
-      "prompt": "Pipa initiate a stakeholder map so we know who decides and approves.",
-      "expected_output": "Routes through define work to the preserved stakeholder-map reference.",
+      "id": "pipa-stakeholder-map-route-1",
+      "prompt": "Pipa map the stakeholders so we know who decides, approves, and needs updates.",
+      "expected_output": "Routes generic stakeholder-mapping language through Define Work to pipa-stakeholder-map.",
       "assertions": [
-        "Does it select stakeholder mapping and load `references/initiate-stakeholder-map.md`?",
+        "Does it select `define work` as the business lane and `pipa-stakeholder-map` as the one operation?",
         "Does it keep the response focused on stakeholder mapping?"
       ],
       "files": []
     },
     {
-      "id": "pipa-initiate-charter-preserved-1",
-      "prompt": "Pipa initiate a charter readiness and go/no-go viability check.",
-      "expected_output": "Routes through define work to the preserved charter-and-viability reference.",
+      "id": "pipa-project-charter-route-1",
+      "prompt": "Pipa run a charter readiness and go/no-go viability check.",
+      "expected_output": "Routes generic charter-readiness language through Define Work to pipa-project-charter.",
       "assertions": [
-        "Does it select charter and viability and load `references/initiate-charter-and-viability-gate.md`?",
+        "Does it select `define work` as the business lane and `pipa-project-charter` as the one operation?",
         "Does it keep the response focused on charter readiness and viability?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-explicit-operation-wins-1",
+      "prompt": "Run pipa-status-update on these risky stale tickets and summarize overall project health.",
+      "expected_output": "Honors the explicit pipa-status-update invocation despite adjacent triage and risk wording.",
+      "assertions": [
+        "Does it select `pipa-status-update` directly?",
+        "Does explicit operation invocation win over `pipa-ticket-triage` and `pipa-risk-escalation` cues?",
+        "Does it preserve the project-health objective?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-get-work-ownership-1",
+      "prompt": "Pipa follow up with this new prospect and turn their inquiry into the next opportunity action.",
+      "expected_output": "Routes new-prospect acquisition to the lane-native Get Work workflow.",
+      "assertions": [
+        "Does it select `pipa-get-work`?",
+        "Does it avoid `pipa-keep-clients` because this is a new prospect rather than an existing relationship?",
+        "Does it avoid sending outreach without approval?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-keep-clients-ownership-1",
+      "prompt": "Pipa ask this existing client for a referral after the successful handover.",
+      "expected_output": "Routes an existing-client trust and referral ask to the lane-native Keep Clients workflow.",
+      "assertions": [
+        "Does it select `pipa-keep-clients`?",
+        "Does it avoid `pipa-get-work` because the relationship already exists?",
+        "Does it avoid sending the ask without approval?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-get-paid-ownership-1",
+      "prompt": "Pipa follow up with this client about their overdue invoice and payment date.",
+      "expected_output": "Routes invoice and payment action to Get Paid even though relationship-sensitive wording is present.",
+      "assertions": [
+        "Does it select `pipa-get-paid`?",
+        "Does payment ownership win over `pipa-keep-clients`?",
+        "Does it avoid claiming payment status or sending a message without evidence and approval?"
       ],
       "files": []
     }

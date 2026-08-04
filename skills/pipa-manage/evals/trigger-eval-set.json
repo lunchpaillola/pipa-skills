@@ -1,34 +1,26 @@
 [
   {
+    "query": "Audit what Pipa remembers about my company.",
+    "should_trigger": true
+  },
+  {
+    "query": "Configure a recurring Pipa operations loop.",
+    "should_trigger": true
+  },
+  {
+    "query": "Review Pipa's permissions and access boundaries.",
+    "should_trigger": true
+  },
+  {
     "query": "Set up Pipa for my business.",
-    "should_trigger": true
+    "should_trigger": false
   },
   {
-    "query": "Onboard Pipa and help me connect the tools that matter.",
-    "should_trigger": true
-  },
-  {
-    "query": "Update my Pipa business profile and working preferences.",
-    "should_trigger": true
-  },
-  {
-    "query": "Resume my incomplete Pipa setup.",
-    "should_trigger": true
-  },
-  {
-    "query": "Check which tools Pipa can access.",
-    "should_trigger": true
+    "query": "Connect Gmail to Pipa.",
+    "should_trigger": false
   },
   {
     "query": "Help me plan this urgent client delivery.",
-    "should_trigger": false
-  },
-  {
-    "query": "Summarize this Linear issue without changing anything.",
-    "should_trigger": false
-  },
-  {
-    "query": "Draft a client project brief.",
     "should_trigger": false
   }
 ]

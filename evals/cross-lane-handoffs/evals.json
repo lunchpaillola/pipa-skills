@@ -93,6 +93,103 @@
         "Does it satisfy all shared output contract assertions listed in this suite, including literal `TBD` handling?"
       ],
       "files": []
+    },
+    {
+      "id": "route-delivery-status-1",
+      "transition": "deliver work -> pipa-status-update",
+      "prompt": "Pipa, summarize overall project health for the steering update. Some tickets are stale and one risk may need escalation.",
+      "expected_output": "Routes generic delivery language into Deliver Work, then selects only pipa-status-update because overall project state is primary.",
+      "assertions": [
+        "Does generic language enter `pipa-deliver-work` before operation selection?",
+        "Does it select only `pipa-status-update`?",
+        "Does it leave ticket triage and risk escalation as follow-ups rather than running them?"
+      ],
+      "files": []
+    },
+    {
+      "id": "route-delivery-triage-1",
+      "transition": "deliver work -> pipa-ticket-triage",
+      "prompt": "Pipa, sort these new support tickets and comments by response priority and route each one.",
+      "expected_output": "Routes generic intake language into Deliver Work, then selects only pipa-ticket-triage.",
+      "assertions": [
+        "Does generic language enter `pipa-deliver-work` before operation selection?",
+        "Does it select only `pipa-ticket-triage`?",
+        "Does it avoid turning item-level urgency into a project status report or dedicated escalation?"
+      ],
+      "files": []
+    },
+    {
+      "id": "route-delivery-risk-1",
+      "transition": "deliver work -> pipa-risk-escalation",
+      "prompt": "Pipa, this blocker is nearing its tolerance breach and the owner is silent. Prepare the escalation decision path.",
+      "expected_output": "Routes generic blocker language into Deliver Work, then selects only pipa-risk-escalation.",
+      "assertions": [
+        "Does generic language enter `pipa-deliver-work` before operation selection?",
+        "Does it select only `pipa-risk-escalation`?",
+        "Does it avoid selecting routine status or intake triage as the primary operation?"
+      ],
+      "files": []
+    },
+    {
+      "id": "route-budget-setup-1",
+      "transition": "get paid -> pipa-budget-setup",
+      "prompt": "Pipa, create the first budget baseline and tracker for this engagement so we can review burn later.",
+      "expected_output": "Routes generic money language into Get Paid, then selects pipa-budget-setup because no baseline exists.",
+      "assertions": [
+        "Does generic language enter `pipa-get-paid` before operation selection?",
+        "Does it select only `pipa-budget-setup` despite future review wording?",
+        "Does it keep tracker creation behind explicit write approval?"
+      ],
+      "files": []
+    },
+    {
+      "id": "route-budget-review-1",
+      "transition": "get paid -> pipa-budget-review",
+      "prompt": "Pipa, compare this approved budget baseline with actuals and commitments, then explain burn, variance, forecast, and margin.",
+      "expected_output": "Routes generic money-review language into Get Paid, then selects pipa-budget-review without editing the baseline.",
+      "assertions": [
+        "Does generic language enter `pipa-get-paid` before operation selection?",
+        "Does it select only `pipa-budget-review`?",
+        "Does it avoid changing the baseline or opening change control automatically?"
+      ],
+      "files": []
+    },
+    {
+      "id": "route-change-control-1",
+      "transition": "deliver work -> get paid -> pipa-change-control",
+      "prompt": "Pipa, the client requested an in-flight scope change that adds $4,000 and moves the margin. Prepare the approval decision.",
+      "expected_output": "Hands explicit money-impacting scope change ownership to Get Paid and selects only pipa-change-control.",
+      "assertions": [
+        "Does explicit fee and margin impact move ownership from Deliver Work to `pipa-get-paid`?",
+        "Does it select only `pipa-change-control`?",
+        "Does it avoid approving or applying the change without explicit authority?"
+      ],
+      "files": []
+    },
+    {
+      "id": "route-formal-closeout-not-shutdown-1",
+      "transition": "improve operations -> formal closeout operation",
+      "prompt": "Pipa, formally close this project today. Acceptance is recorded, but support handover and archive retrieval still need review.",
+      "expected_output": "Routes to Improve Operations but does not select Daily Shutdown; it selects the first unmet formal closure operation and preserves the remaining closeout checks as follow-ups.",
+      "assertions": [
+        "Does formal project closure override incidental `today` wording?",
+        "Does it avoid `pipa-daily-shutdown`?",
+        "Does it select one of `pipa-handover` or `pipa-closeout-review` based on the first unmet gate rather than claiming closure?"
+      ],
+      "files": []
+    },
+    {
+      "id": "route-shutdown-baseline-mismatch-read-only-1",
+      "transition": "pipa-daily-plan -> pipa-daily-shutdown",
+      "prompt": "Pipa, shut down August 3 in America/New_York and post the result. The latest accepted Daily Plan here is for August 4 in Europe/London.",
+      "expected_output": "Selects pipa-daily-shutdown, rejects the date/timezone-mismatched baseline, degrades comparison honestly, and completes read-only analysis before any proposed post.",
+      "assertions": [
+        "Does it select `pipa-daily-shutdown` rather than formal closeout?",
+        "Does it reject the mismatched accepted plan and report the baseline unavailable?",
+        "Does it avoid claiming accurate plan-versus-actual comparison?",
+        "Does it require separate explicit approval before posting externally?"
+      ],
+      "files": []
     }
   ]
 }

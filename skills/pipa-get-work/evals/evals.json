@@ -1,0 +1,73 @@
+{
+  "skill_name": "pipa-get-work",
+  "suite_name": "pipa-get-work-ownership",
+  "artifact_type": "public-generic-eval-suite",
+  "evals": [
+    {
+      "id": "get-work-new-opportunity-1",
+      "prompt": "A former client introduced me to the operations lead at a company I have never worked with. Qualify the opportunity and recommend my next move.",
+      "expected_output": "Keeps the new prospect in Get Work and recommends one evidence-based acquisition action.",
+      "assertions": [
+        "Does it treat the introduction as a new opportunity owned by `pipa-get-work`?",
+        "Does it include fit, urgency, confidence, owner, next action, source, and unknowns?",
+        "Does it avoid treating the new prospect as existing-client relationship care?"
+      ],
+      "files": []
+    },
+    {
+      "id": "get-work-existing-client-referral-negative-1",
+      "prompt": "Our current client just praised the launch. Help me ask her for a referral without making the relationship awkward.",
+      "expected_output": "Hands the trust-sensitive referral ask to Keep Clients rather than treating it as new-opportunity acquisition.",
+      "assertions": [
+        "Does it route the referral ask to `pipa-keep-clients` because the immediate job is caring for an existing relationship?",
+        "Does it avoid selecting Get Work merely because the request mentions a referral?",
+        "Does it preserve the user's trust-sensitive objective?"
+      ],
+      "files": []
+    },
+    {
+      "id": "get-work-prospect-follow-up-1",
+      "prompt": "Draft the next follow-up for a prospect who attended our discovery call but has not replied to the proposal.",
+      "expected_output": "Keeps prospect and pipeline follow-up in Get Work and drafts without sending.",
+      "assertions": [
+        "Does it treat prospect follow-up as `pipa-get-work`?",
+        "Does it ground the next action in the supplied pipeline signal and mark missing facts `TBD`?",
+        "Does it avoid sending the follow-up without explicit approval and a connected workflow?"
+      ],
+      "files": []
+    },
+    {
+      "id": "get-work-payment-follow-up-negative-1",
+      "prompt": "Follow up with a client whose invoice is two weeks overdue and tell me what payment action to take next.",
+      "expected_output": "Hands invoice and payment action to Get Paid rather than treating it as acquisition or generic client follow-up.",
+      "assertions": [
+        "Does it route the overdue-invoice action to `pipa-get-paid`?",
+        "Does it avoid selecting Get Work because the request uses follow-up wording?",
+        "Does it avoid claiming invoice or payment access without a connected tool?"
+      ],
+      "files": []
+    },
+    {
+      "id": "get-work-opportunity-content-1",
+      "prompt": "Turn these three buyer pain quotes from sales calls into a blog angle that can attract more operations consulting leads.",
+      "expected_output": "Keeps content tied to buyer evidence and lead acquisition in Get Work.",
+      "assertions": [
+        "Does it select `pipa-get-work` because the content has an explicit demand and acquisition objective?",
+        "Does it cite the supplied buyer signals and avoid inventing market evidence?",
+        "Does it recommend a concrete opportunity-oriented content action?"
+      ],
+      "files": []
+    },
+    {
+      "id": "get-work-generic-content-negative-1",
+      "prompt": "Proofread this internal training article for grammar and make the headings consistent.",
+      "expected_output": "Does not force generic content editing into Get Work when no acquisition, demand, positioning, or opportunity objective exists.",
+      "assertions": [
+        "Does it avoid selecting `pipa-get-work` solely because the artifact is content?",
+        "Does it route by the editing objective rather than inventing an acquisition objective?",
+        "Does it avoid manufacturing leads, buyer signals, or market context?"
+      ],
+      "files": []
+    }
+  ]
+}

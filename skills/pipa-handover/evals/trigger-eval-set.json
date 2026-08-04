@@ -1,0 +1,30 @@
+[
+  {
+    "query": "Prepare the operational handover and confirm who owns support after launch.",
+    "should_trigger": true
+  },
+  {
+    "query": "Check whether today's in-flight design artifact handoff is ready for engineering.",
+    "should_trigger": false
+  },
+  {
+    "query": "Are the runbook, access, escalation path, and transition checkpoints ready for ownership transfer?",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a conditional handover plan for the remaining support-readiness gaps.",
+    "should_trigger": true
+  },
+  {
+    "query": "Decide whether stakeholders formally accept the delivered scope.",
+    "should_trigger": false
+  },
+  {
+    "query": "Review the project's realized benefits and archive package.",
+    "should_trigger": false
+  },
+  {
+    "query": "Close today's work and prepare tomorrow.",
+    "should_trigger": false
+  }
+]

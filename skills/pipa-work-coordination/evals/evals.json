@@ -1,0 +1,28 @@
+{
+  "skill_name":"pipa-work-coordination",
+  "evals":[
+    {
+      "id":"work-coordination-1",
+      "prompt":"Coordinate these active packages: design is ready but has no owner, implementation waits on design, and launch review is Friday.",
+      "expected_output":"Normalizes each package, preserves the dependency, marks unsupported owners or dates TBD, and returns execution actions and checkpoints.",
+      "assertions":[
+        "Does it state the execution objective and source quality?",
+        "Does each action include item, owner, next action, due/review date, status, and evidence/source?",
+        "Does it use literal `TBD` instead of inventing the missing owner?",
+        "Does it avoid turning the request into a status report, intake triage, or escalation workflow?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"work-coordination-handoff-1",
+      "prompt":"Are these work packages ready for status monitoring? Package A has an owner and status but no next action, date, or source.",
+      "expected_output":"Marks the handoff blocked and lists only the missing required fields for the package.",
+      "assertions":[
+        "Does it require Owner, Next action, Due/review date, Status, and Evidence/source for handoff readiness?",
+        "Does it mark readiness blocked because required fields are absent?",
+        "Does it recommend `pipa-status-update` only as the next operation rather than running it?"
+      ],
+      "files":[]
+    }
+  ]
+}

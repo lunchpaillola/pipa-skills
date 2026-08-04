@@ -1,0 +1,29 @@
+{
+  "skill_name":"pipa-budget-review",
+  "evals":[
+    {
+      "id":"budget-review-1",
+      "prompt":"Baseline is $120K, actuals are $80K, commitments are $54K, and integration rework is the main driver. Review budget health.",
+      "expected_output":"Returns an outcome-first budget judgment, EAC and variance, confidence, one driver, one decision, and one accountable next step.",
+      "assertions":[
+        "Does it assess baseline, actuals, commitments, EAC, and variance using consistent thresholds?",
+        "Does it name only the single biggest budget driver?",
+        "Does it provide one decision and one next step with owner and due date or `TBD`?",
+        "Does it cite no more than two readable sources and avoid claiming live financial access without tool evidence?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"budget-review-missing-baseline-1",
+      "prompt":"Tell me our burn variance and margin, but no approved baseline is available.",
+      "expected_output":"Blocks the review on the exact missing baseline and recommends Budget Setup without creating or inventing a baseline.",
+      "assertions":[
+        "Does it mark the review blocked because the baseline is missing?",
+        "Does it name the exact source needed and why it matters?",
+        "Does it recommend `pipa-budget-setup` without creating a tracker or baseline?",
+        "Does it avoid inventing variance, margin, or confidence?"
+      ],
+      "files":[]
+    }
+  ]
+}

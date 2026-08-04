@@ -1,0 +1,49 @@
+{
+  "skill_name":"pipa-deliver-work",
+  "evals":[
+    {
+      "id":"deliver-route-status-1",
+      "prompt":"Where does the project stand for tomorrow's steering meeting? There are also new tickets and one blocker.",
+      "expected_output":"Selects pipa-status-update as the one primary operation and leaves triage and escalation as follow-ups.",
+      "assertions":[
+        "Does it select `pipa-status-update` because overall project state is primary?",
+        "Does it avoid running ticket triage or risk escalation in the same turn?",
+        "Does it preserve the user's audience and status objective?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"deliver-route-triage-1",
+      "prompt":"What needs response first in these incoming tickets? One is stale and another looks risky.",
+      "expected_output":"Selects pipa-ticket-triage as the one primary operation despite stale and risk language.",
+      "assertions":[
+        "Does it select `pipa-ticket-triage` because incoming response priority is primary?",
+        "Does it avoid switching to routine status or dedicated escalation?",
+        "Does it preserve escalation as a possible per-item disposition only?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"deliver-route-risk-1",
+      "prompt":"The owner has gone silent, tolerance breach is likely, and a director must decide. Escalate it.",
+      "expected_output":"Selects pipa-risk-escalation as the one primary operation.",
+      "assertions":[
+        "Does it select `pipa-risk-escalation` because breach and authority are primary?",
+        "Does it avoid replacing escalation with a broad status report?",
+        "Does it avoid intake triage?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"deliver-change-control-gate-1",
+      "prompt":"The client requested a scope change. First, resequence the work; there is no fee, cost, budget, or margin impact.",
+      "expected_output":"Keeps the request in Deliver Work and does not route to pipa-change-control.",
+      "assertions":[
+        "Does it keep the non-financial change in Deliver Work?",
+        "Does it avoid selecting `pipa-change-control` without explicit money impact?",
+        "Does it select the best matching delivery operation only once?"
+      ],
+      "files":[]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+[
+  {"query":"This blocker is nearing tolerance breach; prepare the escalation path.","should_trigger":true},
+  {"query":"The owner has gone silent and the decision is outside our authority. Who must act next?","should_trigger":true},
+  {"query":"Give leadership a routine project status update.","should_trigger":false},
+  {"query":"Prioritize and respond to these incoming tickets.","should_trigger":false},
+  {"query":"Check whether the operations handoff artifact is ready.","should_trigger":false}
+]

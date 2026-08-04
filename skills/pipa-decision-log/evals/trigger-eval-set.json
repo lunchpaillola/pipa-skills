@@ -1,0 +1,9 @@
+[
+  {"query":"Set up a RAID register and decision log for this project.","should_trigger":true},
+  {"query":"Create a RACI and map stakeholder decision authority.","should_trigger":false},
+  {"query":"We need decision traceability and a weekly governance review cadence.","should_trigger":true},
+  {"query":"Create lightweight controls for risks, issues, assumptions, dependencies, and owners.","should_trigger":true},
+  {"query":"Map the client stakeholders and their communication preferences.","should_trigger":false},
+  {"query":"Assess whether the charter is viable enough to start.","should_trigger":false},
+  {"query":"Escalate this active delivery risk to leadership now.","should_trigger":false}
+]

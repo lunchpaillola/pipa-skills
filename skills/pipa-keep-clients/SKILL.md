@@ -13,14 +13,30 @@ When present, read `~/.pipa/profile.md` once for durable business context. If mi
 
 ## Use For
 
-- Client check-ins, relationship health, retention, renewals, referrals, and testimonials.
+- Existing-client check-ins, relationship health, retention, renewals, referrals, and testimonials.
 - Follow-up wording when the user wants to keep trust or recover momentum.
 - Relationship risks surfaced by delivery or closeout.
 
-## References
+## Starter Jobs
 
-- Load `references/keep-clients.md` for the lane workflow.
-- Load `references/examples/keep-clients.md` when an example shape helps.
+- Find who needs a check-in and why now.
+- Draft or structure a follow-up. Send nothing by default.
+- Surface stakeholder risk, client-health signals, renewal or retention opportunities, trust gaps, testimonials, and referrals.
+- Treat generic `follow up with client` as client-retention follow-through, not reminder scheduling.
+
+## Required Inputs
+
+- Source: client notes, stakeholder map, thread, delivery state, support signal, or `TBD`.
+- Objective: repair, nurture, unblock, renew, ask, thank, or `TBD`.
+- Timing, owner, and channel, if known.
+
+## Workflow
+
+1. State the relationship objective and source.
+2. Name the signal and why now.
+3. Choose the smallest useful touch: check-in, clarification, escalation, thanks, renewal prompt, or no action.
+4. Draft the next action when useful. Do not send.
+5. Capture owner, timing, source, and watchlist.
 
 ## Output Contract
 
@@ -33,9 +49,24 @@ When present, read `~/.pipa/profile.md` once for durable business context. If mi
 
 ## Boundaries
 
+- Existing-client trust, retention, renewal, testimonial, and referral asks belong here. Acquiring a new prospect or opportunity belongs to `pipa-get-work`.
+- Relationship follow-up with an existing client belongs here; prospect and pipeline follow-up belongs to `pipa-get-work`.
+- Invoice and payment follow-up belongs to `pipa-get-paid`, even when relationship-sensitive wording matters.
 - Do not send messages or schedule reminders unless explicitly asked.
 - One-shot self-email reminders go through `pipa-tools` to `pipa-follow-up-reminders`.
 - Active delivery status stays `pipa-deliver-work` unless relationship health dominates.
+- Use `composio-mcp` only for live email, CRM, calendar access, or an explicitly approved external send.
+- Route future automated client-health checks to `pipa-manage` or `pipa-triggers`.
+- Do not update CRM records or access an inbox without connected-tool approval.
+- Relevant connector categories include CRM, email, chat, calendar, project tracker, and knowledge base.
+
+## Supporting Methods
+
+- `pipa-stakeholder-map`: role, influence, and decision authority.
+- `pipa-status-update`: anchor updates in delivery reality.
+- `pipa-risk-escalation`: trust, owner drift, and blocker escalation.
+- `pipa-handover`: transition ownership.
+- Load `references/examples/keep-clients.md` when an example shape helps.
 
 ## Gotchas
 

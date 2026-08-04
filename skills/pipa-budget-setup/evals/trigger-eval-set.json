@@ -1,0 +1,7 @@
+[
+  {"query":"Create a new project budget baseline and tracker.","should_trigger":true},
+  {"query":"Add Project Atlas to our existing budget table without changing other rows.","should_trigger":true},
+  {"query":"Are we over budget based on actuals and commitments?","should_trigger":false},
+  {"query":"What is our current burn and forecast at completion?","should_trigger":false},
+  {"query":"Approve this scope change and its added fee.","should_trigger":false}
+]

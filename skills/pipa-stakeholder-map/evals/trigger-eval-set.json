@@ -1,0 +1,9 @@
+[
+  {"query":"Build a stakeholder map showing who decides, approves, contributes, and needs updates.","should_trigger":true},
+  {"query":"Create a RACI for the kickoff and identify the escalation path.","should_trigger":true},
+  {"query":"Set up a RAID register and decision review log.","should_trigger":false},
+  {"query":"Who has authority over this launch, and where could approvals stall?", "should_trigger":true},
+  {"query":"Set up a RAID register and decision review cadence across the project.","should_trigger":false},
+  {"query":"Decide whether this charter is ready for a go/no-go gate.","should_trigger":false},
+  {"query":"Prioritize these initiatives into now, next, and later.","should_trigger":false}
+]

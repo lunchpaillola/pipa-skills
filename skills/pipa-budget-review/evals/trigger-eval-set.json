@@ -1,0 +1,7 @@
+[
+  {"query":"Review our budget burn, variance, and forecast at completion.","should_trigger":true},
+  {"query":"We used 70% of retainer hours halfway through the month. Are we on track?","should_trigger":true},
+  {"query":"Create a new budget baseline for this project.","should_trigger":false},
+  {"query":"Add a project row to our budget tracker.","should_trigger":false},
+  {"query":"Approve the client change request and added fee.","should_trigger":false}
+]

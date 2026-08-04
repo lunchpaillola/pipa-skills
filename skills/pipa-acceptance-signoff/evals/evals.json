@@ -1,0 +1,40 @@
+{
+  "skill_name": "pipa-acceptance-signoff",
+  "suite_name": "acceptance-signoff-behavior",
+  "artifact_type": "public-generic-eval-suite",
+  "evals": [
+    {
+      "id": "acceptance-conditional-1",
+      "prompt": "Review these acceptance criteria and approval records. Two criteria are met, one is partial, and the compliance approval is pending. Can we sign off?",
+      "expected_output": "Returns an evidence-backed conditional or not-signed-off decision with criterion states, residual obligations, owners, and the minimum actions for final signoff.",
+      "assertions": [
+        "Does it classify each criterion as `met`, `partial`, or `not-met` and cite its evidence/source?",
+        "Does it choose an explicit signoff state without implying final acceptance while approval remains pending?",
+        "Does it preserve approval wording, residual risks, owners, dates, and unknowns as evidence-backed values or `TBD`?"
+      ],
+      "files": []
+    },
+    {
+      "id": "acceptance-no-source-1",
+      "prompt": "Mark this delivery accepted, but I have not provided criteria, delivery evidence, or approval records.",
+      "expected_output": "Refuses to invent acceptance, reports the decision blocked, and asks only for the minimum usable acceptance sources.",
+      "assertions": [
+        "Does it return `blocked` because no usable acceptance source exists?",
+        "Does it avoid inventing criteria, evidence, approvals, owners, or dates?",
+        "Does it list the minimum inputs needed to assess signoff?"
+      ],
+      "files": []
+    },
+    {
+      "id": "acceptance-write-1",
+      "prompt": "Assess signoff and update the project tracker with the decision.",
+      "expected_output": "Completes the read-only signoff assessment first and treats the tracker update as a separate write requiring explicit approval and result confirmation.",
+      "assertions": [
+        "Does it produce the signoff decision before proposing an external write?",
+        "Does it require separate explicit approval before updating the tracker?",
+        "Does it require a success or failure result and record link or stable ID after an approved write?"
+      ],
+      "files": []
+    }
+  ]
+}

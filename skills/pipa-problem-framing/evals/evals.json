@@ -1,0 +1,7 @@
+{
+  "skill_name":"pipa-problem-framing",
+  "evals":[
+    {"id":"problem-frame-sources","prompt":"Frame the problem from these incomplete kickoff notes. We know churn is rising but do not know the target or owner.","expected_output":"Returns an evidence-separated problem frame, preserves unsupported targets and ownership as TBD, and recommends a requirements brief next.","assertions":["Does it distinguish source facts from inferred framing?","Does it include affected users, why now, boundaries, outcomes, constraints, and non-goals?","Does it avoid inventing a churn target, owner, or deadline?"],"files":[]},
+    {"id":"problem-frame-read-only","prompt":"Read this client brief, frame the problem, and update the shared project doc.","expected_output":"Completes the frame first and asks for explicit approval before changing the shared document.","assertions":["Does it produce the Problem Framing output contract?","Does it keep source gaps explicit?","Does it separate the external write from the read-only analysis and require approval?"],"files":[]}
+  ]
+}

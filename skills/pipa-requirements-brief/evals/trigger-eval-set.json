@@ -1,0 +1,8 @@
+[
+  {"query":"Turn these notes into a concise requirements brief with acceptance criteria.","should_trigger":true},
+  {"query":"Plan this project from the messy brief and identify unresolved requirement decisions.","should_trigger":true},
+  {"query":"Define the functional, non-functional, and integration requirements for delivery.","should_trigger":true},
+  {"query":"Plan today's priorities around my available capacity.","should_trigger":false},
+  {"query":"Lock the scope baseline and milestone schedule.","should_trigger":false},
+  {"query":"Sequence these approved requirements into now, next, and later.","should_trigger":false}
+]

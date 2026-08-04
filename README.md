@@ -44,7 +44,7 @@ cp -r pipa-skills/skills/* .agents/skills/
 - Audio briefs from sessions, plans, PRs, docs, and links
 - Connected-tool work through Composio-backed workflows
 - Recurring Slack updates and event-triggered automations
-- Lane-owned references with gotchas, examples, and connector setup through `pipa-manage`
+- Narrow operation skills for substantial workflows, with lane-owned examples and shared presentation guidance
 
 ### Core Router
 
@@ -57,11 +57,25 @@ cp -r pipa-skills/skills/* .agents/skills/
 | Skill | Description |
 |---|---|
 | [`pipa-get-work`](skills/pipa-get-work/) | Helps service businesses create and qualify opportunities through content, inbound, referrals, outreach, market signals, and pipeline next actions. |
-| [`pipa-define-work`](skills/pipa-define-work/) | Turns messy demand into defined work: Daily Planning, discovery, scope, proposals, acceptance checks, decisions, and client/project onboarding. |
+| [`pipa-define-work`](skills/pipa-define-work/) | Turns messy demand into defined work: Daily Plan, discovery, scope, proposals, acceptance checks, decisions, and client/project onboarding. |
 | [`pipa-deliver-work`](skills/pipa-deliver-work/) | Coordinates active delivery: status, blockers, risks, handoffs, dependencies, QA, weekly updates, and next actions. |
 | [`pipa-get-paid`](skills/pipa-get-paid/) | Tracks money follow-through: invoices, payments, billable time, budgets, margin, and change-control money impact. |
 | [`pipa-keep-clients`](skills/pipa-keep-clients/) | Maintains client trust through follow-ups, check-ins, client health, retention, renewals, referrals, testimonials, and stakeholder care. |
 | [`pipa-improve-operations`](skills/pipa-improve-operations/) | Turns work into better operations through Daily Shutdown, retrospectives, lessons, SOPs, templates, reusable processes, and archive readiness. |
+
+### Operation Skills
+
+Generic business language enters one of the six lanes. An explicit operation name runs that operation directly.
+
+| Entry surface | Operation skills |
+|---|---|
+| Manage Pipa | [`pipa-setup`](skills/pipa-setup/), [`pipa-connectors`](skills/pipa-connectors/) |
+| Define Work | [`pipa-project-charter`](skills/pipa-project-charter/), [`pipa-problem-framing`](skills/pipa-problem-framing/), [`pipa-stakeholder-map`](skills/pipa-stakeholder-map/), [`pipa-daily-plan`](skills/pipa-daily-plan/), [`pipa-decision-log`](skills/pipa-decision-log/), [`pipa-requirements-brief`](skills/pipa-requirements-brief/), [`pipa-roadmap`](skills/pipa-roadmap/), [`pipa-scope-baseline`](skills/pipa-scope-baseline/) |
+| Deliver Work | [`pipa-work-coordination`](skills/pipa-work-coordination/), [`pipa-iteration-cycle`](skills/pipa-iteration-cycle/), [`pipa-dependency-handoff`](skills/pipa-dependency-handoff/), [`pipa-risk-escalation`](skills/pipa-risk-escalation/), [`pipa-status-update`](skills/pipa-status-update/), [`pipa-ticket-triage`](skills/pipa-ticket-triage/) |
+| Get Paid | [`pipa-change-control`](skills/pipa-change-control/), [`pipa-budget-setup`](skills/pipa-budget-setup/), [`pipa-budget-review`](skills/pipa-budget-review/) |
+| Improve Operations | [`pipa-acceptance-signoff`](skills/pipa-acceptance-signoff/), [`pipa-closeout-review`](skills/pipa-closeout-review/), [`pipa-daily-shutdown`](skills/pipa-daily-shutdown/), [`pipa-handover`](skills/pipa-handover/), [`pipa-retrospective`](skills/pipa-retrospective/) |
+
+Get Work and Keep Clients remain lane-native; they do not add speculative child operations.
 
 ### Meta Skills
 

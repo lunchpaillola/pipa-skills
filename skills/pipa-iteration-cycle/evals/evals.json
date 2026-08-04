@@ -1,0 +1,17 @@
+{
+  "skill_name":"pipa-iteration-cycle",
+  "evals":[
+    {
+      "id":"iteration-cycle-1",
+      "prompt":"We committed five sprint items. Two are complete, two are in progress, and one is blocked with no owner. Run the cycle check.",
+      "expected_output":"Returns cycle health, normalized commitments, carryover pressure, and owner-by-owner recovery actions without inventing the missing owner.",
+      "assertions":[
+        "Does it separate committed, in-progress, completed, and carryover-risk items?",
+        "Does it assess blocker, dependency, capacity, and change-intake pressure?",
+        "Does it include actions with owner, next action, date, status, and evidence/source?",
+        "Does it preserve unknown owner or date as `TBD` and avoid unsupported completion claims?"
+      ],
+      "files":[]
+    }
+  ]
+}
