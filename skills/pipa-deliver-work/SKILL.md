@@ -2,7 +2,7 @@
 name: pipa-deliver-work
 description: "Use when the user wants Pipa to coordinate active service delivery: status, blockers, risks, owners, handoffs, dependencies, triage, weekly client updates, QA, and next actions."
 metadata:
-  version: 0.1.1
+  version: 0.2.0
 ---
 
 # Pipa Deliver Work

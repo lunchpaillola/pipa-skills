@@ -2,7 +2,7 @@
 name: pipa-manage
 description: "Use when the user wants to manage Pipa configuration across profile setup, connectors, company brain or memory, permissions, automations, triggers, loops, or access audits. Route profile setup to pipa-setup and connector setup/status to pipa-connectors. Do not use for business work or an already-connected app action."
 metadata:
-  version: 0.2.1
+  version: 0.3.0
 ---
 
 # Pipa Manage

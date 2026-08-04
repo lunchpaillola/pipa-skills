@@ -1,5 +1,11 @@
 # Versions
 
+## v2.1.0
+
+- Promoted 24 substantial lane workflows into independently invokable operation skills with local trigger and behavior evals.
+- Updated `pipa` to v2.1.0, `pipa-manage` to v0.3.0, and the six business lanes to v0.2.0 for lane-first routing with explicit operation precedence.
+- Removed promoted workflow references and secondary routers, folded Get Work and Keep Clients into their lanes, and added architecture validation for names, links, stale paths, and inline fallbacks.
+
 ## v2.0.2
 
 - Hardened Daily Planning and Daily Shutdown with formal-intent routing, degraded source handling, capacity definitions, baseline revisions, and separate-write-approval contracts.

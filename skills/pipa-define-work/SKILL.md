@@ -2,7 +2,7 @@
 name: pipa-define-work
 description: "Use when the user wants Pipa to turn fuzzy demand into defined work by selecting one focused operation for framing, chartering, stakeholders, requirements, scope, roadmap, decisions, or a specific workday plan."
 metadata:
-  version: 0.1.2
+  version: 0.2.0
 ---
 
 # Pipa Define Work

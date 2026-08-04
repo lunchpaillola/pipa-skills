@@ -2,7 +2,7 @@
 name: pipa-keep-clients
 description: "Use when the user wants Pipa to maintain client trust: follow-ups, check-ins, client health, retention, renewals, referrals, testimonials, stakeholder care, and relationship-sensitive next actions."
 metadata:
-  version: 0.1.1
+  version: 0.2.0
 ---
 
 # Pipa Keep Clients

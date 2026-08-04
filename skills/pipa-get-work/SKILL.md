@@ -2,7 +2,7 @@
 name: pipa-get-work
 description: "Use when the user wants Pipa to help a small service business get work: content, inbound, leads, pipeline, opportunities, referrals, outreach, market signals, and next opportunity actions."
 metadata:
-  version: 0.1.1
+  version: 0.2.0
 ---
 
 # Pipa Get Work

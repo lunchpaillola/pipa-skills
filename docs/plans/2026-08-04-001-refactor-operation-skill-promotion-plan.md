@@ -1,7 +1,7 @@
 ---
 title: "Refactor Pipa references into operation skills"
 type: refactor
-status: active
+status: completed
 date: 2026-08-04
 origin: https://linear.app/lunchpaillabs/document/pipa-skill-architecture-lanes-as-entry-surfaces-operation-skills-as-20e627fea5c0
 ---

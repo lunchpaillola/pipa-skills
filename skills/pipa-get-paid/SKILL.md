@@ -2,7 +2,7 @@
 name: pipa-get-paid
 description: "Use when the user wants Pipa to help a service business get paid: invoices, payments, billable time, budgets, margin, change-control money impact, and payment follow-through."
 metadata:
-  version: 0.1.1
+  version: 0.2.0
 ---
 
 # Pipa Get Paid

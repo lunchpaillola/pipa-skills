@@ -2,7 +2,7 @@
 name: pipa-improve-operations
 description: "Use when the user wants to improve operations through a workday shutdown, acceptance decision, handover, retrospective, or closeout review and needs Pipa to select the right focused operation."
 metadata:
-  version: 0.1.2
+  version: 0.2.0
 ---
 
 # Pipa Improve Operations
