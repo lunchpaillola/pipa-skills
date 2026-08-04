@@ -169,20 +169,6 @@ If user asks for tool-specific output, map the same triage decisions into that f
 
 Adapter rule: core triage decision quality comes first; tool formatting comes second.
 
-## Output contract
-
-Always return:
-
-1. triage objective used
-2. tools and sources used
-3. rubric used (default or custom)
-4. count by recommendation (`ready`, `needs-info`, `defer`, `escalate`)
-5. top 3 items by urgency with one-line rationale each
-6. explicit list of items blocked by missing context
-7. response queue with comment drafts
-8. closure summary (`close now`, `keep open`, `escalate` counts)
-9. tool/data gaps that reduced confidence
-
 ## Rules
 
 - Keep language short, specific, and operational.

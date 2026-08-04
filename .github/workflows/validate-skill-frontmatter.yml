@@ -9,6 +9,7 @@ on:
       - "README.md"
       - "scripts/validate_skill_frontmatter.rb"
       - "scripts/validate_skill_evals.rb"
+      - "scripts/validate_skill_evals_test.rb"
       - "scripts/validate_skill_architecture.rb"
       - "scripts/validate_skill_architecture_test.rb"
       - ".github/workflows/validate-skill-frontmatter.yml"
@@ -22,6 +23,7 @@ on:
       - "README.md"
       - "scripts/validate_skill_frontmatter.rb"
       - "scripts/validate_skill_evals.rb"
+      - "scripts/validate_skill_evals_test.rb"
       - "scripts/validate_skill_architecture.rb"
       - "scripts/validate_skill_architecture_test.rb"
       - ".github/workflows/validate-skill-frontmatter.yml"
@@ -52,7 +54,7 @@ jobs:
         run: ruby scripts/validate_skill_frontmatter.rb
 
       - name: Validate skill eval fixtures
-        run: ruby scripts/validate_skill_evals.rb
+        run: ruby scripts/validate_skill_evals_test.rb
 
       - name: Validate skill architecture
         run: ruby scripts/validate_skill_architecture_test.rb

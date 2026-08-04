@@ -18,7 +18,7 @@ Communication style contract: when returning user-facing updates, briefs, or sum
 Before executing, copy this checklist and keep it updated in your working notes:
 
 ```text
-Pipa Initiate Budget Progress
+Pipa Budget Setup Progress
 - [ ] Step 1 complete: target file and mode confirmed
 - [ ] Step 2 complete: existing tracker checked
 - [ ] Step 3 complete: required columns confirmed

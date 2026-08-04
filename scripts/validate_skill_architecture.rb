@@ -77,6 +77,9 @@ errors = []
 skill_files = Dir.glob(ROOT.join("skills/*/SKILL.md").to_s).map { |path| Pathname(path) }.sort
 active_files = Dir.glob(ROOT.join("skills/**/*.{md,json}").to_s) +
   Dir.glob(ROOT.join("evals/**/*.json").to_s) + [ROOT.join("README.md").to_s]
+markdown_files = Dir.glob(ROOT.join("{AGENTS.md,CONTRIBUTING.md,README.md,docs/**/*.md,skills/**/*.md}").to_s).reject do |filename|
+  Pathname(filename).relative_path_from(ROOT).to_s.start_with?("docs/plans/")
+end.sort
 
 skill_files.each do |path|
   directory = path.dirname.basename.to_s
@@ -86,7 +89,7 @@ skill_files.each do |path|
   errors << "#{path.relative_path_from(ROOT)}: frontmatter name '#{actual}' must match directory '#{directory}'" if actual != expected
 end
 
-Dir.glob(ROOT.join("skills/**/*.md").to_s).sort.each do |filename|
+markdown_files.each do |filename|
   path = Pathname(filename)
   local_link_targets(path.read).each do |target|
     resolved = path.dirname.join(target).cleanpath
@@ -97,7 +100,12 @@ end
 PROMOTIONS.each do |operation, (owner, stale_path)|
   operation_path = ROOT.join("skills", operation, "SKILL.md")
   owner_path = ROOT.join("skills", owner, "SKILL.md")
-  next unless owner_path.exist?
+  next unless owner_path.exist? || operation_path.exist?
+
+  unless owner_path.exist?
+    errors << "skills/#{owner}/SKILL.md: owner lane for #{operation} is missing"
+    next
+  end
 
   unless operation_path.exist?
     errors << "skills/#{operation}/SKILL.md: canonical operation is missing"

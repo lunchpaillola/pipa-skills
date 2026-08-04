@@ -548,6 +548,26 @@
         "Does it avoid claiming payment status or sending a message without evidence and approval?"
       ],
       "files": []
+    },
+    {
+      "id": "pipa-get-work-content-ownership-1",
+      "prompt": "Pipa turn this customer pain signal into an opportunity-focused article for our target buyers.",
+      "expected_output": "Routes opportunity- and positioning-tied content work to the lane-native Get Work workflow.",
+      "assertions": [
+        "Does it select `pipa-get-work` because the content objective is opportunity acquisition?",
+        "Does it preserve the customer-pain and target-buyer context?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-generic-content-negative-1",
+      "prompt": "Write a generic tutorial explaining CSS grid.",
+      "expected_output": "Does not force generic content creation into Pipa or the Get Work lane without a business-opportunity objective.",
+      "assertions": [
+        "Does it avoid selecting `pipa-get-work` without opportunity, demand, positioning, or acquisition intent?",
+        "Does it avoid forcing a non-Pipa writing request into a business lane?"
+      ],
+      "files": []
     }
   ]
 }

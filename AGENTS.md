@@ -17,6 +17,6 @@ This repository stores Pipa skills for AI agents. Pipa is the primary PM brain a
 - A substantial, independently invokable workflow belongs in a narrowly described operation skill. Its skill owns the workflow, output contract, safety rules, and local positive/negative evals.
 - Generic business language enters a lane. Explicit operation invocation wins; otherwise the lane selects one operation and preserves the user's business objective.
 - References are non-routing assets such as templates, schemas, examples, source-handling rules, and shared presentation guidance. Do not keep promoted workflow bodies or fallback copies in lanes or references.
-- Preserve `pipa-audio-brief`, `composio`, and `pipa-triggers` as standalone breakouts unless a future plan explicitly changes that architecture.
+- Preserve `pipa-audio-brief`, `composio-mcp`, and `pipa-triggers` as standalone breakouts unless a future plan explicitly changes that architecture.
 - Keep routers and lanes concise. Route to an operation by skill name and fail clearly when it is unavailable instead of embedding a compatibility copy.
 - `docs/solutions/` stores documented solutions to past problems (bugs, best practices, workflow patterns), organized by category with YAML frontmatter (`module`, `tags`, `problem_type`); relevant when implementing or debugging in documented areas.

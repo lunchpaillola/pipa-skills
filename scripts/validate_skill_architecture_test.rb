@@ -61,11 +61,37 @@ fixture do |root|
 end
 
 fixture do |root|
+  File.write(File.join(root, "README.md"), "[Missing root reference](docs/missing.md)\n")
+  out, = validate(root)
+  abort "expected broken root link" unless out.include?("README.md: broken local Markdown link")
+end
+
+Dir.mktmpdir do |root|
+  skill(root, "pipa-setup")
+  out, = validate(root)
+  abort "expected missing owner lane" unless out.include?("owner lane for pipa-setup is missing")
+end
+
+fixture do |root|
   stale = File.join(root, "skills/pipa-manage/references/setup.md")
   FileUtils.mkdir_p(File.dirname(stale))
   File.write(stale, "# Old setup\n")
   out, = validate(root)
   abort "expected stale promoted path" unless out.include?("promoted workflow source still exists")
+end
+
+fixture do |root|
+  stale = File.join(root, "skills/pipa-get-work/references/get-work.md")
+  FileUtils.mkdir_p(File.dirname(stale))
+  File.write(stale, "# Old router\n")
+  out, = validate(root)
+  abort "expected restored router failure" unless out.include?("removed router source still exists")
+end
+
+fixture do |root|
+  File.write(File.join(root, "README.md"), "See skills/pipa-get-work/references/get-work.md.\n")
+  out, = validate(root)
+  abort "expected removed router reference failure" unless out.include?("stale removed router path")
 end
 
 fixture do |root|
