@@ -13,7 +13,7 @@ When present, read `~/.pipa/profile.md` once for durable business context. If mi
 
 ## Select One Operation
 
-- `pipa-daily-shutdown`: close one specific workday, compare it with an accepted Daily Plan when valid, resolve open loops, and prepare tomorrow.
+- `pipa-daily-shutdown`: account for one specific workday, close important open loops, and prepare tomorrow.
 - `pipa-acceptance-signoff`: assess acceptance criteria and make an auditable signoff decision.
 - `pipa-handover`: assess ownership transfer, runbooks, support, access, and transition readiness.
 - `pipa-retrospective`: capture evidence-backed lessons and turn them into process, SOP, template, or behavior changes.

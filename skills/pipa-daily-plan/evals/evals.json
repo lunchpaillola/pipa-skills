@@ -1,10 +1,85 @@
 {
-  "skill_name":"pipa-daily-plan",
-  "evals":[
-    {"id":"daily-plan-source-state","prompt":"Plan today. CONNECTORS.md maps Linear and Calendar. Live discovery confirms Linear, its issue query returns no active work, Calendar access fails, GitHub is unavailable, and email was not requested. I pasted two priorities and have six gross work hours.","expected_output":"Resolves date and IANA timezone, verifies mapped access and schemas, distinguishes every source state, continues from pasted priorities, and returns a proposed plan awaiting acceptance.","assertions":["Does it show the target date and canonical IANA timezone before interpreting today?","Does it use composio-mcp discovery and complete selected-tool schemas rather than treat CONNECTORS.md as access proof?","Does it report Linear `empty`, Calendar `failed`, GitHub `unavailable`, and email `not-requested` without collapsing the states?","Does it cite the pasted priorities, continue safely, and keep the baseline proposed until explicit acceptance?"],"files":[]},
-    {"id":"daily-plan-capacity","prompt":"Plan tomorrow. I have an already-adjusted five-hour focus budget and these priorities total seven hours.","expected_output":"Uses five hours without subtracting calendar events again, shows two hours of overload, and recommends explicit deferrals.","assertions":["Does it avoid double-subtracting events from adjusted focus capacity?","Does it show planned work versus capacity and the overload?","Does it name work that will not fit without changing external records?"],"files":[]},
-    {"id":"daily-plan-acceptance","prompt":"I accept revision 2 of the Daily Plan for 2026-08-05 in America/New_York exactly as proposed.","expected_output":"Marks only that latest explicitly accepted revision as accepted and records an immutable priority snapshot, matching date, and canonical IANA timezone for same-conversation shutdown use.","assertions":["Does it require explicit acceptance rather than infer it?","Does it record revision, accepted priorities, target date, and canonical IANA timezone?","Does it limit shutdown-baseline validity to the same conversation and matching date/timezone?"],"files":[]},
-    {"id":"daily-plan-write-confirmation","prompt":"Plan today and then move the deferred tasks in Linear and block focus time on my calendar.","expected_output":"Finishes the read-only Daily Plan, keeps writes pending, and asks separately for explicit approval before tracker or calendar changes, followed by confirmation of actual writes.","assertions":["Does it complete the read-only plan before proposing writes?","Does it show each exact scoped change and require separate explicit approval immediately before execution?","Does it avoid claiming tracker or calendar changes before execution and confirmation?"],"files":[]},
-    {"id":"daily-plan-not-project-plan","prompt":"Plan this project. We need requirements, acceptance criteria, and unresolved decisions from kickoff notes.","expected_output":"Does not run Daily Plan because the ask lacks specific-workday priorities or capacity intent and recommends pipa-requirements-brief.","assertions":["Does it decline Daily Plan ownership for broad project planning?","Does it avoid creating a Daily Plan baseline?","Does it route to pipa-requirements-brief?"],"files":[]}
+  "skill_name": "pipa-daily-plan",
+  "evals": [
+    {
+      "id": "daily-plan-discovers-sources",
+      "prompt": "Plan today. CONNECTORS.md is missing, but Linear and Google Calendar are connected through Composio. Linear has one overdue issue, one goal-aligned issue in Now, and several Backlog issues. My calendar has two afternoon meetings.",
+      "expected_output": "Discovers and reads the live tracker and calendar without depending on CONNECTORS.md, selects the overdue issue, and returns a human brief with linked sources.",
+      "assertions": [
+        "Does it use composio-mcp discovery even though CONNECTORS.md is missing?",
+        "Does it avoid claiming Composio, Linear, or Calendar is unavailable based on static configuration?",
+        "Does it prioritize the overdue issue ahead of the goal-aligned Now and Backlog work?",
+        "Does it use the required brief sections without showing connector diagnostics or source-gap tables?",
+        "Does it cite the apps and material records actually used?"
+      ],
+      "files": []
+    },
+    {
+      "id": "daily-plan-priority-order",
+      "prompt": "Run pipa-daily-plan for tomorrow in America/New_York. Nothing is overdue or due tomorrow. STU-20 is in Now, STU-21 is high-priority Up next, and STU-22 is Backlog. My calendar leaves about four focus hours.",
+      "expected_output": "Chooses the Now issue as the main focus and includes no more than two credible secondary items based on available time.",
+      "assertions": [
+        "Does it choose STU-20 in Now before queued or Backlog work?",
+        "Does it include at most two secondary items?",
+        "Does it explain the shape of the day and use calendar capacity without overstating precision?",
+        "Does it give one concrete first action?"
+      ],
+      "files": []
+    },
+    {
+      "id": "daily-plan-actionable-capacity",
+      "prompt": "Run pipa-daily-plan for August 8 in America/New_York. An overdue ticket is blocked waiting on another team with no action I can take. STU-20 is unblocked in Now and needs six hours, but my calendar leaves two focus hours.",
+      "expected_output": "Flags the blocked overdue item, chooses executable Now work, and scopes today's main focus to a credible two-hour milestone.",
+      "assertions": [
+        "Does it avoid selecting work the user cannot advance today as the main focus?",
+        "Does it flag the blocked overdue item without letting it displace executable Now work?",
+        "Does it scope the main focus to fit available capacity and carry forward the remainder?",
+        "Does the heading preserve the canonical IANA timezone?"
+      ],
+      "files": []
+    },
+    {
+      "id": "daily-plan-goal-tiebreaker",
+      "prompt": "Run pipa-daily-plan for August 8 in America/New_York. Nothing is due. Two executable issues are in Now with equal priority; STU-30 directly advances my stated current goal and STU-31 does not.",
+      "expected_output": "Uses goal alignment to choose STU-30 between otherwise credible same-tier candidates.",
+      "assertions": [
+        "Does it use the explicit current goal as a tie-breaker between same-tier candidates?",
+        "Does it explain the goal connection without inventing a goal score or percentage?"
+      ],
+      "files": []
+    },
+    {
+      "id": "daily-plan-best-next-ticket",
+      "prompt": "Run pipa-daily-plan for August 8 in America/New_York. Nothing is overdue, due, or in Now. The tracker has one high-priority ticket that unblocks an active project and several unrelated Backlog tickets. Calendar capacity is unknown.",
+      "expected_output": "Selects the high-priority unblocker as the best next ticket and recommends only that main focus because capacity is unclear.",
+      "assertions": [
+        "Does it choose the best next ticket using tracker priority, dependencies, and active-work relevance?",
+        "Does it avoid inventing capacity or padding the brief with secondary work?",
+        "Does it omit empty optional sections rather than filling them with diagnostics?"
+      ],
+      "files": []
+    },
+    {
+      "id": "daily-plan-write-confirmation",
+      "prompt": "Plan today and then move the deferred tasks in Linear and block focus time on my calendar.",
+      "expected_output": "Finishes the read-only Daily Brief, then presents tracker and calendar writes separately for explicit approval and confirms only executed results.",
+      "assertions": [
+        "Does it complete the read-only brief before proposing writes?",
+        "Does it show each exact scoped change and require separate explicit approval immediately before execution?",
+        "Does it avoid claiming tracker or calendar changes before execution and confirmation?"
+      ],
+      "files": []
+    },
+    {
+      "id": "daily-plan-not-project-plan",
+      "prompt": "Plan this project. We need requirements, acceptance criteria, and unresolved decisions from kickoff notes.",
+      "expected_output": "Does not run Daily Plan because the ask lacks specific-workday priority or capacity intent and recommends pipa-requirements-brief.",
+      "assertions": [
+        "Does it decline Daily Plan ownership for broad project planning?",
+        "Does it avoid producing a Daily Brief?",
+        "Does it route to pipa-requirements-brief?"
+      ],
+      "files": []
+    }
   ]
 }

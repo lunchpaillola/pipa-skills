@@ -22,7 +22,7 @@ Explicit operation invocation wins. Otherwise select exactly one primary operati
 - `pipa-scope-baseline`: baseline deliverables, exclusions, milestones, schedule assumptions, tolerances, and change triggers.
 - `pipa-roadmap`: sequence candidate work into now/next/later or another requested prioritization method.
 - `pipa-decision-log`: set up RAID, RACI, decision records, ownership, and review cadence.
-- `pipa-daily-plan`: plan one specific workday against priorities, estimates, calendar-adjusted capacity, and explicit deferrals.
+- `pipa-daily-plan`: brief one specific workday around due work, active priorities, calendar capacity, and the best next action.
 
 ## Tie-Breakers
 
