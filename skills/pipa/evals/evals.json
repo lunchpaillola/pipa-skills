@@ -382,7 +382,7 @@
       "expected_output": "Routes to pipa-follow-up-reminders because the user asked for a specific future email reminder to themself.",
       "assertions": [
         "Does the output route to `pipa-follow-up-reminders`?",
-        "Does it preserve one-shot reminder scope, timezone resolution, and the verified self-recipient guardrail, then create without an extra confirmation when validation passes?",
+        "Does it preserve one-shot reminder scope, timezone resolution, verified self-recipient guardrail, and confirmation before create?",
         "Does it avoid turning this into recurring automation or inbox monitoring?"
       ],
       "files": []

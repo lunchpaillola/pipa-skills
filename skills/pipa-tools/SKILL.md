@@ -21,7 +21,7 @@ Route standalone utilities without turning them into business lanes.
 - Selected tool.
 - Why this is a utility instead of a business lane.
 - Required inputs and blockers.
-- Destination-specific authorization, validation, and blocker checks without adding or skipping confirmation steps.
+- Confirmation gate before publishing, reminders, huddles, or time-record changes.
 - Source/provenance when connected tools are used.
 
 ## Boundaries
@@ -33,4 +33,4 @@ Route standalone utilities without turning them into business lanes.
 
 - `brief this` is not an audio brief unless audio/listenable/spoken/phone-friendly wording is explicit.
 - `talk through` is not a voice huddle unless live voice wording is explicit.
-- Preserve each destination skill's authorization contract exactly. Do not add an extra confirmation when the explicit request is sufficient, and do not skip a confirmation the destination requires.
+- External writes, published audio pages, reminders, huddles, and time-record changes require the destination skill's confirmation gate.

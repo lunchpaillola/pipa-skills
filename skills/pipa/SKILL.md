@@ -105,5 +105,5 @@ Get Work and Keep Clients remain lane-native. Do not invent child operations for
 - Do not present Pipa as an acronym.
 - Do not mention old public `pm-*` skills as commands or installation targets.
 - Do not edit/copy internals of `pipa-audio-brief`, `pipa-huddle-beta`, `pipa-follow-up-reminders`, `pipa-time-tracking`, `pipa-triggers`, or `composio-mcp`; standalone skills own them.
-- Preserve each specialized capability's authorization contract exactly; do not add or skip confirmation steps at the router layer.
+- Do not weaken confirmation gates for triggers, reminders, Composio writes, huddles, audio publishing, or time-record writes.
 - Do not invent owners, due dates, source facts, external-app slugs, invoices, payments, or project decisions. Use `TBD` for unknowns.

@@ -2,7 +2,7 @@
 
 ## Review Status
 
-**Overall: PASS after resolving one specialized-capability contract conflict found during review.**
+**Overall: PASS for promoted-operation routing. Specialized capabilities remain unchanged; one pre-existing confirmation-contract conflict is documented below.**
 
 This was a **model-assisted documented manual review**, not an automated routing or eval execution. No prompt was run through an eval runner or live router. Each fixture was read and compared semantically against the root precedence rules, owning lane/meta selection rules, operation frontmatter boundary, destination safety contract, and neighboring fixtures.
 
@@ -79,11 +79,11 @@ Seven additional files were read to establish the canonical inventory and review
 | Cross-lane and collision handling | PASS | 14/14 preserve one primary route, handoff gates, `TBD` gaps, and follow-ups without silently executing multiple lanes. |
 | Direct promoted-operation safety/tool contracts | PASS | The 86 operation behavior cases consistently preserve source-state distinctions, Composio discovery and complete-schema checks where live tools are needed, provenance, conservative evidence handling, read-only-first analysis, separately scoped write approvals, and confirmed write results. |
 | Specialized-capability surface selection | PASS | Audio, huddle, reminders, triggers, Composio, and time tracking route to the intended standalone capability; generic lane work remains lane-owned. |
-| Specialized-capability contract preservation | PASS after fix | The review found and removed a root/meta confirmation rule that conflicted with four destination workflows. Routers now preserve each destination's authorization contract without adding or skipping confirmation. |
+| Specialized-capability contract preservation | Unchanged | The review found a pre-existing root/meta confirmation rule that conflicts with four destination workflows. This PR intentionally leaves those standalone capabilities and their routing contract unchanged. |
 
-## Finding Resolved During Review
+## Pre-existing Finding Left Unchanged
 
-### F1. `pipa-tools` added confirmation gates that conflicted with destination contracts
+### F1. `pipa-tools` confirmation gates conflict with destination contracts
 
 The review found that `skills/pipa-tools/SKILL.md` required a confirmation gate before publishing, reminders, huddles, or time-record changes, while four destination skills treat the explicit user request as authorization after their own validation and blocker checks:
 
@@ -101,7 +101,7 @@ Affected prompts and expected routes:
 | `Pipa remind me by email next Friday at 9 to chase this invoice.` | `pipa` -> `pipa-tools` -> `pipa-follow-up-reminders` | Preserve verified-self-recipient, timezone, future-time, payload, and idempotency checks, then create without extra confirmation; the root eval currently asserts confirmation before create. |
 | `Pipa track time for this client call.` | `pipa` -> `pipa-tools` -> `pipa-time-tracking` | Preserve required credentials and timer-state checks, then start the requested timer; the meta rule inserts an undocumented confirmation before mutation. |
 
-No affected prompt selected the wrong destination surface. The root router and `pipa-tools` now preserve each destination's authorization contract exactly: they neither add an extra confirmation when the explicit request is sufficient nor skip a confirmation the destination requires. The reminder root eval now matches the destination contract.
+No affected prompt selects the wrong destination surface. The conflict predates this operation-promotion work and is recorded without changing `pipa-tools`, `pipa-audio-brief`, `pipa-huddle-beta`, or their root confirmation behavior.
 
 ## Collision Notes
 
