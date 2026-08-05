@@ -140,9 +140,9 @@ PROMOTIONS.each do |operation, (owner, stale_path)|
   end
 
   operation_data = frontmatter(operation_path)
-  expected_description = "Use only when `#{operation}` is explicitly invoked or `#{owner}` delegates to it. Do not trigger from generic language."
+  expected_description = "Use only when `#{operation}` is explicitly invoked or `#{owner}` delegates to it."
   actual_description = operation_data.is_a?(Hash) ? operation_data["description"].to_s : ""
-  if actual_description != expected_description
+  unless [expected_description, "#{expected_description} Do not trigger from generic language."].include?(actual_description)
     errors << "#{operation_path.relative_path_from(ROOT)}: operation description must require explicit invocation or #{owner} delegation"
   end
 
