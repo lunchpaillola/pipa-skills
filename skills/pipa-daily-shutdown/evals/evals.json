@@ -13,6 +13,7 @@
         "Does it avoid claiming calendar attendance unless verified?",
         "Does it explain how the day tracked toward the known goal?",
         "Does Tomorrow account for the due ticket and the 9 AM calendar constraint without creating or changing either record?",
+        "Does it track all six progress steps in working notes without showing checklist progress in the final shutdown?",
         "Does it close the workday without claiming the entire project is complete?"
       ],
       "files": []
@@ -44,11 +45,11 @@
     },
     {
       "id": "shutdown-timezone",
-      "prompt": "Shut down my workday. I am on UTC-5.",
-      "expected_output": "Asks one focused question for the target date and canonical IANA timezone before interpreting relative dates or evidence.",
+      "prompt": "Shut down my workday and prepare tomorrow.",
+      "expected_output": "Uses the system date for today and asks one focused question only if the target day remains unclear.",
       "assertions": [
-        "Does it recognize that `UTC-5` is not sufficient canonical IANA timezone context?",
-        "Does it ask one focused target date and timezone question?",
+        "Does it use the system date instead of asking for information the computer provides?",
+        "Does it ask one focused question only if the target day remains unclear?",
         "Does it avoid producing or closing the wrong day's shutdown?"
       ],
       "files": []

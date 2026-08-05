@@ -171,7 +171,7 @@
       "assertions": [
         "Does it avoid foregrounding or displaying a missing baseline?",
         "Does it reconstruct completed work, movement, events, and open loops from verified tracker and calendar evidence?",
-        "Does it use Composio discovery before treating any mapped source as used or unavailable?",
+        "Does it verify mapped tools directly and use Composio discovery for unmapped capabilities?",
         "Does it mention unavailable sources only when they materially affect the account and keep evidence-dependent outcomes unknown?",
         "Can it complete the shutdown ritual without claiming all work is complete?"
       ],
@@ -180,11 +180,11 @@
     {
       "id": "pipa-daily-shutdown-timezone-1",
       "prompt": "Pipa shut down my workday and prepare tomorrow.",
-      "expected_output": "Selects Daily Shutdown but asks one focused target-date/timezone question before comparing commitments, interpreting calendar evidence, or closing the ritual when no verified timezone context exists.",
+      "expected_output": "Selects Daily Shutdown, uses the system date for today, and asks one focused question only if the target day remains unclear.",
       "assertions": [
         "Does the output select `improve operations` and Daily Shutdown?",
-        "Does it ask one focused question for the target date or timezone before interpreting relative dates or source evidence?",
-        "Does it avoid inventing a timezone, comparing the wrong baseline, or closing the ritual before that context is resolved?"
+        "Does it use the system date instead of asking for information the computer provides?",
+        "Does it ask one focused question only if the target day remains unclear?"
       ],
       "files": []
     },
