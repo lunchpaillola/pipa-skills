@@ -3,12 +3,12 @@
   "evals": [
     {
       "id": "daily-plan-discovers-sources",
-      "prompt": "Plan today. CONNECTORS.md is missing, but Linear and Google Calendar are connected through Composio. Linear has one overdue issue, one goal-aligned issue in Now, and several Backlog issues. My calendar has two afternoon meetings.",
+      "prompt": "Plan today. CONNECTORS.md is missing, but Linear and Google Calendar are connected through Composio. Linear has one overdue issue, one goal-aligned active issue, and several backlog issues. My calendar has two afternoon meetings.",
       "expected_output": "Discovers and reads the live tracker and calendar without depending on CONNECTORS.md, selects the overdue issue, and returns a human brief with linked sources.",
       "assertions": [
         "Does it use composio-mcp discovery even though CONNECTORS.md is missing?",
         "Does it avoid claiming Composio, Linear, or Calendar is unavailable based on static configuration?",
-        "Does it prioritize the overdue issue ahead of the goal-aligned Now and Backlog work?",
+        "Does it prioritize the overdue issue ahead of the goal-aligned active and backlog work?",
         "Does it use the required brief sections without showing connector diagnostics or source-gap tables?",
         "Does it cite the apps and material records actually used?"
       ],
@@ -16,31 +16,30 @@
     },
     {
       "id": "daily-plan-priority-order",
-      "prompt": "Run pipa-daily-plan for tomorrow in America/New_York. Nothing is overdue or due tomorrow. STU-20 is in Now, STU-21 is high-priority Up next, and STU-22 is Backlog. My calendar leaves about four focus hours.",
-      "expected_output": "Chooses the Now issue as the main focus and includes no more than two credible secondary items based on available time.",
+      "prompt": "Run pipa-daily-plan for tomorrow. Nothing is overdue or due tomorrow. STU-20 is active, STU-21 is high-priority queued work, and STU-22 is in the backlog. My calendar has two afternoon meetings.",
+      "expected_output": "Chooses the active issue as the main focus and returns a concise brief around the day's commitments.",
       "assertions": [
-        "Does it choose STU-20 in Now before queued or Backlog work?",
-        "Does it include at most two secondary items?",
-        "Does it explain the shape of the day and use calendar capacity without overstating precision?",
-        "Does it give one concrete first action?"
+        "Does it choose STU-20 because it is active before queued or backlog work?",
+        "Does it explain the shape of the day without forecasting capacity or task size?",
+        "Does it omit the timezone and Start Here from the output?"
       ],
       "files": []
     },
     {
-      "id": "daily-plan-actionable-capacity",
-      "prompt": "Run pipa-daily-plan for August 8 in America/New_York. An overdue ticket is blocked waiting on another team with no action I can take. STU-20 is unblocked in Now and needs six hours, but my calendar leaves two focus hours.",
-      "expected_output": "Flags the blocked overdue item, chooses executable Now work, and scopes today's main focus to a credible two-hour milestone.",
+      "id": "daily-plan-actionable-work",
+      "prompt": "Run pipa-daily-plan for August 8. An overdue ticket is blocked waiting on another team with no action I can take. STU-20 is active, executable, and supports my current goal.",
+      "expected_output": "Flags the blocked overdue item and chooses executable active work that supports the goal.",
       "assertions": [
         "Does it avoid selecting work the user cannot advance today as the main focus?",
-        "Does it flag the blocked overdue item without letting it displace executable Now work?",
-        "Does it scope the main focus to fit available capacity and carry forward the remainder?",
-        "Does the heading preserve the canonical IANA timezone?"
+        "Does it flag the blocked overdue item without letting it displace executable active work?",
+        "Does it avoid estimating task size or forecasting capacity?",
+        "Does the heading omit the timezone?"
       ],
       "files": []
     },
     {
       "id": "daily-plan-goal-tiebreaker",
-      "prompt": "Run pipa-daily-plan for August 8 in America/New_York. Nothing is due. Two executable issues are in Now with equal priority; STU-30 directly advances my stated current goal and STU-31 does not.",
+      "prompt": "Run pipa-daily-plan for August 8. Nothing is due. Two executable issues are active with equal priority; STU-30 directly advances my stated current goal and STU-31 does not.",
       "expected_output": "Uses goal alignment to choose STU-30 between otherwise credible same-tier candidates.",
       "assertions": [
         "Does it use the explicit current goal as a tie-breaker between same-tier candidates?",
@@ -50,11 +49,11 @@
     },
     {
       "id": "daily-plan-best-next-ticket",
-      "prompt": "Run pipa-daily-plan for August 8 in America/New_York. Nothing is overdue, due, or in Now. The tracker has one high-priority ticket that unblocks an active project and several unrelated Backlog tickets. Calendar capacity is unknown.",
-      "expected_output": "Selects the high-priority unblocker as the best next ticket and recommends only that main focus because capacity is unclear.",
+      "prompt": "Run pipa-daily-plan for August 8. Nothing is overdue, due, or active. The tracker has one high-priority ticket that unblocks a current project and supports my goal, plus several unrelated backlog tickets.",
+      "expected_output": "Selects the high-priority unblocker as the best next ticket because it supports the goal.",
       "assertions": [
-        "Does it choose the best next ticket using tracker priority, dependencies, and active-work relevance?",
-        "Does it avoid inventing capacity or padding the brief with secondary work?",
+        "Does it choose the best next ticket using tracker priority, dependencies, and goal alignment?",
+        "Does it avoid inventing task size or capacity?",
         "Does it omit empty optional sections rather than filling them with diagnostics?"
       ],
       "files": []
@@ -73,7 +72,7 @@
     {
       "id": "daily-plan-not-project-plan",
       "prompt": "Plan this project. We need requirements, acceptance criteria, and unresolved decisions from kickoff notes.",
-      "expected_output": "Does not run Daily Plan because the ask lacks specific-workday priority or capacity intent and recommends pipa-requirements-brief.",
+      "expected_output": "Does not run Daily Plan because the ask lacks specific-workday priority intent and recommends pipa-requirements-brief.",
       "assertions": [
         "Does it decline Daily Plan ownership for broad project planning?",
         "Does it avoid producing a Daily Brief?",

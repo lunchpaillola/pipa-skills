@@ -61,12 +61,12 @@
     {
       "id": "pipa-daily-plan-1",
       "prompt": "Pipa plan my day. It is August 3 in America/New_York. Read my active tracker work, open pull requests, and calendar, then help me commit to a realistic plan.",
-      "expected_output": "Routes to pipa-daily-plan through Define Work, verifies live sources, prioritizes due or active work against calendar capacity, and returns a structured, human Daily Brief.",
+      "expected_output": "Routes to pipa-daily-plan through Define Work, verifies live sources, prioritizes due or active work and goals, and returns a structured, human Daily Brief.",
       "assertions": [
         "Does the output select `define work` and `pipa-daily-plan` as the one primary route?",
         "Does it prioritize overdue or due-today work, then active work, then the best next ticket?",
-        "Does it resolve the target date and timezone and use calendar-adjusted capacity to limit secondary work?",
-        "Does the Daily Brief include Your Day, Main Focus, up to two credible secondary items, Schedule, and Start Here?",
+        "Does it use the system date or verified user and calendar data to resolve the target day?",
+        "Does the Daily Brief include Your Day, Main Focus, optional secondary items, and Schedule without a timezone or Start Here?",
         "Does it avoid ritual-progress, connector-status, and formal baseline sections?",
         "Does provenance name the concrete tool or app and material records with links or stable IDs when connected tools were used?"
       ],
@@ -75,10 +75,10 @@
     {
       "id": "pipa-daily-plan-degraded-1",
       "prompt": "Pipa help me plan August 3 in America/New_York. CONNECTORS.md maps my tracker and calendar, but Composio verifies the calendar is disconnected and the code host check failed. I have eight hours of proposed work and only five hours free. Also update every selected tracker item for me.",
-      "expected_output": "Builds a useful capacity-aware Daily Brief from available evidence, limits the recommendation to work that fits, mentions only material source limits, and leaves tracker writes pending separate approval.",
+      "expected_output": "Builds a useful Daily Brief from available evidence, chooses the best work that supports the user's goal, mentions only material source limits, and leaves tracker writes pending separate approval.",
       "assertions": [
         "Does it mention the failed code-host source only when that materially limits the recommendation, without interpreting failure as no open code work?",
-        "Does it scope the main focus and secondary work to the five available hours rather than present an eight-hour plan?",
+        "Does it avoid estimating task size or forecasting capacity from the supplied hours?",
         "Does it use Composio discovery, mark the mapped calendar unavailable only after live verification, and continue with verified tracker evidence?",
         "Does it keep connector diagnostics out of the user-facing brief?",
         "Does it finish the read-only plan and require separate explicit approval before updating tracker items?"
@@ -99,11 +99,11 @@
     {
       "id": "pipa-daily-plan-timezone-1",
       "prompt": "Pipa help me plan today around my calendar and due work.",
-      "expected_output": "Selects pipa-daily-plan but asks one focused target-date/timezone question before interpreting relative dates, calendar load, or capacity when no verified timezone context exists.",
+      "expected_output": "Selects pipa-daily-plan, uses the system date for today, and asks one focused question only if the target day remains unclear.",
       "assertions": [
         "Does the output select `define work` and `pipa-daily-plan`?",
-        "Does it ask one focused question for the target date or timezone before interpreting `today`, due dates, or calendar capacity?",
-        "Does it avoid inventing a timezone or producing a committed plan before that context is resolved?"
+        "Does it use the system date instead of asking for information the computer provides?",
+        "Does it ask one focused question only if the target day remains unclear?"
       ],
       "files": []
     },
@@ -227,7 +227,7 @@
       "expected_output": "Supports the old plan wording by reframing it into the define-work lane.",
       "assertions": [
         "Does the output route old `plan` wording into `define work`?",
-        "Does it avoid selecting `pipa-daily-plan` when the request is project onboarding planning rather than one-day priority and capacity planning?",
+        "Does it avoid selecting `pipa-daily-plan` when the request is project onboarding planning rather than one-day priority planning?",
         "Does it avoid presenting lifecycle commands as the primary public model?",
         "Does it preserve requirements, baseline, decisions, owners, and acceptance checks as possible outputs?"
       ],

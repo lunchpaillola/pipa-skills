@@ -22,12 +22,12 @@ Explicit operation invocation wins. Otherwise select exactly one primary operati
 - `pipa-scope-baseline`: baseline deliverables, exclusions, milestones, schedule assumptions, tolerances, and change triggers.
 - `pipa-roadmap`: sequence candidate work into now/next/later or another requested prioritization method.
 - `pipa-decision-log`: set up RAID, RACI, decision records, ownership, and review cadence.
-- `pipa-daily-plan`: brief one specific workday around due work, active priorities, calendar capacity, and the best next action.
+- `pipa-daily-plan`: brief one specific workday around due work, active priorities, goals, and calendar commitments.
 
 ## Tie-Breakers
 
 - “Plan this project” or similarly broad project planning selects `pipa-requirements-brief`, not `pipa-daily-plan`.
-- Select `pipa-daily-plan` only when one specific workday's priorities or capacity are central. Incidental `today` wording does not override project requirements, scope, milestone, or roadmap intent.
+- Select `pipa-daily-plan` only when one specific workday's priorities are central. Incidental `today` wording does not override project requirements, scope, milestone, or roadmap intent.
 - Recurring or scheduled Daily Plan setup goes to `pipa-manage`.
 - Start-readiness or go/no-go intent selects `pipa-project-charter`; problem clarity selects `pipa-problem-framing`.
 - Ownership of the engagement selects `pipa-stakeholder-map`; governance controls across workstreams select `pipa-decision-log`.
