@@ -154,13 +154,13 @@
     {
       "id": "pipa-daily-shutdown-1",
       "prompt": "Pipa shut down August 3 in America/New_York. Use the matching Daily Plan I accepted earlier in this conversation and compare it with my tracker, pull requests, and calendar evidence.",
-      "expected_output": "Routes to improve-operations Daily Shutdown, concisely compares the matching plan with completed and advanced work, resolves open loops, prepares tomorrow, and explicitly closes the ritual.",
+      "expected_output": "Routes to improve-operations Daily Shutdown, concisely compares the matching plan with completed and advanced work, resolves open loops, and prepares tomorrow.",
       "assertions": [
         "Does the output select `improve operations` and Daily Shutdown as the one primary route?",
-        "Does it preserve the requested plan comparison while showing what was completed, what moved, the shape of the day, open loops, tomorrow, and an explicit close?",
+        "Does it preserve the requested plan comparison while showing what was completed, what moved, the shape of the day, open loops, and tomorrow?",
         "Does it separate completed work from work that moved and give every important unresolved loop a disposition?",
-        "Does it include a tomorrow seed, concrete tool/app and material-record provenance, and an explicit closure signal without a tool-access table?",
-        "Does it distinguish `ritual complete` from all work or the project being complete?"
+        "Does it include a tomorrow seed and concrete tool/app and material-record provenance without a tool-access table?",
+        "Does it omit Reflection and Closed sections?"
       ],
       "files": []
     },

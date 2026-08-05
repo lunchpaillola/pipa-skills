@@ -83,7 +83,6 @@ Get Work and Keep Clients remain lane-native. Do not invent child operations for
 - `daily planning`, `plan my day`, or choosing today's priorities -> `define work`; recurring or scheduled daily planning -> `pipa-manage`.
 - `daily shutdown`, `close my day`, or shutting down today's work -> `improve operations`; recurring or scheduled daily shutdown -> `pipa-manage`.
 - Explicit requirements, scope, schedule baseline, signoff, handover, or archive intent overrides incidental `today` wording; Daily Plan requires workday priority/capacity intent and Daily Shutdown requires workday wrap-up/tomorrow intent.
-- Daily Shutdown completion closes the ritual, not the project; formal project closure still requires the existing evidence gates.
 - `monitor` -> `deliver work`, unless money/relationship wording dominates.
 - `stakeholder map/setup/decision authority` -> `define work`; relationship health/check-ins/retention -> `keep clients`.
 - `company brain` -> `pipa-manage` for setup/config/access; `improve operations` for ongoing process learning.

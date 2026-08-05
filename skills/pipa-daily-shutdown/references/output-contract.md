@@ -24,12 +24,6 @@
 - Start with:
 - Calendar constraint:
 
-## Reflection
-<Optional short reflection, or omit when skipped.>
-
-## Closed
-<Short workday closure.>
-
 I pulled this from: <apps, linked records, and user context used>.
 ```
 

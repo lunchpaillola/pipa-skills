@@ -36,7 +36,6 @@ Run the selected operation skill. If it is unavailable, name that missing skill 
 
 - Company brain setup, memory permissions, or tool access goes to `pipa-manage`.
 - Do not declare formal or project closure without signoff, handover, archive, or acceptance evidence.
-- `pipa-daily-shutdown` may declare its ritual complete without declaring all work or the project complete.
 
 ## Gotchas
 

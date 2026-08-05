@@ -19,8 +19,6 @@ Daily Shutdown Progress
 - [ ] Step 2 complete: compare plan to actual
 - [ ] Step 3 complete: resolve open loops
 - [ ] Step 4 complete: prepare tomorrow
-- [ ] Step 5 complete: reflect or skip
-- [ ] Step 6 complete: explicitly close
 ```
 
 ## Workflow
@@ -33,5 +31,5 @@ Read `~/.pipa/profile.md` and `~/.pipa/CONNECTORS.md` when present. Use the prof
 2. **Compare plan to actual.** Use a matching Daily Plan when available. Otherwise, use target-day evidence without showing `baseline unavailable`. If the user asks for a comparison, include it in completed, moved, and open work.
 3. **Resolve open loops.** Give each important unfinished item one disposition: carry forward, delegate, schedule, defer, drop, or `TBD`. Add a next action when possible.
 4. **Prepare tomorrow.** Find the likely first priority, first action, and known calendar constraint. Do not create tasks or events.
-5. **Reflect or skip.** Offer one short reflection on what helped, what blocked progress, or what to change tomorrow. A decline does not block shutdown.
-6. **Explicitly close.** Write the read-only shutdown with [references/output-contract.md](references/output-contract.md). Do not claim all work or the project is complete. Require separate approval for each external write and report its result. End with a short sources line that names only the apps and material records used.
+
+Write the read-only shutdown with [references/output-contract.md](references/output-contract.md). Require separate approval for each external write and report its result. End with a short sources line that names only the apps and material records used.
