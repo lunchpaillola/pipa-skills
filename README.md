@@ -69,6 +69,11 @@ cp -r pipa-skills/skills/* .agents/skills/
 
 Generic business language enters one of the six lanes. An explicit operation name runs that operation directly.
 
+Daily work has two focused operations:
+
+- [`pipa-daily-plan`](skills/pipa-daily-plan/) creates a concise Daily Brief from due work, active priorities, goals, and calendar commitments.
+- [`pipa-daily-shutdown`](skills/pipa-daily-shutdown/) separates completed, moved, and open work, then prepares the next workday.
+
 | Entry surface | Operation skills |
 |---|---|
 | Manage Pipa | [`pipa-setup`](skills/pipa-setup/), [`pipa-connectors`](skills/pipa-connectors/) |

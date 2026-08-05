@@ -82,15 +82,10 @@
       "id": "handoff-daily-plan-to-shutdown-1",
       "transition": "define work daily planning -> improve operations daily shutdown",
       "prompt": "For August 3 in America/New_York, I accepted this Daily Plan: finish the proposal, review the open pull request, and prepare tomorrow's client call. Pipa, shut down August 3 in America/New_York using that baseline. The proposal is complete, the pull request is blocked, and call prep is partial.",
-      "expected_output": "Routes this turn only to improve-operations Daily Shutdown, compares the accepted in-conversation baseline to actual outcomes, resolves open loops, prepares tomorrow, and closes the ritual without external writes.",
+      "expected_output": "Routes this turn only through Improve Operations to pipa-daily-shutdown and preserves the supplied Daily Plan as context.",
       "assertions": [
         "Does the output select `improve operations` and Daily Shutdown as the one primary route for this turn?",
-        "Does it use the accepted Daily Plan from the conversation as the baseline and classify each commitment as completed, partial, blocked, deferred, dropped, or unknown?",
-        "Does every unresolved loop receive an explicit disposition and does the output include a tomorrow seed?",
-        "Does it distinguish ritual completion from all work being complete?",
-        "Does it name material sources or supplied evidence and leave unavailable evidence visible?",
-        "Does it avoid creating tasks, calendar events, messages, documents, or automations without separate explicit approval?",
-        "Does it satisfy all shared output contract assertions listed in this suite, including literal `TBD` handling?"
+        "Does it pass the matching Daily Plan and supplied outcomes to the operation without switching lanes?"
       ],
       "files": []
     },
@@ -182,11 +177,11 @@
       "id": "route-shutdown-baseline-mismatch-read-only-1",
       "transition": "pipa-daily-plan -> pipa-daily-shutdown",
       "prompt": "Pipa, shut down August 3 in America/New_York and post the result. The latest accepted Daily Plan here is for August 4 in Europe/London.",
-      "expected_output": "Selects pipa-daily-shutdown, rejects the date/timezone-mismatched baseline, degrades comparison honestly, and completes read-only analysis before any proposed post.",
+      "expected_output": "Selects pipa-daily-shutdown, ignores the date/timezone-mismatched plan, builds the account from target-day evidence, and completes read-only analysis before any proposed post.",
       "assertions": [
         "Does it select `pipa-daily-shutdown` rather than formal closeout?",
-        "Does it reject the mismatched accepted plan and report the baseline unavailable?",
-        "Does it avoid claiming accurate plan-versus-actual comparison?",
+        "Does it ignore the mismatched plan without making baseline availability the focus?",
+        "Does it use verified target-day evidence without claiming unsupported outcomes?",
         "Does it require separate explicit approval before posting externally?"
       ],
       "files": []

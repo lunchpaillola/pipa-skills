@@ -2,7 +2,7 @@
 name: pipa-improve-operations
 description: "Use when the user wants to improve operations through a workday shutdown, acceptance decision, handover, retrospective, or closeout review and needs Pipa to select the right focused operation."
 metadata:
-  version: 0.2.0
+  version: 0.2.1
 ---
 
 # Pipa Improve Operations
@@ -13,7 +13,7 @@ When present, read `~/.pipa/profile.md` once for durable business context. If mi
 
 ## Select One Operation
 
-- `pipa-daily-shutdown`: close one specific workday, compare it with an accepted Daily Plan when valid, resolve open loops, and prepare tomorrow.
+- `pipa-daily-shutdown`: account for one specific workday, close important open loops, and prepare tomorrow.
 - `pipa-acceptance-signoff`: assess acceptance criteria and make an auditable signoff decision.
 - `pipa-handover`: assess ownership transfer, runbooks, support, access, and transition readiness.
 - `pipa-retrospective`: capture evidence-backed lessons and turn them into process, SOP, template, or behavior changes.
@@ -36,7 +36,6 @@ Run the selected operation skill. If it is unavailable, name that missing skill 
 
 - Company brain setup, memory permissions, or tool access goes to `pipa-manage`.
 - Do not declare formal or project closure without signoff, handover, archive, or acceptance evidence.
-- `pipa-daily-shutdown` may declare its ritual complete without declaring all work or the project complete.
 
 ## Gotchas
 
