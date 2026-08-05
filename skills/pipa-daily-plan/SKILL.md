@@ -2,7 +2,7 @@
 name: pipa-daily-plan
 description: "Use only when `pipa-daily-plan` is explicitly invoked or `pipa-define-work` delegates to it."
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Pipa Daily Plan

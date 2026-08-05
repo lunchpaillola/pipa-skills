@@ -1,5 +1,12 @@
 # Versions
 
+## v2.1.1
+
+- Reworked Daily Plan into a concise Daily Brief that prioritizes executable due or active work, uses canonical tool capabilities, and avoids unsupported sizing or capacity forecasts.
+- Reworked Daily Shutdown into a concise account of completed, moved, and open work with a four-step working checklist and tomorrow preparation, without baseline diagnostics, reflection, or closure sections.
+- Focused both operation eval suites on normal output, degraded sources, and external-write approval; reduced root and cross-lane coverage to routing behavior.
+- Updated `pipa` to v2.1.1, `pipa-define-work` and `pipa-improve-operations` to v0.2.1, and `pipa-daily-plan` and `pipa-daily-shutdown` to v0.1.1.
+
 ## v2.1.0
 
 - Promoted 24 substantial lane workflows into independently invokable operation skills with local trigger and behavior evals.

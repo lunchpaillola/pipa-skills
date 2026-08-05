@@ -2,7 +2,7 @@
 name: pipa-daily-shutdown
 description: "Use only when `pipa-daily-shutdown` is explicitly invoked or `pipa-improve-operations` delegates to it."
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Pipa Daily Shutdown

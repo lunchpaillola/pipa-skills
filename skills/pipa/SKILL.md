@@ -2,7 +2,7 @@
 name: pipa
 description: "Use when the user invokes Pipa or asks to plan a service-business workday, shut down work for the day, or prepare tomorrow. Routes business operations to get work, define work, deliver work, get paid, keep clients, improve operations, Manage Pipa, or Pipa Tools."
 metadata:
-  version: 2.1.0
+  version: 2.1.1
 ---
 
 # Pipa
