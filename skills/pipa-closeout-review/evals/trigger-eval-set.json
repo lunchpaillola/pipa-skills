@@ -1,0 +1,31 @@
+[
+  {
+    "query": "Run pipa-closeout-review to review expected versus observed benefits and package this completed project for archive.",
+    "should_trigger": true
+  },
+  {
+    "query": "Invoke pipa-closeout-review: is our closeout package complete and retrievable for an audit?",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa Improve Operations delegates this to pipa-closeout-review: set post-close benefit checkpoints and identify missing archive records.",
+    "should_trigger": true
+  },
+  {
+    "query": "Review the expected versus observed benefits and package this completed project for archive.",
+    "should_trigger": false,
+    "routing_contract": "generic-lane-owned"
+  },
+  {
+    "query": "Decide whether the delivered work meets its acceptance criteria.",
+    "should_trigger": false
+  },
+  {
+    "query": "Capture what worked and what should change in our next project cycle.",
+    "should_trigger": false
+  },
+  {
+    "query": "Close my workday against today's plan.",
+    "should_trigger": false
+  }
+]

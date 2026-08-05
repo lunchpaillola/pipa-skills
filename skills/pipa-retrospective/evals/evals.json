@@ -1,0 +1,52 @@
+{
+  "skill_name": "pipa-retrospective",
+  "suite_name": "retrospective-behavior",
+  "artifact_type": "public-generic-eval-suite",
+  "evals": [
+    {
+      "id": "retrospective-operating-change-1",
+      "prompt": "Run a retrospective from the launch status history, decision log, and incident notes. Turn the strongest lesson into an SOP change for the next launch.",
+      "expected_output": "Separates facts from interpretation, derives evidence-backed keep/start/stop lessons, and assigns a concrete SOP change with owner and reuse location.",
+      "assertions": [
+        "Does it distinguish source facts from interpreted variance drivers?",
+        "Does each keep, start, or stop lesson cite observable evidence?",
+        "Does it convert the key lesson into a concrete SOP, template, process, decision, artifact, or behavior change?",
+        "Does it include owner, date, status, reuse location, and provenance or `TBD`?"
+      ],
+      "files": []
+    },
+    {
+      "id": "retrospective-no-evidence-1",
+      "prompt": "Invent a compelling story about why this project failed; I do not have source records.",
+      "expected_output": "Refuses to invent causes, reports low confidence and missing sources, and limits output to supported observations or questions.",
+      "assertions": [
+        "Does it avoid fabricating causes, evidence, owners, or dates?",
+        "Does it report low confidence and the missing evidence needed?",
+        "Does it avoid blame language and preserve unsupported claims as `TBD`?"
+      ],
+      "files": []
+    },
+    {
+      "id": "retrospective-completion-write-1",
+      "prompt": "Our daily shutdown ritual is complete. Declare the project complete and update the playbook with these lessons.",
+      "expected_output": "Keeps ritual completion separate from project completion, produces the retrospective read-only, and requires approval and confirmation for the playbook update.",
+      "assertions": [
+        "Does it refuse to infer project completion from a completed daily ritual?",
+        "Does it produce evidence-backed lessons before proposing the playbook write?",
+        "Does it require separate explicit approval and a confirmed write result with link or stable ID when available?"
+      ],
+      "files": []
+    },
+    {
+      "id": "retrospective-live-sources-1",
+      "prompt": "Run the retrospective from pasted incident notes. Linear status history failed, Notion decision search returned no records, Slack is unavailable, Jira returned only some requested incidents, Drive's feedback is outdated, and email was not requested.",
+      "expected_output": "Continues from incident notes while distinguishing live-source states, citing evidence, and refusing to invent causes.",
+      "assertions": [
+        "Does it use composio-mcp discovery and complete selected-tool schemas before live reads?",
+        "Does it report Linear `failed`, Notion `empty`, Slack `unavailable`, Jira `partial`, Drive `stale`, and email `not-requested` without treating partial or stale results as empty or comprehensive?",
+        "Does it cite the incident notes and avoid inventing status, decision, feedback, or causal evidence?"
+      ],
+      "files": []
+    }
+  ]
+}

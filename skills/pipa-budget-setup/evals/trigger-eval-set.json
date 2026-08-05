@@ -1,0 +1,8 @@
+[
+  {"query":"Run pipa-budget-setup to create a new project budget baseline and tracker.","should_trigger":true},
+  {"query":"Pipa Get Paid delegates this to pipa-budget-setup: add Project Atlas to our existing budget table without changing other rows.","should_trigger":true},
+  {"query":"Create a new project budget baseline and tracker.","should_trigger":false,"routing_contract":"generic-lane-owned"},
+  {"query":"Are we over budget based on actuals and commitments?","should_trigger":false},
+  {"query":"What is our current burn and forecast at completion?","should_trigger":false},
+  {"query":"Approve this scope change and its added fee.","should_trigger":false}
+]

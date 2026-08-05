@@ -1,0 +1,9 @@
+[
+  {"query":"Run pipa-problem-framing on what problem this client onboarding project should solve and why now.","should_trigger":true},
+  {"query":"Invoke pipa-problem-framing to clarify the affected users, desired outcome, constraints, and non-goals before we plan.","should_trigger":true},
+  {"query":"Pipa Define Work delegates this to pipa-problem-framing: turn these discovery notes into a clear problem statement and success criteria.","should_trigger":true},
+  {"query":"Help me frame what problem this client onboarding project should solve and why now.","should_trigger":false,"routing_contract":"generic-lane-owned"},
+  {"query":"Map who approves this project and who must be consulted.","should_trigger":false},
+  {"query":"Create acceptance criteria and a requirements brief from these notes.","should_trigger":false},
+  {"query":"Plan my priorities for today around four available focus hours.","should_trigger":false}
+]

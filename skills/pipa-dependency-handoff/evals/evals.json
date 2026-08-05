@@ -1,0 +1,24 @@
+{
+  "skill_name":"pipa-dependency-handoff",
+  "evals":[
+    {
+      "id":"dependency-handoff-1",
+      "prompt":"Engineering must hand the release to operations after security approval. The artifact is ready, but the approver and target date are unknown.",
+      "expected_output":"Maps upstream and downstream ownership, required approval, readiness gaps, unblock actions, acceptance checks, and a time-critical escalation trigger.",
+      "assertions":[
+        "Does it map the dependency or handoff, owners, required artifact/approval, target checkpoint, and current state?",
+        "Does it link readiness gaps to supplied evidence?",
+        "Does it mark the unknown approver and date as `TBD`?",
+        "Does it avoid marking the handoff complete without approval evidence?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"dependency-handoff-live-sources",
+      "prompt":"Assess the handoff from this pasted release checklist. Linear blocker retrieval failed, Drive returned no approval artifact, Notion returned only part of the runbook, Jira's dependency snapshot is outdated, and Slack was not requested.",
+      "expected_output":"Continues from the checklist while distinguishing failed, empty, partial, stale, and unrequested sources and withholding readiness without approval evidence.",
+      "assertions":["Does it use composio-mcp discovery and complete selected-tool schemas before live reads?","Does it report Linear `failed`, Drive `empty`, Notion `partial`, Jira `stale`, and Slack `not-requested` distinctly, without treating partial or stale results as empty or comprehensive?","Does it cite the checklist and avoid marking the handoff complete without the missing approval?"],
+      "files":[]
+    }
+  ]
+}

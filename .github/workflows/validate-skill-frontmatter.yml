@@ -3,19 +3,35 @@ name: Validate Skills
 on:
   pull_request:
     paths:
-      - "skills/**/SKILL.md"
-      - "skills/**/evals/*.json"
+      - "AGENTS.md"
+      - "CONTRIBUTING.md"
+      - "skills/**/*.md"
+      - "skills/**/evals/**/*.json"
+      - "evals/**/*.json"
+      - "README.md"
+      - "docs/**/*.md"
       - "scripts/validate_skill_frontmatter.rb"
       - "scripts/validate_skill_evals.rb"
+      - "scripts/validate_skill_evals_test.rb"
+      - "scripts/validate_skill_architecture.rb"
+      - "scripts/validate_skill_architecture_test.rb"
       - ".github/workflows/validate-skill-frontmatter.yml"
   push:
     branches:
       - main
     paths:
-      - "skills/**/SKILL.md"
-      - "skills/**/evals/*.json"
+      - "AGENTS.md"
+      - "CONTRIBUTING.md"
+      - "skills/**/*.md"
+      - "skills/**/evals/**/*.json"
+      - "evals/**/*.json"
+      - "README.md"
+      - "docs/**/*.md"
       - "scripts/validate_skill_frontmatter.rb"
       - "scripts/validate_skill_evals.rb"
+      - "scripts/validate_skill_evals_test.rb"
+      - "scripts/validate_skill_architecture.rb"
+      - "scripts/validate_skill_architecture_test.rb"
       - ".github/workflows/validate-skill-frontmatter.yml"
 
 jobs:
@@ -44,7 +60,10 @@ jobs:
         run: ruby scripts/validate_skill_frontmatter.rb
 
       - name: Validate skill eval fixtures
-        run: ruby scripts/validate_skill_evals.rb
+        run: ruby scripts/validate_skill_evals_test.rb
+
+      - name: Validate skill architecture
+        run: ruby scripts/validate_skill_architecture_test.rb
 
       - name: Run relay protocol tests
         run: npm run test:relay

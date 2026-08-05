@@ -1,0 +1,7 @@
+[
+  {"query":"Help me get this active client delivery moving again.","should_trigger":true},
+  {"query":"Coordinate status, owners, blockers, and handoffs for this week's delivery.","should_trigger":true},
+  {"query":"Create an initial project brief and define scope.","should_trigger":false},
+  {"query":"Follow up on this overdue invoice.","should_trigger":false},
+  {"query":"Schedule a recurring daily delivery automation.","should_trigger":false}
+]

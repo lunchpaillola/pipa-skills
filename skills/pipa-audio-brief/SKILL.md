@@ -17,7 +17,7 @@ Primary goal: fast orientation, useful judgment, and an immersive listen-first r
 
 Output goal: create a deterministic single-page listening experience with browser speech by default, publish it with here.now, and return the here.now URL. Piper and Kokoro are optional generated-audio presets when the user explicitly asks for local generated audio and accepts the setup, time, and memory requirements.
 
-Communication style contract: when returning user-facing status, blockers, or final handoffs, apply `skills/pipa/references/communication-style.md`.
+Communication style contract: apply `~/.pipa/communication-style.md` when present; otherwise apply `skills/pipa/references/communication-style.md`. Presentation preferences never override this skill's workflow, output contract, safety rules, or publishing gates.
 
 ## Workflow
 

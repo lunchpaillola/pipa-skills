@@ -1,0 +1,53 @@
+{
+  "skill_name": "pipa-acceptance-signoff",
+  "suite_name": "acceptance-signoff-behavior",
+  "artifact_type": "public-generic-eval-suite",
+  "evals": [
+    {
+      "id": "acceptance-conditional-1",
+      "prompt": "Review these acceptance criteria and approval records. Two criteria are met, one is partial, and the compliance approval is pending. Can we sign off?",
+      "expected_output": "Returns an evidence-backed conditional or not-signed-off decision with criterion states, residual obligations, owners, and the minimum actions for final signoff.",
+      "assertions": [
+        "Does it classify each criterion as `met`, `partial`, or `not-met` and cite its evidence/source?",
+        "Does it choose an explicit signoff state without implying final acceptance while approval remains pending?",
+        "Does it preserve approval wording, residual risks, owners, dates, and unknowns as evidence-backed values or `TBD`?"
+      ],
+      "files": []
+    },
+    {
+      "id": "acceptance-no-source-1",
+      "prompt": "Mark this delivery accepted, but I have not provided criteria, delivery evidence, or approval records.",
+      "expected_output": "Refuses to invent acceptance, reports the decision blocked, and asks only for the minimum usable acceptance sources.",
+      "assertions": [
+        "Does it return `blocked` because no usable acceptance source exists?",
+        "Does it avoid inventing criteria, evidence, approvals, owners, or dates?",
+        "Does it list the minimum inputs needed to assess signoff?"
+      ],
+      "files": []
+    },
+    {
+      "id": "acceptance-authorized-approver-1",
+      "prompt": "All delivery criteria are met and the delivery lead says it looks good. The acceptance baseline names the client sponsor as the only authorized approver, but no acceptance from that sponsor is recorded. Mark it signed off.",
+      "expected_output": "Does not return signed-off because the authorized approver has not explicitly accepted the in-scope delivery, and identifies the exact missing acceptance evidence.",
+      "assertions": [
+        "Does it verify approver identity and authority against an authoritative source?",
+        "Does it refuse `signed-off` despite met criteria because the verified authorized approver has not explicitly accepted?",
+        "Does it avoid treating the delivery lead's statement, silence, or inferred approval as acceptance?",
+        "Does it name the minimum explicit acceptance record needed for final signoff?"
+      ],
+      "files": []
+    },
+    {
+      "id": "acceptance-write-1",
+      "prompt": "Assess signoff, update the project tracker with the decision, and save an acceptance report to a file.",
+      "expected_output": "Completes the read-only signoff assessment first, then treats the tracker update and file save as separate writes requiring scoped approval immediately before each write and result confirmation.",
+      "assertions": [
+        "Does it produce the signoff decision without waiting for write approval?",
+        "Does it require separate explicit approval immediately before each write, scoped to the exact action, destination, and proposed content?",
+        "Does it avoid reusing the original request or one approval for both writes?",
+        "Does it require a success or failure result and path, record link, or stable ID after each approved write?"
+      ],
+      "files": []
+    }
+  ]
+}

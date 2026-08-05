@@ -30,13 +30,20 @@ Manage Pipa:
 Pipa Tools:
 - `audio brief`, `voice session`, `follow-up reminder`, `time tracking`
 
+Focused operations (invoke the exact name to run one directly):
+- Manage Pipa: `pipa-setup`, `pipa-connectors`
+- Define Work: `pipa-project-charter`, `pipa-problem-framing`, `pipa-stakeholder-map`, `pipa-daily-plan`, `pipa-decision-log`, `pipa-requirements-brief`, `pipa-roadmap`, `pipa-scope-baseline`
+- Deliver Work: `pipa-work-coordination`, `pipa-iteration-cycle`, `pipa-dependency-handoff`, `pipa-risk-escalation`, `pipa-status-update`, `pipa-ticket-triage`
+- Get Paid: `pipa-change-control`, `pipa-budget-setup`, `pipa-budget-review`
+- Improve Operations: `pipa-acceptance-signoff`, `pipa-closeout-review`, `pipa-daily-shutdown`, `pipa-handover`, `pipa-retrospective`
+
 Connected app work:
 - choose the business lane first; Pipa uses Composio for the live app operation
 
 Decision stub: next action, owner, date, evidence. Use `TBD` when missing.
 ```
 
-This is the help screen, not a full command registry. `skills/pipa/SKILL.md` owns routing.
+`skills/pipa/SKILL.md` owns routing. Generic business requests still enter a lane; exact operation names take precedence.
 
 ## Common Starting Paths
 

@@ -1,0 +1,9 @@
+[
+  {"query":"Run pipa-requirements-brief to turn these notes into a concise requirements brief with acceptance criteria.","should_trigger":true},
+  {"query":"Invoke pipa-requirements-brief on this messy brief and identify unresolved requirement decisions.","should_trigger":true},
+  {"query":"Pipa Define Work delegates this to pipa-requirements-brief: define the functional, non-functional, and integration requirements for delivery.","should_trigger":true},
+  {"query":"Turn these notes into a concise requirements brief with acceptance criteria.","should_trigger":false,"routing_contract":"generic-lane-owned"},
+  {"query":"Plan today's priorities around my available capacity.","should_trigger":false},
+  {"query":"Lock the scope baseline and milestone schedule.","should_trigger":false},
+  {"query":"Sequence these approved requirements into now, next, and later.","should_trigger":false}
+]

@@ -1,0 +1,7 @@
+[
+  {"query":"Help me review budget health and get this invoice paid.","should_trigger":true},
+  {"query":"What payment, billable-time, or margin item needs action?","should_trigger":true},
+  {"query":"Coordinate this non-financial delivery handoff.","should_trigger":false},
+  {"query":"Draft a stakeholder project status update.","should_trigger":false},
+  {"query":"Start a timer for this client task.","should_trigger":false}
+]

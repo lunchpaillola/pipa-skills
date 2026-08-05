@@ -1,0 +1,40 @@
+{
+  "skill_name":"pipa-change-control",
+  "evals":[
+    {
+      "id":"change-control-money-impact-1",
+      "prompt":"The client wants an extra reporting module. It adds $8,000 in delivery cost and needs a decision by Friday.",
+      "expected_output":"Maps baseline and money impact, presents explicit decision options and a recommendation, and defines approval actions without approving implicitly.",
+      "assertions":[
+        "Does it capture the requested change, driver, impacted work, and fee/cost/budget/margin implications?",
+        "Does it present accept, accept-with-conditions, defer, reject, and escalate options with one preferred path?",
+        "Does it specify approval owner, checkpoint, and impacted-owner actions using `TBD` for unknowns?",
+        "Does it avoid treating analysis as approval and recommend `pipa-budget-review` only as a follow-up?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"change-control-non-money-negative-1",
+      "prompt":"Move the internal design review from Tuesday to Wednesday. There is no fee, cost, budget, or margin impact.",
+      "expected_output":"Does not run change control and routes the non-financial delivery adjustment to pipa-deliver-work.",
+      "assertions":[
+        "Does it reject Change Control as the primary operation because money impact is explicitly absent?",
+        "Does it recommend `pipa-deliver-work` for the delivery adjustment?",
+        "Does it avoid creating an approval or financial-impact record?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"change-control-write-1",
+      "prompt":"Evaluate this cost-impacting change now, then update the change tracker and save the decision brief to a file.",
+      "expected_output":"Completes read-only change analysis, then requests separate scoped approval immediately before each external or file write and reports each result.",
+      "assertions":[
+        "Does it perform read-only source checks, impact analysis, and recommendation without waiting for write approval?",
+        "Does it request separate explicit approval immediately before each write, scoped to the exact action, destination, and proposed content?",
+        "Does it avoid treating the original request or one write approval as approval for both writes?",
+        "Does it report success or failure for each approved write with a path, link, or stable ID when available?"
+      ],
+      "files":[]
+    }
+  ]
+}

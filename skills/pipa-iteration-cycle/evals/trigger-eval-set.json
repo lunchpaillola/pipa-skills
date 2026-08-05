@@ -1,0 +1,8 @@
+[
+  {"query":"Run pipa-iteration-cycle to plan this sprint commitment and flag likely carryover.","should_trigger":true},
+  {"query":"Pipa Deliver Work delegates this to pipa-iteration-cycle: review our in-cycle WIP and set checkpoints for the rest of the cycle.","should_trigger":true},
+  {"query":"Plan this sprint commitment and flag likely carryover.","should_trigger":false,"routing_contract":"generic-lane-owned"},
+  {"query":"Assign owners across these unrelated active work packages.","should_trigger":false},
+  {"query":"Give the steering group a current project status report.","should_trigger":false},
+  {"query":"Prioritize these newly arrived tickets.","should_trigger":false}
+]

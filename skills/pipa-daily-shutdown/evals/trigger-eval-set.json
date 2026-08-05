@@ -1,0 +1,31 @@
+[
+  {
+    "query": "Run pipa-daily-shutdown for August 3 in America/New_York and prepare tomorrow.",
+    "should_trigger": true
+  },
+  {
+    "query": "Invoke pipa-daily-shutdown against the Daily Plan I accepted earlier in this conversation.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa Improve Operations delegates this to pipa-daily-shutdown: wrap up today, resolve my open loops, and seed the first priority for tomorrow.",
+    "should_trigger": true
+  },
+  {
+    "query": "Shut down August 3 in America/New_York and prepare tomorrow.",
+    "should_trigger": false,
+    "routing_contract": "generic-lane-owned"
+  },
+  {
+    "query": "Set up an automatic shutdown every weekday at 5 PM.",
+    "should_trigger": false
+  },
+  {
+    "query": "Formally close this project after checking signoff, handover, and archive readiness.",
+    "should_trigger": false
+  },
+  {
+    "query": "Run a retrospective on what failed during this launch.",
+    "should_trigger": false
+  }
+]

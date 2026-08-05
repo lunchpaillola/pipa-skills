@@ -1,0 +1,7 @@
+{
+  "skill_name":"pipa-decision-log",
+  "evals":[
+    {"id":"decision-controls","prompt":"Set up governance from these notes. Risks and decisions are listed, but most owners and review dates are missing.","expected_output":"Creates minimal RAID, a concrete RACI matrix, and decision controls while preserving unsupported authority, ownership, and dates as TBD.","assertions":["Does it include all four RAID types?","Does it create decision records with options, owner, date, status, and evidence or TBD?","Does it return a concrete RACI matrix and use `TBD` rather than assigning unsupported Responsible, Accountable, Consulted, or Informed roles?"],"files":[]},
+    {"id":"decision-external","prompt":"Analyze the governance notes, then write the decision log to our project tracker and save the RACI matrix to a file.","expected_output":"Completes read-only governance analysis, then requests separate scoped approval immediately before each tracker and file write and reports each result.","assertions":["Does it complete read-only analysis without waiting for write approval?","Does it request separate explicit approval immediately before each write, scoped to the exact action, destination, and proposed content?","Does it avoid treating the original request or one write approval as approval for both writes?","Does it report success or failure for each approved write with a path, link, or stable ID when available?"],"files":[]}
+  ]
+}

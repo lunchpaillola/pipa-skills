@@ -1,0 +1,31 @@
+[
+  {
+    "query": "Run pipa-acceptance-signoff to assess the acceptance criteria and prepare the final signoff decision for this delivery.",
+    "should_trigger": true
+  },
+  {
+    "query": "Invoke pipa-acceptance-signoff: can we sign off this project with conditions while two obligations remain open?",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa Improve Operations delegates this to pipa-acceptance-signoff: show me which acceptance criteria lack evidence before I approve closure.",
+    "should_trigger": true
+  },
+  {
+    "query": "Assess the acceptance criteria and prepare the final signoff decision for this delivery.",
+    "should_trigger": false,
+    "routing_contract": "generic-lane-owned"
+  },
+  {
+    "query": "Hand this project over to support and confirm the escalation owner.",
+    "should_trigger": false
+  },
+  {
+    "query": "Archive the completed project and review whether its expected benefits appeared.",
+    "should_trigger": false
+  },
+  {
+    "query": "Shut down my workday and prepare tomorrow.",
+    "should_trigger": false
+  }
+]

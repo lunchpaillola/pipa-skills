@@ -1,0 +1,51 @@
+{
+  "skill_name": "pipa-closeout-review",
+  "suite_name": "closeout-review-behavior",
+  "artifact_type": "public-generic-eval-suite",
+  "evals": [
+    {
+      "id": "closeout-archive-gaps-1",
+      "prompt": "Check archive readiness. We have signoff and handover records, but no retrospective, risk disposition, or durable archive location.",
+      "expected_output": "Marks archive readiness blocked, names the missing gate records and retrieval location, and returns only the minimum completion actions with owners or TBD.",
+      "assertions": [
+        "Does it set the closure package or archive state to `blocked` because required gate records are missing?",
+        "Does it identify the missing retrospective, risk disposition, and retrieval location without declaring project closure?",
+        "Does it provide minimum actions, owners, review dates, provenance, and unknowns as evidence-backed values or `TBD`?"
+      ],
+      "files": []
+    },
+    {
+      "id": "closeout-benefits-1",
+      "prompt": "The charter expected faster onboarding. Status records show cycle time fell, but the sample is small. Review benefits and set a later checkpoint.",
+      "expected_output": "Separates intended and observed outcomes, keeps confidence appropriately qualified, avoids fabricated value claims, and assigns a post-close checkpoint.",
+      "assertions": [
+        "Does it compare intended and observed benefits and state the evidence source?",
+        "Does it use low or medium confidence rather than over-claiming realized value from a small sample?",
+        "Does it set an owner and review date or `TBD` for the deferred benefit checkpoint?"
+      ],
+      "files": []
+    },
+    {
+      "id": "closeout-write-1",
+      "prompt": "Review closeout and move all final documents into the archive folder.",
+      "expected_output": "Completes the read-only review first and separates document moves as explicitly approved writes with per-write confirmation.",
+      "assertions": [
+        "Does it assess archive readiness without moving documents first?",
+        "Does it require separate explicit approval before external document changes?",
+        "Does it require success or failure confirmation and resulting links or stable IDs for approved writes?"
+      ],
+      "files": []
+    },
+    {
+      "id": "closeout-live-sources-1",
+      "prompt": "Review closeout from the pasted signoff. Drive archive search returned no records, Notion handover access failed, Linear is unavailable, Slack returned only some requested closure comments, Jira's risk disposition is outdated, and email was not requested.",
+      "expected_output": "Continues from signoff evidence while distinguishing empty, failed, unavailable, partial, stale, and unrequested sources and withholding archive-complete claims.",
+      "assertions": [
+        "Does it use composio-mcp discovery and complete selected-tool schemas before live reads rather than trust mappings?",
+        "Does it report Drive `empty`, Notion `failed`, Linear `unavailable`, Slack `partial`, Jira `stale`, and email `not-requested` distinctly without treating partial or stale results as empty or comprehensive?",
+        "Does it cite the signoff and avoid treating inaccessible sources as an empty or complete archive?"
+      ],
+      "files": []
+    }
+  ]
+}

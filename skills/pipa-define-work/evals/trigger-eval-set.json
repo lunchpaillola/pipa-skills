@@ -1,0 +1,8 @@
+[
+  {"query":"Help me define this fuzzy client project before delivery starts.","should_trigger":true},
+  {"query":"Plan this project from the kickoff notes.","should_trigger":true},
+  {"query":"Clarify scope, stakeholders, acceptance checks, and decisions for this engagement.","should_trigger":true},
+  {"query":"Run pipa-roadmap on these candidate initiatives.","should_trigger":false},
+  {"query":"Send the client a status update on active delivery.","should_trigger":false},
+  {"query":"Set up Pipa and connect my project tracker.","should_trigger":false}
+]

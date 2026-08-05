@@ -1,0 +1,24 @@
+{
+  "skill_name":"pipa-iteration-cycle",
+  "evals":[
+    {
+      "id":"iteration-cycle-1",
+      "prompt":"We committed five sprint items. Two are complete, two are in progress, and one is blocked with no owner. Run the cycle check.",
+      "expected_output":"Returns cycle health, normalized commitments, carryover pressure, and owner-by-owner recovery actions without inventing the missing owner.",
+      "assertions":[
+        "Does it separate committed, in-progress, completed, and carryover-risk items?",
+        "Does it assess blocker, dependency, capacity, and change-intake pressure?",
+        "Does it include actions with owner, next action, date, status, and evidence/source?",
+        "Does it preserve unknown owner or date as `TBD` and avoid unsupported completion claims?"
+      ],
+      "files":[]
+    },
+    {
+      "id":"iteration-cycle-live-sources",
+      "prompt":"Run the cycle check from this pasted commitment list. The mapped Linear board is unavailable, Slack standup search returned no messages, Notion returned only some requested blocker notes, Jira's cycle snapshot is outdated, and GitHub was not requested.",
+      "expected_output":"Continues from the commitment list, distinguishes unavailable, empty, partial, stale, and unrequested sources, and avoids unsupported completion claims.",
+      "assertions":["Does it verify mapped apps through composio-mcp discovery and complete schemas?","Does it report Linear `unavailable`, Slack `empty`, Notion `partial`, Jira `stale`, and GitHub `not-requested` without treating partial or stale results as empty or comprehensive?","Does it cite the commitment list and keep unsupported board states or completion claims unknown?"],
+      "files":[]
+    }
+  ]
+}

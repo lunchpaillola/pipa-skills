@@ -1,0 +1,31 @@
+[
+  {
+    "query": "Run pipa-connectors to connect Gmail to Pipa.",
+    "should_trigger": true
+  },
+  {
+    "query": "Invoke pipa-connectors to check which tools Pipa can access right now.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa Manage delegates this to pipa-connectors: troubleshoot Pipa's broken Linear connection.",
+    "should_trigger": true
+  },
+  {
+    "query": "Connect Gmail to Pipa.",
+    "should_trigger": false,
+    "routing_contract": "generic-lane-owned"
+  },
+  {
+    "query": "Set up Pipa's business profile.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use connected Gmail to summarize this email thread.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a recurring delivery status automation.",
+    "should_trigger": false
+  }
+]

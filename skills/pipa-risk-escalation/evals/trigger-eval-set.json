@@ -1,0 +1,8 @@
+[
+  {"query":"Run pipa-risk-escalation because this blocker is nearing tolerance breach; prepare the escalation path.","should_trigger":true},
+  {"query":"Pipa Deliver Work delegates this to pipa-risk-escalation: the owner has gone silent and the decision is outside our authority. Who must act next?","should_trigger":true},
+  {"query":"This blocker is nearing tolerance breach; prepare the escalation path.","should_trigger":false,"routing_contract":"generic-lane-owned"},
+  {"query":"Give leadership a routine project status update.","should_trigger":false},
+  {"query":"Prioritize and respond to these incoming tickets.","should_trigger":false},
+  {"query":"Check whether the operations handoff artifact is ready.","should_trigger":false}
+]

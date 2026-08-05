@@ -1,0 +1,107 @@
+{
+  "skill_name": "pipa-setup",
+  "suite_name": "pipa-profile-setup",
+  "artifact_type": "public-generic-eval-suite",
+  "evals": [
+    {
+      "id": "pipa-setup-first-time-1",
+      "prompt": "Set up Pipa for my business. I do brand strategy for early-stage founders and prefer concise async updates.",
+      "expected_output": "Checks the global profile, gets setup acceptance, saves supplied answers, asks only the missing core question, and routes connector review to pipa-connectors before completion.",
+      "assertions": [
+        "Does it use `~/.pipa/profile.md` as the setup state and business-context source of truth?",
+        "Does it ask only what the user does, who they help or work with, and how they like to work, one at a time without repeating supplied answers?",
+        "Does it save profile fields incrementally and use `pipa-connectors` for connector review before marking setup complete?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-existing-profile-1",
+      "prompt": "Review my Pipa setup. My global profile already says setup_status: complete.",
+      "expected_output": "Routes to profile review or update rather than restarting first-time questions.",
+      "assertions": [
+        "Does it treat the completed profile marker as deterministic completion?",
+        "Does it update only requested fields while preserving `setup_status: complete`?",
+        "Does it skip connector review unless requested and avoid inferring setup state from memory or project files?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-resume-1",
+      "prompt": "Resume Pipa setup. The profile is incomplete, and it already records what I do and who I help.",
+      "expected_output": "Preserves confirmed answers and resumes at how the user likes to work.",
+      "assertions": [
+        "Does it resume at the first unanswered core question?",
+        "Does it preserve rather than re-ask or overwrite confirmed facts?",
+        "Does it keep setup incomplete until connector review finishes?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-skips-1",
+      "prompt": "Set up Pipa, but I want to skip the profile questions and I do not want to connect tools right now.",
+      "expected_output": "Allows every core question and connector review to be declined while completing the profile with explicit skipped fields.",
+      "assertions": [
+        "Does it allow all three core questions to be skipped?",
+        "Does it allow connector review to be declined without trapping the user?",
+        "Does it mark setup complete and summarize skipped or unknown state honestly?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-website-1",
+      "prompt": "Set up Pipa and use https://example.com, https://example.com/about, https://example.com/services, and https://example.com/archive to help draft my business profile. The home page returns no business facts, the about-page read fails, services returns only part of the requested content, the archive is outdated, and do not read https://example.com/blog.",
+      "expected_output": "Reports the empty, failed, partial, stale, and unrequested website reads separately, continues setup, and saves no unsupported website facts while still asking the core questions.",
+      "assertions": [
+        "Does it treat website assistance as optional and read-only?",
+        "Does it report the home page `empty`, about page `failed`, services page `partial`, archive page `stale`, and blog page `not-requested`, without treating partial or stale pages as empty or comprehensive?",
+        "Does it confirm supported facts before saving optional website context without overwriting user content?",
+        "Does it avoid enrichment services, email reverse lookup, or invented positioning?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-no-side-effects-1",
+      "prompt": "Finish setting up Pipa and create a daily brief automation while you are there.",
+      "expected_output": "Completes setup without creating automation and keeps recurring behavior outside the setup operation.",
+      "assertions": [
+        "Does it avoid creating tasks, reminders, automations, triggers, or recurring workflows during setup?",
+        "Does it keep the requested automation as a separate management objective?",
+        "Does it avoid inventing a scheduled setup route?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-declined-1",
+      "prompt": "Not now. Skip Pipa setup and help me with my actual work instead.",
+      "expected_output": "Accepts the decline, leaves profile and connectors untouched, and continues with concrete work.",
+      "assertions": [
+        "Does it avoid connector or memory actions after setup is declined?",
+        "Does it avoid creating or changing `~/.pipa/profile.md`?",
+        "Does it continue with concrete work without another setup question?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-communication-style-create-1",
+      "prompt": "Run pipa-setup. My profile is complete, but ~/.pipa/communication-style.md does not exist.",
+      "expected_output": "Offers the packaged default without creating the runtime file until the user separately approves the exact write.",
+      "assertions": [
+        "Does it identify `skills/pipa-setup/references/communication-style.md` as the packaged default and `~/.pipa/communication-style.md` as the runtime path?",
+        "Does it require separate explicit approval before creating the runtime file?",
+        "Does it leave setup and other Pipa skills usable if the user declines?"
+      ],
+      "files": []
+    },
+    {
+      "id": "pipa-setup-communication-style-update-1",
+      "prompt": "Run pipa-setup and update my existing communication style to the packaged default.",
+      "expected_output": "Shows the proposed replacement and waits for separate explicit approval before overwriting the customized runtime file.",
+      "assertions": [
+        "Does it preserve the existing runtime file by default?",
+        "Does it show the proposed change or replacement before requesting approval?",
+        "Does it avoid treating the request to review or update as approval to write?"
+      ],
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+[
+  {"query":"Run pipa-dependency-handoff to check whether the analytics handoff to the client team is ready.","should_trigger":true},
+  {"query":"Transfer post-launch support ownership, runbooks, and access to operations.","should_trigger":false},
+  {"query":"Pipa Deliver Work delegates this to pipa-dependency-handoff: map the approval dependency blocking the release and set an escalation trigger.","should_trigger":true},
+  {"query":"Check whether the analytics handoff to the client team is ready.","should_trigger":false,"routing_contract":"generic-lane-owned"},
+  {"query":"Summarize overall project health for leadership.","should_trigger":false},
+  {"query":"Rebalance all active work between our internal owners.","should_trigger":false},
+  {"query":"Review the risk register and decide what to escalate.","should_trigger":false}
+]

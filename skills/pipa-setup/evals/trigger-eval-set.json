@@ -1,0 +1,31 @@
+[
+  {
+    "query": "Run pipa-setup for my business.",
+    "should_trigger": true
+  },
+  {
+    "query": "Invoke pipa-setup to resume my incomplete setup.",
+    "should_trigger": true
+  },
+  {
+    "query": "Pipa Manage delegates this to pipa-setup: update my global Pipa business profile and working preferences.",
+    "should_trigger": true
+  },
+  {
+    "query": "Set up Pipa for my business.",
+    "should_trigger": false,
+    "routing_contract": "generic-lane-owned"
+  },
+  {
+    "query": "Connect Gmail and Linear to Pipa.",
+    "should_trigger": false
+  },
+  {
+    "query": "Audit what Pipa remembers about my company.",
+    "should_trigger": false
+  },
+  {
+    "query": "Help me plan this urgent client delivery.",
+    "should_trigger": false
+  }
+]

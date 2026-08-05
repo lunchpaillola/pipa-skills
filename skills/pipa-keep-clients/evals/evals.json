@@ -1,0 +1,62 @@
+{
+  "skill_name": "pipa-keep-clients",
+  "suite_name": "pipa-keep-clients-ownership",
+  "artifact_type": "public-generic-eval-suite",
+  "evals": [
+    {
+      "id": "keep-clients-existing-referral-1",
+      "prompt": "Our current client just praised the launch. Help me ask her for a referral without making the relationship awkward.",
+      "expected_output": "Keeps the trust-sensitive referral ask in Keep Clients and drafts without sending.",
+      "assertions": [
+        "Does it treat a referral ask to an existing client as `pipa-keep-clients`?",
+        "Does it ground the ask in delivered value or the supplied client signal?",
+        "Does it avoid sending the message without explicit approval and a connected workflow?"
+      ],
+      "files": []
+    },
+    {
+      "id": "keep-clients-new-opportunity-negative-1",
+      "prompt": "A partner introduced me to a company I have never worked with. Qualify the lead and choose the next outreach action.",
+      "expected_output": "Hands acquisition of the new opportunity to Get Work rather than treating the introduction as client retention.",
+      "assertions": [
+        "Does it route the new prospect to `pipa-get-work`?",
+        "Does it avoid selecting Keep Clients merely because the opportunity came through a relationship?",
+        "Does it preserve qualification and outreach as the primary objective?"
+      ],
+      "files": []
+    },
+    {
+      "id": "keep-clients-relationship-follow-up-1",
+      "prompt": "Follow up with our existing client sponsor after a rough milestone and help rebuild confidence.",
+      "expected_output": "Keeps existing-client trust repair in Keep Clients and proposes the smallest useful touch.",
+      "assertions": [
+        "Does it treat relationship follow-up with an existing client as `pipa-keep-clients`?",
+        "Does it include why now, suggested touch, owner, timing, source, and watchlist?",
+        "Does it avoid turning generic follow-up wording into reminder scheduling?"
+      ],
+      "files": []
+    },
+    {
+      "id": "keep-clients-prospect-follow-up-negative-1",
+      "prompt": "Follow up with a prospect who completed discovery but has not replied to our proposal.",
+      "expected_output": "Hands prospect and pipeline follow-up to Get Work rather than treating it as existing-client care.",
+      "assertions": [
+        "Does it route prospect follow-up to `pipa-get-work`?",
+        "Does it avoid selecting Keep Clients when no existing-client relationship exists?",
+        "Does it preserve the opportunity objective and supplied pipeline signal?"
+      ],
+      "files": []
+    },
+    {
+      "id": "keep-clients-payment-follow-up-negative-1",
+      "prompt": "Our client invoice is overdue. Draft a payment follow-up and recommend the next collections action.",
+      "expected_output": "Hands the invoice and collections action to Get Paid while preserving relationship-sensitive wording as context.",
+      "assertions": [
+        "Does it route invoice and payment action to `pipa-get-paid`?",
+        "Does it avoid selecting Keep Clients merely because the payer is an existing client?",
+        "Does it avoid sending or claiming financial-system access without approval and a connected workflow?"
+      ],
+      "files": []
+    }
+  ]
+}
