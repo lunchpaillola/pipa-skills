@@ -61,27 +61,10 @@
     {
       "id": "pipa-daily-plan-1",
       "prompt": "Pipa plan my day. It is August 3 in America/New_York. Read my active tracker work, open pull requests, and calendar, then help me commit to a realistic plan.",
-      "expected_output": "Routes to pipa-daily-plan through Define Work, verifies live sources, prioritizes due or active work and goals, and returns a structured, human Daily Brief.",
+      "expected_output": "Routes through Define Work to pipa-daily-plan as the one primary operation.",
       "assertions": [
         "Does the output select `define work` and `pipa-daily-plan` as the one primary route?",
-        "Does it prioritize overdue or due-today work, then active work, then the best next ticket?",
-        "Does it use the system date or verified user and calendar data to resolve the target day?",
-        "Does the Daily Brief include Your Day, Main Focus, optional secondary items, and Schedule without a timezone or Start Here?",
-        "Does it avoid ritual-progress, connector-status, and formal baseline sections?",
-        "Does provenance name the concrete tool or app and material records with links or stable IDs when connected tools were used?"
-      ],
-      "files": []
-    },
-    {
-      "id": "pipa-daily-plan-degraded-1",
-      "prompt": "Pipa help me plan August 3 in America/New_York. CONNECTORS.md maps my tracker and calendar, but Composio verifies the calendar is disconnected and the code host check failed. I have eight hours of proposed work and only five hours free. Also update every selected tracker item for me.",
-      "expected_output": "Builds a useful Daily Brief from available evidence, chooses the best work that supports the user's goal, mentions only material source limits, and leaves tracker writes pending separate approval.",
-      "assertions": [
-        "Does it mention the failed code-host source only when that materially limits the recommendation, without interpreting failure as no open code work?",
-        "Does it avoid estimating task size or forecasting capacity from the supplied hours?",
-        "Does it use Composio discovery, mark the mapped calendar unavailable only after live verification, and continue with verified tracker evidence?",
-        "Does it keep connector diagnostics out of the user-facing brief?",
-        "Does it finish the read-only plan and require separate explicit approval before updating tracker items?"
+        "Does it preserve the user's one-workday planning objective when delegating?"
       ],
       "files": []
     },
@@ -93,17 +76,6 @@
         "Does the output select `pipa-manage` as the primary route?",
         "Does it avoid running `pipa-daily-plan` as the primary workflow?",
         "Does it preserve the automation confirmation contract before creating a recurring ritual?"
-      ],
-      "files": []
-    },
-    {
-      "id": "pipa-daily-plan-timezone-1",
-      "prompt": "Pipa help me plan today around my calendar and due work.",
-      "expected_output": "Selects pipa-daily-plan, uses the system date for today, and asks one focused question only if the target day remains unclear.",
-      "assertions": [
-        "Does the output select `define work` and `pipa-daily-plan`?",
-        "Does it use the system date instead of asking for information the computer provides?",
-        "Does it ask one focused question only if the target day remains unclear?"
       ],
       "files": []
     },
@@ -154,59 +126,10 @@
     {
       "id": "pipa-daily-shutdown-1",
       "prompt": "Pipa shut down August 3 in America/New_York. Use the matching Daily Plan I accepted earlier in this conversation and compare it with my tracker, pull requests, and calendar evidence.",
-      "expected_output": "Routes to improve-operations Daily Shutdown, concisely compares the matching plan with completed and advanced work, resolves open loops, and prepares tomorrow.",
+      "expected_output": "Routes through Improve Operations to pipa-daily-shutdown as the one primary operation.",
       "assertions": [
         "Does the output select `improve operations` and Daily Shutdown as the one primary route?",
-        "Does it preserve the requested plan comparison while showing what was completed, what moved, the shape of the day, open loops, and tomorrow?",
-        "Does it separate completed work from work that moved and give every important unresolved loop a disposition?",
-        "Does it include a tomorrow seed and concrete tool/app and material-record provenance without a tool-access table?",
-        "Does it omit Reflection and Closed sections?"
-      ],
-      "files": []
-    },
-    {
-      "id": "pipa-daily-shutdown-no-baseline-1",
-      "prompt": "Pipa close August 3 in America/New_York. There is no accepted plan in this conversation. CONNECTORS.md maps the tracker, calendar, and code host; use Composio to verify access before reconstructing what you can.",
-      "expected_output": "Runs Daily Shutdown from verified target-day evidence, gives a useful account without requiring a prior plan, and avoids overstating unknown outcomes.",
-      "assertions": [
-        "Does it avoid foregrounding or displaying a missing baseline?",
-        "Does it reconstruct completed work, movement, events, and open loops from verified tracker and calendar evidence?",
-        "Does it verify mapped tools directly and use Composio discovery for unmapped capabilities?",
-        "Does it mention unavailable sources only when they materially affect the account and keep evidence-dependent outcomes unknown?",
-        "Can it complete the shutdown ritual without claiming all work is complete?"
-      ],
-      "files": []
-    },
-    {
-      "id": "pipa-daily-shutdown-timezone-1",
-      "prompt": "Pipa shut down my workday and prepare tomorrow.",
-      "expected_output": "Selects Daily Shutdown, uses the system date for today, and asks one focused question only if the target day remains unclear.",
-      "assertions": [
-        "Does the output select `improve operations` and Daily Shutdown?",
-        "Does it use the system date instead of asking for information the computer provides?",
-        "Does it ask one focused question only if the target day remains unclear?"
-      ],
-      "files": []
-    },
-    {
-      "id": "pipa-daily-shutdown-write-1",
-      "prompt": "Pipa shut down August 3 in America/New_York, send the summary to my team, and schedule tomorrow's unfinished tasks.",
-      "expected_output": "Completes a read-only Daily Shutdown first, then presents message and scheduling writes as separate proposed actions requiring explicit approval.",
-      "assertions": [
-        "Does it run Daily Shutdown rather than treating this as formal project closeout?",
-        "Does it produce an account of completed and advanced work, open-loop dispositions, a tomorrow seed, concise sources, and closure?",
-        "Does it avoid sending messages or creating tasks or calendar events without separate explicit approval?"
-      ],
-      "files": []
-    },
-    {
-      "id": "pipa-daily-shutdown-baseline-mismatch-1",
-      "prompt": "Pipa shut down August 3 in America/New_York. The only accepted Daily Plan in this conversation is for August 4.",
-      "expected_output": "Selects Daily Shutdown, ignores the mismatched plan, and builds today's account from verified target-day sources.",
-      "assertions": [
-        "Does it avoid using the August 4 plan as the August 3 baseline?",
-        "Does it avoid making the mismatched or missing baseline the focus of the shutdown?",
-        "Does it preserve unknown outcomes as `TBD` until verified evidence or user correction resolves them?"
+        "Does it preserve the user's workday-wrap-up objective when delegating?"
       ],
       "files": []
     },

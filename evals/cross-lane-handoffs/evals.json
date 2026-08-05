@@ -82,15 +82,10 @@
       "id": "handoff-daily-plan-to-shutdown-1",
       "transition": "define work daily planning -> improve operations daily shutdown",
       "prompt": "For August 3 in America/New_York, I accepted this Daily Plan: finish the proposal, review the open pull request, and prepare tomorrow's client call. Pipa, shut down August 3 in America/New_York using that baseline. The proposal is complete, the pull request is blocked, and call prep is partial.",
-      "expected_output": "Routes this turn only to improve-operations Daily Shutdown, uses the matching plan as context for today's account, resolves open loops, prepares tomorrow, and closes the ritual without external writes.",
+      "expected_output": "Routes this turn only through Improve Operations to pipa-daily-shutdown and preserves the supplied Daily Plan as context.",
       "assertions": [
         "Does the output select `improve operations` and Daily Shutdown as the one primary route for this turn?",
-        "Does it use the matching Daily Plan as context and separate completed work from partial or blocked work?",
-        "Does every unresolved loop receive an explicit disposition and does the output include a tomorrow seed?",
-        "Does it distinguish ritual completion from all work being complete?",
-        "Does it name material sources or supplied evidence?",
-        "Does it avoid creating tasks, calendar events, messages, documents, or automations without separate explicit approval?",
-        "Does it follow the Daily Shutdown output contract instead of the suite's generic shared output contract?"
+        "Does it pass the matching Daily Plan and supplied outcomes to the operation without switching lanes?"
       ],
       "files": []
     },

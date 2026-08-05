@@ -32,4 +32,4 @@ Read `~/.pipa/profile.md` and `~/.pipa/CONNECTORS.md` when present. Use the prof
 3. **Resolve open loops.** Give each important unfinished item one disposition: carry forward, delegate, schedule, defer, drop, or `TBD`. Add a next action when possible.
 4. **Prepare tomorrow.** Find the likely first priority, first action, and known calendar constraint. Do not create tasks or events.
 
-Write the read-only shutdown with [references/output-contract.md](references/output-contract.md). Require separate approval for each external write and report its result. End with a short sources line that names only the apps and material records used.
+Write the read-only shutdown with [references/output-contract.md](references/output-contract.md). Show each exact external write and require separate approval before execution; report its result. End with a short sources line that names only the apps and material records used.

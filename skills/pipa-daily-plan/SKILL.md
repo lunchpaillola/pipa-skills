@@ -20,4 +20,4 @@ Follow this workflow. Keep a todo list to track each step.
 5. Gather due work, current or active work, priorities, dependencies, calendar commitments, and stated goals or profile preferences.
 6. Find work the user can advance today. If due work is blocked, select an unblock step. If none exists, flag the block and continue to executable work.
 7. Choose the main focus in this order: overdue or due-today work, current or active work, then the best ticket that supports the user's goals or preferences. Do not estimate task size or forecast capacity.
-8. Write the read-only brief with [references/output-contract.md](references/output-contract.md). Require separate approval for each external write and report its result. End with a short sources line that names only the apps and material records used.
+8. Write the read-only brief with [references/output-contract.md](references/output-contract.md). Show each exact external write and require separate approval before execution; report its result. End with a short sources line that names only the apps and material records used.
