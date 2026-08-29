@@ -6,6 +6,8 @@ Your craft comes with work around the work, like getting opportunities, defining
 
 Pipa skills give agents practical operator workflows for service-business work: lead signals, briefs, delivery updates, blockers, money follow-through, client relationships, closeout, lessons, tools, and automations.
 
+[View Pipa Skills on GitHub](https://github.com/lunchpaillola/pipa-skills). If they are useful, star the repo so more people can find them. To run Pipa from Slack, see the [Pipa CLI](https://github.com/lunchpaillola/pipa).
+
 Built and maintained by [Lola](https://www.linkedin.com/in/lolaojabowale) at [Lunch Pail Labs](https://lunchpaillabs.com/).
 
 ## Install
@@ -103,6 +105,10 @@ These workflows remain separately installable connected capabilities because the
 | [`pipa-follow-up-reminders`](skills/pipa-follow-up-reminders/) | Creates and cancels deterministic one-shot email follow-up reminders through Pipa only when the user wants a specific future reminder sent to their email. Includes email-code/API-key setup, timezone resolution, and self-reminder guardrails. |
 | [`pipa-time-tracking`](skills/pipa-time-tracking/) | Starts, stops, switches, backfills, updates, archives, and summarizes Toggl-style time entries through Pipa generic agent utility records. |
 | [`pipa-triggers`](skills/pipa-triggers/) | Creates, inspects, and deletes event-triggered Pipa automations with explicit trigger proposal confirmation. |
+
+## Pipa Managed
+
+Want someone to configure, run, and manage agent workflows for your company? Check out [Pipa Managed](https://usepipa.com/managed). We set up a Slack-native operations agent around how your team works, then keep its workflows running and improving over time.
 
 ## Contributing
 
