@@ -101,6 +101,14 @@ These workflows remain separately installable connected capabilities because the
 | [`pipa-time-tracking`](skills/pipa-time-tracking/) | Starts, stops, switches, backfills, updates, archives, and summarizes Toggl-style time entries through Pipa generic agent utility records. |
 | [`pipa-triggers`](skills/pipa-triggers/) | Creates, inspects, and deletes event-triggered Pipa automations with explicit trigger proposal confirmation. |
 
+### Watch time tracking in action
+
+[![Track billable time without leaving your AI agent — watch the 2-minute tutorial](https://i.ytimg.com/vi/qjubUuNAeQw/hqdefault.jpg)](https://www.youtube.com/watch?v=qjubUuNAeQw)
+
+Install Pipa, connect your account with an email verification code, start and switch timers, then retrieve your saved hours in a new chat. The walkthrough uses OpenCode; the skill works with agents that can install and follow its instructions.
+
+[Set up Pipa at usepipa.com/tools](https://usepipa.com/tools) · [Read the written time-tracking guide](https://usepipa.com/blog/how-to-track-time-from-claude-codex-opencode-or-any-agent-session)
+
 ## Pipa Managed
 
 Want someone to configure, run, and manage agent workflows for your company? Check out [Pipa Managed](https://usepipa.com/managed). We set up a Slack-native operations agent around how your team works, then keep its workflows running and improving over time.
